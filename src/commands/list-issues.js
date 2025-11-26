@@ -10,8 +10,16 @@ export async function listIssues(scanId, options) {
     console.error(chalk.blue('Authenticating...'));
     await service.authenticate();
 
-    console.error(chalk.blue(`Fetching issues for scan ${scanId}...`));
-    const response = await service.listIssues(scanId);
+    // Handle exclude-status option
+    const excludeStatus = options.excludeStatus !== undefined ? options.excludeStatus : 'Noise';
+    
+    if (excludeStatus) {
+      console.error(chalk.blue(`Fetching issues for scan ${scanId} (excluding status: ${excludeStatus})...`));
+    } else {
+      console.error(chalk.blue(`Fetching issues for scan ${scanId}...`));
+    }
+    
+    const response = await service.listIssues(scanId, excludeStatus);
     const issues = response.Items || [];
 
     if (options.json) {

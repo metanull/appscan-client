@@ -77,10 +77,25 @@ export class AppScanService {
     }
   }
 
-  async listIssues(scanId) {
+  async listIssues(scanId, excludeStatus = 'Noise') {
     await this.ensureAuthenticated();
     try {
       const response = await this.api.v4.Issues_Get('Scan', scanId, {});
+      
+      // Filter issues by status if excludeStatus is provided
+      if (excludeStatus && response.Items) {
+        const statusesToExclude = excludeStatus.split(',').map(s => s.trim()).filter(s => s);
+        if (statusesToExclude.length > 0) {
+          response.Items = response.Items.filter(
+            issue => !statusesToExclude.includes(issue.Status)
+          );
+          // Update count if present
+          if (response.Count !== undefined) {
+            response.Count = response.Items.length;
+          }
+        }
+      }
+      
       return response;
     } catch (error) {
       throw new Error(`Failed to list issues: ${error.message}`);

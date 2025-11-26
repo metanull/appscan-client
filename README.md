@@ -116,11 +116,17 @@ appscan list-scan-executions <scanId> --json
 ### List Issues
 
 ```bash
-# List issues for a specific scan
+# List issues for a specific scan (excludes 'Noise' status by default)
 appscan list-issues <scanId>
 
 # Example
 appscan list-issues 456e7890-e89b-12d3-a456-426614174000
+
+# Show all issues (including Noise)
+appscan list-issues <scanId> --exclude-status ""
+
+# Exclude specific statuses (comma-separated)
+appscan list-issues <scanId> --exclude-status "Noise,False Positive"
 
 # Output as JSON
 appscan list-issues <scanId> --json
@@ -135,8 +141,14 @@ appscan generate-report applications
 # Generate scans report for an application
 appscan generate-report scans <appId>
 
-# Generate issues report for a scan
+# Generate issues report for a scan (excludes 'Noise' status by default)
 appscan generate-report issues <scanId>
+
+# Generate issues report including all statuses
+appscan generate-report issues <scanId> --exclude-status ""
+
+# Generate issues report excluding specific statuses
+appscan generate-report issues <scanId> --exclude-status "Noise,False Positive"
 
 # Generate executions report for a scan
 appscan generate-report executions <scanId>

@@ -43,8 +43,16 @@ export async function generateReport(type, id, options) {
         break;
       }
       case 'issues': {
-        console.error(chalk.blue(`Fetching issues for scan ${id}...`));
-        const response = await service.listIssues(id);
+        // Handle exclude-status option
+        const excludeStatus = options.excludeStatus !== undefined ? options.excludeStatus : 'Noise';
+        
+        if (excludeStatus) {
+          console.error(chalk.blue(`Fetching issues for scan ${id} (excluding status: ${excludeStatus})...`));
+        } else {
+          console.error(chalk.blue(`Fetching issues for scan ${id}...`));
+        }
+        
+        const response = await service.listIssues(id, excludeStatus);
         const issues = response.Items || [];
         const scanDetailsResponse = await service.getScanDetails(id);
         const scanName = scanDetailsResponse.Items?.[0]?.Name || 'Unknown Scan';
