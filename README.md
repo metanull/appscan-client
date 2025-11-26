@@ -9,6 +9,8 @@ A Node.js command-line interface (CLI) tool for interacting with the HCL AppScan
 - 📊 Generate reports in Markdown and HTML formats
 - ⚙️ Flexible configuration via environment variables or config files
 - 🎯 Simple and intuitive command-line interface
+- 🎨 Colored terminal output for better readability
+- 🔧 Pipe-friendly: messages to stderr, data to stdout
 
 ## Prerequisites
 
@@ -72,7 +74,7 @@ Use the `-c` or `--config` flag to specify the config file path.
 ### List Applications
 
 ```bash
-# List all applications
+# List all applications (colored output)
 appscan list-applications
 
 # Output as JSON
@@ -80,6 +82,9 @@ appscan list-applications --json
 
 # Using a config file
 appscan list-applications --config /path/to/config.json
+
+# Pipe JSON output to other tools (messages go to stderr, data to stdout)
+appscan list-applications --json 2>$null | ConvertFrom-Json | Where-Object { $_.RiskRating -eq 'High' }
 ```
 
 ### List Scans
@@ -111,11 +116,17 @@ appscan list-scan-executions <scanId> --json
 ### List Issues
 
 ```bash
-# List issues for a specific scan
+# List issues for a specific scan (excludes 'Noise' status by default)
 appscan list-issues <scanId>
 
 # Example
 appscan list-issues 456e7890-e89b-12d3-a456-426614174000
+
+# Show all issues (including Noise)
+appscan list-issues <scanId> --exclude-status ""
+
+# Exclude specific statuses (comma-separated)
+appscan list-issues <scanId> --exclude-status "Noise,False Positive"
 
 # Output as JSON
 appscan list-issues <scanId> --json
@@ -130,8 +141,14 @@ appscan generate-report applications
 # Generate scans report for an application
 appscan generate-report scans <appId>
 
-# Generate issues report for a scan
+# Generate issues report for a scan (excludes 'Noise' status by default)
 appscan generate-report issues <scanId>
+
+# Generate issues report including all statuses
+appscan generate-report issues <scanId> --exclude-status ""
+
+# Generate issues report excluding specific statuses
+appscan generate-report issues <scanId> --exclude-status "Noise,False Positive"
 
 # Generate executions report for a scan
 appscan generate-report executions <scanId>
@@ -226,6 +243,30 @@ npm test:coverage
 The tool uses the HCL AppScan Cloud REST API v4. For detailed API documentation, visit:
 - [AppScan Cloud API Documentation](https://cloud.appscan.com/swagger/ui/index)
 
+## Output and Piping
+
+The CLI tool follows best practices for command-line applications:
+
+- **Status messages** (authentication, progress) are sent to **stderr**
+- **Data output** (JSON, reports, lists) is sent to **stdout**
+- This allows you to pipe data to other tools while still seeing progress messages
+
+### Examples
+
+```bash
+# PowerShell: Filter applications by risk rating
+appscan list-applications --json 2>$null | ConvertFrom-Json | Where-Object { $_.RiskRating -eq 'High' }
+
+# PowerShell: Save JSON output and see progress
+appscan list-applications --json > apps.json  # Progress shown, JSON saved
+
+# Bash: Filter applications
+appscan list-applications --json 2>/dev/null | jq '.[] | select(.RiskRating=="High")'
+
+# Bash: Count applications
+appscan list-applications --json 2>/dev/null | jq '. | length'
+```
+
 ## Troubleshooting
 
 ### Authentication Errors
@@ -239,6 +280,14 @@ The tool uses the HCL AppScan Cloud REST API v4. For detailed API documentation,
 - Verify network connectivity to AppScan Cloud
 - Check if a proxy is required and configure appropriately
 - Ensure your firewall allows outbound HTTPS connections
+
+### Windows Testing Issues
+
+If you encounter `'NODE_OPTIONS' is not recognized` error when running tests, the project uses `cross-env` to handle this automatically. Make sure all dependencies are installed:
+
+```bash
+npm install
+```
 
 ## Contributing
 

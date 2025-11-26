@@ -1,11 +1,14 @@
 import { Config } from '../../src/utils/config.js';
 import fs from 'fs';
+import path from 'path';
+import os from 'os';
 
 describe('Config', () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
-    process.env = { ...originalEnv };
+    // Create a clean environment without .env variables
+    process.env = {};
   });
 
   afterEach(() => {
@@ -39,10 +42,6 @@ describe('Config', () => {
 
   describe('isValid', () => {
     it('should return true when both key and secret are set', () => {
-      delete process.env.APPSCAN_API_KEY;
-      delete process.env.APPSCAN_API_SECRET;
-      delete process.env.APPSCAN_BASE_URL;
-      
       process.env.APPSCAN_API_KEY = 'test-key';
       process.env.APPSCAN_API_SECRET = 'test-secret';
 
@@ -51,10 +50,6 @@ describe('Config', () => {
     });
 
     it('should return false when key is missing', () => {
-      delete process.env.APPSCAN_API_KEY;
-      delete process.env.APPSCAN_API_SECRET;
-      delete process.env.APPSCAN_BASE_URL;
-      
       process.env.APPSCAN_API_SECRET = 'test-secret';
 
       const config = new Config();
@@ -62,10 +57,6 @@ describe('Config', () => {
     });
 
     it('should return false when secret is missing', () => {
-      delete process.env.APPSCAN_API_KEY;
-      delete process.env.APPSCAN_API_SECRET;
-      delete process.env.APPSCAN_BASE_URL;
-      
       process.env.APPSCAN_API_KEY = 'test-key';
 
       const config = new Config();
@@ -74,7 +65,7 @@ describe('Config', () => {
   });
 
   describe('loadFromFile', () => {
-    const testConfigPath = '/tmp/test-config.json';
+    const testConfigPath = path.join(os.tmpdir(), 'test-config.json');
 
     afterEach(() => {
       if (fs.existsSync(testConfigPath)) {

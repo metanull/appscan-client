@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { AppScanService } from '../services/appscan-service.js';
 import { Config } from '../utils/config.js';
 import { MarkdownReportGenerator } from '../reports/markdown-report.js';
@@ -10,7 +11,7 @@ export async function generateReport(type, id, options) {
     const config = options.config ? Config.loadFromFile(options.config) : new Config();
     const service = new AppScanService(config);
 
-    console.log('Authenticating...');
+    console.error(chalk.blue('Authenticating...'));
     await service.authenticate();
 
     let report = '';
@@ -20,8 +21,9 @@ export async function generateReport(type, id, options) {
 
     switch (type) {
       case 'applications': {
-        console.log('Fetching applications...');
-        const applications = await service.listApplications();
+        console.error(chalk.blue('Fetching applications...'));
+        const response = await service.listApplications();
+        const applications = response.Items || [];
         report =
           format === 'html'
             ? htmlGenerator.generateApplicationsReport(applications)
@@ -29,33 +31,47 @@ export async function generateReport(type, id, options) {
         break;
       }
       case 'scans': {
-        console.log(`Fetching scans for application ${id}...`);
-        const scans = await service.listScans(id);
-        const appDetails = await service.getApplicationDetails(id);
+        console.error(chalk.blue(`Fetching scans for application ${id}...`));
+        const response = await service.listScans(id);
+        const scans = response.Items || [];
+        const appDetailsResponse = await service.getApplicationDetails(id);
+        const appName = appDetailsResponse.Items?.[0]?.Name || 'Unknown Application';
         report =
           format === 'html'
-            ? htmlGenerator.generateScansReport(scans, appDetails.Name)
-            : markdownGenerator.generateScansReport(scans, appDetails.Name);
+            ? htmlGenerator.generateScansReport(scans, appName)
+            : markdownGenerator.generateScansReport(scans, appName);
         break;
       }
       case 'issues': {
-        console.log(`Fetching issues for scan ${id}...`);
-        const issues = await service.listIssues(id);
-        const scanDetails = await service.getScanDetails(id);
+        // Handle exclude-status option
+        const excludeStatus = options.excludeStatus !== undefined ? options.excludeStatus : 'Noise';
+        
+        if (excludeStatus) {
+          console.error(chalk.blue(`Fetching issues for scan ${id} (excluding status: ${excludeStatus})...`));
+        } else {
+          console.error(chalk.blue(`Fetching issues for scan ${id}...`));
+        }
+        
+        const response = await service.listIssues(id, excludeStatus);
+        const issues = response.Items || [];
+        const scanDetailsResponse = await service.getScanDetails(id);
+        const scanName = scanDetailsResponse.Items?.[0]?.Name || 'Unknown Scan';
         report =
           format === 'html'
-            ? htmlGenerator.generateIssuesReport(issues, scanDetails.Name)
-            : markdownGenerator.generateIssuesReport(issues, scanDetails.Name);
+            ? htmlGenerator.generateIssuesReport(issues, scanName)
+            : markdownGenerator.generateIssuesReport(issues, scanName);
         break;
       }
       case 'executions': {
-        console.log(`Fetching executions for scan ${id}...`);
-        const executions = await service.listScanExecutions(id);
-        const scanDetails = await service.getScanDetails(id);
+        console.error(chalk.blue(`Fetching executions for scan ${id}...`));
+        const response = await service.listScanExecutions(id);
+        const executions = response.Items || [];
+        const scanDetailsResponse = await service.getScanDetails(id);
+        const scanName = scanDetailsResponse.Items?.[0]?.Name || 'Unknown Scan';
         report =
           format === 'html'
-            ? htmlGenerator.generateScanExecutionsReport(executions, scanDetails.Name)
-            : markdownGenerator.generateScanExecutionsReport(executions, scanDetails.Name);
+            ? htmlGenerator.generateScanExecutionsReport(executions, scanName)
+            : markdownGenerator.generateScanExecutionsReport(executions, scanName);
         break;
       }
       default:
@@ -67,12 +83,12 @@ export async function generateReport(type, id, options) {
     if (options.output) {
       const outputPath = path.resolve(options.output);
       fs.writeFileSync(outputPath, report, 'utf-8');
-      console.log(`Report saved to: ${outputPath}`);
+      console.error(chalk.green(`Report saved to: ${outputPath}`));
     } else {
-      console.log('\n' + report);
+      console.log(report);
     }
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    console.error(chalk.red(`Error: ${error.message}`));
     process.exit(1);
   }
 }

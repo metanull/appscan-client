@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 import fs from 'fs';
 
+// Load environment variables silently (suppress dotenv tips/messages)
+process.env.DOTENV_CONFIG_QUIET = 'true';
 dotenv.config();
 
 export class Config {

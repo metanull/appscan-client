@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { AppScanService } from '../services/appscan-service.js';
 import { Config } from '../utils/config.js';
 
@@ -6,27 +7,29 @@ export async function listScans(appId, options) {
     const config = options.config ? Config.loadFromFile(options.config) : new Config();
     const service = new AppScanService(config);
 
-    console.log('Authenticating...');
+    console.error(chalk.blue('Authenticating...'));
     await service.authenticate();
 
-    console.log(`Fetching scans for application ${appId}...`);
-    const scans = await service.listScans(appId);
+    console.error(chalk.blue(`Fetching scans for application ${appId}...`));
+    const response = await service.listScans(appId);
+    const scans = response.Items || [];
 
     if (options.json) {
       console.log(JSON.stringify(scans, null, 2));
     } else {
-      console.log(`\nFound ${scans.length} scan(s):\n`);
+      console.error(chalk.green(`\nFound ${scans.length} scan(s):\n`));
       scans.forEach((scan, index) => {
-        console.log(`${index + 1}. ${scan.Name || 'N/A'} (ID: ${scan.Id || 'N/A'})`);
-        console.log(`   Type: ${scan.ScanType || 'N/A'}`);
+        console.log(`${index + 1}. ${chalk.bold(scan.Name || 'N/A')} ${chalk.gray(`(ID: ${scan.Id || 'N/A'})`)}`);
+        console.log(`   ${chalk.dim('Type:')} ${scan.ScanType || 'N/A'}`);
         if (scan.LatestExecution) {
-          console.log(`   Status: ${scan.LatestExecution.Status || 'N/A'}`);
+          const statusColor = scan.LatestExecution.Status === 'Ready' ? 'green' : scan.LatestExecution.Status === 'Failed' ? 'red' : 'yellow';
+          console.log(`   ${chalk.dim('Status:')} ${chalk[statusColor](scan.LatestExecution.Status || 'N/A')}`);
         }
         console.log('');
       });
     }
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    console.error(chalk.red(`Error: ${error.message}`));
     process.exit(1);
   }
 }
