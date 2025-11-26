@@ -10,7 +10,8 @@ export async function listScanExecutions(scanId, options) {
     await service.authenticate();
 
     console.log(`Fetching executions for scan ${scanId}...`);
-    const executions = await service.listScanExecutions(scanId);
+    const response = await service.listScanExecutions(scanId);
+    const executions = response.Items || [];
 
     if (options.json) {
       console.log(JSON.stringify(executions, null, 2));

@@ -10,7 +10,8 @@ export async function listScans(appId, options) {
     await service.authenticate();
 
     console.log(`Fetching scans for application ${appId}...`);
-    const scans = await service.listScans(appId);
+    const response = await service.listScans(appId);
+    const scans = response.Items || [];
 
     if (options.json) {
       console.log(JSON.stringify(scans, null, 2));

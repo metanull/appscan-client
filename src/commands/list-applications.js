@@ -10,7 +10,8 @@ export async function listApplications(options) {
     await service.authenticate();
 
     console.log('Fetching applications...');
-    const applications = await service.listApplications();
+    const response = await service.listApplications();
+    const applications = response.Items || [];
 
     if (options.json) {
       console.log(JSON.stringify(applications, null, 2));

@@ -10,7 +10,8 @@ export async function listIssues(scanId, options) {
     await service.authenticate();
 
     console.log(`Fetching issues for scan ${scanId}...`);
-    const issues = await service.listIssues(scanId);
+    const response = await service.listIssues(scanId);
+    const issues = response.Items || [];
 
     if (options.json) {
       console.log(JSON.stringify(issues, null, 2));

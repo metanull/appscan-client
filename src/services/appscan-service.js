@@ -1,4 +1,4 @@
-import { Api } from '../generated/Api.js';
+import { Api, HttpClient } from '../generated/Api.js';
 import { Config } from '../utils/config.js';
 
 export class AppScanService {
@@ -16,11 +16,12 @@ export class AppScanService {
     }
 
     try {
-      this.api = new Api({
+      const httpClient = new HttpClient({
         baseURL: this.config.getBaseUrl(),
       });
+      this.api = new Api(httpClient);
 
-      const response = await this.api.api.accountApiKeyLogin({
+      const response = await this.api.v4.Account_ApiKeyLogin({
         KeyId: this.config.getApiKey(),
         KeySecret: this.config.getApiSecret(),
       });
@@ -32,12 +33,13 @@ export class AppScanService {
       this.token = response.Token;
 
       // Update API instance with authorization token
-      this.api = new Api({
+      const authenticatedHttpClient = new HttpClient({
         baseURL: this.config.getBaseUrl(),
         headers: {
           Authorization: `Bearer ${this.token}`,
         },
       });
+      this.api = new Api(authenticatedHttpClient);
 
       return this.token;
     } catch (error) {
@@ -48,7 +50,7 @@ export class AppScanService {
   async listApplications() {
     await this.ensureAuthenticated();
     try {
-      const response = await this.api.api.appsAppsList();
+      const response = await this.api.v4.Apps_Get({});
       return response;
     } catch (error) {
       throw new Error(`Failed to list applications: ${error.message}`);
@@ -58,7 +60,7 @@ export class AppScanService {
   async listScans(appId) {
     await this.ensureAuthenticated();
     try {
-      const response = await this.api.api.scansList({ AppId: appId });
+      const response = await this.api.v4.Scans_Get({ AppId: appId });
       return response;
     } catch (error) {
       throw new Error(`Failed to list scans: ${error.message}`);
@@ -68,7 +70,7 @@ export class AppScanService {
   async listScanExecutions(scanId) {
     await this.ensureAuthenticated();
     try {
-      const response = await this.api.api.scansExecutionsList(scanId);
+      const response = await this.api.v4.Scans_GetExecutions(scanId, {});
       return response;
     } catch (error) {
       throw new Error(`Failed to list scan executions: ${error.message}`);
@@ -78,7 +80,7 @@ export class AppScanService {
   async listIssues(scanId) {
     await this.ensureAuthenticated();
     try {
-      const response = await this.api.api.issuesList({ ScanId: scanId });
+      const response = await this.api.v4.Issues_Get('Scan', scanId, {});
       return response;
     } catch (error) {
       throw new Error(`Failed to list issues: ${error.message}`);
@@ -88,7 +90,7 @@ export class AppScanService {
   async getApplicationDetails(appId) {
     await this.ensureAuthenticated();
     try {
-      const response = await this.api.api.appsDetail(appId);
+      const response = await this.api.v4.Apps_Get({ Id: appId });
       return response;
     } catch (error) {
       throw new Error(`Failed to get application details: ${error.message}`);
@@ -98,7 +100,7 @@ export class AppScanService {
   async getScanDetails(scanId) {
     await this.ensureAuthenticated();
     try {
-      const response = await this.api.api.scansDetail(scanId);
+      const response = await this.api.v4.Scans_Get({ ScanId: scanId });
       return response;
     } catch (error) {
       throw new Error(`Failed to get scan details: ${error.message}`);
