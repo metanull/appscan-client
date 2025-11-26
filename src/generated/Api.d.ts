@@ -64,30 +64,6 @@ export interface AppCommentModel {
   DateCreated?: string;
   CreatedBy?: BasicUserInfo;
 }
-export interface AppCommentModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface AppCommentModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: AppCommentModelETag;
-  IfNoneMatch?: AppCommentModelETag;
-}
 export interface AppCommentModelPageResultModel {
   Items?: AppCommentModel[] | null;
   /** @format int64 */
@@ -221,30 +197,6 @@ export interface ApplicationModel {
   AddedToAssetGroupAt?: string | null;
   ScanTechnologies?: ApplicationModelScanTechnologiesEnum;
 }
-export interface ApplicationModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface ApplicationModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: ApplicationModelETag;
-  IfNoneMatch?: ApplicationModelETag;
-}
 export interface ApplicationModelPageResultModel {
   Items?: ApplicationModel[] | null;
   /** @format int64 */
@@ -294,38 +246,6 @@ export interface ApplicationUpdateModel {
   AddedToAssetGroupAt?: string | null;
   AppCustomFields?: AppCustomFieldModel[] | null;
 }
-export interface ApplyClause {
-  Transformations?: TransformationNode[] | null;
-}
-export interface ApplyQueryOption {
-  Context?: ODataQueryContext;
-  ResultClrType?: Type;
-  ApplyClause?: ApplyClause;
-  RawValue?: string | null;
-}
-export interface AsnEncodedData {
-  Oid?: Oid;
-  /** @format byte */
-  RawData?: string | null;
-}
-export interface Assembly {
-  DefinedTypes?: TypeInfo[] | null;
-  ExportedTypes?: Type[] | null;
-  EntryPoint?: MethodInfo;
-  FullName?: string | null;
-  ImageRuntimeVersion?: string | null;
-  IsDynamic?: boolean;
-  Location?: string | null;
-  ReflectionOnly?: boolean;
-  IsCollectible?: boolean;
-  IsFullyTrusted?: boolean;
-  CustomAttributes?: CustomAttributeData[] | null;
-  ManifestModule?: Module;
-  Modules?: Module[] | null;
-  /** @format int64 */
-  HostContext?: number;
-  SecurityRuleSet?: AssemblySecurityRuleSetEnum;
-}
 export interface AssetGroupModel {
   /** @format uuid */
   Id?: string;
@@ -350,30 +270,6 @@ export interface AssetGroupModel {
   DomainsCount?: number;
   /** @format int32 */
   ScanTemplatesCount?: number;
-}
-export interface AssetGroupModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface AssetGroupModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: AssetGroupModelETag;
-  IfNoneMatch?: AssetGroupModelETag;
 }
 export interface AssetGroupModelPageResultModel {
   Items?: AssetGroupModel[] | null;
@@ -427,30 +323,6 @@ export interface AuditModel {
   AffectedEntity1?: AuditEffectedEntity;
   AffectedEntity2?: AuditEffectedEntity;
 }
-export interface AuditModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface AuditModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: AuditModelETag;
-  IfNoneMatch?: AuditModelETag;
-}
 export interface AuditModelPageResultModel {
   Items?: AuditModel[] | null;
   /** @format int64 */
@@ -501,50 +373,10 @@ export interface BusinessUnitModel {
   /** @format int32 */
   NumApplications?: number;
 }
-export interface BusinessUnitModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface BusinessUnitModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: BusinessUnitModelETag;
-  IfNoneMatch?: BusinessUnitModelETag;
-}
 export interface BusinessUnitModelPageResultModel {
   Items?: BusinessUnitModel[] | null;
   /** @format int64 */
   Count?: number | null;
-}
-export interface ByteReadOnlyMemory {
-  /** @format int32 */
-  Length?: number;
-  IsEmpty?: boolean;
-  Span?: ByteReadOnlySpan;
-}
-export interface ByteReadOnlySpan {
-  /** @format int32 */
-  Length?: number;
-  IsEmpty?: boolean;
-}
-export interface CancellationToken {
-  IsCancellationRequested?: boolean;
-  CanBeCanceled?: boolean;
-  WaitHandle?: WaitHandle;
 }
 export interface CategoriesChartData {
   data?: CategoryData[] | null;
@@ -591,60 +423,11 @@ export interface ChartFilterModel {
   AppsFilter?: ChartAppsFilterModel;
   MinSeverity?: ChartFilterModelMinSeverityEnum;
 }
-export interface Claim {
-  Issuer?: string | null;
-  OriginalIssuer?: string | null;
-  Properties?: Record<string, string>;
-  Subject?: ClaimsIdentity;
-  Type?: string | null;
-  Value?: string | null;
-  ValueType?: string | null;
-}
-export interface ClaimsIdentity {
-  AuthenticationType?: string | null;
-  IsAuthenticated?: boolean;
-  Actor?: ClaimsIdentity;
-  BootstrapContext?: object | null;
-  Claims?: Claim[] | null;
-  Label?: string | null;
-  Name?: string | null;
-  NameClaimType?: string | null;
-  RoleClaimType?: string | null;
-}
-export interface ClaimsPrincipal {
-  Claims?: Claim[] | null;
-  Identities?: ClaimsIdentity[] | null;
-  Identity?: IIdentity;
-}
 export interface CommentModelResponse {
   Comment?: string | null;
   /** @format date-time */
   DateCreated?: string;
   CreatedBy?: BasicUserInfo;
-}
-export interface CommentModelResponseETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface CommentModelResponseODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: CommentModelResponseETag;
-  IfNoneMatch?: CommentModelResponseETag;
 }
 export interface CommentModelResponsePageResultModel {
   Items?: CommentModelResponse[] | null;
@@ -694,66 +477,6 @@ export interface ComplianceStatus {
   Category?: ComplianceStatusCategoryEnum;
   Parameters?: string | null;
 }
-export interface ComputeClause {
-  ComputedItems?: ComputeExpression[] | null;
-}
-export interface ComputeExpression {
-  Expression?: SingleValueNode;
-  Alias?: string | null;
-  TypeReference?: IEdmTypeReference;
-}
-export interface ComputeQueryOption {
-  Context?: ODataQueryContext;
-  ResultClrType?: Type;
-  ComputeClause?: ComputeClause;
-  RawValue?: string | null;
-  Validator?: IComputeQueryValidator;
-}
-export interface ConnectionInfo {
-  Id?: string | null;
-  RemoteIpAddress?: IPAddress;
-  /** @format int32 */
-  RemotePort?: number;
-  LocalIpAddress?: IPAddress;
-  /** @format int32 */
-  LocalPort?: number;
-  ClientCertificate?: X509Certificate2;
-}
-export interface ConstructorInfo {
-  Name?: string | null;
-  DeclaringType?: Type;
-  ReflectedType?: Type;
-  Module?: Module;
-  CustomAttributes?: CustomAttributeData[] | null;
-  IsCollectible?: boolean;
-  /** @format int32 */
-  MetadataToken?: number;
-  Attributes?: ConstructorInfoAttributesEnum;
-  MethodImplementationFlags?: ConstructorInfoMethodImplementationFlagsEnum;
-  CallingConvention?: ConstructorInfoCallingConventionEnum;
-  IsAbstract?: boolean;
-  IsConstructor?: boolean;
-  IsFinal?: boolean;
-  IsHideBySig?: boolean;
-  IsSpecialName?: boolean;
-  IsStatic?: boolean;
-  IsVirtual?: boolean;
-  IsAssembly?: boolean;
-  IsFamily?: boolean;
-  IsFamilyAndAssembly?: boolean;
-  IsFamilyOrAssembly?: boolean;
-  IsPrivate?: boolean;
-  IsPublic?: boolean;
-  IsConstructedGenericMethod?: boolean;
-  IsGenericMethod?: boolean;
-  IsGenericMethodDefinition?: boolean;
-  ContainsGenericParameters?: boolean;
-  MethodHandle?: RuntimeMethodHandle;
-  IsSecurityCritical?: boolean;
-  IsSecuritySafeCritical?: boolean;
-  IsSecurityTransparent?: boolean;
-  MemberType?: ConstructorInfoMemberTypeEnum;
-}
 export interface CorrelationGroupModel {
   /** @format uuid */
   Id?: string;
@@ -778,30 +501,6 @@ export interface CorrelationGroupModel {
   IncludeIast?: boolean;
   IncludeSca?: boolean;
 }
-export interface CorrelationGroupModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface CorrelationGroupModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: CorrelationGroupModelETag;
-  IfNoneMatch?: CorrelationGroupModelETag;
-}
 export interface CorrelationGroupModelPageResultModel {
   Items?: CorrelationGroupModel[] | null;
   /** @format int64 */
@@ -816,28 +515,6 @@ export interface CountPerTechnologies {
   /** @format int32 */
   Count?: number;
   Technologies?: CountPerTechnologiesTechnologiesEnum;
-}
-export interface CountQueryOption {
-  Context?: ODataQueryContext;
-  RawValue?: string | null;
-  Value?: boolean;
-  Validator?: ICountQueryValidator;
-}
-export interface CustomAttributeData {
-  AttributeType?: Type;
-  Constructor?: ConstructorInfo;
-  ConstructorArguments?: CustomAttributeTypedArgument[] | null;
-  NamedArguments?: CustomAttributeNamedArgument[] | null;
-}
-export interface CustomAttributeNamedArgument {
-  MemberInfo?: MemberInfo;
-  TypedValue?: CustomAttributeTypedArgument;
-  MemberName?: string | null;
-  IsField?: boolean;
-}
-export interface CustomAttributeTypedArgument {
-  ArgumentType?: Type;
-  Value?: object | null;
 }
 export interface CustomFieldModel {
   /** @format uuid */
@@ -1076,16 +753,6 @@ export interface DateValues {
   Date?: string;
   Values?: number[] | null;
 }
-export interface DefaultQueryConfigurations {
-  EnableExpand?: boolean;
-  EnableSelect?: boolean;
-  EnableCount?: boolean;
-  EnableOrderBy?: boolean;
-  EnableFilter?: boolean;
-  /** @format int32 */
-  MaxTop?: number | null;
-  EnableSkipToken?: boolean;
-}
 export interface DeleteDomainResult {
   /** @format int32 */
   DomainId?: number;
@@ -1118,30 +785,6 @@ export interface DomainModel {
   LastScanned?: string | null;
   AssetGroups?: MinAssetGroupModel[] | null;
 }
-export interface DomainModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface DomainModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: DomainModelETag;
-  IfNoneMatch?: DomainModelETag;
-}
 export interface DomainModelPageResultModel {
   Items?: DomainModel[] | null;
   /** @format int64 */
@@ -1158,12 +801,6 @@ export interface DomainOwnershipModelVerificationModel {
   Domain?: string | null;
   /** @format uuid */
   AppId?: string | null;
-}
-export interface ETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
 }
 export interface EditPolicyModel {
   /**
@@ -1193,32 +830,10 @@ export interface EditTestPolicyModel {
   /** @format uuid */
   TestPolicyFileId?: string | null;
 }
-export interface EdmReferentialConstraintPropertyPair {
-  DependentProperty?: IEdmStructuralProperty;
-  PrincipalProperty?: IEdmStructuralProperty;
-}
 export interface ErrorMessage {
   Key?: string | null;
   Message?: string | null;
   FormatParams?: string[] | null;
-}
-export interface EventInfo {
-  Name?: string | null;
-  DeclaringType?: Type;
-  ReflectedType?: Type;
-  Module?: Module;
-  CustomAttributes?: CustomAttributeData[] | null;
-  IsCollectible?: boolean;
-  /** @format int32 */
-  MetadataToken?: number;
-  MemberType?: EventInfoMemberTypeEnum;
-  Attributes?: EventInfoAttributesEnum;
-  IsSpecialName?: boolean;
-  AddMethod?: MethodInfo;
-  RemoveMethod?: MethodInfo;
-  RaiseMethod?: MethodInfo;
-  IsMulticast?: boolean;
-  EventHandlerType?: Type;
 }
 export interface ExcludeExceptionModel {
   Type?: ExcludeExceptionModelTypeEnum;
@@ -1246,46 +861,6 @@ export interface ExploreItem {
   /** @default false */
   MultiStep?: boolean;
   TrafficType?: ExploreItemTrafficTypeEnum;
-}
-export interface FieldInfo {
-  Name?: string | null;
-  DeclaringType?: Type;
-  ReflectedType?: Type;
-  Module?: Module;
-  CustomAttributes?: CustomAttributeData[] | null;
-  IsCollectible?: boolean;
-  /** @format int32 */
-  MetadataToken?: number;
-  MemberType?: FieldInfoMemberTypeEnum;
-  Attributes?: FieldInfoAttributesEnum;
-  FieldType?: Type;
-  IsInitOnly?: boolean;
-  IsLiteral?: boolean;
-  IsPinvokeImpl?: boolean;
-  IsSpecialName?: boolean;
-  IsStatic?: boolean;
-  IsAssembly?: boolean;
-  IsFamily?: boolean;
-  IsFamilyAndAssembly?: boolean;
-  IsFamilyOrAssembly?: boolean;
-  IsPrivate?: boolean;
-  IsPublic?: boolean;
-  IsSecurityCritical?: boolean;
-  IsSecuritySafeCritical?: boolean;
-  IsSecurityTransparent?: boolean;
-  FieldHandle?: RuntimeFieldHandle;
-}
-export interface FilterClause {
-  Expression?: SingleValueNode;
-  RangeVariable?: RangeVariable;
-  ItemType?: IEdmTypeReference;
-}
-export interface FilterQueryOption {
-  Context?: ODataQueryContext;
-  Validator?: IFilterQueryValidator;
-  Compute?: ComputeQueryOption;
-  FilterClause?: FilterClause;
-  RawValue?: string | null;
 }
 export interface FixGroup {
   /** @format uuid */
@@ -1325,30 +900,6 @@ export interface FixGroup {
   LibraryName?: string | null;
   LastComment?: BasicCommentModel;
   Language?: string | null;
-}
-export interface FixGroupETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface FixGroupODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: FixGroupETag;
-  IfNoneMatch?: FixGroupETag;
 }
 export interface FixGroupPageResultModel {
   Items?: FixGroup[] | null;
@@ -1429,30 +980,6 @@ export interface GeneralScanExecutionModel {
   SupportModeEnabled?: boolean;
   CanResume?: boolean;
 }
-export interface GeneralScanExecutionModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface GeneralScanExecutionModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: GeneralScanExecutionModelETag;
-  IfNoneMatch?: GeneralScanExecutionModelETag;
-}
 export interface GenericChartData {
   Columns?: string[] | null;
   DataPoints?: TimedDataPoints[] | null;
@@ -1473,13 +1000,6 @@ export interface HealthStatusModel {
   HasLDAPAccess?: boolean;
   HasLicenseServerAccess?: boolean | null;
 }
-export interface HostString {
-  Value?: string | null;
-  HasValue?: boolean;
-  Host?: string | null;
-  /** @format int32 */
-  Port?: number | null;
-}
 export interface HttpAuthSettings {
   UserName?: string | null;
   Password?: string | null;
@@ -1488,203 +1008,6 @@ export interface HttpAuthSettings {
 export interface HttpContent {
   Headers?: StringStringIEnumerableKeyValuePair[] | null;
 }
-export interface HttpContext {
-  Features?: TypeObjectKeyValuePair[] | null;
-  Request?: HttpRequest;
-  Response?: HttpResponse;
-  Connection?: ConnectionInfo;
-  WebSockets?: WebSocketManager;
-  User?: ClaimsPrincipal;
-  Items?: Record<string, object | null>;
-  RequestServices?: IServiceProvider;
-  RequestAborted?: CancellationToken;
-  TraceIdentifier?: string | null;
-  Session?: ISession;
-}
-export interface HttpRequest {
-  HttpContext?: HttpContext;
-  Method?: string | null;
-  Scheme?: string | null;
-  IsHttps?: boolean;
-  Host?: HostString;
-  PathBase?: PathString;
-  Path?: PathString;
-  QueryString?: QueryString;
-  Query?: StringStringValuesKeyValuePair[] | null;
-  Protocol?: string | null;
-  Headers?: Record<string, string[]>;
-  Cookies?: StringStringKeyValuePair[] | null;
-  /** @format int64 */
-  ContentLength?: number | null;
-  ContentType?: string | null;
-  /** @format binary */
-  Body?: File | null;
-  /** @format binary */
-  BodyReader?: File | null;
-  HasFormContentType?: boolean;
-  Form?: StringStringValuesKeyValuePair[] | null;
-  RouteValues?: Record<string, object>;
-}
-export interface HttpResponse {
-  HttpContext?: HttpContext;
-  /** @format int32 */
-  StatusCode?: number;
-  Headers?: Record<string, string[]>;
-  /** @format binary */
-  Body?: File | null;
-  BodyWriter?: PipeWriter;
-  /** @format int64 */
-  ContentLength?: number | null;
-  ContentType?: string | null;
-  Cookies?: IResponseCookies;
-  HasStarted?: boolean;
-}
-export type IComputeQueryValidator = object;
-export type ICountQueryValidator = object;
-export type ICustomAttributeProvider = object;
-export type IEdmDirectValueAnnotationsManager = object;
-export interface IEdmEntityContainer {
-  Name?: string | null;
-  SchemaElementKind?: IEdmEntityContainerSchemaElementKindEnum;
-  Namespace?: string | null;
-  Elements?: IEdmEntityContainerElement[] | null;
-}
-export interface IEdmEntityContainerElement {
-  Name?: string | null;
-  ContainerElementKind?: IEdmEntityContainerElementContainerElementKindEnum;
-  Container?: IEdmEntityContainer;
-}
-export interface IEdmEntityType {
-  TypeKind?: IEdmEntityTypeTypeKindEnum;
-  Name?: string | null;
-  IsAbstract?: boolean;
-  IsOpen?: boolean;
-  BaseType?: IEdmStructuredType;
-  DeclaredProperties?: IEdmProperty[] | null;
-  SchemaElementKind?: IEdmEntityTypeSchemaElementKindEnum;
-  Namespace?: string | null;
-  DeclaredKey?: IEdmStructuralProperty[] | null;
-  HasStream?: boolean;
-}
-export interface IEdmExpression {
-  ExpressionKind?: IEdmExpressionExpressionKindEnum;
-}
-export interface IEdmModel {
-  SchemaElements?: IEdmSchemaElement[] | null;
-  VocabularyAnnotations?: IEdmVocabularyAnnotation[] | null;
-  ReferencedModels?: IEdmModel[] | null;
-  DeclaredNamespaces?: string[] | null;
-  DirectValueAnnotationsManager?: IEdmDirectValueAnnotationsManager;
-  EntityContainer?: IEdmEntityContainer;
-}
-export interface IEdmNavigationProperty {
-  Name?: string | null;
-  PropertyKind?: IEdmNavigationPropertyPropertyKindEnum;
-  Type?: IEdmTypeReference;
-  DeclaringType?: IEdmStructuredType;
-  Partner?: IEdmNavigationProperty;
-  OnDelete?: IEdmNavigationPropertyOnDeleteEnum;
-  ContainsTarget?: boolean;
-  ReferentialConstraint?: IEdmReferentialConstraint;
-}
-export interface IEdmNavigationPropertyBinding {
-  NavigationProperty?: IEdmNavigationProperty;
-  Target?: IEdmNavigationSource;
-  Path?: IEdmPathExpression;
-}
-export interface IEdmNavigationSource {
-  Name?: string | null;
-  NavigationPropertyBindings?: IEdmNavigationPropertyBinding[] | null;
-  Path?: IEdmPathExpression;
-  Type?: IEdmType;
-  EntityType?: IEdmEntityType;
-}
-export interface IEdmPathExpression {
-  ExpressionKind?: IEdmPathExpressionExpressionKindEnum;
-  PathSegments?: string[] | null;
-  Path?: string | null;
-}
-export interface IEdmProperty {
-  Name?: string | null;
-  PropertyKind?: IEdmPropertyPropertyKindEnum;
-  Type?: IEdmTypeReference;
-  DeclaringType?: IEdmStructuredType;
-}
-export interface IEdmReferentialConstraint {
-  PropertyPairs?: EdmReferentialConstraintPropertyPair[] | null;
-}
-export interface IEdmSchemaElement {
-  Name?: string | null;
-  SchemaElementKind?: IEdmSchemaElementSchemaElementKindEnum;
-  Namespace?: string | null;
-}
-export interface IEdmStructuralProperty {
-  Name?: string | null;
-  PropertyKind?: IEdmStructuralPropertyPropertyKindEnum;
-  Type?: IEdmTypeReference;
-  DeclaringType?: IEdmStructuredType;
-  DefaultValueString?: string | null;
-}
-export interface IEdmStructuredType {
-  TypeKind?: IEdmStructuredTypeTypeKindEnum;
-  IsAbstract?: boolean;
-  IsOpen?: boolean;
-  BaseType?: IEdmStructuredType;
-  DeclaredProperties?: IEdmProperty[] | null;
-}
-export interface IEdmTerm {
-  Name?: string | null;
-  SchemaElementKind?: IEdmTermSchemaElementKindEnum;
-  Namespace?: string | null;
-  Type?: IEdmTypeReference;
-  AppliesTo?: string | null;
-  DefaultValue?: string | null;
-}
-export interface IEdmType {
-  TypeKind?: IEdmTypeTypeKindEnum;
-}
-export interface IEdmTypeReference {
-  IsNullable?: boolean;
-  Definition?: IEdmType;
-}
-export type IEdmVocabularyAnnotatable = object;
-export interface IEdmVocabularyAnnotation {
-  Qualifier?: string | null;
-  Term?: IEdmTerm;
-  Target?: IEdmVocabularyAnnotatable;
-  Value?: IEdmExpression;
-  UsesDefault?: boolean;
-}
-export type IFilterQueryValidator = object;
-export interface IIdentity {
-  Name?: string | null;
-  AuthenticationType?: string | null;
-  IsAuthenticated?: boolean;
-}
-export type IODataQueryValidator = object;
-export type IOrderByQueryValidator = object;
-export interface IPAddress {
-  AddressFamily?: IpAddressAddressFamilyEnum;
-  /** @format int64 */
-  ScopeId?: number;
-  IsIPv6Multicast?: boolean;
-  IsIPv6LinkLocal?: boolean;
-  IsIPv6SiteLocal?: boolean;
-  IsIPv6Teredo?: boolean;
-  IsIPv6UniqueLocal?: boolean;
-  IsIPv4MappedToIPv6?: boolean;
-}
-export type IResponseCookies = object;
-export type ISelectExpandQueryValidator = object;
-export type IServiceProvider = object;
-export interface ISession {
-  IsAvailable?: boolean;
-  Id?: string | null;
-  Keys?: string[] | null;
-}
-export type ISkipQueryValidator = object;
-export type ISkipTokenQueryValidator = object;
-export type ITopQueryValidator = object;
 export interface IastScanExecutionModel {
   /** @format uuid */
   Id?: string;
@@ -1814,7 +1137,6 @@ export interface ImportIssueStatusModel {
   /** @format int32 */
   Skipped?: number;
 }
-export type IntPtr = object;
 export interface InviteResult {
   Email?: string | null;
   InviteStatus?: InviteResultInviteStatusEnum;
@@ -1928,30 +1250,6 @@ export interface IssueModel {
   SourceFileUri?: string | null;
   ReplayScriptFrameworks?: IssueModelReplayScriptFrameworksEnum;
 }
-export interface IssueModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface IssueModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: IssueModelETag;
-  IfNoneMatch?: IssueModelETag;
-}
 export interface IssueModelPageResultModel {
   Items?: IssueModel[] | null;
   /** @format int64 */
@@ -1994,30 +1292,6 @@ export interface LibraryModel {
   /** @format date-time */
   LatestReleaseDateTime?: string | null;
 }
-export interface LibraryModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface LibraryModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: LibraryModelETag;
-  IfNoneMatch?: LibraryModelETag;
-}
 export interface LibraryModelPageResultModel {
   Items?: LibraryModel[] | null;
   /** @format int64 */
@@ -2055,30 +1329,6 @@ export interface LicenseLibraryModel {
   Technology?: string | null;
   Malware?: boolean;
 }
-export interface LicenseLibraryModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface LicenseLibraryModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: LicenseLibraryModelETag;
-  IfNoneMatch?: LicenseLibraryModelETag;
-}
 export interface LicenseLibraryModelPageResultModel {
   Items?: LicenseLibraryModel[] | null;
   /** @format int64 */
@@ -2095,30 +1345,6 @@ export interface LicenseModel {
   RoyaltyFree?: LicenseModelRoyaltyFreeEnum;
   Url?: string | null;
   LicenseName?: string | null;
-}
-export interface LicenseModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface LicenseModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: LicenseModelETag;
-  IfNoneMatch?: LicenseModelETag;
 }
 export interface LicenseModelPageResultModel {
   Items?: LicenseModel[] | null;
@@ -2181,90 +1407,6 @@ export interface MHSPayloadAscpSignature {
   MHSError?: MhsPayloadAscpSignatureMhsErrorEnum;
   MHSSignature?: string | null;
   Payload?: MHSPasetoPayloadV1;
-}
-export interface MemberInfo {
-  MemberType?: MemberInfoMemberTypeEnum;
-  Name?: string | null;
-  DeclaringType?: Type;
-  ReflectedType?: Type;
-  Module?: Module;
-  CustomAttributes?: CustomAttributeData[] | null;
-  IsCollectible?: boolean;
-  /** @format int32 */
-  MetadataToken?: number;
-}
-export interface MethodBase {
-  MemberType?: MethodBaseMemberTypeEnum;
-  Name?: string | null;
-  DeclaringType?: Type;
-  ReflectedType?: Type;
-  Module?: Module;
-  CustomAttributes?: CustomAttributeData[] | null;
-  IsCollectible?: boolean;
-  /** @format int32 */
-  MetadataToken?: number;
-  Attributes?: MethodBaseAttributesEnum;
-  MethodImplementationFlags?: MethodBaseMethodImplementationFlagsEnum;
-  CallingConvention?: MethodBaseCallingConventionEnum;
-  IsAbstract?: boolean;
-  IsConstructor?: boolean;
-  IsFinal?: boolean;
-  IsHideBySig?: boolean;
-  IsSpecialName?: boolean;
-  IsStatic?: boolean;
-  IsVirtual?: boolean;
-  IsAssembly?: boolean;
-  IsFamily?: boolean;
-  IsFamilyAndAssembly?: boolean;
-  IsFamilyOrAssembly?: boolean;
-  IsPrivate?: boolean;
-  IsPublic?: boolean;
-  IsConstructedGenericMethod?: boolean;
-  IsGenericMethod?: boolean;
-  IsGenericMethodDefinition?: boolean;
-  ContainsGenericParameters?: boolean;
-  MethodHandle?: RuntimeMethodHandle;
-  IsSecurityCritical?: boolean;
-  IsSecuritySafeCritical?: boolean;
-  IsSecurityTransparent?: boolean;
-}
-export interface MethodInfo {
-  Name?: string | null;
-  DeclaringType?: Type;
-  ReflectedType?: Type;
-  Module?: Module;
-  CustomAttributes?: CustomAttributeData[] | null;
-  IsCollectible?: boolean;
-  /** @format int32 */
-  MetadataToken?: number;
-  Attributes?: MethodInfoAttributesEnum;
-  MethodImplementationFlags?: MethodInfoMethodImplementationFlagsEnum;
-  CallingConvention?: MethodInfoCallingConventionEnum;
-  IsAbstract?: boolean;
-  IsConstructor?: boolean;
-  IsFinal?: boolean;
-  IsHideBySig?: boolean;
-  IsSpecialName?: boolean;
-  IsStatic?: boolean;
-  IsVirtual?: boolean;
-  IsAssembly?: boolean;
-  IsFamily?: boolean;
-  IsFamilyAndAssembly?: boolean;
-  IsFamilyOrAssembly?: boolean;
-  IsPrivate?: boolean;
-  IsPublic?: boolean;
-  IsConstructedGenericMethod?: boolean;
-  IsGenericMethod?: boolean;
-  IsGenericMethodDefinition?: boolean;
-  ContainsGenericParameters?: boolean;
-  MethodHandle?: RuntimeMethodHandle;
-  IsSecurityCritical?: boolean;
-  IsSecuritySafeCritical?: boolean;
-  IsSecurityTransparent?: boolean;
-  MemberType?: MethodInfoMemberTypeEnum;
-  ReturnParameter?: ParameterInfo;
-  ReturnType?: Type;
-  ReturnTypeCustomAttributes?: ICustomAttributeProvider;
 }
 export interface MetricData {
   name?: string | null;
@@ -2388,76 +1530,10 @@ export interface MinScanModel {
   EnableEditing?: boolean;
   ProactiveAlerts?: boolean;
 }
-export interface MinScanModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface MinScanModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: MinScanModelETag;
-  IfNoneMatch?: MinScanModelETag;
-}
 export interface MinScanModelPageResultModel {
   Items?: MinScanModel[] | null;
   /** @format int64 */
   Count?: number | null;
-}
-export interface Module {
-  Assembly?: Assembly;
-  FullyQualifiedName?: string | null;
-  Name?: string | null;
-  /** @format int32 */
-  MDStreamVersion?: number;
-  /** @format uuid */
-  ModuleVersionId?: string;
-  ScopeName?: string | null;
-  ModuleHandle?: ModuleHandle;
-  CustomAttributes?: CustomAttributeData[] | null;
-  /** @format int32 */
-  MetadataToken?: number;
-}
-export interface ModuleHandle {
-  /** @format int32 */
-  MDStreamVersion?: number;
-}
-export interface MonitoredServiceComponentModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface MonitoredServiceComponentModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: MonitoredServiceComponentModelETag;
-  IfNoneMatch?: MonitoredServiceComponentModelETag;
 }
 export interface MonitoredServiceModel {
   /** @format date-time */
@@ -2466,30 +1542,6 @@ export interface MonitoredServiceModel {
   LastCheck?: string;
   ServiceType?: MonitoredServiceModelServiceTypeEnum;
   Status?: MonitoredServiceModelStatusEnum;
-}
-export interface MonitoredServiceModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface MonitoredServiceModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: MonitoredServiceModelETag;
-  IfNoneMatch?: MonitoredServiceModelETag;
 }
 export interface MonitoredServiceModelPageResultModel {
   Items?: MonitoredServiceModel[] | null;
@@ -2854,38 +1906,6 @@ export interface NewWebhook {
   AssetGroupId?: string | null;
   Event: NewWebhookEventEnum;
 }
-export interface ODataPathSegment {
-  EdmType?: IEdmType;
-  Identifier?: string | null;
-}
-export interface ODataQueryContext {
-  DefaultQueryConfigurations?: DefaultQueryConfigurations;
-  Model?: IEdmModel;
-  ElementType?: IEdmType;
-  NavigationSource?: IEdmNavigationSource;
-  ElementClrType?: Type;
-  Path?: ODataPathSegment[] | null;
-  RequestContainer?: IServiceProvider;
-}
-export interface ODataRawQueryOptions {
-  Filter?: string | null;
-  Apply?: string | null;
-  Compute?: string | null;
-  Search?: string | null;
-  OrderBy?: string | null;
-  Top?: string | null;
-  Skip?: string | null;
-  Select?: string | null;
-  Expand?: string | null;
-  Count?: string | null;
-  Format?: string | null;
-  SkipToken?: string | null;
-  DeltaToken?: string | null;
-}
-export interface Oid {
-  Value?: string | null;
-  FriendlyName?: string | null;
-}
 export interface OnBoardResult {
   UserName?: string | null;
   OnBoardStatus?: OnBoardResultOnBoardStatusEnum;
@@ -2939,24 +1959,6 @@ export interface OpenApiLoginKey {
   KeyName?: string | null;
   KeyValue?: string | null;
 }
-export interface OrderByClause {
-  ThenBy?: OrderByClause;
-  Expression?: SingleValueNode;
-  Direction?: OrderByClauseDirectionEnum;
-  RangeVariable?: RangeVariable;
-  ItemType?: IEdmTypeReference;
-}
-export interface OrderByNode {
-  Direction?: OrderByNodeDirectionEnum;
-}
-export interface OrderByQueryOption {
-  Context?: ODataQueryContext;
-  OrderByNodes?: OrderByNode[] | null;
-  RawValue?: string | null;
-  Validator?: IOrderByQueryValidator;
-  Compute?: ComputeQueryOption;
-  OrderByClause?: OrderByClause;
-}
 export interface OrgLibraryModel {
   /** @format uuid */
   PackageId?: string;
@@ -2976,30 +1978,6 @@ export interface OrgLibraryModel {
   Technology?: string | null;
   Malware?: boolean;
 }
-export interface OrgLibraryModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface OrgLibraryModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: OrgLibraryModelETag;
-  IfNoneMatch?: OrgLibraryModelETag;
-}
 export interface OrgLibraryModelPageResultModel {
   Items?: OrgLibraryModel[] | null;
   /** @format int64 */
@@ -3015,30 +1993,6 @@ export interface OrgSettingsModel {
   /** @format date-time */
   LastModified?: string;
 }
-export interface OrgSettingsModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface OrgSettingsModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: OrgSettingsModelETag;
-  IfNoneMatch?: OrgSettingsModelETag;
-}
 export interface OrgSettingsModelPageResultModel {
   Items?: OrgSettingsModel[] | null;
   /** @format int64 */
@@ -3049,34 +2003,6 @@ export interface PalleteItem {
   value?: string | null;
   /** @format int32 */
   sortVal?: number;
-}
-export interface ParameterInfo {
-  Attributes?: ParameterInfoAttributesEnum;
-  Member?: MemberInfo;
-  Name?: string | null;
-  ParameterType?: Type;
-  /** @format int32 */
-  Position?: number;
-  IsIn?: boolean;
-  IsLcid?: boolean;
-  IsOptional?: boolean;
-  IsOut?: boolean;
-  IsRetval?: boolean;
-  DefaultValue?: object | null;
-  RawDefaultValue?: object | null;
-  HasDefaultValue?: boolean;
-  CustomAttributes?: CustomAttributeData[] | null;
-  /** @format int32 */
-  MetadataToken?: number;
-}
-export interface PathString {
-  Value?: string | null;
-  HasValue?: boolean;
-}
-export interface PipeWriter {
-  CanGetUnflushedBytes?: boolean;
-  /** @format int64 */
-  UnflushedBytes?: number;
 }
 export interface PolicyAssociationModel {
   /** @format uuid */
@@ -3096,30 +2022,6 @@ export interface PolicyAssociationModel {
   UIFeatures?: string | null;
   Enabled?: boolean;
   Parameters?: NameValuePair[] | null;
-}
-export interface PolicyAssociationModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface PolicyAssociationModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: PolicyAssociationModelETag;
-  IfNoneMatch?: PolicyAssociationModelETag;
 }
 export interface PolicyAssociationModelPageResultModel {
   Items?: PolicyAssociationModel[] | null;
@@ -3146,30 +2048,6 @@ export interface PolicyModel {
   Category?: PolicyModelCategoryEnum;
   Region?: PolicyModelRegionEnum;
   UIFeatures?: string | null;
-}
-export interface PolicyModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface PolicyModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: PolicyModelETag;
-  IfNoneMatch?: PolicyModelETag;
 }
 export interface PolicyModelPageResultModel {
   Items?: PolicyModel[] | null;
@@ -3205,30 +2083,6 @@ export interface Presence {
   /** @maxLength 512 */
   GitServerName?: string | null;
 }
-export interface PresenceETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface PresenceODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: PresenceETag;
-  IfNoneMatch?: PresenceETag;
-}
 export interface PresencePageResultModel {
   Items?: Presence[] | null;
   /** @format int64 */
@@ -3242,33 +2096,6 @@ export interface ProblemDetails {
   detail?: string | null;
   instance?: string | null;
   [key: string]: any;
-}
-export interface PropertyInfo {
-  Name?: string | null;
-  DeclaringType?: Type;
-  ReflectedType?: Type;
-  Module?: Module;
-  CustomAttributes?: CustomAttributeData[] | null;
-  IsCollectible?: boolean;
-  /** @format int32 */
-  MetadataToken?: number;
-  MemberType?: PropertyInfoMemberTypeEnum;
-  PropertyType?: Type;
-  Attributes?: PropertyInfoAttributesEnum;
-  IsSpecialName?: boolean;
-  CanRead?: boolean;
-  CanWrite?: boolean;
-  GetMethod?: MethodInfo;
-  SetMethod?: MethodInfo;
-}
-export interface PublicKey {
-  EncodedKeyValue?: AsnEncodedData;
-  EncodedParameters?: AsnEncodedData;
-  Oid?: Oid;
-}
-export interface QueryString {
-  Value?: string | null;
-  HasValue?: boolean;
 }
 export interface RFAnalysisStatusUpdateModel {
   /** @format uuid */
@@ -3385,30 +2212,6 @@ export interface RFPatchModel {
   /** @format date-time */
   CreatedAt?: string;
 }
-export interface RFPatchModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface RFPatchModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: RFPatchModelETag;
-  IfNoneMatch?: RFPatchModelETag;
-}
 export interface RFPatchModelPageResultModel {
   Items?: RFPatchModel[] | null;
   /** @format int64 */
@@ -3436,12 +2239,6 @@ export interface RFUpdatePatchModel {
    */
   PullRequestUrl?: string | null;
   Status?: RfUpdatePatchModelStatusEnum;
-}
-export interface RangeVariable {
-  Name?: string | null;
-  TypeReference?: IEdmTypeReference;
-  /** @format int32 */
-  Kind?: number;
 }
 export interface Recurrence {
   /**
@@ -3548,30 +2345,6 @@ export interface ReportStatusModel {
   DownloadLink?: string | null;
   ReportFileType?: string | null;
 }
-export interface ReportStatusModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface ReportStatusModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: ReportStatusModelETag;
-  IfNoneMatch?: ReportStatusModelETag;
-}
 export interface ReportStatusModelPageResultModel {
   Items?: ReportStatusModel[] | null;
   /** @format int64 */
@@ -3601,43 +2374,10 @@ export interface RoleModel {
   Predefined?: boolean;
   IsAssignable?: boolean;
 }
-export interface RoleModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface RoleModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: RoleModelETag;
-  IfNoneMatch?: RoleModelETag;
-}
 export interface RoleModelPageResultModel {
   Items?: RoleModel[] | null;
   /** @format int64 */
   Count?: number | null;
-}
-export interface RuntimeFieldHandle {
-  Value?: IntPtr;
-}
-export interface RuntimeMethodHandle {
-  Value?: IntPtr;
-}
-export interface RuntimeTypeHandle {
-  Value?: IntPtr;
 }
 export interface SCXSubscription {
   LicenseKeyPostfix?: string | null;
@@ -3679,10 +2419,6 @@ export interface SCXUserInfo {
   LastName?: string | null;
   /** @format int32 */
   IdleTimeForSignout?: number;
-}
-export interface SafeWaitHandle {
-  IsClosed?: boolean;
-  IsInvalid?: boolean;
 }
 export interface SastScanExecutionModel {
   /** @format uuid */
@@ -4068,43 +2804,10 @@ export interface ScanTemplateModel {
   /** @format int32 */
   AssetGroupsCount?: number | null;
 }
-export interface ScanTemplateModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface ScanTemplateModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: ScanTemplateModelETag;
-  IfNoneMatch?: ScanTemplateModelETag;
-}
 export interface ScanTemplateModelPageResultModel {
   Items?: ScanTemplateModel[] | null;
   /** @format int64 */
   Count?: number | null;
-}
-export interface SearchClause {
-  Expression?: SingleValueNode;
-}
-export interface SearchQueryOption {
-  Context?: ODataQueryContext;
-  ResultClrType?: Type;
-  SearchClause?: SearchClause;
-  RawValue?: string | null;
 }
 export interface SecurityReportJob {
   OdataFilter?: string | null;
@@ -4127,54 +2830,9 @@ export interface SecurityReportOptions {
   MinimizeDetails?: boolean;
   Articles?: boolean;
 }
-export interface SelectExpandClause {
-  SelectedItems?: SelectItem[] | null;
-  AllSelected?: boolean;
-}
-export interface SelectExpandQueryOption {
-  Context?: ODataQueryContext;
-  RawSelect?: string | null;
-  RawExpand?: string | null;
-  Compute?: ComputeQueryOption;
-  Validator?: ISelectExpandQueryValidator;
-  SelectExpandClause?: SelectExpandClause;
-  /** @format int32 */
-  LevelsMaxLiteralExpansionDepth?: number;
-}
-export type SelectItem = object;
-export interface SingleValueNode {
-  TypeReference?: IEdmTypeReference;
-  Kind?: SingleValueNodeKindEnum;
-}
-export interface SkipQueryOption {
-  Context?: ODataQueryContext;
-  RawValue?: string | null;
-  /** @format int32 */
-  Value?: number;
-  Validator?: ISkipQueryValidator;
-}
-export type SkipTokenHandler = object;
-export interface SkipTokenQueryOption {
-  RawValue?: string | null;
-  Context?: ODataQueryContext;
-  Validator?: ISkipTokenQueryValidator;
-  Handler?: SkipTokenHandler;
-}
 export interface StringStringIEnumerableKeyValuePair {
   Key?: string | null;
   Value?: string[] | null;
-}
-export interface StringStringKeyValuePair {
-  Key?: string | null;
-  Value?: string | null;
-}
-export interface StringStringValuesKeyValuePair {
-  Key?: string | null;
-  Value?: string[];
-}
-export interface StructLayoutAttribute {
-  TypeId?: object | null;
-  Value?: StructLayoutAttributeValueEnum;
 }
 export interface SubscriptionInfoModel {
   IsValid?: boolean;
@@ -4280,30 +2938,6 @@ export interface TestPolicyModel {
   IsPredefined?: boolean;
   IsDefault?: boolean;
 }
-export interface TestPolicyModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface TestPolicyModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: TestPolicyModelETag;
-  IfNoneMatch?: TestPolicyModelETag;
-}
 export interface TestPolicyModelPageResultModel {
   Items?: TestPolicyModel[] | null;
   /** @format int64 */
@@ -4337,16 +2971,6 @@ export interface TimedDataPoints {
   Time?: string;
   Data?: number[] | null;
 }
-export interface TopQueryOption {
-  Context?: ODataQueryContext;
-  RawValue?: string | null;
-  /** @format int32 */
-  Value?: number;
-  Validator?: ITopQueryValidator;
-}
-export interface TransformationNode {
-  Kind?: TransformationNodeKindEnum;
-}
 export interface TriageResult {
   /** @format int32 */
   NProvidedIssues?: number;
@@ -4379,173 +3003,6 @@ export interface TrialUserDetails {
    */
   OrgName?: string | null;
   BackChunnelKey?: string | null;
-}
-export interface Type {
-  Name?: string | null;
-  CustomAttributes?: CustomAttributeData[] | null;
-  IsCollectible?: boolean;
-  /** @format int32 */
-  MetadataToken?: number;
-  IsInterface?: boolean;
-  MemberType?: TypeMemberTypeEnum;
-  Namespace?: string | null;
-  AssemblyQualifiedName?: string | null;
-  FullName?: string | null;
-  Assembly?: Assembly;
-  Module?: Module;
-  IsNested?: boolean;
-  DeclaringType?: Type;
-  DeclaringMethod?: MethodBase;
-  ReflectedType?: Type;
-  UnderlyingSystemType?: Type;
-  IsTypeDefinition?: boolean;
-  IsArray?: boolean;
-  IsByRef?: boolean;
-  IsPointer?: boolean;
-  IsConstructedGenericType?: boolean;
-  IsGenericParameter?: boolean;
-  IsGenericTypeParameter?: boolean;
-  IsGenericMethodParameter?: boolean;
-  IsGenericType?: boolean;
-  IsGenericTypeDefinition?: boolean;
-  IsSZArray?: boolean;
-  IsVariableBoundArray?: boolean;
-  IsByRefLike?: boolean;
-  IsFunctionPointer?: boolean;
-  IsUnmanagedFunctionPointer?: boolean;
-  HasElementType?: boolean;
-  GenericTypeArguments?: Type[] | null;
-  /** @format int32 */
-  GenericParameterPosition?: number;
-  GenericParameterAttributes?: TypeGenericParameterAttributesEnum;
-  Attributes?: TypeAttributesEnum;
-  IsAbstract?: boolean;
-  IsImport?: boolean;
-  IsSealed?: boolean;
-  IsSpecialName?: boolean;
-  IsClass?: boolean;
-  IsNestedAssembly?: boolean;
-  IsNestedFamANDAssem?: boolean;
-  IsNestedFamily?: boolean;
-  IsNestedFamORAssem?: boolean;
-  IsNestedPrivate?: boolean;
-  IsNestedPublic?: boolean;
-  IsNotPublic?: boolean;
-  IsPublic?: boolean;
-  IsAutoLayout?: boolean;
-  IsExplicitLayout?: boolean;
-  IsLayoutSequential?: boolean;
-  IsAnsiClass?: boolean;
-  IsAutoClass?: boolean;
-  IsUnicodeClass?: boolean;
-  IsCOMObject?: boolean;
-  IsContextful?: boolean;
-  IsEnum?: boolean;
-  IsMarshalByRef?: boolean;
-  IsPrimitive?: boolean;
-  IsValueType?: boolean;
-  IsSignatureType?: boolean;
-  IsSecurityCritical?: boolean;
-  IsSecuritySafeCritical?: boolean;
-  IsSecurityTransparent?: boolean;
-  StructLayoutAttribute?: StructLayoutAttribute;
-  TypeInitializer?: ConstructorInfo;
-  TypeHandle?: RuntimeTypeHandle;
-  /** @format uuid */
-  GUID?: string;
-  BaseType?: Type;
-  ContainsGenericParameters?: boolean;
-  IsVisible?: boolean;
-}
-export interface TypeInfo {
-  Name?: string | null;
-  CustomAttributes?: CustomAttributeData[] | null;
-  IsCollectible?: boolean;
-  /** @format int32 */
-  MetadataToken?: number;
-  IsInterface?: boolean;
-  MemberType?: TypeInfoMemberTypeEnum;
-  Namespace?: string | null;
-  AssemblyQualifiedName?: string | null;
-  FullName?: string | null;
-  Assembly?: Assembly;
-  Module?: Module;
-  IsNested?: boolean;
-  DeclaringType?: Type;
-  DeclaringMethod?: MethodBase;
-  ReflectedType?: Type;
-  UnderlyingSystemType?: Type;
-  IsTypeDefinition?: boolean;
-  IsArray?: boolean;
-  IsByRef?: boolean;
-  IsPointer?: boolean;
-  IsConstructedGenericType?: boolean;
-  IsGenericParameter?: boolean;
-  IsGenericTypeParameter?: boolean;
-  IsGenericMethodParameter?: boolean;
-  IsGenericType?: boolean;
-  IsGenericTypeDefinition?: boolean;
-  IsSZArray?: boolean;
-  IsVariableBoundArray?: boolean;
-  IsByRefLike?: boolean;
-  IsFunctionPointer?: boolean;
-  IsUnmanagedFunctionPointer?: boolean;
-  HasElementType?: boolean;
-  GenericTypeArguments?: Type[] | null;
-  /** @format int32 */
-  GenericParameterPosition?: number;
-  GenericParameterAttributes?: TypeInfoGenericParameterAttributesEnum;
-  Attributes?: TypeInfoAttributesEnum;
-  IsAbstract?: boolean;
-  IsImport?: boolean;
-  IsSealed?: boolean;
-  IsSpecialName?: boolean;
-  IsClass?: boolean;
-  IsNestedAssembly?: boolean;
-  IsNestedFamANDAssem?: boolean;
-  IsNestedFamily?: boolean;
-  IsNestedFamORAssem?: boolean;
-  IsNestedPrivate?: boolean;
-  IsNestedPublic?: boolean;
-  IsNotPublic?: boolean;
-  IsPublic?: boolean;
-  IsAutoLayout?: boolean;
-  IsExplicitLayout?: boolean;
-  IsLayoutSequential?: boolean;
-  IsAnsiClass?: boolean;
-  IsAutoClass?: boolean;
-  IsUnicodeClass?: boolean;
-  IsCOMObject?: boolean;
-  IsContextful?: boolean;
-  IsEnum?: boolean;
-  IsMarshalByRef?: boolean;
-  IsPrimitive?: boolean;
-  IsValueType?: boolean;
-  IsSignatureType?: boolean;
-  IsSecurityCritical?: boolean;
-  IsSecuritySafeCritical?: boolean;
-  IsSecurityTransparent?: boolean;
-  StructLayoutAttribute?: StructLayoutAttribute;
-  TypeInitializer?: ConstructorInfo;
-  TypeHandle?: RuntimeTypeHandle;
-  /** @format uuid */
-  GUID?: string;
-  BaseType?: Type;
-  ContainsGenericParameters?: boolean;
-  IsVisible?: boolean;
-  GenericTypeParameters?: Type[] | null;
-  DeclaredConstructors?: ConstructorInfo[] | null;
-  DeclaredEvents?: EventInfo[] | null;
-  DeclaredFields?: FieldInfo[] | null;
-  DeclaredMembers?: MemberInfo[] | null;
-  DeclaredMethods?: MethodInfo[] | null;
-  DeclaredNestedTypes?: TypeInfo[] | null;
-  DeclaredProperties?: PropertyInfo[] | null;
-  ImplementedInterfaces?: Type[] | null;
-}
-export interface TypeObjectKeyValuePair {
-  Key?: Type;
-  Value?: object | null;
 }
 export interface UpdateApplicationElementsSettings {
   EnableAutomaticFormFill?: boolean | null;
@@ -4950,30 +3407,6 @@ export interface UserModel {
   Status?: UserModelStatusEnum;
   InvitedBy?: string | null;
 }
-export interface UserModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface UserModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: UserModelETag;
-  IfNoneMatch?: UserModelETag;
-}
 export interface UserModelPageResultModel {
   Items?: UserModel[] | null;
   /** @format int64 */
@@ -5015,13 +3448,6 @@ export interface VerAndHashes {
   /** @maxItems 500 */
   Hashes?: string[] | null;
 }
-export interface WaitHandle {
-  SafeWaitHandle?: SafeWaitHandle;
-}
-export interface WebSocketManager {
-  IsWebSocketRequest?: boolean;
-  WebSocketRequestedProtocols?: string[] | null;
-}
 export interface WebhookAssociation {
   Scope: WebhookAssociationScopeEnum;
   /** @format uuid */
@@ -5053,71 +3479,10 @@ export interface WebhookModel {
   Global: boolean;
   Event: WebhookModelEventEnum;
 }
-export interface WebhookModelETag {
-  IsWellFormed?: boolean;
-  EntityType?: Type;
-  IsAny?: boolean;
-  IsIfNoneMatch?: boolean;
-}
-export interface WebhookModelODataQueryOptions {
-  Request?: HttpRequest;
-  Context?: ODataQueryContext;
-  RawValues?: ODataRawQueryOptions;
-  SelectExpand?: SelectExpandQueryOption;
-  Apply?: ApplyQueryOption;
-  Compute?: ComputeQueryOption;
-  Filter?: FilterQueryOption;
-  Search?: SearchQueryOption;
-  OrderBy?: OrderByQueryOption;
-  Skip?: SkipQueryOption;
-  SkipToken?: SkipTokenQueryOption;
-  Top?: TopQueryOption;
-  Count?: CountQueryOption;
-  Validator?: IODataQueryValidator;
-  IfMatch?: WebhookModelETag;
-  IfNoneMatch?: WebhookModelETag;
-}
 export interface WebhookModelPageResultModel {
   Items?: WebhookModel[] | null;
   /** @format int64 */
   Count?: number | null;
-}
-export interface X500DistinguishedName {
-  Oid?: Oid;
-  /** @format byte */
-  RawData?: string | null;
-  Name?: string | null;
-}
-export interface X509Certificate2 {
-  Handle?: IntPtr;
-  Issuer?: string | null;
-  Subject?: string | null;
-  SerialNumberBytes?: ByteReadOnlyMemory;
-  Archived?: boolean;
-  Extensions?: X509Extension[] | null;
-  FriendlyName?: string | null;
-  HasPrivateKey?: boolean;
-  IssuerName?: X500DistinguishedName;
-  /** @format date-time */
-  NotAfter?: string;
-  /** @format date-time */
-  NotBefore?: string;
-  PublicKey?: PublicKey;
-  /** @format byte */
-  RawData?: string | null;
-  RawDataMemory?: ByteReadOnlyMemory;
-  SerialNumber?: string | null;
-  SignatureAlgorithm?: Oid;
-  SubjectName?: X500DistinguishedName;
-  Thumbprint?: string | null;
-  /** @format int32 */
-  Version?: number;
-}
-export interface X509Extension {
-  Oid?: Oid;
-  /** @format byte */
-  RawData?: string | null;
-  Critical?: boolean;
 }
 export declare enum ActivationResultActivationStatusEnum {
   Verified = "Verified",
@@ -5690,11 +4055,6 @@ export declare enum ApplicationUpdateModelPreferredOfferingTypeEnum {
   ScanExecution = "ScanExecution",
   Applications = "Applications",
 }
-export declare enum AssemblySecurityRuleSetEnum {
-  None = "None",
-  Level1 = "Level1",
-  Level2 = "Level2",
-}
 export declare enum AssetGroupModelIssuesStatusInheritanceEnum {
   None = "None",
   Noise = "Noise",
@@ -5787,64 +4147,6 @@ export declare enum ComplianceStatusCategoryEnum {
   Security = "Security",
   Regulation = "Regulation",
   IndustryStandard = "IndustryStandard",
-}
-export declare enum ConstructorInfoAttributesEnum {
-  PrivateScope = "PrivateScope",
-  Private = "Private",
-  FamANDAssem = "FamANDAssem",
-  Assembly = "Assembly",
-  Family = "Family",
-  FamORAssem = "FamORAssem",
-  Public = "Public",
-  MemberAccessMask = "MemberAccessMask",
-  UnmanagedExport = "UnmanagedExport",
-  Static = "Static",
-  Final = "Final",
-  Virtual = "Virtual",
-  HideBySig = "HideBySig",
-  NewSlot = "NewSlot",
-  CheckAccessOnOverride = "CheckAccessOnOverride",
-  Abstract = "Abstract",
-  SpecialName = "SpecialName",
-  RTSpecialName = "RTSpecialName",
-  PinvokeImpl = "PinvokeImpl",
-  HasSecurity = "HasSecurity",
-  RequireSecObject = "RequireSecObject",
-  ReservedMask = "ReservedMask",
-}
-export declare enum ConstructorInfoMethodImplementationFlagsEnum {
-  IL = "IL",
-  Native = "Native",
-  OPTIL = "OPTIL",
-  CodeTypeMask = "CodeTypeMask",
-  ManagedMask = "ManagedMask",
-  NoInlining = "NoInlining",
-  ForwardRef = "ForwardRef",
-  Synchronized = "Synchronized",
-  NoOptimization = "NoOptimization",
-  PreserveSig = "PreserveSig",
-  AggressiveInlining = "AggressiveInlining",
-  AggressiveOptimization = "AggressiveOptimization",
-  InternalCall = "InternalCall",
-  MaxMethodImplVal = "MaxMethodImplVal",
-}
-export declare enum ConstructorInfoCallingConventionEnum {
-  Standard = "Standard",
-  VarArgs = "VarArgs",
-  Any = "Any",
-  HasThis = "HasThis",
-  ExplicitThis = "ExplicitThis",
-}
-export declare enum ConstructorInfoMemberTypeEnum {
-  Constructor = "Constructor",
-  Event = "Event",
-  Field = "Field",
-  Method = "Method",
-  Property = "Property",
-  TypeInfo = "TypeInfo",
-  Custom = "Custom",
-  NestedType = "NestedType",
-  All = "All",
 }
 export declare enum CorrelationGroupModelStatusEnum {
   Open = "Open",
@@ -6069,22 +4371,6 @@ export declare enum DomainOwnershipModelVerificationModelMailPrefixEnum {
   WebMaster = "WebMaster",
   PostMaster = "PostMaster",
 }
-export declare enum EventInfoMemberTypeEnum {
-  Constructor = "Constructor",
-  Event = "Event",
-  Field = "Field",
-  Method = "Method",
-  Property = "Property",
-  TypeInfo = "TypeInfo",
-  Custom = "Custom",
-  NestedType = "NestedType",
-  All = "All",
-}
-export declare enum EventInfoAttributesEnum {
-  None = "None",
-  SpecialName = "SpecialName",
-  RTSpecialName = "RTSpecialName",
-}
 export declare enum ExcludeExceptionModelTypeEnum {
   Exclude = "Exclude",
   Exception = "Exception",
@@ -6094,38 +4380,6 @@ export declare enum ExploreItemTrafficTypeEnum {
   Manual = "Manual",
   MultiStep = "MultiStep",
   Llm = "Llm",
-}
-export declare enum FieldInfoMemberTypeEnum {
-  Constructor = "Constructor",
-  Event = "Event",
-  Field = "Field",
-  Method = "Method",
-  Property = "Property",
-  TypeInfo = "TypeInfo",
-  Custom = "Custom",
-  NestedType = "NestedType",
-  All = "All",
-}
-export declare enum FieldInfoAttributesEnum {
-  PrivateScope = "PrivateScope",
-  Private = "Private",
-  FamANDAssem = "FamANDAssem",
-  Assembly = "Assembly",
-  Family = "Family",
-  FamORAssem = "FamORAssem",
-  Public = "Public",
-  FieldAccessMask = "FieldAccessMask",
-  Static = "Static",
-  InitOnly = "InitOnly",
-  Literal = "Literal",
-  NotSerialized = "NotSerialized",
-  HasFieldRVA = "HasFieldRVA",
-  SpecialName = "SpecialName",
-  RTSpecialName = "RTSpecialName",
-  HasFieldMarshal = "HasFieldMarshal",
-  PinvokeImpl = "PinvokeImpl",
-  HasDefault = "HasDefault",
-  ReservedMask = "ReservedMask",
 }
 export declare enum FixGroupFixGroupTypeEnum {
   OpenSourceLib = "OpenSourceLib",
@@ -6210,189 +4464,6 @@ export declare enum GlobalEnvironmentInfoExternalIdpModeEnum {
   ManualOnboard = "ManualOnboard",
   GroupsAccess = "GroupsAccess",
   MapGroupsToRoles = "MapGroupsToRoles",
-}
-export declare enum IEdmEntityContainerSchemaElementKindEnum {
-  None = "None",
-  TypeDefinition = "TypeDefinition",
-  Term = "Term",
-  Action = "Action",
-  EntityContainer = "EntityContainer",
-  Function = "Function",
-}
-export declare enum IEdmEntityContainerElementContainerElementKindEnum {
-  None = "None",
-  EntitySet = "EntitySet",
-  ActionImport = "ActionImport",
-  FunctionImport = "FunctionImport",
-  Singleton = "Singleton",
-}
-export declare enum IEdmEntityTypeTypeKindEnum {
-  None = "None",
-  Primitive = "Primitive",
-  Entity = "Entity",
-  Complex = "Complex",
-  Collection = "Collection",
-  EntityReference = "EntityReference",
-  Enum = "Enum",
-  TypeDefinition = "TypeDefinition",
-  Untyped = "Untyped",
-  Path = "Path",
-}
-export declare enum IEdmEntityTypeSchemaElementKindEnum {
-  None = "None",
-  TypeDefinition = "TypeDefinition",
-  Term = "Term",
-  Action = "Action",
-  EntityContainer = "EntityContainer",
-  Function = "Function",
-}
-export declare enum IEdmExpressionExpressionKindEnum {
-  None = "None",
-  BinaryConstant = "BinaryConstant",
-  BooleanConstant = "BooleanConstant",
-  DateTimeOffsetConstant = "DateTimeOffsetConstant",
-  DecimalConstant = "DecimalConstant",
-  FloatingConstant = "FloatingConstant",
-  GuidConstant = "GuidConstant",
-  IntegerConstant = "IntegerConstant",
-  StringConstant = "StringConstant",
-  DurationConstant = "DurationConstant",
-  Null = "Null",
-  Record = "Record",
-  Collection = "Collection",
-  Path = "Path",
-  If = "If",
-  Cast = "Cast",
-  IsOf = "IsOf",
-  FunctionApplication = "FunctionApplication",
-  LabeledExpressionReference = "LabeledExpressionReference",
-  Labeled = "Labeled",
-  PropertyPath = "PropertyPath",
-  NavigationPropertyPath = "NavigationPropertyPath",
-  DateConstant = "DateConstant",
-  TimeOfDayConstant = "TimeOfDayConstant",
-  EnumMember = "EnumMember",
-  AnnotationPath = "AnnotationPath",
-}
-export declare enum IEdmNavigationPropertyPropertyKindEnum {
-  None = "None",
-  Structural = "Structural",
-  Navigation = "Navigation",
-}
-export declare enum IEdmNavigationPropertyOnDeleteEnum {
-  None = "None",
-  Cascade = "Cascade",
-}
-export declare enum IEdmPathExpressionExpressionKindEnum {
-  None = "None",
-  BinaryConstant = "BinaryConstant",
-  BooleanConstant = "BooleanConstant",
-  DateTimeOffsetConstant = "DateTimeOffsetConstant",
-  DecimalConstant = "DecimalConstant",
-  FloatingConstant = "FloatingConstant",
-  GuidConstant = "GuidConstant",
-  IntegerConstant = "IntegerConstant",
-  StringConstant = "StringConstant",
-  DurationConstant = "DurationConstant",
-  Null = "Null",
-  Record = "Record",
-  Collection = "Collection",
-  Path = "Path",
-  If = "If",
-  Cast = "Cast",
-  IsOf = "IsOf",
-  FunctionApplication = "FunctionApplication",
-  LabeledExpressionReference = "LabeledExpressionReference",
-  Labeled = "Labeled",
-  PropertyPath = "PropertyPath",
-  NavigationPropertyPath = "NavigationPropertyPath",
-  DateConstant = "DateConstant",
-  TimeOfDayConstant = "TimeOfDayConstant",
-  EnumMember = "EnumMember",
-  AnnotationPath = "AnnotationPath",
-}
-export declare enum IEdmPropertyPropertyKindEnum {
-  None = "None",
-  Structural = "Structural",
-  Navigation = "Navigation",
-}
-export declare enum IEdmSchemaElementSchemaElementKindEnum {
-  None = "None",
-  TypeDefinition = "TypeDefinition",
-  Term = "Term",
-  Action = "Action",
-  EntityContainer = "EntityContainer",
-  Function = "Function",
-}
-export declare enum IEdmStructuralPropertyPropertyKindEnum {
-  None = "None",
-  Structural = "Structural",
-  Navigation = "Navigation",
-}
-export declare enum IEdmStructuredTypeTypeKindEnum {
-  None = "None",
-  Primitive = "Primitive",
-  Entity = "Entity",
-  Complex = "Complex",
-  Collection = "Collection",
-  EntityReference = "EntityReference",
-  Enum = "Enum",
-  TypeDefinition = "TypeDefinition",
-  Untyped = "Untyped",
-  Path = "Path",
-}
-export declare enum IEdmTermSchemaElementKindEnum {
-  None = "None",
-  TypeDefinition = "TypeDefinition",
-  Term = "Term",
-  Action = "Action",
-  EntityContainer = "EntityContainer",
-  Function = "Function",
-}
-export declare enum IEdmTypeTypeKindEnum {
-  None = "None",
-  Primitive = "Primitive",
-  Entity = "Entity",
-  Complex = "Complex",
-  Collection = "Collection",
-  EntityReference = "EntityReference",
-  Enum = "Enum",
-  TypeDefinition = "TypeDefinition",
-  Untyped = "Untyped",
-  Path = "Path",
-}
-export declare enum IpAddressAddressFamilyEnum {
-  Unspecified = "Unspecified",
-  Unix = "Unix",
-  InterNetwork = "InterNetwork",
-  ImpLink = "ImpLink",
-  Pup = "Pup",
-  Chaos = "Chaos",
-  NS = "NS",
-  Iso = "Iso",
-  Ecma = "Ecma",
-  DataKit = "DataKit",
-  Ccitt = "Ccitt",
-  Sna = "Sna",
-  DecNet = "DecNet",
-  DataLink = "DataLink",
-  Lat = "Lat",
-  HyperChannel = "HyperChannel",
-  AppleTalk = "AppleTalk",
-  NetBios = "NetBios",
-  VoiceView = "VoiceView",
-  FireFox = "FireFox",
-  Banyan = "Banyan",
-  Atm = "Atm",
-  InterNetworkV6 = "InterNetworkV6",
-  Cluster = "Cluster",
-  Ieee12844 = "Ieee12844",
-  Irda = "Irda",
-  NetworkDesigners = "NetworkDesigners",
-  Max = "Max",
-  Packet = "Packet",
-  ControllerAreaNetwork = "ControllerAreaNetwork",
-  Unknown = "Unknown",
 }
 export declare enum IastScanExecutionModelStatusEnum {
   Running = "Running",
@@ -6682,133 +4753,6 @@ export declare enum MhsPayloadAscpSignatureMhsErrorEnum {
   MHSLicenseWasIssuedTooLongAgo = "MHSLicenseWasIssuedTooLongAgo",
   MHSLicenseInvalidASoCFingerprint = "MHSLicenseInvalidASoCFingerprint",
 }
-export declare enum MemberInfoMemberTypeEnum {
-  Constructor = "Constructor",
-  Event = "Event",
-  Field = "Field",
-  Method = "Method",
-  Property = "Property",
-  TypeInfo = "TypeInfo",
-  Custom = "Custom",
-  NestedType = "NestedType",
-  All = "All",
-}
-export declare enum MethodBaseMemberTypeEnum {
-  Constructor = "Constructor",
-  Event = "Event",
-  Field = "Field",
-  Method = "Method",
-  Property = "Property",
-  TypeInfo = "TypeInfo",
-  Custom = "Custom",
-  NestedType = "NestedType",
-  All = "All",
-}
-export declare enum MethodBaseAttributesEnum {
-  PrivateScope = "PrivateScope",
-  Private = "Private",
-  FamANDAssem = "FamANDAssem",
-  Assembly = "Assembly",
-  Family = "Family",
-  FamORAssem = "FamORAssem",
-  Public = "Public",
-  MemberAccessMask = "MemberAccessMask",
-  UnmanagedExport = "UnmanagedExport",
-  Static = "Static",
-  Final = "Final",
-  Virtual = "Virtual",
-  HideBySig = "HideBySig",
-  NewSlot = "NewSlot",
-  CheckAccessOnOverride = "CheckAccessOnOverride",
-  Abstract = "Abstract",
-  SpecialName = "SpecialName",
-  RTSpecialName = "RTSpecialName",
-  PinvokeImpl = "PinvokeImpl",
-  HasSecurity = "HasSecurity",
-  RequireSecObject = "RequireSecObject",
-  ReservedMask = "ReservedMask",
-}
-export declare enum MethodBaseMethodImplementationFlagsEnum {
-  IL = "IL",
-  Native = "Native",
-  OPTIL = "OPTIL",
-  CodeTypeMask = "CodeTypeMask",
-  ManagedMask = "ManagedMask",
-  NoInlining = "NoInlining",
-  ForwardRef = "ForwardRef",
-  Synchronized = "Synchronized",
-  NoOptimization = "NoOptimization",
-  PreserveSig = "PreserveSig",
-  AggressiveInlining = "AggressiveInlining",
-  AggressiveOptimization = "AggressiveOptimization",
-  InternalCall = "InternalCall",
-  MaxMethodImplVal = "MaxMethodImplVal",
-}
-export declare enum MethodBaseCallingConventionEnum {
-  Standard = "Standard",
-  VarArgs = "VarArgs",
-  Any = "Any",
-  HasThis = "HasThis",
-  ExplicitThis = "ExplicitThis",
-}
-export declare enum MethodInfoAttributesEnum {
-  PrivateScope = "PrivateScope",
-  Private = "Private",
-  FamANDAssem = "FamANDAssem",
-  Assembly = "Assembly",
-  Family = "Family",
-  FamORAssem = "FamORAssem",
-  Public = "Public",
-  MemberAccessMask = "MemberAccessMask",
-  UnmanagedExport = "UnmanagedExport",
-  Static = "Static",
-  Final = "Final",
-  Virtual = "Virtual",
-  HideBySig = "HideBySig",
-  NewSlot = "NewSlot",
-  CheckAccessOnOverride = "CheckAccessOnOverride",
-  Abstract = "Abstract",
-  SpecialName = "SpecialName",
-  RTSpecialName = "RTSpecialName",
-  PinvokeImpl = "PinvokeImpl",
-  HasSecurity = "HasSecurity",
-  RequireSecObject = "RequireSecObject",
-  ReservedMask = "ReservedMask",
-}
-export declare enum MethodInfoMethodImplementationFlagsEnum {
-  IL = "IL",
-  Native = "Native",
-  OPTIL = "OPTIL",
-  CodeTypeMask = "CodeTypeMask",
-  ManagedMask = "ManagedMask",
-  NoInlining = "NoInlining",
-  ForwardRef = "ForwardRef",
-  Synchronized = "Synchronized",
-  NoOptimization = "NoOptimization",
-  PreserveSig = "PreserveSig",
-  AggressiveInlining = "AggressiveInlining",
-  AggressiveOptimization = "AggressiveOptimization",
-  InternalCall = "InternalCall",
-  MaxMethodImplVal = "MaxMethodImplVal",
-}
-export declare enum MethodInfoCallingConventionEnum {
-  Standard = "Standard",
-  VarArgs = "VarArgs",
-  Any = "Any",
-  HasThis = "HasThis",
-  ExplicitThis = "ExplicitThis",
-}
-export declare enum MethodInfoMemberTypeEnum {
-  Constructor = "Constructor",
-  Event = "Event",
-  Field = "Field",
-  Method = "Method",
-  Property = "Property",
-  TypeInfo = "TypeInfo",
-  Custom = "Custom",
-  NestedType = "NestedType",
-  All = "All",
-}
 export declare enum MinPresenceDataStatusEnum {
   Active = "Active",
   NeverUsed = "NeverUsed",
@@ -6930,14 +4874,6 @@ export declare enum OneTimePasswordHashTypeEnum {
   Sha256 = "Sha256",
   Sha512 = "Sha512",
 }
-export declare enum OrderByClauseDirectionEnum {
-  Ascending = "Ascending",
-  Descending = "Descending",
-}
-export declare enum OrderByNodeDirectionEnum {
-  Ascending = "Ascending",
-  Descending = "Descending",
-}
 export declare enum OrgLibraryModelStatusEnum {
   Discovered = "Discovered",
   Rediscovered = "Rediscovered",
@@ -6959,19 +4895,6 @@ export declare enum OrgSettingsModelSettingTypeEnum {
   SsoClientId = "SsoClientId",
   SsoClientSecret = "SsoClientSecret",
   OnBoardingMode = "OnBoardingMode",
-}
-export declare enum ParameterInfoAttributesEnum {
-  None = "None",
-  In = "In",
-  Out = "Out",
-  Lcid = "Lcid",
-  Retval = "Retval",
-  Optional = "Optional",
-  HasDefault = "HasDefault",
-  HasFieldMarshal = "HasFieldMarshal",
-  Reserved3 = "Reserved3",
-  Reserved4 = "Reserved4",
-  ReservedMask = "ReservedMask",
 }
 export declare enum PolicyAssociationModelTypeEnum {
   None = "None",
@@ -7081,27 +5004,6 @@ export declare enum PresenceStatusEnum {
 }
 export declare enum PresenceGitPlatformEnum {
   GitHub = "GitHub",
-}
-export declare enum PropertyInfoMemberTypeEnum {
-  Constructor = "Constructor",
-  Event = "Event",
-  Field = "Field",
-  Method = "Method",
-  Property = "Property",
-  TypeInfo = "TypeInfo",
-  Custom = "Custom",
-  NestedType = "NestedType",
-  All = "All",
-}
-export declare enum PropertyInfoAttributesEnum {
-  None = "None",
-  SpecialName = "SpecialName",
-  RTSpecialName = "RTSpecialName",
-  HasDefault = "HasDefault",
-  Reserved2 = "Reserved2",
-  Reserved3 = "Reserved3",
-  Reserved4 = "Reserved4",
-  ReservedMask = "ReservedMask",
 }
 export declare enum RfAnalysisStatusUpdateModelStatusEnum {
   InProgress = "InProgress",
@@ -7543,47 +5445,6 @@ export declare enum SecurityReportOptionsReportFileTypeEnum {
   Csv = "Csv",
   Sarif = "Sarif",
 }
-export declare enum SingleValueNodeKindEnum {
-  None = "None",
-  Constant = "Constant",
-  Convert = "Convert",
-  NonResourceRangeVariableReference = "NonResourceRangeVariableReference",
-  BinaryOperator = "BinaryOperator",
-  UnaryOperator = "UnaryOperator",
-  SingleValuePropertyAccess = "SingleValuePropertyAccess",
-  CollectionPropertyAccess = "CollectionPropertyAccess",
-  SingleValueFunctionCall = "SingleValueFunctionCall",
-  Any = "Any",
-  CollectionNavigationNode = "CollectionNavigationNode",
-  SingleNavigationNode = "SingleNavigationNode",
-  SingleValueOpenPropertyAccess = "SingleValueOpenPropertyAccess",
-  SingleResourceCast = "SingleResourceCast",
-  All = "All",
-  CollectionResourceCast = "CollectionResourceCast",
-  ResourceRangeVariableReference = "ResourceRangeVariableReference",
-  SingleResourceFunctionCall = "SingleResourceFunctionCall",
-  CollectionFunctionCall = "CollectionFunctionCall",
-  CollectionResourceFunctionCall = "CollectionResourceFunctionCall",
-  NamedFunctionParameter = "NamedFunctionParameter",
-  ParameterAlias = "ParameterAlias",
-  EntitySet = "EntitySet",
-  KeyLookup = "KeyLookup",
-  SearchTerm = "SearchTerm",
-  CollectionOpenPropertyAccess = "CollectionOpenPropertyAccess",
-  CollectionComplexNode = "CollectionComplexNode",
-  SingleComplexNode = "SingleComplexNode",
-  Count = "Count",
-  SingleValueCast = "SingleValueCast",
-  CollectionPropertyNode = "CollectionPropertyNode",
-  AggregatedCollectionPropertyNode = "AggregatedCollectionPropertyNode",
-  In = "In",
-  CollectionConstant = "CollectionConstant",
-}
-export declare enum StructLayoutAttributeValueEnum {
-  Sequential = "Sequential",
-  Explicit = "Explicit",
-  Auto = "Auto",
-}
 export declare enum SubscriptionInfoModelOfferingTypeEnum {
   None = "None",
   Trial = "Trial",
@@ -7650,111 +5511,6 @@ export declare enum TimeFrameIntervalEnum {
   Month = "Month",
   Quarter = "Quarter",
   Year = "Year",
-}
-export declare enum TransformationNodeKindEnum {
-  Aggregate = "Aggregate",
-  GroupBy = "GroupBy",
-  Filter = "Filter",
-  Compute = "Compute",
-  Expand = "Expand",
-}
-export declare enum TypeMemberTypeEnum {
-  Constructor = "Constructor",
-  Event = "Event",
-  Field = "Field",
-  Method = "Method",
-  Property = "Property",
-  TypeInfo = "TypeInfo",
-  Custom = "Custom",
-  NestedType = "NestedType",
-  All = "All",
-}
-export declare enum TypeGenericParameterAttributesEnum {
-  None = "None",
-  Covariant = "Covariant",
-  Contravariant = "Contravariant",
-  VarianceMask = "VarianceMask",
-  ReferenceTypeConstraint = "ReferenceTypeConstraint",
-  NotNullableValueTypeConstraint = "NotNullableValueTypeConstraint",
-  DefaultConstructorConstraint = "DefaultConstructorConstraint",
-  SpecialConstraintMask = "SpecialConstraintMask",
-}
-export declare enum TypeAttributesEnum {
-  NotPublic = "NotPublic",
-  Public = "Public",
-  NestedPublic = "NestedPublic",
-  NestedPrivate = "NestedPrivate",
-  NestedFamily = "NestedFamily",
-  NestedAssembly = "NestedAssembly",
-  NestedFamANDAssem = "NestedFamANDAssem",
-  VisibilityMask = "VisibilityMask",
-  SequentialLayout = "SequentialLayout",
-  ExplicitLayout = "ExplicitLayout",
-  LayoutMask = "LayoutMask",
-  Interface = "Interface",
-  Abstract = "Abstract",
-  Sealed = "Sealed",
-  SpecialName = "SpecialName",
-  RTSpecialName = "RTSpecialName",
-  Import = "Import",
-  Serializable = "Serializable",
-  WindowsRuntime = "WindowsRuntime",
-  UnicodeClass = "UnicodeClass",
-  AutoClass = "AutoClass",
-  StringFormatMask = "StringFormatMask",
-  HasSecurity = "HasSecurity",
-  ReservedMask = "ReservedMask",
-  BeforeFieldInit = "BeforeFieldInit",
-  CustomFormatMask = "CustomFormatMask",
-}
-export declare enum TypeInfoMemberTypeEnum {
-  Constructor = "Constructor",
-  Event = "Event",
-  Field = "Field",
-  Method = "Method",
-  Property = "Property",
-  TypeInfo = "TypeInfo",
-  Custom = "Custom",
-  NestedType = "NestedType",
-  All = "All",
-}
-export declare enum TypeInfoGenericParameterAttributesEnum {
-  None = "None",
-  Covariant = "Covariant",
-  Contravariant = "Contravariant",
-  VarianceMask = "VarianceMask",
-  ReferenceTypeConstraint = "ReferenceTypeConstraint",
-  NotNullableValueTypeConstraint = "NotNullableValueTypeConstraint",
-  DefaultConstructorConstraint = "DefaultConstructorConstraint",
-  SpecialConstraintMask = "SpecialConstraintMask",
-}
-export declare enum TypeInfoAttributesEnum {
-  NotPublic = "NotPublic",
-  Public = "Public",
-  NestedPublic = "NestedPublic",
-  NestedPrivate = "NestedPrivate",
-  NestedFamily = "NestedFamily",
-  NestedAssembly = "NestedAssembly",
-  NestedFamANDAssem = "NestedFamANDAssem",
-  VisibilityMask = "VisibilityMask",
-  SequentialLayout = "SequentialLayout",
-  ExplicitLayout = "ExplicitLayout",
-  LayoutMask = "LayoutMask",
-  Interface = "Interface",
-  Abstract = "Abstract",
-  Sealed = "Sealed",
-  SpecialName = "SpecialName",
-  RTSpecialName = "RTSpecialName",
-  Import = "Import",
-  Serializable = "Serializable",
-  WindowsRuntime = "WindowsRuntime",
-  UnicodeClass = "UnicodeClass",
-  AutoClass = "AutoClass",
-  StringFormatMask = "StringFormatMask",
-  HasSecurity = "HasSecurity",
-  ReservedMask = "ReservedMask",
-  BeforeFieldInit = "BeforeFieldInit",
-  CustomFormatMask = "CustomFormatMask",
 }
 export declare enum UpdateAssetGroupModelIssuesStatusInheritanceEnum {
   None = "None",
