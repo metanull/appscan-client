@@ -7,8 +7,12 @@ export class HtmlReportGenerator {
   }
 
   generateApplicationsReport(applications) {
-    const markdown = this.markdownGenerator.generateApplicationsReport(applications);
-    return this.wrapInHtml(marked.parse(markdown), 'AppScan Applications Report');
+    const markdown =
+      this.markdownGenerator.generateApplicationsReport(applications);
+    return this.wrapInHtml(
+      marked.parse(markdown),
+      'AppScan Applications Report'
+    );
   }
 
   generateScansReport(scans, appName) {
@@ -17,7 +21,10 @@ export class HtmlReportGenerator {
   }
 
   generateIssuesReport(issues, scanName) {
-    const markdown = this.markdownGenerator.generateIssuesReport(issues, scanName);
+    const markdown = this.markdownGenerator.generateIssuesReport(
+      issues,
+      scanName
+    );
     return this.wrapInHtml(marked.parse(markdown), 'AppScan Issues Report');
   }
 
@@ -26,7 +33,10 @@ export class HtmlReportGenerator {
       executions,
       scanName
     );
-    return this.wrapInHtml(marked.parse(markdown), 'AppScan Scan Executions Report');
+    return this.wrapInHtml(
+      marked.parse(markdown),
+      'AppScan Scan Executions Report'
+    );
   }
 
   wrapInHtml(content, title) {

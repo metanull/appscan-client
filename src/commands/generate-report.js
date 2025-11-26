@@ -8,7 +8,9 @@ import path from 'path';
 
 export async function generateReport(type, id, options) {
   try {
-    const config = options.config ? Config.loadFromFile(options.config) : new Config();
+    const config = options.config
+      ? Config.loadFromFile(options.config)
+      : new Config();
     const service = new AppScanService(config);
 
     console.error(chalk.blue('Authenticating...'));
@@ -35,7 +37,8 @@ export async function generateReport(type, id, options) {
         const response = await service.listScans(id);
         const scans = response.Items || [];
         const appDetailsResponse = await service.getApplicationDetails(id);
-        const appName = appDetailsResponse.Items?.[0]?.Name || 'Unknown Application';
+        const appName =
+          appDetailsResponse.Items?.[0]?.Name || 'Unknown Application';
         report =
           format === 'html'
             ? htmlGenerator.generateScansReport(scans, appName)
@@ -44,14 +47,19 @@ export async function generateReport(type, id, options) {
       }
       case 'issues': {
         // Handle exclude-status option
-        const excludeStatus = options.excludeStatus !== undefined ? options.excludeStatus : 'Noise';
-        
+        const excludeStatus =
+          options.excludeStatus !== undefined ? options.excludeStatus : 'Noise';
+
         if (excludeStatus) {
-          console.error(chalk.blue(`Fetching issues for scan ${id} (excluding status: ${excludeStatus})...`));
+          console.error(
+            chalk.blue(
+              `Fetching issues for scan ${id} (excluding status: ${excludeStatus})...`
+            )
+          );
         } else {
           console.error(chalk.blue(`Fetching issues for scan ${id}...`));
         }
-        
+
         const response = await service.listIssues(id, excludeStatus);
         const issues = response.Items || [];
         const scanDetailsResponse = await service.getScanDetails(id);
@@ -71,7 +79,10 @@ export async function generateReport(type, id, options) {
         report =
           format === 'html'
             ? htmlGenerator.generateScanExecutionsReport(executions, scanName)
-            : markdownGenerator.generateScanExecutionsReport(executions, scanName);
+            : markdownGenerator.generateScanExecutionsReport(
+                executions,
+                scanName
+              );
         break;
       }
       default:

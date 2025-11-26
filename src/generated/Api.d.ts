@@ -685,6 +685,7 @@ export interface DastTemplateConfiguration {
   DastUserScanConfiguration?: DastUserScanConfigurationExtended;
   LoginConfigurationType?: DastTemplateConfigurationLoginConfigurationTypeEnum;
   DastScanMethod?: DastTemplateConfigurationDastScanMethodEnum;
+  HasLlmExplore?: boolean;
 }
 export interface DastUserScanConfigurationExtended {
   StartingUrl?: string | null;
@@ -1713,9 +1714,9 @@ export interface NewIastScan {
   Comment?: string | null;
   /**
    * @format int32
-   * @min 30
-   * @max 2147483647
-   * @default ""
+   * @min 0
+   * @max 30
+   * @default 30
    */
   ConnLostStopTimer?: number | null;
   AgentType?: NewIastScanAgentTypeEnum;

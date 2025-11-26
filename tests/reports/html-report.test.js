@@ -48,7 +48,12 @@ describe('HtmlReportGenerator', () => {
   describe('generateIssuesReport', () => {
     it('should generate HTML report for issues', () => {
       const issues = [
-        { IssueType: 'XSS', Severity: 'High', Location: '/page1', Status: 'Open' },
+        {
+          IssueType: 'XSS',
+          Severity: 'High',
+          Location: '/page1',
+          Status: 'Open',
+        },
       ];
 
       const report = generator.generateIssuesReport(issues, 'Test Scan');
