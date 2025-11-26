@@ -1,11 +1,10 @@
 export default {
   testEnvironment: 'node',
   transform: {},
-  extensionsToTreatAsEsm: ['.js'],
   collectCoverageFrom: [
     'src/**/*.js',
     '!src/index.js',
-    '!src/api/generated/**',
+    '!src/generated/**',
   ],
   coverageThreshold: {
     global: {
