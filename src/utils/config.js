@@ -28,12 +28,16 @@ export class Config {
 
   static loadFromFile(filePath) {
     if (fs.existsSync(filePath)) {
-      const config = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-      const instance = new Config();
-      instance.apiKey = config.apiKey || instance.apiKey;
-      instance.apiSecret = config.apiSecret || instance.apiSecret;
-      instance.baseUrl = config.baseUrl || instance.baseUrl;
-      return instance;
+      try {
+        const config = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+        const instance = new Config();
+        instance.apiKey = config.apiKey || instance.apiKey;
+        instance.apiSecret = config.apiSecret || instance.apiSecret;
+        instance.baseUrl = config.baseUrl || instance.baseUrl;
+        return instance;
+      } catch (error) {
+        throw new Error(`Failed to parse config file: ${error.message}`);
+      }
     }
     return new Config();
   }

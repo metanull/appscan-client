@@ -25,6 +25,10 @@ export class AppScanService {
         KeySecret: this.config.getApiSecret(),
       });
 
+      if (!response || !response.Token) {
+        throw new Error('Authentication response did not contain a valid token');
+      }
+
       this.token = response.Token;
 
       // Update API instance with authorization token

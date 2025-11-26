@@ -1,4 +1,10 @@
 export class MarkdownReportGenerator {
+  escapeMarkdownTableCell(text) {
+    if (!text) return 'N/A';
+    // Escape backslashes first, then pipes
+    return text.replace(/\\/g, '\\\\').replace(/\|/g, '\\|');
+  }
+
   generateApplicationsReport(applications) {
     let report = '# AppScan Applications Report\n\n';
     report += `Generated: ${new Date().toISOString()}\n\n`;
@@ -13,9 +19,9 @@ export class MarkdownReportGenerator {
     report += '|------|----|--------------|\n';
 
     applications.forEach((app) => {
-      const name = app.Name || 'N/A';
-      const id = app.Id || 'N/A';
-      const description = (app.Description || 'N/A').replace(/\|/g, '\\|');
+      const name = this.escapeMarkdownTableCell(app.Name);
+      const id = this.escapeMarkdownTableCell(app.Id);
+      const description = this.escapeMarkdownTableCell(app.Description);
       report += `| ${name} | ${id} | ${description} |\n`;
     });
 
@@ -74,9 +80,9 @@ export class MarkdownReportGenerator {
         report += '|------------|----------|--------|\n';
 
         severityIssues.forEach((issue) => {
-          const issueType = (issue.IssueType || 'N/A').replace(/\|/g, '\\|');
-          const location = (issue.Location || 'N/A').replace(/\|/g, '\\|');
-          const status = issue.Status || 'N/A';
+          const issueType = this.escapeMarkdownTableCell(issue.IssueType);
+          const location = this.escapeMarkdownTableCell(issue.Location);
+          const status = this.escapeMarkdownTableCell(issue.Status);
           report += `| ${issueType} | ${location} | ${status} |\n`;
         });
 
