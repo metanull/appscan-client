@@ -80,7 +80,12 @@ describe('MarkdownReportGenerator', () => {
   describe('generateIssuesReport', () => {
     it('should generate report for issues grouped by severity', () => {
       const issues = [
-        { IssueType: 'XSS', Severity: 'High', Location: '/page1', Status: 'Open' },
+        {
+          IssueType: 'XSS',
+          Severity: 'High',
+          Location: '/page1',
+          Status: 'Open',
+        },
         {
           IssueType: 'SQL Injection',
           Severity: 'Critical',
@@ -131,7 +136,10 @@ describe('MarkdownReportGenerator', () => {
         },
       ];
 
-      const report = generator.generateScanExecutionsReport(executions, 'Test Scan');
+      const report = generator.generateScanExecutionsReport(
+        executions,
+        'Test Scan'
+      );
 
       expect(report).toContain('# AppScan Scan Executions Report');
       expect(report).toContain('Scan: Test Scan');

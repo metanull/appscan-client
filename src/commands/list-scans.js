@@ -4,7 +4,9 @@ import { Config } from '../utils/config.js';
 
 export async function listScans(appId, options) {
   try {
-    const config = options.config ? Config.loadFromFile(options.config) : new Config();
+    const config = options.config
+      ? Config.loadFromFile(options.config)
+      : new Config();
     const service = new AppScanService(config);
 
     console.error(chalk.blue('Authenticating...'));
@@ -19,11 +21,20 @@ export async function listScans(appId, options) {
     } else {
       console.error(chalk.green(`\nFound ${scans.length} scan(s):\n`));
       scans.forEach((scan, index) => {
-        console.log(`${index + 1}. ${chalk.bold(scan.Name || 'N/A')} ${chalk.gray(`(ID: ${scan.Id || 'N/A'})`)}`);
+        console.log(
+          `${index + 1}. ${chalk.bold(scan.Name || 'N/A')} ${chalk.gray(`(ID: ${scan.Id || 'N/A'})`)}`
+        );
         console.log(`   ${chalk.dim('Type:')} ${scan.ScanType || 'N/A'}`);
         if (scan.LatestExecution) {
-          const statusColor = scan.LatestExecution.Status === 'Ready' ? 'green' : scan.LatestExecution.Status === 'Failed' ? 'red' : 'yellow';
-          console.log(`   ${chalk.dim('Status:')} ${chalk[statusColor](scan.LatestExecution.Status || 'N/A')}`);
+          const statusColor =
+            scan.LatestExecution.Status === 'Ready'
+              ? 'green'
+              : scan.LatestExecution.Status === 'Failed'
+                ? 'red'
+                : 'yellow';
+          console.log(
+            `   ${chalk.dim('Status:')} ${chalk[statusColor](scan.LatestExecution.Status || 'N/A')}`
+          );
         }
         console.log('');
       });

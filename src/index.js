@@ -47,7 +47,11 @@ program
   .argument('<scanId>', 'Scan ID')
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
-  .option('-e, --exclude-status <status>', 'Exclude issues by status (comma-separated, use empty string "" for none)', 'Noise')
+  .option(
+    '-e, --exclude-status <status>',
+    'Exclude issues by status (comma-separated, use empty string "" for none)',
+    'Noise'
+  )
   .action(listIssues);
 
 program
@@ -59,7 +63,11 @@ program
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-f, --format <format>', 'Output format (markdown, html)', 'markdown')
   .option('-o, --output <path>', 'Output file path')
-  .option('-e, --exclude-status <status>', 'Exclude issues by status (comma-separated, use empty string "" for none, applies to issues reports only)', 'Noise')
+  .option(
+    '-e, --exclude-status <status>',
+    'Exclude issues by status (comma-separated, use empty string "" for none, applies to issues reports only)',
+    'Noise'
+  )
   .action(generateReport);
 
 program.parse(process.argv);

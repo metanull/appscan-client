@@ -12,3041 +12,3781 @@
 
 export var ActivationResultActivationStatusEnum;
 (function (ActivationResultActivationStatusEnum) {
-  ActivationResultActivationStatusEnum["Verified"] = "Verified";
-  ActivationResultActivationStatusEnum["VerifiedPendingIDPRegistration"] =
-    "VerifiedPendingIDPRegistration";
-  ActivationResultActivationStatusEnum["ActivationInvalidLicense"] =
-    "ActivationInvalidLicense";
-  ActivationResultActivationStatusEnum["ActivationFailed"] = "ActivationFailed";
-  ActivationResultActivationStatusEnum["AccountAssigned"] = "AccountAssigned";
-  ActivationResultActivationStatusEnum["Assigned"] = "Assigned";
-  ActivationResultActivationStatusEnum["ActivationLinkExpired"] =
-    "ActivationLinkExpired";
-  ActivationResultActivationStatusEnum["ShouldFillRegistrationForm"] =
-    "ShouldFillRegistrationForm";
-  ActivationResultActivationStatusEnum["DeprecatedInvitation"] =
-    "DeprecatedInvitation";
-  ActivationResultActivationStatusEnum["DeprecatedActivation"] =
-    "DeprecatedActivation";
+  ActivationResultActivationStatusEnum['Verified'] = 'Verified';
+  ActivationResultActivationStatusEnum['VerifiedPendingIDPRegistration'] =
+    'VerifiedPendingIDPRegistration';
+  ActivationResultActivationStatusEnum['ActivationInvalidLicense'] =
+    'ActivationInvalidLicense';
+  ActivationResultActivationStatusEnum['ActivationFailed'] = 'ActivationFailed';
+  ActivationResultActivationStatusEnum['AccountAssigned'] = 'AccountAssigned';
+  ActivationResultActivationStatusEnum['Assigned'] = 'Assigned';
+  ActivationResultActivationStatusEnum['ActivationLinkExpired'] =
+    'ActivationLinkExpired';
+  ActivationResultActivationStatusEnum['ShouldFillRegistrationForm'] =
+    'ShouldFillRegistrationForm';
+  ActivationResultActivationStatusEnum['DeprecatedInvitation'] =
+    'DeprecatedInvitation';
+  ActivationResultActivationStatusEnum['DeprecatedActivation'] =
+    'DeprecatedActivation';
 })(
   ActivationResultActivationStatusEnum ||
-    (ActivationResultActivationStatusEnum = {}),
+    (ActivationResultActivationStatusEnum = {})
 );
 export var ActivationResultMhsErrorEnum;
 (function (ActivationResultMhsErrorEnum) {
-  ActivationResultMhsErrorEnum["None"] = "None";
-  ActivationResultMhsErrorEnum["GeneralError"] = "GeneralError";
-  ActivationResultMhsErrorEnum["InvalidInput"] = "InvalidInput";
-  ActivationResultMhsErrorEnum["MissingCapabilities"] = "MissingCapabilities";
-  ActivationResultMhsErrorEnum["MHSLicenseGeneralStructureUnrecognized"] =
-    "MHSLicenseGeneralStructureUnrecognized";
-  ActivationResultMhsErrorEnum["MHSLicenseCertificateInvalid"] =
-    "MHSLicenseCertificateInvalid";
-  ActivationResultMhsErrorEnum["MHSLicensePasetoSignatureInvalid"] =
-    "MHSLicensePasetoSignatureInvalid";
-  ActivationResultMhsErrorEnum["MHSLicensePasetoRawPayloadUnrecognized"] =
-    "MHSLicensePasetoRawPayloadUnrecognized";
-  ActivationResultMhsErrorEnum["MHSLicenseInvalidAs360Fingerprint"] =
-    "MHSLicenseInvalidAs360Fingerprint";
-  ActivationResultMhsErrorEnum["MHSLicenseDeploymentIdMismatch"] =
-    "MHSLicenseDeploymentIdMismatch";
-  ActivationResultMhsErrorEnum["MHSLicenseIssuedEarlierThanCurrentlyUsed"] =
-    "MHSLicenseIssuedEarlierThanCurrentlyUsed";
-  ActivationResultMhsErrorEnum["MHSLicenseHasNoRelevantEntitlements"] =
-    "MHSLicenseHasNoRelevantEntitlements";
-  ActivationResultMhsErrorEnum["MHSLicenseWasAlreadyUploaded"] =
-    "MHSLicenseWasAlreadyUploaded";
-  ActivationResultMhsErrorEnum["MHSLicenseOldFeatureIsMissing"] =
-    "MHSLicenseOldFeatureIsMissing";
-  ActivationResultMhsErrorEnum["MHSLicenseChangingPreviousMhsValue"] =
-    "MHSLicenseChangingPreviousMhsValue";
-  ActivationResultMhsErrorEnum["MHSLicenseWasIssuedTooLongAgo"] =
-    "MHSLicenseWasIssuedTooLongAgo";
-  ActivationResultMhsErrorEnum["MHSLicenseInvalidASoCFingerprint"] =
-    "MHSLicenseInvalidASoCFingerprint";
+  ActivationResultMhsErrorEnum['None'] = 'None';
+  ActivationResultMhsErrorEnum['GeneralError'] = 'GeneralError';
+  ActivationResultMhsErrorEnum['InvalidInput'] = 'InvalidInput';
+  ActivationResultMhsErrorEnum['MissingCapabilities'] = 'MissingCapabilities';
+  ActivationResultMhsErrorEnum['MHSLicenseGeneralStructureUnrecognized'] =
+    'MHSLicenseGeneralStructureUnrecognized';
+  ActivationResultMhsErrorEnum['MHSLicenseCertificateInvalid'] =
+    'MHSLicenseCertificateInvalid';
+  ActivationResultMhsErrorEnum['MHSLicensePasetoSignatureInvalid'] =
+    'MHSLicensePasetoSignatureInvalid';
+  ActivationResultMhsErrorEnum['MHSLicensePasetoRawPayloadUnrecognized'] =
+    'MHSLicensePasetoRawPayloadUnrecognized';
+  ActivationResultMhsErrorEnum['MHSLicenseInvalidAs360Fingerprint'] =
+    'MHSLicenseInvalidAs360Fingerprint';
+  ActivationResultMhsErrorEnum['MHSLicenseDeploymentIdMismatch'] =
+    'MHSLicenseDeploymentIdMismatch';
+  ActivationResultMhsErrorEnum['MHSLicenseIssuedEarlierThanCurrentlyUsed'] =
+    'MHSLicenseIssuedEarlierThanCurrentlyUsed';
+  ActivationResultMhsErrorEnum['MHSLicenseHasNoRelevantEntitlements'] =
+    'MHSLicenseHasNoRelevantEntitlements';
+  ActivationResultMhsErrorEnum['MHSLicenseWasAlreadyUploaded'] =
+    'MHSLicenseWasAlreadyUploaded';
+  ActivationResultMhsErrorEnum['MHSLicenseOldFeatureIsMissing'] =
+    'MHSLicenseOldFeatureIsMissing';
+  ActivationResultMhsErrorEnum['MHSLicenseChangingPreviousMhsValue'] =
+    'MHSLicenseChangingPreviousMhsValue';
+  ActivationResultMhsErrorEnum['MHSLicenseWasIssuedTooLongAgo'] =
+    'MHSLicenseWasIssuedTooLongAgo';
+  ActivationResultMhsErrorEnum['MHSLicenseInvalidASoCFingerprint'] =
+    'MHSLicenseInvalidASoCFingerprint';
 })(ActivationResultMhsErrorEnum || (ActivationResultMhsErrorEnum = {}));
 export var AddMhsLicenseResultMhsErrorEnum;
 (function (AddMhsLicenseResultMhsErrorEnum) {
-  AddMhsLicenseResultMhsErrorEnum["None"] = "None";
-  AddMhsLicenseResultMhsErrorEnum["GeneralError"] = "GeneralError";
-  AddMhsLicenseResultMhsErrorEnum["InvalidInput"] = "InvalidInput";
-  AddMhsLicenseResultMhsErrorEnum["MissingCapabilities"] =
-    "MissingCapabilities";
-  AddMhsLicenseResultMhsErrorEnum["MHSLicenseGeneralStructureUnrecognized"] =
-    "MHSLicenseGeneralStructureUnrecognized";
-  AddMhsLicenseResultMhsErrorEnum["MHSLicenseCertificateInvalid"] =
-    "MHSLicenseCertificateInvalid";
-  AddMhsLicenseResultMhsErrorEnum["MHSLicensePasetoSignatureInvalid"] =
-    "MHSLicensePasetoSignatureInvalid";
-  AddMhsLicenseResultMhsErrorEnum["MHSLicensePasetoRawPayloadUnrecognized"] =
-    "MHSLicensePasetoRawPayloadUnrecognized";
-  AddMhsLicenseResultMhsErrorEnum["MHSLicenseInvalidAs360Fingerprint"] =
-    "MHSLicenseInvalidAs360Fingerprint";
-  AddMhsLicenseResultMhsErrorEnum["MHSLicenseDeploymentIdMismatch"] =
-    "MHSLicenseDeploymentIdMismatch";
-  AddMhsLicenseResultMhsErrorEnum["MHSLicenseIssuedEarlierThanCurrentlyUsed"] =
-    "MHSLicenseIssuedEarlierThanCurrentlyUsed";
-  AddMhsLicenseResultMhsErrorEnum["MHSLicenseHasNoRelevantEntitlements"] =
-    "MHSLicenseHasNoRelevantEntitlements";
-  AddMhsLicenseResultMhsErrorEnum["MHSLicenseWasAlreadyUploaded"] =
-    "MHSLicenseWasAlreadyUploaded";
-  AddMhsLicenseResultMhsErrorEnum["MHSLicenseOldFeatureIsMissing"] =
-    "MHSLicenseOldFeatureIsMissing";
-  AddMhsLicenseResultMhsErrorEnum["MHSLicenseChangingPreviousMhsValue"] =
-    "MHSLicenseChangingPreviousMhsValue";
-  AddMhsLicenseResultMhsErrorEnum["MHSLicenseWasIssuedTooLongAgo"] =
-    "MHSLicenseWasIssuedTooLongAgo";
-  AddMhsLicenseResultMhsErrorEnum["MHSLicenseInvalidASoCFingerprint"] =
-    "MHSLicenseInvalidASoCFingerprint";
+  AddMhsLicenseResultMhsErrorEnum['None'] = 'None';
+  AddMhsLicenseResultMhsErrorEnum['GeneralError'] = 'GeneralError';
+  AddMhsLicenseResultMhsErrorEnum['InvalidInput'] = 'InvalidInput';
+  AddMhsLicenseResultMhsErrorEnum['MissingCapabilities'] =
+    'MissingCapabilities';
+  AddMhsLicenseResultMhsErrorEnum['MHSLicenseGeneralStructureUnrecognized'] =
+    'MHSLicenseGeneralStructureUnrecognized';
+  AddMhsLicenseResultMhsErrorEnum['MHSLicenseCertificateInvalid'] =
+    'MHSLicenseCertificateInvalid';
+  AddMhsLicenseResultMhsErrorEnum['MHSLicensePasetoSignatureInvalid'] =
+    'MHSLicensePasetoSignatureInvalid';
+  AddMhsLicenseResultMhsErrorEnum['MHSLicensePasetoRawPayloadUnrecognized'] =
+    'MHSLicensePasetoRawPayloadUnrecognized';
+  AddMhsLicenseResultMhsErrorEnum['MHSLicenseInvalidAs360Fingerprint'] =
+    'MHSLicenseInvalidAs360Fingerprint';
+  AddMhsLicenseResultMhsErrorEnum['MHSLicenseDeploymentIdMismatch'] =
+    'MHSLicenseDeploymentIdMismatch';
+  AddMhsLicenseResultMhsErrorEnum['MHSLicenseIssuedEarlierThanCurrentlyUsed'] =
+    'MHSLicenseIssuedEarlierThanCurrentlyUsed';
+  AddMhsLicenseResultMhsErrorEnum['MHSLicenseHasNoRelevantEntitlements'] =
+    'MHSLicenseHasNoRelevantEntitlements';
+  AddMhsLicenseResultMhsErrorEnum['MHSLicenseWasAlreadyUploaded'] =
+    'MHSLicenseWasAlreadyUploaded';
+  AddMhsLicenseResultMhsErrorEnum['MHSLicenseOldFeatureIsMissing'] =
+    'MHSLicenseOldFeatureIsMissing';
+  AddMhsLicenseResultMhsErrorEnum['MHSLicenseChangingPreviousMhsValue'] =
+    'MHSLicenseChangingPreviousMhsValue';
+  AddMhsLicenseResultMhsErrorEnum['MHSLicenseWasIssuedTooLongAgo'] =
+    'MHSLicenseWasIssuedTooLongAgo';
+  AddMhsLicenseResultMhsErrorEnum['MHSLicenseInvalidASoCFingerprint'] =
+    'MHSLicenseInvalidASoCFingerprint';
 })(AddMhsLicenseResultMhsErrorEnum || (AddMhsLicenseResultMhsErrorEnum = {}));
 export var AllowDomainModelUrlTypeEnum;
 (function (AllowDomainModelUrlTypeEnum) {
-  AllowDomainModelUrlTypeEnum["Domain"] = "Domain";
-  AllowDomainModelUrlTypeEnum["IpAddress"] = "IpAddress";
+  AllowDomainModelUrlTypeEnum['Domain'] = 'Domain';
+  AllowDomainModelUrlTypeEnum['IpAddress'] = 'IpAddress';
 })(AllowDomainModelUrlTypeEnum || (AllowDomainModelUrlTypeEnum = {}));
 export var AllowDomainResultMessageEnum;
 (function (AllowDomainResultMessageEnum) {
-  AllowDomainResultMessageEnum["NONE"] = "NONE";
-  AllowDomainResultMessageEnum["APK_PROCESSED"] = "APK_PROCESSED";
-  AllowDomainResultMessageEnum["BLOCK_NEW_SCANS"] = "BLOCK_NEW_SCANS";
-  AllowDomainResultMessageEnum["HIGH_SEVERITY"] = "HIGH_SEVERITY";
-  AllowDomainResultMessageEnum["INCOMPLETE_SCAN_WITH_ISSUES"] =
-    "INCOMPLETE_SCAN_WITH_ISSUES";
-  AllowDomainResultMessageEnum["INVALID_INPUT"] = "INVALID_INPUT";
-  AllowDomainResultMessageEnum["GENERAL_ERROR"] = "GENERAL_ERROR";
-  AllowDomainResultMessageEnum["INVALID_APK_FILE"] = "INVALID_APK_FILE";
-  AllowDomainResultMessageEnum["INVALID_IPA_FILE"] = "INVALID_IPA_FILE";
-  AllowDomainResultMessageEnum["INVALID_IPAX_FILE"] = "INVALID_IPAX_FILE";
-  AllowDomainResultMessageEnum["INVALID_IRX_FILE"] = "INVALID_IRX_FILE";
-  AllowDomainResultMessageEnum["WARNING_UTILITIES_VERSION"] =
-    "WARNING_UTILITIES_VERSION";
-  AllowDomainResultMessageEnum["UNABLE_SCAN_EDITING"] = "UNABLE_SCAN_EDITING";
-  AllowDomainResultMessageEnum["INVALID_DAST_SCAN_CONFIGURATION"] =
-    "INVALID_DAST_SCAN_CONFIGURATION";
-  AllowDomainResultMessageEnum["INVALID_TOTP_CONFIGURATION"] =
-    "INVALID_TOTP_CONFIGURATION";
-  AllowDomainResultMessageEnum["INVALID_TEST_OPERATION_CONFIGURATION"] =
-    "INVALID_TEST_OPERATION_CONFIGURATION";
-  AllowDomainResultMessageEnum["INVALID_JOB_IDENTIFIER"] =
-    "INVALID_JOB_IDENTIFIER";
-  AllowDomainResultMessageEnum["INVALID_SCAN_IDENTIFIER"] =
-    "INVALID_SCAN_IDENTIFIER";
-  AllowDomainResultMessageEnum["INVALID_REPORT_TYPE"] = "INVALID_REPORT_TYPE";
-  AllowDomainResultMessageEnum["INVALID_INCREMENTAL_BASE_JOB_IDENTIFIER"] =
-    "INVALID_INCREMENTAL_BASE_JOB_IDENTIFIER";
-  AllowDomainResultMessageEnum["INCREMENTAL_BASE_SCAN_NO_TEST_STAGE"] =
-    "INCREMENTAL_BASE_SCAN_NO_TEST_STAGE";
+  AllowDomainResultMessageEnum['NONE'] = 'NONE';
+  AllowDomainResultMessageEnum['APK_PROCESSED'] = 'APK_PROCESSED';
+  AllowDomainResultMessageEnum['BLOCK_NEW_SCANS'] = 'BLOCK_NEW_SCANS';
+  AllowDomainResultMessageEnum['HIGH_SEVERITY'] = 'HIGH_SEVERITY';
+  AllowDomainResultMessageEnum['INCOMPLETE_SCAN_WITH_ISSUES'] =
+    'INCOMPLETE_SCAN_WITH_ISSUES';
+  AllowDomainResultMessageEnum['INVALID_INPUT'] = 'INVALID_INPUT';
+  AllowDomainResultMessageEnum['GENERAL_ERROR'] = 'GENERAL_ERROR';
+  AllowDomainResultMessageEnum['INVALID_APK_FILE'] = 'INVALID_APK_FILE';
+  AllowDomainResultMessageEnum['INVALID_IPA_FILE'] = 'INVALID_IPA_FILE';
+  AllowDomainResultMessageEnum['INVALID_IPAX_FILE'] = 'INVALID_IPAX_FILE';
+  AllowDomainResultMessageEnum['INVALID_IRX_FILE'] = 'INVALID_IRX_FILE';
+  AllowDomainResultMessageEnum['WARNING_UTILITIES_VERSION'] =
+    'WARNING_UTILITIES_VERSION';
+  AllowDomainResultMessageEnum['UNABLE_SCAN_EDITING'] = 'UNABLE_SCAN_EDITING';
+  AllowDomainResultMessageEnum['INVALID_DAST_SCAN_CONFIGURATION'] =
+    'INVALID_DAST_SCAN_CONFIGURATION';
+  AllowDomainResultMessageEnum['INVALID_TOTP_CONFIGURATION'] =
+    'INVALID_TOTP_CONFIGURATION';
+  AllowDomainResultMessageEnum['INVALID_TEST_OPERATION_CONFIGURATION'] =
+    'INVALID_TEST_OPERATION_CONFIGURATION';
+  AllowDomainResultMessageEnum['INVALID_JOB_IDENTIFIER'] =
+    'INVALID_JOB_IDENTIFIER';
+  AllowDomainResultMessageEnum['INVALID_SCAN_IDENTIFIER'] =
+    'INVALID_SCAN_IDENTIFIER';
+  AllowDomainResultMessageEnum['INVALID_REPORT_TYPE'] = 'INVALID_REPORT_TYPE';
+  AllowDomainResultMessageEnum['INVALID_INCREMENTAL_BASE_JOB_IDENTIFIER'] =
+    'INVALID_INCREMENTAL_BASE_JOB_IDENTIFIER';
+  AllowDomainResultMessageEnum['INCREMENTAL_BASE_SCAN_NO_TEST_STAGE'] =
+    'INCREMENTAL_BASE_SCAN_NO_TEST_STAGE';
   AllowDomainResultMessageEnum[
-    "INCREMENTAL_BASE_JOB_NOT_RELATED_TO_CURRENT_SCAN"
-  ] = "INCREMENTAL_BASE_JOB_NOT_RELATED_TO_CURRENT_SCAN";
-  AllowDomainResultMessageEnum["INCREMENTAL_BASE_SCAN_FILE_WAS_DELETED"] =
-    "INCREMENTAL_BASE_SCAN_FILE_WAS_DELETED";
-  AllowDomainResultMessageEnum["LOW_SEVERITY"] = "LOW_SEVERITY";
-  AllowDomainResultMessageEnum["MEDIUM_SEVERITY"] = "MEDIUM_SEVERITY";
-  AllowDomainResultMessageEnum["NOT_ALLOWED_DAST_SCAN_HOST"] =
-    "NOT_ALLOWED_DAST_SCAN_HOST";
-  AllowDomainResultMessageEnum["NOT_ALLOWED_DAST_SCAN_HOST_ADDITIONAL_DOMAIN"] =
-    "NOT_ALLOWED_DAST_SCAN_HOST_ADDITIONAL_DOMAIN";
-  AllowDomainResultMessageEnum["ADDITIONAL_DOMAINS_LIMIT_EXCEEDED"] =
-    "ADDITIONAL_DOMAINS_LIMIT_EXCEEDED";
-  AllowDomainResultMessageEnum["NOT_ASSOCIATED_PRESENCE_TO_APPLICATION"] =
-    "NOT_ASSOCIATED_PRESENCE_TO_APPLICATION";
-  AllowDomainResultMessageEnum["APPLICATION_PRESENCES_LIMIT_EXCEEDED"] =
-    "APPLICATION_PRESENCES_LIMIT_EXCEEDED";
-  AllowDomainResultMessageEnum["NO_ISSUES"] = "NO_ISSUES";
-  AllowDomainResultMessageEnum["REPORT_PROBLEMS"] = "REPORT_PROBLEMS";
-  AllowDomainResultMessageEnum["CLIENT_UTIL_DOWNLOAD_PROBLEMS"] =
-    "CLIENT_UTIL_DOWNLOAD_PROBLEMS";
-  AllowDomainResultMessageEnum["CLIENT_UTIL_NOT_FOUND"] =
-    "CLIENT_UTIL_NOT_FOUND";
-  AllowDomainResultMessageEnum["SCAN_ENDED_WITH_ERROR"] =
-    "SCAN_ENDED_WITH_ERROR";
-  AllowDomainResultMessageEnum["SCAN_FAILURE"] = "SCAN_FAILURE";
-  AllowDomainResultMessageEnum["SCAN_LIMIT_EXCEEDED"] = "SCAN_LIMIT_EXCEEDED";
-  AllowDomainResultMessageEnum["SCAN_CONCURRENT_AND_QUEUED_EXCEEDED"] =
-    "SCAN_CONCURRENT_AND_QUEUED_EXCEEDED";
-  AllowDomainResultMessageEnum["SUCCESSFUL_SCAN_MESSAGE"] =
-    "SUCCESSFUL_SCAN_MESSAGE";
-  AllowDomainResultMessageEnum["UNAUTHORIZED_ACTION"] = "UNAUTHORIZED_ACTION";
-  AllowDomainResultMessageEnum["UNSUPPORTED_UPLOAD_REQUEST_TYPE"] =
-    "UNSUPPORTED_UPLOAD_REQUEST_TYPE";
-  AllowDomainResultMessageEnum["UNSUPPORTED_LOGIN_METHOD"] =
-    "UNSUPPORTED_LOGIN_METHOD";
-  AllowDomainResultMessageEnum["SCAN_STILL_IN_PROGRESS"] =
-    "SCAN_STILL_IN_PROGRESS";
-  AllowDomainResultMessageEnum["SCAN_ALREADY_RUNNING_ON_APPLICATION"] =
-    "SCAN_ALREADY_RUNNING_ON_APPLICATION";
+    'INCREMENTAL_BASE_JOB_NOT_RELATED_TO_CURRENT_SCAN'
+  ] = 'INCREMENTAL_BASE_JOB_NOT_RELATED_TO_CURRENT_SCAN';
+  AllowDomainResultMessageEnum['INCREMENTAL_BASE_SCAN_FILE_WAS_DELETED'] =
+    'INCREMENTAL_BASE_SCAN_FILE_WAS_DELETED';
+  AllowDomainResultMessageEnum['LOW_SEVERITY'] = 'LOW_SEVERITY';
+  AllowDomainResultMessageEnum['MEDIUM_SEVERITY'] = 'MEDIUM_SEVERITY';
+  AllowDomainResultMessageEnum['NOT_ALLOWED_DAST_SCAN_HOST'] =
+    'NOT_ALLOWED_DAST_SCAN_HOST';
+  AllowDomainResultMessageEnum['NOT_ALLOWED_DAST_SCAN_HOST_ADDITIONAL_DOMAIN'] =
+    'NOT_ALLOWED_DAST_SCAN_HOST_ADDITIONAL_DOMAIN';
+  AllowDomainResultMessageEnum['ADDITIONAL_DOMAINS_LIMIT_EXCEEDED'] =
+    'ADDITIONAL_DOMAINS_LIMIT_EXCEEDED';
+  AllowDomainResultMessageEnum['NOT_ASSOCIATED_PRESENCE_TO_APPLICATION'] =
+    'NOT_ASSOCIATED_PRESENCE_TO_APPLICATION';
+  AllowDomainResultMessageEnum['APPLICATION_PRESENCES_LIMIT_EXCEEDED'] =
+    'APPLICATION_PRESENCES_LIMIT_EXCEEDED';
+  AllowDomainResultMessageEnum['NO_ISSUES'] = 'NO_ISSUES';
+  AllowDomainResultMessageEnum['REPORT_PROBLEMS'] = 'REPORT_PROBLEMS';
+  AllowDomainResultMessageEnum['CLIENT_UTIL_DOWNLOAD_PROBLEMS'] =
+    'CLIENT_UTIL_DOWNLOAD_PROBLEMS';
+  AllowDomainResultMessageEnum['CLIENT_UTIL_NOT_FOUND'] =
+    'CLIENT_UTIL_NOT_FOUND';
+  AllowDomainResultMessageEnum['SCAN_ENDED_WITH_ERROR'] =
+    'SCAN_ENDED_WITH_ERROR';
+  AllowDomainResultMessageEnum['SCAN_FAILURE'] = 'SCAN_FAILURE';
+  AllowDomainResultMessageEnum['SCAN_LIMIT_EXCEEDED'] = 'SCAN_LIMIT_EXCEEDED';
+  AllowDomainResultMessageEnum['SCAN_CONCURRENT_AND_QUEUED_EXCEEDED'] =
+    'SCAN_CONCURRENT_AND_QUEUED_EXCEEDED';
+  AllowDomainResultMessageEnum['SUCCESSFUL_SCAN_MESSAGE'] =
+    'SUCCESSFUL_SCAN_MESSAGE';
+  AllowDomainResultMessageEnum['UNAUTHORIZED_ACTION'] = 'UNAUTHORIZED_ACTION';
+  AllowDomainResultMessageEnum['UNSUPPORTED_UPLOAD_REQUEST_TYPE'] =
+    'UNSUPPORTED_UPLOAD_REQUEST_TYPE';
+  AllowDomainResultMessageEnum['UNSUPPORTED_LOGIN_METHOD'] =
+    'UNSUPPORTED_LOGIN_METHOD';
+  AllowDomainResultMessageEnum['SCAN_STILL_IN_PROGRESS'] =
+    'SCAN_STILL_IN_PROGRESS';
+  AllowDomainResultMessageEnum['SCAN_ALREADY_RUNNING_ON_APPLICATION'] =
+    'SCAN_ALREADY_RUNNING_ON_APPLICATION';
   AllowDomainResultMessageEnum[
-    "FAILED_CANCELLING_SCAN_IN_RESULTS_ANALYSIS_STATE"
-  ] = "FAILED_CANCELLING_SCAN_IN_RESULTS_ANALYSIS_STATE";
-  AllowDomainResultMessageEnum["FREE_SCAN_IS_NOT_ALLOWED"] =
-    "FREE_SCAN_IS_NOT_ALLOWED";
-  AllowDomainResultMessageEnum["FREEMIUM_SCAN_NOT_ALLOWED"] =
-    "FREEMIUM_SCAN_NOT_ALLOWED";
-  AllowDomainResultMessageEnum["INVALID_USER"] = "INVALID_USER";
-  AllowDomainResultMessageEnum["NO_RESCAN_WHILE_SCANNING"] =
-    "NO_RESCAN_WHILE_SCANNING";
-  AllowDomainResultMessageEnum["INVALID_SUBSCRIPTION_FOR_SERVICE"] =
-    "INVALID_SUBSCRIPTION_FOR_SERVICE";
-  AllowDomainResultMessageEnum["SUBSCRIPTION_EXPIRED_OR_DEACTIVATED"] =
-    "SUBSCRIPTION_EXPIRED_OR_DEACTIVATED";
-  AllowDomainResultMessageEnum["INVALID_IRX_VERSION"] = "INVALID_IRX_VERSION";
-  AllowDomainResultMessageEnum["IRX_ENCRYPTION_MISMATCHED_ASOC"] =
-    "IRX_ENCRYPTION_MISMATCHED_ASOC";
-  AllowDomainResultMessageEnum["IRX_ENCRYPTION_MISMATCHED_ASOP"] =
-    "IRX_ENCRYPTION_MISMATCHED_ASOP";
-  AllowDomainResultMessageEnum["FEATURE_AVAILABLE_SOON"] =
-    "FEATURE_AVAILABLE_SOON";
-  AllowDomainResultMessageEnum["SPECIFY_VALID_OS"] = "SPECIFY_VALID_OS";
-  AllowDomainResultMessageEnum["SCAN_IS_DELETED"] = "SCAN_IS_DELETED";
-  AllowDomainResultMessageEnum["SCAN_DELETION_NOT_ALLOWED"] =
-    "SCAN_DELETION_NOT_ALLOWED";
-  AllowDomainResultMessageEnum["KNOWN_USER_SCX_LOGIN_ERROR"] =
-    "KNOWN_USER_SCX_LOGIN_ERROR";
-  AllowDomainResultMessageEnum["UNKNOWN_USER_SCX_LOGIN_ERROR"] =
-    "UNKNOWN_USER_SCX_LOGIN_ERROR";
-  AllowDomainResultMessageEnum["GENERAL_LOGIN_ERROR"] = "GENERAL_LOGIN_ERROR";
-  AllowDomainResultMessageEnum["UNKNOWN_USER_SCX_LOGIN_ERROR_API"] =
-    "UNKNOWN_USER_SCX_LOGIN_ERROR_API";
-  AllowDomainResultMessageEnum["GENERAL_LOGIN_ERROR_API"] =
-    "GENERAL_LOGIN_ERROR_API";
-  AllowDomainResultMessageEnum["LOGIN_BLOCKED"] = "LOGIN_BLOCKED";
-  AllowDomainResultMessageEnum["SUBSCRIPTION_SCAN_LIMIT_REACHED"] =
-    "SUBSCRIPTION_SCAN_LIMIT_REACHED";
-  AllowDomainResultMessageEnum["APPLICATION_REQUIRES_OFFERINGTYPE_SWITCH"] =
-    "APPLICATION_REQUIRES_OFFERINGTYPE_SWITCH";
-  AllowDomainResultMessageEnum["RESCAN_DISABLED_ON_FIRST_FAILURE"] =
-    "RESCAN_DISABLED_ON_FIRST_FAILURE";
-  AllowDomainResultMessageEnum["PROMOTE_ON_SCAN_FAILURE"] =
-    "PROMOTE_ON_SCAN_FAILURE";
-  AllowDomainResultMessageEnum["TRIAL_SCAN_LIMIT_REACHED"] =
-    "TRIAL_SCAN_LIMIT_REACHED";
-  AllowDomainResultMessageEnum["PRESENCE_NAME_ALREADY_EXISTS"] =
-    "PRESENCE_NAME_ALREADY_EXISTS";
-  AllowDomainResultMessageEnum["PRESENCE_WAS_DELETED"] = "PRESENCE_WAS_DELETED";
-  AllowDomainResultMessageEnum["PRESENCE_IS_INACTIVE"] = "PRESENCE_IS_INACTIVE";
-  AllowDomainResultMessageEnum["PSS_NOTSUPPORTED_DURING_TRIAL"] =
-    "PSS_NOTSUPPORTED_DURING_TRIAL";
-  AllowDomainResultMessageEnum["INVALID_STARTING_URL"] = "INVALID_STARTING_URL";
-  AllowDomainResultMessageEnum["INVALID_STARTING_URL_LOCALHOST"] =
-    "INVALID_STARTING_URL_LOCALHOST";
-  AllowDomainResultMessageEnum["INVALID_STARTING_URL_SCHEME"] =
-    "INVALID_STARTING_URL_SCHEME";
-  AllowDomainResultMessageEnum["INVALID_LOGIN_SEQUENCE"] =
-    "INVALID_LOGIN_SEQUENCE";
-  AllowDomainResultMessageEnum["SCAN_NAME_MISSING"] = "SCAN_NAME_MISSING";
-  AllowDomainResultMessageEnum["FILE_ID_MISSING"] = "FILE_ID_MISSING";
-  AllowDomainResultMessageEnum["UNABLE_TO_LOAD_FILE_FROM_STORAGE"] =
-    "UNABLE_TO_LOAD_FILE_FROM_STORAGE";
-  AllowDomainResultMessageEnum["FILE_SIZE_LIMIT_EXCEEDED"] =
-    "FILE_SIZE_LIMIT_EXCEEDED";
-  AllowDomainResultMessageEnum["INPUT_LENGTH_LIMIT_EXCEEDED"] =
-    "INPUT_LENGTH_LIMIT_EXCEEDED";
-  AllowDomainResultMessageEnum["WRONG_TECHNOLOGY"] = "WRONG_TECHNOLOGY";
-  AllowDomainResultMessageEnum["THE_FILE_HAS_ALREADY_DELETED"] =
-    "THE_FILE_HAS_ALREADY_DELETED";
-  AllowDomainResultMessageEnum["JOB_IS_NOT_READY"] = "JOB_IS_NOT_READY";
-  AllowDomainResultMessageEnum["MISSING_FILE_EXTENSION"] =
-    "MISSING_FILE_EXTENSION";
-  AllowDomainResultMessageEnum["INCORRECT_FILE_EXTENSION"] =
-    "INCORRECT_FILE_EXTENSION";
-  AllowDomainResultMessageEnum["RESCAN_DISABLED"] = "RESCAN_DISABLED";
-  AllowDomainResultMessageEnum["INSUFFICIENT_SUBSCRIPTION_CREDIT"] =
-    "INSUFFICIENT_SUBSCRIPTION_CREDIT";
-  AllowDomainResultMessageEnum["CONSULTANT_DELETION_NOT_ALLOWED"] =
-    "CONSULTANT_DELETION_NOT_ALLOWED";
-  AllowDomainResultMessageEnum["INVALID_DAST_FILE"] = "INVALID_DAST_FILE";
-  AllowDomainResultMessageEnum["DAST_FILE_REQUIRED"] = "DAST_FILE_REQUIRED";
-  AllowDomainResultMessageEnum["INVALID_URL"] = "INVALID_URL";
-  AllowDomainResultMessageEnum["INVALID_DAST_FILE_RESCAN"] =
-    "INVALID_DAST_FILE_RESCAN";
-  AllowDomainResultMessageEnum["REPORT_IS_NOT_AVAILABLE"] =
-    "REPORT_IS_NOT_AVAILABLE";
-  AllowDomainResultMessageEnum["UPLOAD_DAST_PERMISSION"] =
-    "UPLOAD_DAST_PERMISSION";
-  AllowDomainResultMessageEnum["IFA_SCAN_LIMIT_REACHED"] =
-    "IFA_SCAN_LIMIT_REACHED";
-  AllowDomainResultMessageEnum["INVALID_SCANT_MULTISTEP_TESTONLY"] =
-    "INVALID_SCANT_MULTISTEP_TESTONLY";
-  AllowDomainResultMessageEnum["INVALID_SCAN_MULTISTEP_MANUALEXPL_TESTONLY"] =
-    "INVALID_SCAN_MULTISTEP_MANUALEXPL_TESTONLY";
-  AllowDomainResultMessageEnum["UNABLE_TO_CHANGE_SCAN_OFFERING_TYPE"] =
-    "UNABLE_TO_CHANGE_SCAN_OFFERING_TYPE";
+    'FAILED_CANCELLING_SCAN_IN_RESULTS_ANALYSIS_STATE'
+  ] = 'FAILED_CANCELLING_SCAN_IN_RESULTS_ANALYSIS_STATE';
+  AllowDomainResultMessageEnum['FREE_SCAN_IS_NOT_ALLOWED'] =
+    'FREE_SCAN_IS_NOT_ALLOWED';
+  AllowDomainResultMessageEnum['FREEMIUM_SCAN_NOT_ALLOWED'] =
+    'FREEMIUM_SCAN_NOT_ALLOWED';
+  AllowDomainResultMessageEnum['INVALID_USER'] = 'INVALID_USER';
+  AllowDomainResultMessageEnum['NO_RESCAN_WHILE_SCANNING'] =
+    'NO_RESCAN_WHILE_SCANNING';
+  AllowDomainResultMessageEnum['INVALID_SUBSCRIPTION_FOR_SERVICE'] =
+    'INVALID_SUBSCRIPTION_FOR_SERVICE';
+  AllowDomainResultMessageEnum['SUBSCRIPTION_EXPIRED_OR_DEACTIVATED'] =
+    'SUBSCRIPTION_EXPIRED_OR_DEACTIVATED';
+  AllowDomainResultMessageEnum['INVALID_IRX_VERSION'] = 'INVALID_IRX_VERSION';
+  AllowDomainResultMessageEnum['IRX_ENCRYPTION_MISMATCHED_ASOC'] =
+    'IRX_ENCRYPTION_MISMATCHED_ASOC';
+  AllowDomainResultMessageEnum['IRX_ENCRYPTION_MISMATCHED_ASOP'] =
+    'IRX_ENCRYPTION_MISMATCHED_ASOP';
+  AllowDomainResultMessageEnum['FEATURE_AVAILABLE_SOON'] =
+    'FEATURE_AVAILABLE_SOON';
+  AllowDomainResultMessageEnum['SPECIFY_VALID_OS'] = 'SPECIFY_VALID_OS';
+  AllowDomainResultMessageEnum['SCAN_IS_DELETED'] = 'SCAN_IS_DELETED';
+  AllowDomainResultMessageEnum['SCAN_DELETION_NOT_ALLOWED'] =
+    'SCAN_DELETION_NOT_ALLOWED';
+  AllowDomainResultMessageEnum['KNOWN_USER_SCX_LOGIN_ERROR'] =
+    'KNOWN_USER_SCX_LOGIN_ERROR';
+  AllowDomainResultMessageEnum['UNKNOWN_USER_SCX_LOGIN_ERROR'] =
+    'UNKNOWN_USER_SCX_LOGIN_ERROR';
+  AllowDomainResultMessageEnum['GENERAL_LOGIN_ERROR'] = 'GENERAL_LOGIN_ERROR';
+  AllowDomainResultMessageEnum['UNKNOWN_USER_SCX_LOGIN_ERROR_API'] =
+    'UNKNOWN_USER_SCX_LOGIN_ERROR_API';
+  AllowDomainResultMessageEnum['GENERAL_LOGIN_ERROR_API'] =
+    'GENERAL_LOGIN_ERROR_API';
+  AllowDomainResultMessageEnum['LOGIN_BLOCKED'] = 'LOGIN_BLOCKED';
+  AllowDomainResultMessageEnum['SUBSCRIPTION_SCAN_LIMIT_REACHED'] =
+    'SUBSCRIPTION_SCAN_LIMIT_REACHED';
+  AllowDomainResultMessageEnum['APPLICATION_REQUIRES_OFFERINGTYPE_SWITCH'] =
+    'APPLICATION_REQUIRES_OFFERINGTYPE_SWITCH';
+  AllowDomainResultMessageEnum['RESCAN_DISABLED_ON_FIRST_FAILURE'] =
+    'RESCAN_DISABLED_ON_FIRST_FAILURE';
+  AllowDomainResultMessageEnum['PROMOTE_ON_SCAN_FAILURE'] =
+    'PROMOTE_ON_SCAN_FAILURE';
+  AllowDomainResultMessageEnum['TRIAL_SCAN_LIMIT_REACHED'] =
+    'TRIAL_SCAN_LIMIT_REACHED';
+  AllowDomainResultMessageEnum['PRESENCE_NAME_ALREADY_EXISTS'] =
+    'PRESENCE_NAME_ALREADY_EXISTS';
+  AllowDomainResultMessageEnum['PRESENCE_WAS_DELETED'] = 'PRESENCE_WAS_DELETED';
+  AllowDomainResultMessageEnum['PRESENCE_IS_INACTIVE'] = 'PRESENCE_IS_INACTIVE';
+  AllowDomainResultMessageEnum['PSS_NOTSUPPORTED_DURING_TRIAL'] =
+    'PSS_NOTSUPPORTED_DURING_TRIAL';
+  AllowDomainResultMessageEnum['INVALID_STARTING_URL'] = 'INVALID_STARTING_URL';
+  AllowDomainResultMessageEnum['INVALID_STARTING_URL_LOCALHOST'] =
+    'INVALID_STARTING_URL_LOCALHOST';
+  AllowDomainResultMessageEnum['INVALID_STARTING_URL_SCHEME'] =
+    'INVALID_STARTING_URL_SCHEME';
+  AllowDomainResultMessageEnum['INVALID_LOGIN_SEQUENCE'] =
+    'INVALID_LOGIN_SEQUENCE';
+  AllowDomainResultMessageEnum['SCAN_NAME_MISSING'] = 'SCAN_NAME_MISSING';
+  AllowDomainResultMessageEnum['FILE_ID_MISSING'] = 'FILE_ID_MISSING';
+  AllowDomainResultMessageEnum['UNABLE_TO_LOAD_FILE_FROM_STORAGE'] =
+    'UNABLE_TO_LOAD_FILE_FROM_STORAGE';
+  AllowDomainResultMessageEnum['FILE_SIZE_LIMIT_EXCEEDED'] =
+    'FILE_SIZE_LIMIT_EXCEEDED';
+  AllowDomainResultMessageEnum['INPUT_LENGTH_LIMIT_EXCEEDED'] =
+    'INPUT_LENGTH_LIMIT_EXCEEDED';
+  AllowDomainResultMessageEnum['WRONG_TECHNOLOGY'] = 'WRONG_TECHNOLOGY';
+  AllowDomainResultMessageEnum['THE_FILE_HAS_ALREADY_DELETED'] =
+    'THE_FILE_HAS_ALREADY_DELETED';
+  AllowDomainResultMessageEnum['JOB_IS_NOT_READY'] = 'JOB_IS_NOT_READY';
+  AllowDomainResultMessageEnum['MISSING_FILE_EXTENSION'] =
+    'MISSING_FILE_EXTENSION';
+  AllowDomainResultMessageEnum['INCORRECT_FILE_EXTENSION'] =
+    'INCORRECT_FILE_EXTENSION';
+  AllowDomainResultMessageEnum['RESCAN_DISABLED'] = 'RESCAN_DISABLED';
+  AllowDomainResultMessageEnum['INSUFFICIENT_SUBSCRIPTION_CREDIT'] =
+    'INSUFFICIENT_SUBSCRIPTION_CREDIT';
+  AllowDomainResultMessageEnum['CONSULTANT_DELETION_NOT_ALLOWED'] =
+    'CONSULTANT_DELETION_NOT_ALLOWED';
+  AllowDomainResultMessageEnum['INVALID_DAST_FILE'] = 'INVALID_DAST_FILE';
+  AllowDomainResultMessageEnum['DAST_FILE_REQUIRED'] = 'DAST_FILE_REQUIRED';
+  AllowDomainResultMessageEnum['INVALID_URL'] = 'INVALID_URL';
+  AllowDomainResultMessageEnum['INVALID_DAST_FILE_RESCAN'] =
+    'INVALID_DAST_FILE_RESCAN';
+  AllowDomainResultMessageEnum['REPORT_IS_NOT_AVAILABLE'] =
+    'REPORT_IS_NOT_AVAILABLE';
+  AllowDomainResultMessageEnum['UPLOAD_DAST_PERMISSION'] =
+    'UPLOAD_DAST_PERMISSION';
+  AllowDomainResultMessageEnum['IFA_SCAN_LIMIT_REACHED'] =
+    'IFA_SCAN_LIMIT_REACHED';
+  AllowDomainResultMessageEnum['INVALID_SCANT_MULTISTEP_TESTONLY'] =
+    'INVALID_SCANT_MULTISTEP_TESTONLY';
+  AllowDomainResultMessageEnum['INVALID_SCAN_MULTISTEP_MANUALEXPL_TESTONLY'] =
+    'INVALID_SCAN_MULTISTEP_MANUALEXPL_TESTONLY';
+  AllowDomainResultMessageEnum['UNABLE_TO_CHANGE_SCAN_OFFERING_TYPE'] =
+    'UNABLE_TO_CHANGE_SCAN_OFFERING_TYPE';
   AllowDomainResultMessageEnum[
-    "UNABLE_TO_USE_TRIAL_SUBSCIPTION_IF_PAID_SUBSCRIPTION_EXISTS"
-  ] = "UNABLE_TO_USE_TRIAL_SUBSCIPTION_IF_PAID_SUBSCRIPTION_EXISTS";
+    'UNABLE_TO_USE_TRIAL_SUBSCIPTION_IF_PAID_SUBSCRIPTION_EXISTS'
+  ] = 'UNABLE_TO_USE_TRIAL_SUBSCIPTION_IF_PAID_SUBSCRIPTION_EXISTS';
   AllowDomainResultMessageEnum[
-    "SCAN_DOES_NOT_MATCH_APPLICATION_RESTRICTIONS_APPTYPE"
-  ] = "SCAN_DOES_NOT_MATCH_APPLICATION_RESTRICTIONS_APPTYPE";
+    'SCAN_DOES_NOT_MATCH_APPLICATION_RESTRICTIONS_APPTYPE'
+  ] = 'SCAN_DOES_NOT_MATCH_APPLICATION_RESTRICTIONS_APPTYPE';
   AllowDomainResultMessageEnum[
-    "SCAN_DOES_NOT_MATCH_APPLICATION_RESTRICTIONS_DOMAIN"
-  ] = "SCAN_DOES_NOT_MATCH_APPLICATION_RESTRICTIONS_DOMAIN";
+    'SCAN_DOES_NOT_MATCH_APPLICATION_RESTRICTIONS_DOMAIN'
+  ] = 'SCAN_DOES_NOT_MATCH_APPLICATION_RESTRICTIONS_DOMAIN';
   AllowDomainResultMessageEnum[
-    "SCAN_DOES_NOT_MATCH_APPLICATION_RESTRICTIONS_PACKAGE"
-  ] = "SCAN_DOES_NOT_MATCH_APPLICATION_RESTRICTIONS_PACKAGE";
-  AllowDomainResultMessageEnum["INVALID_DAST_CONFIG_FILE"] =
-    "INVALID_DAST_CONFIG_FILE";
-  AllowDomainResultMessageEnum["INVALID_IAST_CONFIG_FILE"] =
-    "INVALID_IAST_CONFIG_FILE";
-  AllowDomainResultMessageEnum["APP_CONCURRENT_SCANS_AND_QUEUE_EXCEEDED"] =
-    "APP_CONCURRENT_SCANS_AND_QUEUE_EXCEEDED";
-  AllowDomainResultMessageEnum["MISSING_OFFERING_TYPE"] =
-    "MISSING_OFFERING_TYPE";
-  AllowDomainResultMessageEnum["ASSETGROUP_NAME_ALREADY_EXISTS"] =
-    "ASSETGROUP_NAME_ALREADY_EXISTS";
-  AllowDomainResultMessageEnum["ASSETGROUP_ASSOCIATION_ERROR"] =
-    "ASSETGROUP_ASSOCIATION_ERROR";
-  AllowDomainResultMessageEnum["ASSETGROUP_CHANGE_DEFAULT_NOTALLOWED"] =
-    "ASSETGROUP_CHANGE_DEFAULT_NOTALLOWED";
-  AllowDomainResultMessageEnum["ASSETGROUP_INVALID_CONTACT_PERSON"] =
-    "ASSETGROUP_INVALID_CONTACT_PERSON";
-  AllowDomainResultMessageEnum["ASSETGROUP_OVERRIDE_AUTO_CLOSE_NOTALLOWED"] =
-    "ASSETGROUP_OVERRIDE_AUTO_CLOSE_NOTALLOWED";
-  AllowDomainResultMessageEnum["ROLE_NAME_ALREADY_EXISTS"] =
-    "ROLE_NAME_ALREADY_EXISTS";
-  AllowDomainResultMessageEnum["ROLE_NOT_EXISTS"] = "ROLE_NOT_EXISTS";
-  AllowDomainResultMessageEnum["ROLE_PREDEFINED_DELETION_NOT_ALLOWED"] =
-    "ROLE_PREDEFINED_DELETION_NOT_ALLOWED";
-  AllowDomainResultMessageEnum["ROLE_PREDEFINED_EDIT_NOT_ALLOWED"] =
-    "ROLE_PREDEFINED_EDIT_NOT_ALLOWED";
-  AllowDomainResultMessageEnum["ROLE_DEFAULT_DELETION_NOT_ALLOWED"] =
-    "ROLE_DEFAULT_DELETION_NOT_ALLOWED";
-  AllowDomainResultMessageEnum["ROLE_UNSET_DEFAULT_NOT_ALLOWED"] =
-    "ROLE_UNSET_DEFAULT_NOT_ALLOWED";
-  AllowDomainResultMessageEnum["ROLE_ASSOCIATION_ERROR"] =
-    "ROLE_ASSOCIATION_ERROR";
-  AllowDomainResultMessageEnum["ORGANIZATION_NO_ACCESS"] =
-    "ORGANIZATION_NO_ACCESS";
-  AllowDomainResultMessageEnum["ORGANIZATION_NOT_FOUND"] =
-    "ORGANIZATION_NOT_FOUND";
-  AllowDomainResultMessageEnum["ORGANIZATION_CUSTOMIZATIONS_NOT_FOUND"] =
-    "ORGANIZATION_CUSTOMIZATIONS_NOT_FOUND";
-  AllowDomainResultMessageEnum["UPDATE_ORGANIZATION_LOGO_FAILURE"] =
-    "UPDATE_ORGANIZATION_LOGO_FAILURE";
-  AllowDomainResultMessageEnum["APPLICATION_NAME_ALREADY_EXISTS"] =
-    "APPLICATION_NAME_ALREADY_EXISTS";
-  AllowDomainResultMessageEnum["APPLICATION_NO_ACCESS"] =
-    "APPLICATION_NO_ACCESS";
-  AllowDomainResultMessageEnum["SCAN_NO_ACCESS"] = "SCAN_NO_ACCESS";
-  AllowDomainResultMessageEnum["SCAN_EXECUTION_NO_ACCESS"] =
-    "SCAN_EXECUTION_NO_ACCESS";
-  AllowDomainResultMessageEnum["ISSUE_NO_ACCESS"] = "ISSUE_NO_ACCESS";
-  AllowDomainResultMessageEnum["FIXGROUP_NO_ACCESS"] = "FIXGROUP_NO_ACCESS";
-  AllowDomainResultMessageEnum["PACKAGE_NO_ACCESS"] = "PACKAGE_NO_ACCESS";
-  AllowDomainResultMessageEnum["INVALID_CSV_FILE"] = "INVALID_CSV_FILE";
-  AllowDomainResultMessageEnum["ISSUES_INVALID_IDS"] = "ISSUES_INVALID_IDS";
-  AllowDomainResultMessageEnum["REPORT_IN_PROGRESS_ERROR"] =
-    "REPORT_IN_PROGRESS_ERROR";
-  AllowDomainResultMessageEnum["MISSING_APP_ID"] = "MISSING_APP_ID";
-  AllowDomainResultMessageEnum["MISSING_CAPABILITIES"] = "MISSING_CAPABILITIES";
-  AllowDomainResultMessageEnum["NO_ADMIN_ROLE_ERROR"] = "NO_ADMIN_ROLE_ERROR";
-  AllowDomainResultMessageEnum["NOT_SAME_ASSET_GROUPS"] =
-    "NOT_SAME_ASSET_GROUPS";
-  AllowDomainResultMessageEnum["INVALID_POLICY_ID"] = "INVALID_POLICY_ID";
-  AllowDomainResultMessageEnum["INVALID_POLICY_EXPRESSION"] =
-    "INVALID_POLICY_EXPRESSION";
-  AllowDomainResultMessageEnum["INVALID_POLICY_PARAMETERS"] =
-    "INVALID_POLICY_PARAMETERS";
-  AllowDomainResultMessageEnum["POLICY_ALREADY_ASSOCIATED_TO_APP"] =
-    "POLICY_ALREADY_ASSOCIATED_TO_APP";
-  AllowDomainResultMessageEnum["POLICY_NAME_ALREADY_EXISTS"] =
-    "POLICY_NAME_ALREADY_EXISTS";
-  AllowDomainResultMessageEnum["INVALID_POLICY_IDENTIFIER"] =
-    "INVALID_POLICY_IDENTIFIER";
-  AllowDomainResultMessageEnum["POLICY_PREDEFINED_DELETION_NOT_ALLOWED"] =
-    "POLICY_PREDEFINED_DELETION_NOT_ALLOWED";
-  AllowDomainResultMessageEnum["POLICY_PREDEFINED_MODIFICATION_NOT_ALLOWED"] =
-    "POLICY_PREDEFINED_MODIFICATION_NOT_ALLOWED";
-  AllowDomainResultMessageEnum["POLICY_DELETION_NOT_ALLOWED"] =
-    "POLICY_DELETION_NOT_ALLOWED";
-  AllowDomainResultMessageEnum["POLICY_INVALID_DATE_FORMAT"] =
-    "POLICY_INVALID_DATE_FORMAT";
-  AllowDomainResultMessageEnum["POLICY_INVALID_SEVERITY_VALUE"] =
-    "POLICY_INVALID_SEVERITY_VALUE";
-  AllowDomainResultMessageEnum["POLICY_INVALID_TECHNOLOGY_VALUE"] =
-    "POLICY_INVALID_TECHNOLOGY_VALUE";
-  AllowDomainResultMessageEnum["POLICY_OPERATION_NOT_ERROR"] =
-    "POLICY_OPERATION_NOT_ERROR";
-  AllowDomainResultMessageEnum["POLICY_OPERATION_AND_ERROR"] =
-    "POLICY_OPERATION_AND_ERROR";
-  AllowDomainResultMessageEnum["POLICY_INVALID_EXPRESSION_DEPTH"] =
-    "POLICY_INVALID_EXPRESSION_DEPTH";
-  AllowDomainResultMessageEnum["INVALID_TEST_POLICY_IDENTIFIER"] =
-    "INVALID_TEST_POLICY_IDENTIFIER";
-  AllowDomainResultMessageEnum["INVALID_TEST_POLICY_FILE"] =
-    "INVALID_TEST_POLICY_FILE";
-  AllowDomainResultMessageEnum["INVALID_TEST_POLICY_NAME"] =
-    "INVALID_TEST_POLICY_NAME";
-  AllowDomainResultMessageEnum["TEST_POLICY_NAME_ALREADY_EXISTS"] =
-    "TEST_POLICY_NAME_ALREADY_EXISTS";
-  AllowDomainResultMessageEnum["MISSING_TEST_POLICY_FILE"] =
-    "MISSING_TEST_POLICY_FILE";
+    'SCAN_DOES_NOT_MATCH_APPLICATION_RESTRICTIONS_PACKAGE'
+  ] = 'SCAN_DOES_NOT_MATCH_APPLICATION_RESTRICTIONS_PACKAGE';
+  AllowDomainResultMessageEnum['INVALID_DAST_CONFIG_FILE'] =
+    'INVALID_DAST_CONFIG_FILE';
+  AllowDomainResultMessageEnum['INVALID_IAST_CONFIG_FILE'] =
+    'INVALID_IAST_CONFIG_FILE';
+  AllowDomainResultMessageEnum['APP_CONCURRENT_SCANS_AND_QUEUE_EXCEEDED'] =
+    'APP_CONCURRENT_SCANS_AND_QUEUE_EXCEEDED';
+  AllowDomainResultMessageEnum['MISSING_OFFERING_TYPE'] =
+    'MISSING_OFFERING_TYPE';
+  AllowDomainResultMessageEnum['ASSETGROUP_NAME_ALREADY_EXISTS'] =
+    'ASSETGROUP_NAME_ALREADY_EXISTS';
+  AllowDomainResultMessageEnum['ASSETGROUP_ASSOCIATION_ERROR'] =
+    'ASSETGROUP_ASSOCIATION_ERROR';
+  AllowDomainResultMessageEnum['ASSETGROUP_CHANGE_DEFAULT_NOTALLOWED'] =
+    'ASSETGROUP_CHANGE_DEFAULT_NOTALLOWED';
+  AllowDomainResultMessageEnum['ASSETGROUP_INVALID_CONTACT_PERSON'] =
+    'ASSETGROUP_INVALID_CONTACT_PERSON';
+  AllowDomainResultMessageEnum['ASSETGROUP_OVERRIDE_AUTO_CLOSE_NOTALLOWED'] =
+    'ASSETGROUP_OVERRIDE_AUTO_CLOSE_NOTALLOWED';
+  AllowDomainResultMessageEnum['ROLE_NAME_ALREADY_EXISTS'] =
+    'ROLE_NAME_ALREADY_EXISTS';
+  AllowDomainResultMessageEnum['ROLE_NOT_EXISTS'] = 'ROLE_NOT_EXISTS';
+  AllowDomainResultMessageEnum['ROLE_PREDEFINED_DELETION_NOT_ALLOWED'] =
+    'ROLE_PREDEFINED_DELETION_NOT_ALLOWED';
+  AllowDomainResultMessageEnum['ROLE_PREDEFINED_EDIT_NOT_ALLOWED'] =
+    'ROLE_PREDEFINED_EDIT_NOT_ALLOWED';
+  AllowDomainResultMessageEnum['ROLE_DEFAULT_DELETION_NOT_ALLOWED'] =
+    'ROLE_DEFAULT_DELETION_NOT_ALLOWED';
+  AllowDomainResultMessageEnum['ROLE_UNSET_DEFAULT_NOT_ALLOWED'] =
+    'ROLE_UNSET_DEFAULT_NOT_ALLOWED';
+  AllowDomainResultMessageEnum['ROLE_ASSOCIATION_ERROR'] =
+    'ROLE_ASSOCIATION_ERROR';
+  AllowDomainResultMessageEnum['ORGANIZATION_NO_ACCESS'] =
+    'ORGANIZATION_NO_ACCESS';
+  AllowDomainResultMessageEnum['ORGANIZATION_NOT_FOUND'] =
+    'ORGANIZATION_NOT_FOUND';
+  AllowDomainResultMessageEnum['ORGANIZATION_CUSTOMIZATIONS_NOT_FOUND'] =
+    'ORGANIZATION_CUSTOMIZATIONS_NOT_FOUND';
+  AllowDomainResultMessageEnum['UPDATE_ORGANIZATION_LOGO_FAILURE'] =
+    'UPDATE_ORGANIZATION_LOGO_FAILURE';
+  AllowDomainResultMessageEnum['APPLICATION_NAME_ALREADY_EXISTS'] =
+    'APPLICATION_NAME_ALREADY_EXISTS';
+  AllowDomainResultMessageEnum['APPLICATION_NO_ACCESS'] =
+    'APPLICATION_NO_ACCESS';
+  AllowDomainResultMessageEnum['SCAN_NO_ACCESS'] = 'SCAN_NO_ACCESS';
+  AllowDomainResultMessageEnum['SCAN_EXECUTION_NO_ACCESS'] =
+    'SCAN_EXECUTION_NO_ACCESS';
+  AllowDomainResultMessageEnum['ISSUE_NO_ACCESS'] = 'ISSUE_NO_ACCESS';
+  AllowDomainResultMessageEnum['FIXGROUP_NO_ACCESS'] = 'FIXGROUP_NO_ACCESS';
+  AllowDomainResultMessageEnum['PACKAGE_NO_ACCESS'] = 'PACKAGE_NO_ACCESS';
+  AllowDomainResultMessageEnum['INVALID_CSV_FILE'] = 'INVALID_CSV_FILE';
+  AllowDomainResultMessageEnum['ISSUES_INVALID_IDS'] = 'ISSUES_INVALID_IDS';
+  AllowDomainResultMessageEnum['REPORT_IN_PROGRESS_ERROR'] =
+    'REPORT_IN_PROGRESS_ERROR';
+  AllowDomainResultMessageEnum['MISSING_APP_ID'] = 'MISSING_APP_ID';
+  AllowDomainResultMessageEnum['MISSING_CAPABILITIES'] = 'MISSING_CAPABILITIES';
+  AllowDomainResultMessageEnum['NO_ADMIN_ROLE_ERROR'] = 'NO_ADMIN_ROLE_ERROR';
+  AllowDomainResultMessageEnum['NOT_SAME_ASSET_GROUPS'] =
+    'NOT_SAME_ASSET_GROUPS';
+  AllowDomainResultMessageEnum['INVALID_POLICY_ID'] = 'INVALID_POLICY_ID';
+  AllowDomainResultMessageEnum['INVALID_POLICY_EXPRESSION'] =
+    'INVALID_POLICY_EXPRESSION';
+  AllowDomainResultMessageEnum['INVALID_POLICY_PARAMETERS'] =
+    'INVALID_POLICY_PARAMETERS';
+  AllowDomainResultMessageEnum['POLICY_ALREADY_ASSOCIATED_TO_APP'] =
+    'POLICY_ALREADY_ASSOCIATED_TO_APP';
+  AllowDomainResultMessageEnum['POLICY_NAME_ALREADY_EXISTS'] =
+    'POLICY_NAME_ALREADY_EXISTS';
+  AllowDomainResultMessageEnum['INVALID_POLICY_IDENTIFIER'] =
+    'INVALID_POLICY_IDENTIFIER';
+  AllowDomainResultMessageEnum['POLICY_PREDEFINED_DELETION_NOT_ALLOWED'] =
+    'POLICY_PREDEFINED_DELETION_NOT_ALLOWED';
+  AllowDomainResultMessageEnum['POLICY_PREDEFINED_MODIFICATION_NOT_ALLOWED'] =
+    'POLICY_PREDEFINED_MODIFICATION_NOT_ALLOWED';
+  AllowDomainResultMessageEnum['POLICY_DELETION_NOT_ALLOWED'] =
+    'POLICY_DELETION_NOT_ALLOWED';
+  AllowDomainResultMessageEnum['POLICY_INVALID_DATE_FORMAT'] =
+    'POLICY_INVALID_DATE_FORMAT';
+  AllowDomainResultMessageEnum['POLICY_INVALID_SEVERITY_VALUE'] =
+    'POLICY_INVALID_SEVERITY_VALUE';
+  AllowDomainResultMessageEnum['POLICY_INVALID_TECHNOLOGY_VALUE'] =
+    'POLICY_INVALID_TECHNOLOGY_VALUE';
+  AllowDomainResultMessageEnum['POLICY_OPERATION_NOT_ERROR'] =
+    'POLICY_OPERATION_NOT_ERROR';
+  AllowDomainResultMessageEnum['POLICY_OPERATION_AND_ERROR'] =
+    'POLICY_OPERATION_AND_ERROR';
+  AllowDomainResultMessageEnum['POLICY_INVALID_EXPRESSION_DEPTH'] =
+    'POLICY_INVALID_EXPRESSION_DEPTH';
+  AllowDomainResultMessageEnum['INVALID_TEST_POLICY_IDENTIFIER'] =
+    'INVALID_TEST_POLICY_IDENTIFIER';
+  AllowDomainResultMessageEnum['INVALID_TEST_POLICY_FILE'] =
+    'INVALID_TEST_POLICY_FILE';
+  AllowDomainResultMessageEnum['INVALID_TEST_POLICY_NAME'] =
+    'INVALID_TEST_POLICY_NAME';
+  AllowDomainResultMessageEnum['TEST_POLICY_NAME_ALREADY_EXISTS'] =
+    'TEST_POLICY_NAME_ALREADY_EXISTS';
+  AllowDomainResultMessageEnum['MISSING_TEST_POLICY_FILE'] =
+    'MISSING_TEST_POLICY_FILE';
   AllowDomainResultMessageEnum[
-    "TEST_POLICY_PREDEFINED_MODIFICATION_NOT_ALLOWED"
-  ] = "TEST_POLICY_PREDEFINED_MODIFICATION_NOT_ALLOWED";
-  AllowDomainResultMessageEnum["TEST_POLICY_UNSET_DEFAULT_NOT_ALLOWED"] =
-    "TEST_POLICY_UNSET_DEFAULT_NOT_ALLOWED";
-  AllowDomainResultMessageEnum["SANDBOX_ONLY_PRIVATE_CAN_BE_PROMOTE"] =
-    "SANDBOX_ONLY_PRIVATE_CAN_BE_PROMOTE";
-  AllowDomainResultMessageEnum["PROMOTE_DISABLED_FOR_SCAN"] =
-    "PROMOTE_DISABLED_FOR_SCAN";
-  AllowDomainResultMessageEnum["POLICY_INVALID_CWE_FORMAT"] =
-    "POLICY_INVALID_CWE_FORMAT";
-  AllowDomainResultMessageEnum["POLICY_ASSOCIATION_LIMIT_REACHED"] =
-    "POLICY_ASSOCIATION_LIMIT_REACHED";
-  AllowDomainResultMessageEnum["APPLICATIONS_MISMATCH"] =
-    "APPLICATIONS_MISMATCH";
-  AllowDomainResultMessageEnum["PAY_PER_APP_APPLICATION_CANNOT_BE_DELETED"] =
-    "PAY_PER_APP_APPLICATION_CANNOT_BE_DELETED";
-  AllowDomainResultMessageEnum["PAY_PER_APP_APPLICATION_CANNOT_BE_MODIFIED"] =
-    "PAY_PER_APP_APPLICATION_CANNOT_BE_MODIFIED";
-  AllowDomainResultMessageEnum["ENVIRONMENT_STATUS_ERROR"] =
-    "ENVIRONMENT_STATUS_ERROR";
-  AllowDomainResultMessageEnum["INVALID_LICENSE"] = "INVALID_LICENSE";
-  AllowDomainResultMessageEnum["USER_ALREADY_SUBSCRIBED"] =
-    "USER_ALREADY_SUBSCRIBED";
-  AllowDomainResultMessageEnum["REGISTERATION_FAILURE"] =
-    "REGISTERATION_FAILURE";
-  AllowDomainResultMessageEnum["TRIAL_EXPIRED"] = "TRIAL_EXPIRED";
-  AllowDomainResultMessageEnum["LICENSE_REQUIRED"] = "LICENSE_REQUIRED";
-  AllowDomainResultMessageEnum["REPORT_FILE_TYPE_IS_NOT_SUPPORTED"] =
-    "REPORT_FILE_TYPE_IS_NOT_SUPPORTED";
-  AllowDomainResultMessageEnum["ODATA_QUERY_ERROR"] = "ODATA_QUERY_ERROR";
-  AllowDomainResultMessageEnum["BLOCKED_EMAIL_DOMAIN"] = "BLOCKED_EMAIL_DOMAIN";
-  AllowDomainResultMessageEnum["LOGIN_USING_IBMID_CRED_DEPRECATED"] =
-    "LOGIN_USING_IBMID_CRED_DEPRECATED";
-  AllowDomainResultMessageEnum["DOWNLOAD_TRIAL_SCAN_NOT_PERMITTED"] =
-    "DOWNLOAD_TRIAL_SCAN_NOT_PERMITTED";
-  AllowDomainResultMessageEnum["JOB_STATUS_CHANGE_ERROR"] =
-    "JOB_STATUS_CHANGE_ERROR";
-  AllowDomainResultMessageEnum["INVALID_EMAIL_PATTERN"] =
-    "INVALID_EMAIL_PATTERN";
-  AllowDomainResultMessageEnum["INVALID_EMAIL_DOMAIN"] = "INVALID_EMAIL_DOMAIN";
-  AllowDomainResultMessageEnum["STICKY_STATUS_PERSONAL_SCAN"] =
-    "STICKY_STATUS_PERSONAL_SCAN";
-  AllowDomainResultMessageEnum["STICKY_STATUS_MISSING_STATUS"] =
-    "STICKY_STATUS_MISSING_STATUS";
-  AllowDomainResultMessageEnum["ISSUE_STATUS_NEW_DEPRECATED"] =
-    "ISSUE_STATUS_NEW_DEPRECATED";
-  AllowDomainResultMessageEnum["INVALID_WEBHOOK_IDENTIFIER"] =
-    "INVALID_WEBHOOK_IDENTIFIER";
-  AllowDomainResultMessageEnum["WEBHOOK_OWNED_BY_ASSET_GROUP_ERROR"] =
-    "WEBHOOK_OWNED_BY_ASSET_GROUP_ERROR";
-  AllowDomainResultMessageEnum["INVALID_PRESENCE_IDENTIFIER"] =
-    "INVALID_PRESENCE_IDENTIFIER";
-  AllowDomainResultMessageEnum["INVALID_SCOPE_IDENTIFIER"] =
-    "INVALID_SCOPE_IDENTIFIER";
-  AllowDomainResultMessageEnum["RESCAN_IAST_FORBIDDEN"] =
-    "RESCAN_IAST_FORBIDDEN";
-  AllowDomainResultMessageEnum["INVALID_SUBSCRIPTION_FOR_TECHNOLOGY"] =
-    "INVALID_SUBSCRIPTION_FOR_TECHNOLOGY";
-  AllowDomainResultMessageEnum["SUBSCRIPTION_LIMIT_EXCEEDED"] =
-    "SUBSCRIPTION_LIMIT_EXCEEDED";
-  AllowDomainResultMessageEnum["USER_QUEUE_LIMIT_EXCEEDED"] =
-    "USER_QUEUE_LIMIT_EXCEEDED";
-  AllowDomainResultMessageEnum["DOMAIN_NO_ACCESS"] = "DOMAIN_NO_ACCESS";
-  AllowDomainResultMessageEnum["DOMAIN_INVALID_VERIFICATION_METHOD"] =
-    "DOMAIN_INVALID_VERIFICATION_METHOD";
-  AllowDomainResultMessageEnum["DOMAIN_IS_ALREADY_VERIFIED"] =
-    "DOMAIN_IS_ALREADY_VERIFIED";
-  AllowDomainResultMessageEnum["MOBILE_TECHNOLOGY_NOT_SUPPORTED"] =
-    "MOBILE_TECHNOLOGY_NOT_SUPPORTED";
-  AllowDomainResultMessageEnum["DASTCONFIG_DOMAIN_MISMATCH"] =
-    "DASTCONFIG_DOMAIN_MISMATCH";
-  AllowDomainResultMessageEnum["INVALID_ID_OR_MISSING_CAPABILITIES"] =
-    "INVALID_ID_OR_MISSING_CAPABILITIES";
-  AllowDomainResultMessageEnum["ISSUES_UPDATE_LIMIT_EXCEEDED"] =
-    "ISSUES_UPDATE_LIMIT_EXCEEDED";
-  AllowDomainResultMessageEnum["ASSETGROUP_NO_ACCESS"] = "ASSETGROUP_NO_ACCESS";
-  AllowDomainResultMessageEnum["USER_IS_ASSETGROUP_CONTACT"] =
-    "USER_IS_ASSETGROUP_CONTACT";
-  AllowDomainResultMessageEnum["PRESENCE_NO_ACCESS"] = "PRESENCE_NO_ACCESS";
-  AllowDomainResultMessageEnum["TOKEN_EXPIRED"] = "TOKEN_EXPIRED";
-  AllowDomainResultMessageEnum["DAST_INVALID_TRAFFIC_FILES"] =
-    "DAST_INVALID_TRAFFIC_FILES";
-  AllowDomainResultMessageEnum["INVALID_SCANT_MANUALEXPLORE_TESTONLY"] =
-    "INVALID_SCANT_MANUALEXPLORE_TESTONLY";
-  AllowDomainResultMessageEnum["INVALID_SCAN_WITH_TRAFFIC_CONFIG"] =
-    "INVALID_SCAN_WITH_TRAFFIC_CONFIG";
-  AllowDomainResultMessageEnum["BUSINESS_UNIT_ALREADY_EXISTS"] =
-    "BUSINESS_UNIT_ALREADY_EXISTS";
-  AllowDomainResultMessageEnum["BUSINESS_UNIT_DOES_NOT_EXIST"] =
-    "BUSINESS_UNIT_DOES_NOT_EXIST";
-  AllowDomainResultMessageEnum["BUSINESS_UNIT_IS_ASSOCIATED_WITH_APPS_ERROR"] =
-    "BUSINESS_UNIT_IS_ASSOCIATED_WITH_APPS_ERROR";
-  AllowDomainResultMessageEnum["BUSINESS_UNIT_UPDATE_APP_ERROR"] =
-    "BUSINESS_UNIT_UPDATE_APP_ERROR";
-  AllowDomainResultMessageEnum["BUSINESS_UNITS_TO_MERGE_ARE_EQUAL"] =
-    "BUSINESS_UNITS_TO_MERGE_ARE_EQUAL";
-  AllowDomainResultMessageEnum["INVALID_RECURRENCE"] = "INVALID_RECURRENCE";
-  AllowDomainResultMessageEnum["TOO_MANY_ISSUES_FOR_THIS_ACTION"] =
-    "TOO_MANY_ISSUES_FOR_THIS_ACTION";
-  AllowDomainResultMessageEnum["INVALID_ZIP_FILE"] = "INVALID_ZIP_FILE";
-  AllowDomainResultMessageEnum["INVALID_XML_FILE"] = "INVALID_XML_FILE";
-  AllowDomainResultMessageEnum["INVALID_IMAGE_FILE"] = "INVALID_IMAGE_FILE";
-  AllowDomainResultMessageEnum["AD_LOGIN_DISABLED"] = "AD_LOGIN_DISABLED";
-  AllowDomainResultMessageEnum["INVALID_USR_PWD"] = "INVALID_USR_PWD";
-  AllowDomainResultMessageEnum["INTERNAL_ADMIN_INACTIVE"] =
-    "INTERNAL_ADMIN_INACTIVE";
-  AllowDomainResultMessageEnum["USER_NOT_AUTHORIZED"] = "USER_NOT_AUTHORIZED";
-  AllowDomainResultMessageEnum["PASSWORD_EXPIRED"] = "PASSWORD_EXPIRED";
-  AllowDomainResultMessageEnum["AD_ACCOUNT_LOCKED_OUT"] =
-    "AD_ACCOUNT_LOCKED_OUT";
-  AllowDomainResultMessageEnum["CHANGE_ROLE_NOT_SUPPORTED"] =
-    "CHANGE_ROLE_NOT_SUPPORTED";
-  AllowDomainResultMessageEnum["SCAN_EXECUTIONS_SCAN_LIMIT_EXCEEDED"] =
-    "SCAN_EXECUTIONS_SCAN_LIMIT_EXCEEDED";
-  AllowDomainResultMessageEnum["SCANS_PER_APPLICATION_LIMIT_EXCEEDED"] =
-    "SCANS_PER_APPLICATION_LIMIT_EXCEEDED";
-  AllowDomainResultMessageEnum["ISSUES_PER_APPLICATION_LIMIT_EXCEEDED"] =
-    "ISSUES_PER_APPLICATION_LIMIT_EXCEEDED";
-  AllowDomainResultMessageEnum["NO_METAL_SUBSCRIPTION"] =
-    "NO_METAL_SUBSCRIPTION";
-  AllowDomainResultMessageEnum["TECHNOLOGIES_ALREAY_SET"] =
-    "TECHNOLOGIES_ALREAY_SET";
-  AllowDomainResultMessageEnum["PROVIDED_LIST_IS_TOO_LONG"] =
-    "PROVIDED_LIST_IS_TOO_LONG";
-  AllowDomainResultMessageEnum["INVALID_JSON_FILE"] = "INVALID_JSON_FILE";
-  AllowDomainResultMessageEnum["WRONG_CREDENTIALS"] = "WRONG_CREDENTIALS";
-  AllowDomainResultMessageEnum["INVITATION_REQUIRED"] = "INVITATION_REQUIRED";
-  AllowDomainResultMessageEnum["REGISTER_USERS_MANUAL_ONBOARD"] =
-    "REGISTER_USERS_MANUAL_ONBOARD";
-  AllowDomainResultMessageEnum["RESCAN_SAST_FORBIDDEN"] =
-    "RESCAN_SAST_FORBIDDEN";
-  AllowDomainResultMessageEnum["SCA_DOESNT_SUPPORT_IFA"] =
-    "SCA_DOESNT_SUPPORT_IFA";
-  AllowDomainResultMessageEnum["SCA_DOESNT_SUPPORT_OPEN_SOURCE_FILES"] =
-    "SCA_DOESNT_SUPPORT_OPEN_SOURCE_FILES";
-  AllowDomainResultMessageEnum["ENCRYPTED_DAST_FILE"] = "ENCRYPTED_DAST_FILE";
-  AllowDomainResultMessageEnum["DOWNLOADING_FILE_FAILED"] =
-    "DOWNLOADING_FILE_FAILED";
-  AllowDomainResultMessageEnum["RESOURCE_NOT_FOUND"] = "RESOURCE_NOT_FOUND";
-  AllowDomainResultMessageEnum["SOURCE_IP_RESTRICTION_VIOLATION"] =
-    "SOURCE_IP_RESTRICTION_VIOLATION";
-  AllowDomainResultMessageEnum["SOURCE_IP_MISMATCH"] = "SOURCE_IP_MISMATCH";
-  AllowDomainResultMessageEnum["PDF_FORMAT_NOT_SUPPORTED"] =
-    "PDF_FORMAT_NOT_SUPPORTED";
-  AllowDomainResultMessageEnum["FILE_NOT_FOUND"] = "FILE_NOT_FOUND";
-  AllowDomainResultMessageEnum["INVALID_TECHNOLOGIES_FOR_SUBSCRIPTION"] =
-    "INVALID_TECHNOLOGIES_FOR_SUBSCRIPTION";
-  AllowDomainResultMessageEnum["SBOM_RAW_DATA_NOT_AVAILABLE"] =
-    "SBOM_RAW_DATA_NOT_AVAILABLE";
-  AllowDomainResultMessageEnum["APP_SCANS_LIMIT_EXCEEDED"] =
-    "APP_SCANS_LIMIT_EXCEEDED";
-  AllowDomainResultMessageEnum["REPORT_SIGNITURE_UNVERIFIED"] =
-    "REPORT_SIGNITURE_UNVERIFIED";
-  AllowDomainResultMessageEnum["SIGNATURE_UNVERIFIED"] = "SIGNATURE_UNVERIFIED";
-  AllowDomainResultMessageEnum["DOMAIN_NOT_FOUND"] = "DOMAIN_NOT_FOUND";
-  AllowDomainResultMessageEnum["PROVIDED_URL_DOMAIN_IS_INVALID"] =
-    "PROVIDED_URL_DOMAIN_IS_INVALID";
-  AllowDomainResultMessageEnum["PROVIDED_IP_IS_INVALID"] =
-    "PROVIDED_IP_IS_INVALID";
+    'TEST_POLICY_PREDEFINED_MODIFICATION_NOT_ALLOWED'
+  ] = 'TEST_POLICY_PREDEFINED_MODIFICATION_NOT_ALLOWED';
+  AllowDomainResultMessageEnum['TEST_POLICY_UNSET_DEFAULT_NOT_ALLOWED'] =
+    'TEST_POLICY_UNSET_DEFAULT_NOT_ALLOWED';
+  AllowDomainResultMessageEnum['SANDBOX_ONLY_PRIVATE_CAN_BE_PROMOTE'] =
+    'SANDBOX_ONLY_PRIVATE_CAN_BE_PROMOTE';
+  AllowDomainResultMessageEnum['PROMOTE_DISABLED_FOR_SCAN'] =
+    'PROMOTE_DISABLED_FOR_SCAN';
+  AllowDomainResultMessageEnum['POLICY_INVALID_CWE_FORMAT'] =
+    'POLICY_INVALID_CWE_FORMAT';
+  AllowDomainResultMessageEnum['POLICY_ASSOCIATION_LIMIT_REACHED'] =
+    'POLICY_ASSOCIATION_LIMIT_REACHED';
+  AllowDomainResultMessageEnum['APPLICATIONS_MISMATCH'] =
+    'APPLICATIONS_MISMATCH';
+  AllowDomainResultMessageEnum['PAY_PER_APP_APPLICATION_CANNOT_BE_DELETED'] =
+    'PAY_PER_APP_APPLICATION_CANNOT_BE_DELETED';
+  AllowDomainResultMessageEnum['PAY_PER_APP_APPLICATION_CANNOT_BE_MODIFIED'] =
+    'PAY_PER_APP_APPLICATION_CANNOT_BE_MODIFIED';
+  AllowDomainResultMessageEnum['ENVIRONMENT_STATUS_ERROR'] =
+    'ENVIRONMENT_STATUS_ERROR';
+  AllowDomainResultMessageEnum['INVALID_LICENSE'] = 'INVALID_LICENSE';
+  AllowDomainResultMessageEnum['USER_ALREADY_SUBSCRIBED'] =
+    'USER_ALREADY_SUBSCRIBED';
+  AllowDomainResultMessageEnum['REGISTERATION_FAILURE'] =
+    'REGISTERATION_FAILURE';
+  AllowDomainResultMessageEnum['TRIAL_EXPIRED'] = 'TRIAL_EXPIRED';
+  AllowDomainResultMessageEnum['LICENSE_REQUIRED'] = 'LICENSE_REQUIRED';
+  AllowDomainResultMessageEnum['REPORT_FILE_TYPE_IS_NOT_SUPPORTED'] =
+    'REPORT_FILE_TYPE_IS_NOT_SUPPORTED';
+  AllowDomainResultMessageEnum['ODATA_QUERY_ERROR'] = 'ODATA_QUERY_ERROR';
+  AllowDomainResultMessageEnum['BLOCKED_EMAIL_DOMAIN'] = 'BLOCKED_EMAIL_DOMAIN';
+  AllowDomainResultMessageEnum['LOGIN_USING_IBMID_CRED_DEPRECATED'] =
+    'LOGIN_USING_IBMID_CRED_DEPRECATED';
+  AllowDomainResultMessageEnum['DOWNLOAD_TRIAL_SCAN_NOT_PERMITTED'] =
+    'DOWNLOAD_TRIAL_SCAN_NOT_PERMITTED';
+  AllowDomainResultMessageEnum['JOB_STATUS_CHANGE_ERROR'] =
+    'JOB_STATUS_CHANGE_ERROR';
+  AllowDomainResultMessageEnum['INVALID_EMAIL_PATTERN'] =
+    'INVALID_EMAIL_PATTERN';
+  AllowDomainResultMessageEnum['INVALID_EMAIL_DOMAIN'] = 'INVALID_EMAIL_DOMAIN';
+  AllowDomainResultMessageEnum['STICKY_STATUS_PERSONAL_SCAN'] =
+    'STICKY_STATUS_PERSONAL_SCAN';
+  AllowDomainResultMessageEnum['STICKY_STATUS_MISSING_STATUS'] =
+    'STICKY_STATUS_MISSING_STATUS';
+  AllowDomainResultMessageEnum['ISSUE_STATUS_NEW_DEPRECATED'] =
+    'ISSUE_STATUS_NEW_DEPRECATED';
+  AllowDomainResultMessageEnum['INVALID_WEBHOOK_IDENTIFIER'] =
+    'INVALID_WEBHOOK_IDENTIFIER';
+  AllowDomainResultMessageEnum['WEBHOOK_OWNED_BY_ASSET_GROUP_ERROR'] =
+    'WEBHOOK_OWNED_BY_ASSET_GROUP_ERROR';
+  AllowDomainResultMessageEnum['INVALID_PRESENCE_IDENTIFIER'] =
+    'INVALID_PRESENCE_IDENTIFIER';
+  AllowDomainResultMessageEnum['INVALID_SCOPE_IDENTIFIER'] =
+    'INVALID_SCOPE_IDENTIFIER';
+  AllowDomainResultMessageEnum['RESCAN_IAST_FORBIDDEN'] =
+    'RESCAN_IAST_FORBIDDEN';
+  AllowDomainResultMessageEnum['INVALID_SUBSCRIPTION_FOR_TECHNOLOGY'] =
+    'INVALID_SUBSCRIPTION_FOR_TECHNOLOGY';
+  AllowDomainResultMessageEnum['SUBSCRIPTION_LIMIT_EXCEEDED'] =
+    'SUBSCRIPTION_LIMIT_EXCEEDED';
+  AllowDomainResultMessageEnum['USER_QUEUE_LIMIT_EXCEEDED'] =
+    'USER_QUEUE_LIMIT_EXCEEDED';
+  AllowDomainResultMessageEnum['DOMAIN_NO_ACCESS'] = 'DOMAIN_NO_ACCESS';
+  AllowDomainResultMessageEnum['DOMAIN_INVALID_VERIFICATION_METHOD'] =
+    'DOMAIN_INVALID_VERIFICATION_METHOD';
+  AllowDomainResultMessageEnum['DOMAIN_IS_ALREADY_VERIFIED'] =
+    'DOMAIN_IS_ALREADY_VERIFIED';
+  AllowDomainResultMessageEnum['MOBILE_TECHNOLOGY_NOT_SUPPORTED'] =
+    'MOBILE_TECHNOLOGY_NOT_SUPPORTED';
+  AllowDomainResultMessageEnum['DASTCONFIG_DOMAIN_MISMATCH'] =
+    'DASTCONFIG_DOMAIN_MISMATCH';
+  AllowDomainResultMessageEnum['INVALID_ID_OR_MISSING_CAPABILITIES'] =
+    'INVALID_ID_OR_MISSING_CAPABILITIES';
+  AllowDomainResultMessageEnum['ISSUES_UPDATE_LIMIT_EXCEEDED'] =
+    'ISSUES_UPDATE_LIMIT_EXCEEDED';
+  AllowDomainResultMessageEnum['ASSETGROUP_NO_ACCESS'] = 'ASSETGROUP_NO_ACCESS';
+  AllowDomainResultMessageEnum['USER_IS_ASSETGROUP_CONTACT'] =
+    'USER_IS_ASSETGROUP_CONTACT';
+  AllowDomainResultMessageEnum['PRESENCE_NO_ACCESS'] = 'PRESENCE_NO_ACCESS';
+  AllowDomainResultMessageEnum['TOKEN_EXPIRED'] = 'TOKEN_EXPIRED';
+  AllowDomainResultMessageEnum['DAST_INVALID_TRAFFIC_FILES'] =
+    'DAST_INVALID_TRAFFIC_FILES';
+  AllowDomainResultMessageEnum['INVALID_SCANT_MANUALEXPLORE_TESTONLY'] =
+    'INVALID_SCANT_MANUALEXPLORE_TESTONLY';
+  AllowDomainResultMessageEnum['INVALID_SCAN_WITH_TRAFFIC_CONFIG'] =
+    'INVALID_SCAN_WITH_TRAFFIC_CONFIG';
+  AllowDomainResultMessageEnum['BUSINESS_UNIT_ALREADY_EXISTS'] =
+    'BUSINESS_UNIT_ALREADY_EXISTS';
+  AllowDomainResultMessageEnum['BUSINESS_UNIT_DOES_NOT_EXIST'] =
+    'BUSINESS_UNIT_DOES_NOT_EXIST';
+  AllowDomainResultMessageEnum['BUSINESS_UNIT_IS_ASSOCIATED_WITH_APPS_ERROR'] =
+    'BUSINESS_UNIT_IS_ASSOCIATED_WITH_APPS_ERROR';
+  AllowDomainResultMessageEnum['BUSINESS_UNIT_UPDATE_APP_ERROR'] =
+    'BUSINESS_UNIT_UPDATE_APP_ERROR';
+  AllowDomainResultMessageEnum['BUSINESS_UNITS_TO_MERGE_ARE_EQUAL'] =
+    'BUSINESS_UNITS_TO_MERGE_ARE_EQUAL';
+  AllowDomainResultMessageEnum['INVALID_RECURRENCE'] = 'INVALID_RECURRENCE';
+  AllowDomainResultMessageEnum['TOO_MANY_ISSUES_FOR_THIS_ACTION'] =
+    'TOO_MANY_ISSUES_FOR_THIS_ACTION';
+  AllowDomainResultMessageEnum['INVALID_ZIP_FILE'] = 'INVALID_ZIP_FILE';
+  AllowDomainResultMessageEnum['INVALID_XML_FILE'] = 'INVALID_XML_FILE';
+  AllowDomainResultMessageEnum['INVALID_IMAGE_FILE'] = 'INVALID_IMAGE_FILE';
+  AllowDomainResultMessageEnum['AD_LOGIN_DISABLED'] = 'AD_LOGIN_DISABLED';
+  AllowDomainResultMessageEnum['INVALID_USR_PWD'] = 'INVALID_USR_PWD';
+  AllowDomainResultMessageEnum['INTERNAL_ADMIN_INACTIVE'] =
+    'INTERNAL_ADMIN_INACTIVE';
+  AllowDomainResultMessageEnum['USER_NOT_AUTHORIZED'] = 'USER_NOT_AUTHORIZED';
+  AllowDomainResultMessageEnum['PASSWORD_EXPIRED'] = 'PASSWORD_EXPIRED';
+  AllowDomainResultMessageEnum['AD_ACCOUNT_LOCKED_OUT'] =
+    'AD_ACCOUNT_LOCKED_OUT';
+  AllowDomainResultMessageEnum['CHANGE_ROLE_NOT_SUPPORTED'] =
+    'CHANGE_ROLE_NOT_SUPPORTED';
+  AllowDomainResultMessageEnum['SCAN_EXECUTIONS_SCAN_LIMIT_EXCEEDED'] =
+    'SCAN_EXECUTIONS_SCAN_LIMIT_EXCEEDED';
+  AllowDomainResultMessageEnum['SCANS_PER_APPLICATION_LIMIT_EXCEEDED'] =
+    'SCANS_PER_APPLICATION_LIMIT_EXCEEDED';
+  AllowDomainResultMessageEnum['ISSUES_PER_APPLICATION_LIMIT_EXCEEDED'] =
+    'ISSUES_PER_APPLICATION_LIMIT_EXCEEDED';
+  AllowDomainResultMessageEnum['NO_METAL_SUBSCRIPTION'] =
+    'NO_METAL_SUBSCRIPTION';
+  AllowDomainResultMessageEnum['TECHNOLOGIES_ALREAY_SET'] =
+    'TECHNOLOGIES_ALREAY_SET';
+  AllowDomainResultMessageEnum['PROVIDED_LIST_IS_TOO_LONG'] =
+    'PROVIDED_LIST_IS_TOO_LONG';
+  AllowDomainResultMessageEnum['INVALID_JSON_FILE'] = 'INVALID_JSON_FILE';
+  AllowDomainResultMessageEnum['WRONG_CREDENTIALS'] = 'WRONG_CREDENTIALS';
+  AllowDomainResultMessageEnum['INVITATION_REQUIRED'] = 'INVITATION_REQUIRED';
+  AllowDomainResultMessageEnum['REGISTER_USERS_MANUAL_ONBOARD'] =
+    'REGISTER_USERS_MANUAL_ONBOARD';
+  AllowDomainResultMessageEnum['RESCAN_SAST_FORBIDDEN'] =
+    'RESCAN_SAST_FORBIDDEN';
+  AllowDomainResultMessageEnum['SCA_DOESNT_SUPPORT_IFA'] =
+    'SCA_DOESNT_SUPPORT_IFA';
+  AllowDomainResultMessageEnum['SCA_DOESNT_SUPPORT_OPEN_SOURCE_FILES'] =
+    'SCA_DOESNT_SUPPORT_OPEN_SOURCE_FILES';
+  AllowDomainResultMessageEnum['ENCRYPTED_DAST_FILE'] = 'ENCRYPTED_DAST_FILE';
+  AllowDomainResultMessageEnum['DOWNLOADING_FILE_FAILED'] =
+    'DOWNLOADING_FILE_FAILED';
+  AllowDomainResultMessageEnum['RESOURCE_NOT_FOUND'] = 'RESOURCE_NOT_FOUND';
+  AllowDomainResultMessageEnum['SOURCE_IP_RESTRICTION_VIOLATION'] =
+    'SOURCE_IP_RESTRICTION_VIOLATION';
+  AllowDomainResultMessageEnum['SOURCE_IP_MISMATCH'] = 'SOURCE_IP_MISMATCH';
+  AllowDomainResultMessageEnum['PDF_FORMAT_NOT_SUPPORTED'] =
+    'PDF_FORMAT_NOT_SUPPORTED';
+  AllowDomainResultMessageEnum['FILE_NOT_FOUND'] = 'FILE_NOT_FOUND';
+  AllowDomainResultMessageEnum['INVALID_TECHNOLOGIES_FOR_SUBSCRIPTION'] =
+    'INVALID_TECHNOLOGIES_FOR_SUBSCRIPTION';
+  AllowDomainResultMessageEnum['SBOM_RAW_DATA_NOT_AVAILABLE'] =
+    'SBOM_RAW_DATA_NOT_AVAILABLE';
+  AllowDomainResultMessageEnum['APP_SCANS_LIMIT_EXCEEDED'] =
+    'APP_SCANS_LIMIT_EXCEEDED';
+  AllowDomainResultMessageEnum['REPORT_SIGNITURE_UNVERIFIED'] =
+    'REPORT_SIGNITURE_UNVERIFIED';
+  AllowDomainResultMessageEnum['SIGNATURE_UNVERIFIED'] = 'SIGNATURE_UNVERIFIED';
+  AllowDomainResultMessageEnum['DOMAIN_NOT_FOUND'] = 'DOMAIN_NOT_FOUND';
+  AllowDomainResultMessageEnum['PROVIDED_URL_DOMAIN_IS_INVALID'] =
+    'PROVIDED_URL_DOMAIN_IS_INVALID';
+  AllowDomainResultMessageEnum['PROVIDED_IP_IS_INVALID'] =
+    'PROVIDED_IP_IS_INVALID';
   AllowDomainResultMessageEnum[
-    "DOMAIN_VERIFICATION_IS_NOT_REQUIRED_IN_YOUR_ORG"
-  ] = "DOMAIN_VERIFICATION_IS_NOT_REQUIRED_IN_YOUR_ORG";
-  AllowDomainResultMessageEnum["DOMAIN_VERIFICATION_IS_REQUIRED_IN_YOUR_ORG"] =
-    "DOMAIN_VERIFICATION_IS_REQUIRED_IN_YOUR_ORG";
-  AllowDomainResultMessageEnum["DOMAIN_ALREADY_BLOCKED"] =
-    "DOMAIN_ALREADY_BLOCKED";
-  AllowDomainResultMessageEnum["PARENT_DOMAIN_IS_ALREADY_BLOCKED"] =
-    "PARENT_DOMAIN_IS_ALREADY_BLOCKED";
-  AllowDomainResultMessageEnum["DOMAIN_ALREADY_ALLOWED"] =
-    "DOMAIN_ALREADY_ALLOWED";
-  AllowDomainResultMessageEnum["PARENT_DOMAIN_IS_ALREADY_ALLOWED"] =
-    "PARENT_DOMAIN_IS_ALREADY_ALLOWED";
-  AllowDomainResultMessageEnum["SUB_DOMAINS_DELETED"] = "SUB_DOMAINS_DELETED";
+    'DOMAIN_VERIFICATION_IS_NOT_REQUIRED_IN_YOUR_ORG'
+  ] = 'DOMAIN_VERIFICATION_IS_NOT_REQUIRED_IN_YOUR_ORG';
+  AllowDomainResultMessageEnum['DOMAIN_VERIFICATION_IS_REQUIRED_IN_YOUR_ORG'] =
+    'DOMAIN_VERIFICATION_IS_REQUIRED_IN_YOUR_ORG';
+  AllowDomainResultMessageEnum['DOMAIN_ALREADY_BLOCKED'] =
+    'DOMAIN_ALREADY_BLOCKED';
+  AllowDomainResultMessageEnum['PARENT_DOMAIN_IS_ALREADY_BLOCKED'] =
+    'PARENT_DOMAIN_IS_ALREADY_BLOCKED';
+  AllowDomainResultMessageEnum['DOMAIN_ALREADY_ALLOWED'] =
+    'DOMAIN_ALREADY_ALLOWED';
+  AllowDomainResultMessageEnum['PARENT_DOMAIN_IS_ALREADY_ALLOWED'] =
+    'PARENT_DOMAIN_IS_ALREADY_ALLOWED';
+  AllowDomainResultMessageEnum['SUB_DOMAINS_DELETED'] = 'SUB_DOMAINS_DELETED';
   AllowDomainResultMessageEnum[
-    "THIS_OPERATION_WILL_EFFECT_THESE_DOMAINS_ARE_YOU_SURE_YOU_WANT_TO_BLOCK_IT"
+    'THIS_OPERATION_WILL_EFFECT_THESE_DOMAINS_ARE_YOU_SURE_YOU_WANT_TO_BLOCK_IT'
   ] =
-    "THIS_OPERATION_WILL_EFFECT_THESE_DOMAINS_ARE_YOU_SURE_YOU_WANT_TO_BLOCK_IT";
+    'THIS_OPERATION_WILL_EFFECT_THESE_DOMAINS_ARE_YOU_SURE_YOU_WANT_TO_BLOCK_IT';
   AllowDomainResultMessageEnum[
-    "YOUR_ORGANIZATION_DOESNT_ALLOW_ASSOCIATING_DOMAIN_TO_ASSET_GROUPS"
-  ] = "YOUR_ORGANIZATION_DOESNT_ALLOW_ASSOCIATING_DOMAIN_TO_ASSET_GROUPS";
-  AllowDomainResultMessageEnum["SCA_STATIC_ONLY_ERROR"] =
-    "SCA_STATIC_ONLY_ERROR";
-  AllowDomainResultMessageEnum["STATIC_SCA_ONLY_ERROR"] =
-    "STATIC_SCA_ONLY_ERROR";
-  AllowDomainResultMessageEnum["REPO_NO_ACCESS"] = "REPO_NO_ACCESS";
-  AllowDomainResultMessageEnum["REPO_SIGNATURE_INVALID"] =
-    "REPO_SIGNATURE_INVALID";
-  AllowDomainResultMessageEnum["FILE_NOT_ALLOWED"] = "FILE_NOT_ALLOWED";
-  AllowDomainResultMessageEnum["SCA_DOESNT_SUPPORT_REPOSITORY"] =
-    "SCA_DOESNT_SUPPORT_REPOSITORY";
-  AllowDomainResultMessageEnum["SAST_RECURRENCE_NO_GIT"] =
-    "SAST_RECURRENCE_NO_GIT";
-  AllowDomainResultMessageEnum["DEMO_SCAN_NO_RECURRENCE"] =
-    "DEMO_SCAN_NO_RECURRENCE";
+    'YOUR_ORGANIZATION_DOESNT_ALLOW_ASSOCIATING_DOMAIN_TO_ASSET_GROUPS'
+  ] = 'YOUR_ORGANIZATION_DOESNT_ALLOW_ASSOCIATING_DOMAIN_TO_ASSET_GROUPS';
+  AllowDomainResultMessageEnum['SCA_STATIC_ONLY_ERROR'] =
+    'SCA_STATIC_ONLY_ERROR';
+  AllowDomainResultMessageEnum['STATIC_SCA_ONLY_ERROR'] =
+    'STATIC_SCA_ONLY_ERROR';
+  AllowDomainResultMessageEnum['REPO_NO_ACCESS'] = 'REPO_NO_ACCESS';
+  AllowDomainResultMessageEnum['REPO_SIGNATURE_INVALID'] =
+    'REPO_SIGNATURE_INVALID';
+  AllowDomainResultMessageEnum['FILE_NOT_ALLOWED'] = 'FILE_NOT_ALLOWED';
+  AllowDomainResultMessageEnum['SCA_DOESNT_SUPPORT_REPOSITORY'] =
+    'SCA_DOESNT_SUPPORT_REPOSITORY';
+  AllowDomainResultMessageEnum['SAST_RECURRENCE_NO_GIT'] =
+    'SAST_RECURRENCE_NO_GIT';
+  AllowDomainResultMessageEnum['DEMO_SCAN_NO_RECURRENCE'] =
+    'DEMO_SCAN_NO_RECURRENCE';
   AllowDomainResultMessageEnum[
-    "THIS_DOMAIN_IS_FOR_OUR_DEMO_SITE_AND_IS_VERIFIED_BY_DEFAULT"
-  ] = "THIS_DOMAIN_IS_FOR_OUR_DEMO_SITE_AND_IS_VERIFIED_BY_DEFAULT";
-  AllowDomainResultMessageEnum["INVALID_ASENC_FILE"] = "INVALID_ASENC_FILE";
-  AllowDomainResultMessageEnum["INVALID_USER_PERMISSTION"] =
-    "INVALID_USER_PERMISSTION";
-  AllowDomainResultMessageEnum["INVALID_ASYMETRIC_KEY"] =
-    "INVALID_ASYMETRIC_KEY";
-  AllowDomainResultMessageEnum["TOO_MANY_USER_PREFERENCES"] =
-    "TOO_MANY_USER_PREFERENCES";
-  AllowDomainResultMessageEnum["INVALID_OPEN_API_FILE"] =
-    "INVALID_OPEN_API_FILE";
-  AllowDomainResultMessageEnum["MISSING_OPEN_AI_CREDENTIALS"] =
-    "MISSING_OPEN_AI_CREDENTIALS";
-  AllowDomainResultMessageEnum["INVALID_OPEN_AI_CREDENTIALS"] =
-    "INVALID_OPEN_AI_CREDENTIALS";
-  AllowDomainResultMessageEnum["DUPLICATE_OPEN_API_METHOD"] =
-    "DUPLICATE_OPEN_API_METHOD";
-  AllowDomainResultMessageEnum["INVALID_DAST_SCAN_METHOD"] =
-    "INVALID_DAST_SCAN_METHOD";
-  AllowDomainResultMessageEnum["MISSING_LOGIN_CREDENTIALS"] =
-    "MISSING_LOGIN_CREDENTIALS";
-  AllowDomainResultMessageEnum["DUPLICATE_LOGIN_METHOD"] =
-    "DUPLICATE_LOGIN_METHOD";
-  AllowDomainResultMessageEnum["MISSING_HTTP_AUTH_CREDENTIALS"] =
-    "MISSING_HTTP_AUTH_CREDENTIALS";
-  AllowDomainResultMessageEnum["INVALID_EXD_FILE"] = "INVALID_EXD_FILE";
+    'THIS_DOMAIN_IS_FOR_OUR_DEMO_SITE_AND_IS_VERIFIED_BY_DEFAULT'
+  ] = 'THIS_DOMAIN_IS_FOR_OUR_DEMO_SITE_AND_IS_VERIFIED_BY_DEFAULT';
+  AllowDomainResultMessageEnum['INVALID_ASENC_FILE'] = 'INVALID_ASENC_FILE';
+  AllowDomainResultMessageEnum['INVALID_USER_PERMISSTION'] =
+    'INVALID_USER_PERMISSTION';
+  AllowDomainResultMessageEnum['INVALID_ASYMETRIC_KEY'] =
+    'INVALID_ASYMETRIC_KEY';
+  AllowDomainResultMessageEnum['TOO_MANY_USER_PREFERENCES'] =
+    'TOO_MANY_USER_PREFERENCES';
+  AllowDomainResultMessageEnum['INVALID_OPEN_API_FILE'] =
+    'INVALID_OPEN_API_FILE';
+  AllowDomainResultMessageEnum['MISSING_OPEN_AI_CREDENTIALS'] =
+    'MISSING_OPEN_AI_CREDENTIALS';
+  AllowDomainResultMessageEnum['INVALID_OPEN_AI_CREDENTIALS'] =
+    'INVALID_OPEN_AI_CREDENTIALS';
+  AllowDomainResultMessageEnum['DUPLICATE_OPEN_API_METHOD'] =
+    'DUPLICATE_OPEN_API_METHOD';
+  AllowDomainResultMessageEnum['INVALID_DAST_SCAN_METHOD'] =
+    'INVALID_DAST_SCAN_METHOD';
+  AllowDomainResultMessageEnum['MISSING_LOGIN_CREDENTIALS'] =
+    'MISSING_LOGIN_CREDENTIALS';
+  AllowDomainResultMessageEnum['DUPLICATE_LOGIN_METHOD'] =
+    'DUPLICATE_LOGIN_METHOD';
+  AllowDomainResultMessageEnum['MISSING_HTTP_AUTH_CREDENTIALS'] =
+    'MISSING_HTTP_AUTH_CREDENTIALS';
+  AllowDomainResultMessageEnum['INVALID_EXD_FILE'] = 'INVALID_EXD_FILE';
   AllowDomainResultMessageEnum[
-    "SEQUENCEDOMAINS_DOES_NOT_MATCH_STRATINGURL_DOMAIN"
-  ] = "SEQUENCEDOMAINS_DOES_NOT_MATCH_STRATINGURL_DOMAIN";
-  AllowDomainResultMessageEnum["SCAN_TEMPLATE_MISSING"] =
-    "SCAN_TEMPLATE_MISSING";
-  AllowDomainResultMessageEnum["REPORT_ISSUE_COUNT_LIMIT_EXCEEDED"] =
-    "REPORT_ISSUE_COUNT_LIMIT_EXCEEDED";
-  AllowDomainResultMessageEnum["FRAMEWORK_ISNT_SUPPORTED"] =
-    "FRAMEWORK_ISNT_SUPPORTED";
-  AllowDomainResultMessageEnum["REPLAY_SCRIPT_GENERATION_FAILED"] =
-    "REPLAY_SCRIPT_GENERATION_FAILED";
-  AllowDomainResultMessageEnum["MALFORMED_ISSUE_XML"] = "MALFORMED_ISSUE_XML";
+    'SEQUENCEDOMAINS_DOES_NOT_MATCH_STRATINGURL_DOMAIN'
+  ] = 'SEQUENCEDOMAINS_DOES_NOT_MATCH_STRATINGURL_DOMAIN';
+  AllowDomainResultMessageEnum['SCAN_TEMPLATE_MISSING'] =
+    'SCAN_TEMPLATE_MISSING';
+  AllowDomainResultMessageEnum['REPORT_ISSUE_COUNT_LIMIT_EXCEEDED'] =
+    'REPORT_ISSUE_COUNT_LIMIT_EXCEEDED';
+  AllowDomainResultMessageEnum['FRAMEWORK_ISNT_SUPPORTED'] =
+    'FRAMEWORK_ISNT_SUPPORTED';
+  AllowDomainResultMessageEnum['REPLAY_SCRIPT_GENERATION_FAILED'] =
+    'REPLAY_SCRIPT_GENERATION_FAILED';
+  AllowDomainResultMessageEnum['MALFORMED_ISSUE_XML'] = 'MALFORMED_ISSUE_XML';
   AllowDomainResultMessageEnum[
-    "ISSUE_INELIGIBLE_FOR_THE_REQUESTED_REPLAY_SCRIPT"
-  ] = "ISSUE_INELIGIBLE_FOR_THE_REQUESTED_REPLAY_SCRIPT";
-  AllowDomainResultMessageEnum["CANT_TERMINATE_MACHINE"] =
-    "CANT_TERMINATE_MACHINE";
-  AllowDomainResultMessageEnum["NO_CUSTOM_FIELDS"] = "NO_CUSTOM_FIELDS";
-  AllowDomainResultMessageEnum["COLUMN_NAME_NOT_FOUND"] =
-    "COLUMN_NAME_NOT_FOUND";
-  AllowDomainResultMessageEnum["MISSING_FIELD"] = "MISSING_FIELD";
-  AllowDomainResultMessageEnum["NO_CUSTOM_FIELDS_DEFINED"] =
-    "NO_CUSTOM_FIELDS_DEFINED";
-  AllowDomainResultMessageEnum["CUSTOMFIELD_REQUIRED"] = "CUSTOMFIELD_REQUIRED";
-  AllowDomainResultMessageEnum["CUSTOM_FIELD_ALREADY_EXISTS"] =
-    "CUSTOM_FIELD_ALREADY_EXISTS";
-  AllowDomainResultMessageEnum["COLUMN_NAME_IS_ALREADY_IN_USE"] =
-    "COLUMN_NAME_IS_ALREADY_IN_USE";
-  AllowDomainResultMessageEnum["CUSTOM_FIELD_ID_DOES_NOT_EXIST"] =
-    "CUSTOM_FIELD_ID_DOES_NOT_EXIST";
-  AllowDomainResultMessageEnum["SCA_SBOM_FILE_NOT_PERSONAL"] =
-    "SCA_SBOM_FILE_NOT_PERSONAL";
-  AllowDomainResultMessageEnum["SBOM_FILE_NOT_SCA"] = "SBOM_FILE_NOT_SCA";
-  AllowDomainResultMessageEnum["SBOM_FILE_NOT_PROMOTE"] =
-    "SBOM_FILE_NOT_PROMOTE";
-  AllowDomainResultMessageEnum["MISSING_PACKAGE_INFORMATION"] =
-    "MISSING_PACKAGE_INFORMATION";
-  AllowDomainResultMessageEnum["COULD_NOT_RETRIEVE_DATA_ABOUT_THE_PACKAGE"] =
-    "COULD_NOT_RETRIEVE_DATA_ABOUT_THE_PACKAGE";
-  AllowDomainResultMessageEnum["FEATURE_IS_DISABLED_FOR_YOUR_ORG"] =
-    "FEATURE_IS_DISABLED_FOR_YOUR_ORG";
-  AllowDomainResultMessageEnum["SCAN_TEMPLATE_NAME_ALREADY_EXISTS"] =
-    "SCAN_TEMPLATE_NAME_ALREADY_EXISTS";
-  AllowDomainResultMessageEnum["SCAN_TEMPLATE_NOT_FOUND"] =
-    "SCAN_TEMPLATE_NOT_FOUND";
-  AllowDomainResultMessageEnum["SCAN_TEMPLATE_IS_DISABLED"] =
-    "SCAN_TEMPLATE_IS_DISABLED";
+    'ISSUE_INELIGIBLE_FOR_THE_REQUESTED_REPLAY_SCRIPT'
+  ] = 'ISSUE_INELIGIBLE_FOR_THE_REQUESTED_REPLAY_SCRIPT';
+  AllowDomainResultMessageEnum['CANT_TERMINATE_MACHINE'] =
+    'CANT_TERMINATE_MACHINE';
+  AllowDomainResultMessageEnum['NO_CUSTOM_FIELDS'] = 'NO_CUSTOM_FIELDS';
+  AllowDomainResultMessageEnum['COLUMN_NAME_NOT_FOUND'] =
+    'COLUMN_NAME_NOT_FOUND';
+  AllowDomainResultMessageEnum['MISSING_FIELD'] = 'MISSING_FIELD';
+  AllowDomainResultMessageEnum['NO_CUSTOM_FIELDS_DEFINED'] =
+    'NO_CUSTOM_FIELDS_DEFINED';
+  AllowDomainResultMessageEnum['CUSTOMFIELD_REQUIRED'] = 'CUSTOMFIELD_REQUIRED';
+  AllowDomainResultMessageEnum['CUSTOM_FIELD_ALREADY_EXISTS'] =
+    'CUSTOM_FIELD_ALREADY_EXISTS';
+  AllowDomainResultMessageEnum['COLUMN_NAME_IS_ALREADY_IN_USE'] =
+    'COLUMN_NAME_IS_ALREADY_IN_USE';
+  AllowDomainResultMessageEnum['CUSTOM_FIELD_ID_DOES_NOT_EXIST'] =
+    'CUSTOM_FIELD_ID_DOES_NOT_EXIST';
+  AllowDomainResultMessageEnum['SCA_SBOM_FILE_NOT_PERSONAL'] =
+    'SCA_SBOM_FILE_NOT_PERSONAL';
+  AllowDomainResultMessageEnum['SBOM_FILE_NOT_SCA'] = 'SBOM_FILE_NOT_SCA';
+  AllowDomainResultMessageEnum['SBOM_FILE_NOT_PROMOTE'] =
+    'SBOM_FILE_NOT_PROMOTE';
+  AllowDomainResultMessageEnum['MISSING_PACKAGE_INFORMATION'] =
+    'MISSING_PACKAGE_INFORMATION';
+  AllowDomainResultMessageEnum['COULD_NOT_RETRIEVE_DATA_ABOUT_THE_PACKAGE'] =
+    'COULD_NOT_RETRIEVE_DATA_ABOUT_THE_PACKAGE';
+  AllowDomainResultMessageEnum['FEATURE_IS_DISABLED_FOR_YOUR_ORG'] =
+    'FEATURE_IS_DISABLED_FOR_YOUR_ORG';
+  AllowDomainResultMessageEnum['SCAN_TEMPLATE_NAME_ALREADY_EXISTS'] =
+    'SCAN_TEMPLATE_NAME_ALREADY_EXISTS';
+  AllowDomainResultMessageEnum['SCAN_TEMPLATE_NOT_FOUND'] =
+    'SCAN_TEMPLATE_NOT_FOUND';
+  AllowDomainResultMessageEnum['SCAN_TEMPLATE_IS_DISABLED'] =
+    'SCAN_TEMPLATE_IS_DISABLED';
   AllowDomainResultMessageEnum[
-    "SCAN_TEMPLATE_WAS_NOT_ASSOCIATED_TO_ASSET_GROUP_CORRECTLY"
-  ] = "SCAN_TEMPLATE_WAS_NOT_ASSOCIATED_TO_ASSET_GROUP_CORRECTLY";
-  AllowDomainResultMessageEnum["INVALID_SCAN_TEMPLATE_CONFIGURATION"] =
-    "INVALID_SCAN_TEMPLATE_CONFIGURATION";
-  AllowDomainResultMessageEnum["UNABLE_TO_SAVE_SCAN_TEMPLATE_CONFIGURATION"] =
-    "UNABLE_TO_SAVE_SCAN_TEMPLATE_CONFIGURATION";
-  AllowDomainResultMessageEnum["MISSING_LOGS"] = "MISSING_LOGS";
-  AllowDomainResultMessageEnum["SAST_GIT_SCAN_BRANCH_UPDATE_NOT_ALLOWED"] =
-    "SAST_GIT_SCAN_BRANCH_UPDATE_NOT_ALLOWED";
-  AllowDomainResultMessageEnum["EXTERNAL_IDP_MODE_NOT_SUPPORTED_FOR_OIDC"] =
-    "EXTERNAL_IDP_MODE_NOT_SUPPORTED_FOR_OIDC";
-  AllowDomainResultMessageEnum["ORG_SETTING_ALREADY_EXISTS"] =
-    "ORG_SETTING_ALREADY_EXISTS";
+    'SCAN_TEMPLATE_WAS_NOT_ASSOCIATED_TO_ASSET_GROUP_CORRECTLY'
+  ] = 'SCAN_TEMPLATE_WAS_NOT_ASSOCIATED_TO_ASSET_GROUP_CORRECTLY';
+  AllowDomainResultMessageEnum['INVALID_SCAN_TEMPLATE_CONFIGURATION'] =
+    'INVALID_SCAN_TEMPLATE_CONFIGURATION';
+  AllowDomainResultMessageEnum['UNABLE_TO_SAVE_SCAN_TEMPLATE_CONFIGURATION'] =
+    'UNABLE_TO_SAVE_SCAN_TEMPLATE_CONFIGURATION';
+  AllowDomainResultMessageEnum['MISSING_LOGS'] = 'MISSING_LOGS';
+  AllowDomainResultMessageEnum['SAST_GIT_SCAN_BRANCH_UPDATE_NOT_ALLOWED'] =
+    'SAST_GIT_SCAN_BRANCH_UPDATE_NOT_ALLOWED';
+  AllowDomainResultMessageEnum['EXTERNAL_IDP_MODE_NOT_SUPPORTED_FOR_OIDC'] =
+    'EXTERNAL_IDP_MODE_NOT_SUPPORTED_FOR_OIDC';
+  AllowDomainResultMessageEnum['ORG_SETTING_ALREADY_EXISTS'] =
+    'ORG_SETTING_ALREADY_EXISTS';
   AllowDomainResultMessageEnum[
-    "SCA_SERVICE_URL_NOT_SUPPORTED_IN_THIS_ENVIRONMENT"
-  ] = "SCA_SERVICE_URL_NOT_SUPPORTED_IN_THIS_ENVIRONMENT";
-  AllowDomainResultMessageEnum["FILE_ENCRYPTION_UNAUTHORIZED_ENVIRONMENT"] =
-    "FILE_ENCRYPTION_UNAUTHORIZED_ENVIRONMENT";
-  AllowDomainResultMessageEnum["FILE_DECRYPTION_FAILED"] =
-    "FILE_DECRYPTION_FAILED";
-  AllowDomainResultMessageEnum["SETTINGS_ARE_DEFINED_IN_JSON_FILE"] =
-    "SETTINGS_ARE_DEFINED_IN_JSON_FILE";
-  AllowDomainResultMessageEnum["COULD_NOT_CONNECT_TO_USER_LDAP_CONFIG"] =
-    "COULD_NOT_CONNECT_TO_USER_LDAP_CONFIG";
-  AllowDomainResultMessageEnum["COULD_NOT_CONNECT_TO_USER_SSO_CONFIG"] =
-    "COULD_NOT_CONNECT_TO_USER_SSO_CONFIG";
-  AllowDomainResultMessageEnum["SSO_URL_MUST_USE_HTTPS"] =
-    "SSO_URL_MUST_USE_HTTPS";
-  AllowDomainResultMessageEnum["FAILED_TO_RESTAT_DEPLOYMENT"] =
-    "FAILED_TO_RESTAT_DEPLOYMENT";
-  AllowDomainResultMessageEnum["SCAN_PROP_CANNOT_BE_UPDATED"] =
-    "SCAN_PROP_CANNOT_BE_UPDATED";
-  AllowDomainResultMessageEnum["DEMO_SCAN_MUST_BE_EXECUTED"] =
-    "DEMO_SCAN_MUST_BE_EXECUTED";
-  AllowDomainResultMessageEnum["DEMO_SCAN_NO_RESCAN"] = "DEMO_SCAN_NO_RESCAN";
+    'SCA_SERVICE_URL_NOT_SUPPORTED_IN_THIS_ENVIRONMENT'
+  ] = 'SCA_SERVICE_URL_NOT_SUPPORTED_IN_THIS_ENVIRONMENT';
+  AllowDomainResultMessageEnum['FILE_ENCRYPTION_UNAUTHORIZED_ENVIRONMENT'] =
+    'FILE_ENCRYPTION_UNAUTHORIZED_ENVIRONMENT';
+  AllowDomainResultMessageEnum['FILE_DECRYPTION_FAILED'] =
+    'FILE_DECRYPTION_FAILED';
+  AllowDomainResultMessageEnum['SETTINGS_ARE_DEFINED_IN_JSON_FILE'] =
+    'SETTINGS_ARE_DEFINED_IN_JSON_FILE';
+  AllowDomainResultMessageEnum['COULD_NOT_CONNECT_TO_USER_LDAP_CONFIG'] =
+    'COULD_NOT_CONNECT_TO_USER_LDAP_CONFIG';
+  AllowDomainResultMessageEnum['COULD_NOT_CONNECT_TO_USER_SSO_CONFIG'] =
+    'COULD_NOT_CONNECT_TO_USER_SSO_CONFIG';
+  AllowDomainResultMessageEnum['SSO_URL_MUST_USE_HTTPS'] =
+    'SSO_URL_MUST_USE_HTTPS';
+  AllowDomainResultMessageEnum['FAILED_TO_RESTAT_DEPLOYMENT'] =
+    'FAILED_TO_RESTAT_DEPLOYMENT';
+  AllowDomainResultMessageEnum['SCAN_PROP_CANNOT_BE_UPDATED'] =
+    'SCAN_PROP_CANNOT_BE_UPDATED';
+  AllowDomainResultMessageEnum['DEMO_SCAN_MUST_BE_EXECUTED'] =
+    'DEMO_SCAN_MUST_BE_EXECUTED';
+  AllowDomainResultMessageEnum['DEMO_SCAN_NO_RESCAN'] = 'DEMO_SCAN_NO_RESCAN';
   AllowDomainResultMessageEnum[
-    "SCAN_EXECUTION_NOT_IN_A_STATE_TO_CREATE_PATCH"
-  ] = "SCAN_EXECUTION_NOT_IN_A_STATE_TO_CREATE_PATCH";
-  AllowDomainResultMessageEnum["NOT_ALL_ISSUES_HAVE_FIXES_IN_SCAN_EXECUTION"] =
-    "NOT_ALL_ISSUES_HAVE_FIXES_IN_SCAN_EXECUTION";
+    'SCAN_EXECUTION_NOT_IN_A_STATE_TO_CREATE_PATCH'
+  ] = 'SCAN_EXECUTION_NOT_IN_A_STATE_TO_CREATE_PATCH';
+  AllowDomainResultMessageEnum['NOT_ALL_ISSUES_HAVE_FIXES_IN_SCAN_EXECUTION'] =
+    'NOT_ALL_ISSUES_HAVE_FIXES_IN_SCAN_EXECUTION';
   AllowDomainResultMessageEnum[
-    "SCAN_EXECUTION_NOT_IN_A_STATE_FOR_RAPIDFIX_RECOMMANDATION"
-  ] = "SCAN_EXECUTION_NOT_IN_A_STATE_FOR_RAPIDFIX_RECOMMANDATION";
-  AllowDomainResultMessageEnum["ISSUE_NOT_IN_CONTEXT"] = "ISSUE_NOT_IN_CONTEXT";
-  AllowDomainResultMessageEnum["INVALID_PATCH_IDENTIFIER"] =
-    "INVALID_PATCH_IDENTIFIER";
-  AllowDomainResultMessageEnum["PATCH_ALREADY_COMPLETED"] =
-    "PATCH_ALREADY_COMPLETED";
-  AllowDomainResultMessageEnum["RAPIDFIX_ANALYSIS_ID_MISMATCH"] =
-    "RAPIDFIX_ANALYSIS_ID_MISMATCH";
-  AllowDomainResultMessageEnum["URL_SIGNITURE_UNVERIFIED"] =
-    "URL_SIGNITURE_UNVERIFIED";
-  AllowDomainResultMessageEnum["INVALID_DIFF_FILE"] = "INVALID_DIFF_FILE";
+    'SCAN_EXECUTION_NOT_IN_A_STATE_FOR_RAPIDFIX_RECOMMANDATION'
+  ] = 'SCAN_EXECUTION_NOT_IN_A_STATE_FOR_RAPIDFIX_RECOMMANDATION';
+  AllowDomainResultMessageEnum['ISSUE_NOT_IN_CONTEXT'] = 'ISSUE_NOT_IN_CONTEXT';
+  AllowDomainResultMessageEnum['INVALID_PATCH_IDENTIFIER'] =
+    'INVALID_PATCH_IDENTIFIER';
+  AllowDomainResultMessageEnum['PATCH_ALREADY_COMPLETED'] =
+    'PATCH_ALREADY_COMPLETED';
+  AllowDomainResultMessageEnum['RAPIDFIX_ANALYSIS_ID_MISMATCH'] =
+    'RAPIDFIX_ANALYSIS_ID_MISMATCH';
+  AllowDomainResultMessageEnum['URL_SIGNITURE_UNVERIFIED'] =
+    'URL_SIGNITURE_UNVERIFIED';
+  AllowDomainResultMessageEnum['INVALID_DIFF_FILE'] = 'INVALID_DIFF_FILE';
 })(AllowDomainResultMessageEnum || (AllowDomainResultMessageEnum = {}));
 export var AppCommentModelSourceTypeEnum;
 (function (AppCommentModelSourceTypeEnum) {
-  AppCommentModelSourceTypeEnum["Issue"] = "Issue";
-  AppCommentModelSourceTypeEnum["FixGroup"] = "FixGroup";
+  AppCommentModelSourceTypeEnum['Issue'] = 'Issue';
+  AppCommentModelSourceTypeEnum['FixGroup'] = 'FixGroup';
 })(AppCommentModelSourceTypeEnum || (AppCommentModelSourceTypeEnum = {}));
 export var ApplicationCreateModelBusinessImpactEnum;
 (function (ApplicationCreateModelBusinessImpactEnum) {
-  ApplicationCreateModelBusinessImpactEnum["Unspecified"] = "Unspecified";
-  ApplicationCreateModelBusinessImpactEnum["Low"] = "Low";
-  ApplicationCreateModelBusinessImpactEnum["Medium"] = "Medium";
-  ApplicationCreateModelBusinessImpactEnum["High"] = "High";
-  ApplicationCreateModelBusinessImpactEnum["Critical"] = "Critical";
+  ApplicationCreateModelBusinessImpactEnum['Unspecified'] = 'Unspecified';
+  ApplicationCreateModelBusinessImpactEnum['Low'] = 'Low';
+  ApplicationCreateModelBusinessImpactEnum['Medium'] = 'Medium';
+  ApplicationCreateModelBusinessImpactEnum['High'] = 'High';
+  ApplicationCreateModelBusinessImpactEnum['Critical'] = 'Critical';
 })(
   ApplicationCreateModelBusinessImpactEnum ||
-    (ApplicationCreateModelBusinessImpactEnum = {}),
+    (ApplicationCreateModelBusinessImpactEnum = {})
 );
 export var ApplicationCreateModelTestingStatusEnum;
 (function (ApplicationCreateModelTestingStatusEnum) {
-  ApplicationCreateModelTestingStatusEnum["NotStarted"] = "NotStarted";
-  ApplicationCreateModelTestingStatusEnum["InProgress"] = "InProgress";
-  ApplicationCreateModelTestingStatusEnum["Completed"] = "Completed";
+  ApplicationCreateModelTestingStatusEnum['NotStarted'] = 'NotStarted';
+  ApplicationCreateModelTestingStatusEnum['InProgress'] = 'InProgress';
+  ApplicationCreateModelTestingStatusEnum['Completed'] = 'Completed';
 })(
   ApplicationCreateModelTestingStatusEnum ||
-    (ApplicationCreateModelTestingStatusEnum = {}),
+    (ApplicationCreateModelTestingStatusEnum = {})
 );
 export var ApplicationCreateModelCollateralDamagePotentialEnum;
 (function (ApplicationCreateModelCollateralDamagePotentialEnum) {
-  ApplicationCreateModelCollateralDamagePotentialEnum["NotDefined"] =
-    "NotDefined";
-  ApplicationCreateModelCollateralDamagePotentialEnum["None"] = "None";
-  ApplicationCreateModelCollateralDamagePotentialEnum["Low"] = "Low";
-  ApplicationCreateModelCollateralDamagePotentialEnum["LowMedium"] =
-    "LowMedium";
-  ApplicationCreateModelCollateralDamagePotentialEnum["MediumHigh"] =
-    "MediumHigh";
-  ApplicationCreateModelCollateralDamagePotentialEnum["High"] = "High";
+  ApplicationCreateModelCollateralDamagePotentialEnum['NotDefined'] =
+    'NotDefined';
+  ApplicationCreateModelCollateralDamagePotentialEnum['None'] = 'None';
+  ApplicationCreateModelCollateralDamagePotentialEnum['Low'] = 'Low';
+  ApplicationCreateModelCollateralDamagePotentialEnum['LowMedium'] =
+    'LowMedium';
+  ApplicationCreateModelCollateralDamagePotentialEnum['MediumHigh'] =
+    'MediumHigh';
+  ApplicationCreateModelCollateralDamagePotentialEnum['High'] = 'High';
 })(
   ApplicationCreateModelCollateralDamagePotentialEnum ||
-    (ApplicationCreateModelCollateralDamagePotentialEnum = {}),
+    (ApplicationCreateModelCollateralDamagePotentialEnum = {})
 );
 export var ApplicationCreateModelTargetDistributionEnum;
 (function (ApplicationCreateModelTargetDistributionEnum) {
-  ApplicationCreateModelTargetDistributionEnum["NotDefined"] = "NotDefined";
-  ApplicationCreateModelTargetDistributionEnum["None"] = "None";
-  ApplicationCreateModelTargetDistributionEnum["Low"] = "Low";
-  ApplicationCreateModelTargetDistributionEnum["Medium"] = "Medium";
-  ApplicationCreateModelTargetDistributionEnum["High"] = "High";
+  ApplicationCreateModelTargetDistributionEnum['NotDefined'] = 'NotDefined';
+  ApplicationCreateModelTargetDistributionEnum['None'] = 'None';
+  ApplicationCreateModelTargetDistributionEnum['Low'] = 'Low';
+  ApplicationCreateModelTargetDistributionEnum['Medium'] = 'Medium';
+  ApplicationCreateModelTargetDistributionEnum['High'] = 'High';
 })(
   ApplicationCreateModelTargetDistributionEnum ||
-    (ApplicationCreateModelTargetDistributionEnum = {}),
+    (ApplicationCreateModelTargetDistributionEnum = {})
 );
 export var ApplicationCreateModelConfidentialityRequirementEnum;
 (function (ApplicationCreateModelConfidentialityRequirementEnum) {
-  ApplicationCreateModelConfidentialityRequirementEnum["NotDefined"] =
-    "NotDefined";
-  ApplicationCreateModelConfidentialityRequirementEnum["Low"] = "Low";
-  ApplicationCreateModelConfidentialityRequirementEnum["Medium"] = "Medium";
-  ApplicationCreateModelConfidentialityRequirementEnum["High"] = "High";
+  ApplicationCreateModelConfidentialityRequirementEnum['NotDefined'] =
+    'NotDefined';
+  ApplicationCreateModelConfidentialityRequirementEnum['Low'] = 'Low';
+  ApplicationCreateModelConfidentialityRequirementEnum['Medium'] = 'Medium';
+  ApplicationCreateModelConfidentialityRequirementEnum['High'] = 'High';
 })(
   ApplicationCreateModelConfidentialityRequirementEnum ||
-    (ApplicationCreateModelConfidentialityRequirementEnum = {}),
+    (ApplicationCreateModelConfidentialityRequirementEnum = {})
 );
 export var ApplicationCreateModelIntegrityRequirementEnum;
 (function (ApplicationCreateModelIntegrityRequirementEnum) {
-  ApplicationCreateModelIntegrityRequirementEnum["NotDefined"] = "NotDefined";
-  ApplicationCreateModelIntegrityRequirementEnum["Low"] = "Low";
-  ApplicationCreateModelIntegrityRequirementEnum["Medium"] = "Medium";
-  ApplicationCreateModelIntegrityRequirementEnum["High"] = "High";
+  ApplicationCreateModelIntegrityRequirementEnum['NotDefined'] = 'NotDefined';
+  ApplicationCreateModelIntegrityRequirementEnum['Low'] = 'Low';
+  ApplicationCreateModelIntegrityRequirementEnum['Medium'] = 'Medium';
+  ApplicationCreateModelIntegrityRequirementEnum['High'] = 'High';
 })(
   ApplicationCreateModelIntegrityRequirementEnum ||
-    (ApplicationCreateModelIntegrityRequirementEnum = {}),
+    (ApplicationCreateModelIntegrityRequirementEnum = {})
 );
 export var ApplicationCreateModelAvailabilityRequirementEnum;
 (function (ApplicationCreateModelAvailabilityRequirementEnum) {
-  ApplicationCreateModelAvailabilityRequirementEnum["NotDefined"] =
-    "NotDefined";
-  ApplicationCreateModelAvailabilityRequirementEnum["Low"] = "Low";
-  ApplicationCreateModelAvailabilityRequirementEnum["Medium"] = "Medium";
-  ApplicationCreateModelAvailabilityRequirementEnum["High"] = "High";
+  ApplicationCreateModelAvailabilityRequirementEnum['NotDefined'] =
+    'NotDefined';
+  ApplicationCreateModelAvailabilityRequirementEnum['Low'] = 'Low';
+  ApplicationCreateModelAvailabilityRequirementEnum['Medium'] = 'Medium';
+  ApplicationCreateModelAvailabilityRequirementEnum['High'] = 'High';
 })(
   ApplicationCreateModelAvailabilityRequirementEnum ||
-    (ApplicationCreateModelAvailabilityRequirementEnum = {}),
+    (ApplicationCreateModelAvailabilityRequirementEnum = {})
 );
 export var ApplicationCreateModelPreferredOfferingTypeEnum;
 (function (ApplicationCreateModelPreferredOfferingTypeEnum) {
-  ApplicationCreateModelPreferredOfferingTypeEnum["None"] = "None";
-  ApplicationCreateModelPreferredOfferingTypeEnum["ScanExecution"] =
-    "ScanExecution";
-  ApplicationCreateModelPreferredOfferingTypeEnum["Applications"] =
-    "Applications";
+  ApplicationCreateModelPreferredOfferingTypeEnum['None'] = 'None';
+  ApplicationCreateModelPreferredOfferingTypeEnum['ScanExecution'] =
+    'ScanExecution';
+  ApplicationCreateModelPreferredOfferingTypeEnum['Applications'] =
+    'Applications';
 })(
   ApplicationCreateModelPreferredOfferingTypeEnum ||
-    (ApplicationCreateModelPreferredOfferingTypeEnum = {}),
+    (ApplicationCreateModelPreferredOfferingTypeEnum = {})
 );
 export var ApplicationModelRiskRatingEnum;
 (function (ApplicationModelRiskRatingEnum) {
-  ApplicationModelRiskRatingEnum["Unknown"] = "Unknown";
-  ApplicationModelRiskRatingEnum["Low"] = "Low";
-  ApplicationModelRiskRatingEnum["Medium"] = "Medium";
-  ApplicationModelRiskRatingEnum["High"] = "High";
-  ApplicationModelRiskRatingEnum["Critical"] = "Critical";
+  ApplicationModelRiskRatingEnum['Unknown'] = 'Unknown';
+  ApplicationModelRiskRatingEnum['Low'] = 'Low';
+  ApplicationModelRiskRatingEnum['Medium'] = 'Medium';
+  ApplicationModelRiskRatingEnum['High'] = 'High';
+  ApplicationModelRiskRatingEnum['Critical'] = 'Critical';
 })(ApplicationModelRiskRatingEnum || (ApplicationModelRiskRatingEnum = {}));
 export var ApplicationModelMaxSeverityEnum;
 (function (ApplicationModelMaxSeverityEnum) {
-  ApplicationModelMaxSeverityEnum["Undetermined"] = "Undetermined";
-  ApplicationModelMaxSeverityEnum["Informational"] = "Informational";
-  ApplicationModelMaxSeverityEnum["Low"] = "Low";
-  ApplicationModelMaxSeverityEnum["Medium"] = "Medium";
-  ApplicationModelMaxSeverityEnum["High"] = "High";
-  ApplicationModelMaxSeverityEnum["Critical"] = "Critical";
+  ApplicationModelMaxSeverityEnum['Undetermined'] = 'Undetermined';
+  ApplicationModelMaxSeverityEnum['Informational'] = 'Informational';
+  ApplicationModelMaxSeverityEnum['Low'] = 'Low';
+  ApplicationModelMaxSeverityEnum['Medium'] = 'Medium';
+  ApplicationModelMaxSeverityEnum['High'] = 'High';
+  ApplicationModelMaxSeverityEnum['Critical'] = 'Critical';
 })(ApplicationModelMaxSeverityEnum || (ApplicationModelMaxSeverityEnum = {}));
 export var ApplicationModelCorrelationStateEnum;
 (function (ApplicationModelCorrelationStateEnum) {
-  ApplicationModelCorrelationStateEnum["None"] = "None";
-  ApplicationModelCorrelationStateEnum["Active"] = "Active";
-  ApplicationModelCorrelationStateEnum["InProgress"] = "InProgress";
+  ApplicationModelCorrelationStateEnum['None'] = 'None';
+  ApplicationModelCorrelationStateEnum['Active'] = 'Active';
+  ApplicationModelCorrelationStateEnum['InProgress'] = 'InProgress';
 })(
   ApplicationModelCorrelationStateEnum ||
-    (ApplicationModelCorrelationStateEnum = {}),
+    (ApplicationModelCorrelationStateEnum = {})
 );
 export var ApplicationModelBusinessImpactEnum;
 (function (ApplicationModelBusinessImpactEnum) {
-  ApplicationModelBusinessImpactEnum["Unspecified"] = "Unspecified";
-  ApplicationModelBusinessImpactEnum["Low"] = "Low";
-  ApplicationModelBusinessImpactEnum["Medium"] = "Medium";
-  ApplicationModelBusinessImpactEnum["High"] = "High";
-  ApplicationModelBusinessImpactEnum["Critical"] = "Critical";
+  ApplicationModelBusinessImpactEnum['Unspecified'] = 'Unspecified';
+  ApplicationModelBusinessImpactEnum['Low'] = 'Low';
+  ApplicationModelBusinessImpactEnum['Medium'] = 'Medium';
+  ApplicationModelBusinessImpactEnum['High'] = 'High';
+  ApplicationModelBusinessImpactEnum['Critical'] = 'Critical';
 })(
   ApplicationModelBusinessImpactEnum ||
-    (ApplicationModelBusinessImpactEnum = {}),
+    (ApplicationModelBusinessImpactEnum = {})
 );
 export var ApplicationModelTestingStatusEnum;
 (function (ApplicationModelTestingStatusEnum) {
-  ApplicationModelTestingStatusEnum["NotStarted"] = "NotStarted";
-  ApplicationModelTestingStatusEnum["InProgress"] = "InProgress";
-  ApplicationModelTestingStatusEnum["Completed"] = "Completed";
+  ApplicationModelTestingStatusEnum['NotStarted'] = 'NotStarted';
+  ApplicationModelTestingStatusEnum['InProgress'] = 'InProgress';
+  ApplicationModelTestingStatusEnum['Completed'] = 'Completed';
 })(
-  ApplicationModelTestingStatusEnum || (ApplicationModelTestingStatusEnum = {}),
+  ApplicationModelTestingStatusEnum || (ApplicationModelTestingStatusEnum = {})
 );
 export var ApplicationModelCollateralDamagePotentialEnum;
 (function (ApplicationModelCollateralDamagePotentialEnum) {
-  ApplicationModelCollateralDamagePotentialEnum["NotDefined"] = "NotDefined";
-  ApplicationModelCollateralDamagePotentialEnum["None"] = "None";
-  ApplicationModelCollateralDamagePotentialEnum["Low"] = "Low";
-  ApplicationModelCollateralDamagePotentialEnum["LowMedium"] = "LowMedium";
-  ApplicationModelCollateralDamagePotentialEnum["MediumHigh"] = "MediumHigh";
-  ApplicationModelCollateralDamagePotentialEnum["High"] = "High";
+  ApplicationModelCollateralDamagePotentialEnum['NotDefined'] = 'NotDefined';
+  ApplicationModelCollateralDamagePotentialEnum['None'] = 'None';
+  ApplicationModelCollateralDamagePotentialEnum['Low'] = 'Low';
+  ApplicationModelCollateralDamagePotentialEnum['LowMedium'] = 'LowMedium';
+  ApplicationModelCollateralDamagePotentialEnum['MediumHigh'] = 'MediumHigh';
+  ApplicationModelCollateralDamagePotentialEnum['High'] = 'High';
 })(
   ApplicationModelCollateralDamagePotentialEnum ||
-    (ApplicationModelCollateralDamagePotentialEnum = {}),
+    (ApplicationModelCollateralDamagePotentialEnum = {})
 );
 export var ApplicationModelTargetDistributionEnum;
 (function (ApplicationModelTargetDistributionEnum) {
-  ApplicationModelTargetDistributionEnum["NotDefined"] = "NotDefined";
-  ApplicationModelTargetDistributionEnum["None"] = "None";
-  ApplicationModelTargetDistributionEnum["Low"] = "Low";
-  ApplicationModelTargetDistributionEnum["Medium"] = "Medium";
-  ApplicationModelTargetDistributionEnum["High"] = "High";
+  ApplicationModelTargetDistributionEnum['NotDefined'] = 'NotDefined';
+  ApplicationModelTargetDistributionEnum['None'] = 'None';
+  ApplicationModelTargetDistributionEnum['Low'] = 'Low';
+  ApplicationModelTargetDistributionEnum['Medium'] = 'Medium';
+  ApplicationModelTargetDistributionEnum['High'] = 'High';
 })(
   ApplicationModelTargetDistributionEnum ||
-    (ApplicationModelTargetDistributionEnum = {}),
+    (ApplicationModelTargetDistributionEnum = {})
 );
 export var ApplicationModelConfidentialityRequirementEnum;
 (function (ApplicationModelConfidentialityRequirementEnum) {
-  ApplicationModelConfidentialityRequirementEnum["NotDefined"] = "NotDefined";
-  ApplicationModelConfidentialityRequirementEnum["Low"] = "Low";
-  ApplicationModelConfidentialityRequirementEnum["Medium"] = "Medium";
-  ApplicationModelConfidentialityRequirementEnum["High"] = "High";
+  ApplicationModelConfidentialityRequirementEnum['NotDefined'] = 'NotDefined';
+  ApplicationModelConfidentialityRequirementEnum['Low'] = 'Low';
+  ApplicationModelConfidentialityRequirementEnum['Medium'] = 'Medium';
+  ApplicationModelConfidentialityRequirementEnum['High'] = 'High';
 })(
   ApplicationModelConfidentialityRequirementEnum ||
-    (ApplicationModelConfidentialityRequirementEnum = {}),
+    (ApplicationModelConfidentialityRequirementEnum = {})
 );
 export var ApplicationModelIntegrityRequirementEnum;
 (function (ApplicationModelIntegrityRequirementEnum) {
-  ApplicationModelIntegrityRequirementEnum["NotDefined"] = "NotDefined";
-  ApplicationModelIntegrityRequirementEnum["Low"] = "Low";
-  ApplicationModelIntegrityRequirementEnum["Medium"] = "Medium";
-  ApplicationModelIntegrityRequirementEnum["High"] = "High";
+  ApplicationModelIntegrityRequirementEnum['NotDefined'] = 'NotDefined';
+  ApplicationModelIntegrityRequirementEnum['Low'] = 'Low';
+  ApplicationModelIntegrityRequirementEnum['Medium'] = 'Medium';
+  ApplicationModelIntegrityRequirementEnum['High'] = 'High';
 })(
   ApplicationModelIntegrityRequirementEnum ||
-    (ApplicationModelIntegrityRequirementEnum = {}),
+    (ApplicationModelIntegrityRequirementEnum = {})
 );
 export var ApplicationModelAvailabilityRequirementEnum;
 (function (ApplicationModelAvailabilityRequirementEnum) {
-  ApplicationModelAvailabilityRequirementEnum["NotDefined"] = "NotDefined";
-  ApplicationModelAvailabilityRequirementEnum["Low"] = "Low";
-  ApplicationModelAvailabilityRequirementEnum["Medium"] = "Medium";
-  ApplicationModelAvailabilityRequirementEnum["High"] = "High";
+  ApplicationModelAvailabilityRequirementEnum['NotDefined'] = 'NotDefined';
+  ApplicationModelAvailabilityRequirementEnum['Low'] = 'Low';
+  ApplicationModelAvailabilityRequirementEnum['Medium'] = 'Medium';
+  ApplicationModelAvailabilityRequirementEnum['High'] = 'High';
 })(
   ApplicationModelAvailabilityRequirementEnum ||
-    (ApplicationModelAvailabilityRequirementEnum = {}),
+    (ApplicationModelAvailabilityRequirementEnum = {})
 );
 export var ApplicationModelPreferredOfferingTypeEnum;
 (function (ApplicationModelPreferredOfferingTypeEnum) {
-  ApplicationModelPreferredOfferingTypeEnum["None"] = "None";
-  ApplicationModelPreferredOfferingTypeEnum["ScanExecution"] = "ScanExecution";
-  ApplicationModelPreferredOfferingTypeEnum["Applications"] = "Applications";
+  ApplicationModelPreferredOfferingTypeEnum['None'] = 'None';
+  ApplicationModelPreferredOfferingTypeEnum['ScanExecution'] = 'ScanExecution';
+  ApplicationModelPreferredOfferingTypeEnum['Applications'] = 'Applications';
 })(
   ApplicationModelPreferredOfferingTypeEnum ||
-    (ApplicationModelPreferredOfferingTypeEnum = {}),
+    (ApplicationModelPreferredOfferingTypeEnum = {})
 );
 export var ApplicationModelScanTechnologiesEnum;
 (function (ApplicationModelScanTechnologiesEnum) {
-  ApplicationModelScanTechnologiesEnum["NONE"] = "NONE";
-  ApplicationModelScanTechnologiesEnum["DAST"] = "DAST";
-  ApplicationModelScanTechnologiesEnum["SAST"] = "SAST";
-  ApplicationModelScanTechnologiesEnum["IAST"] = "IAST";
-  ApplicationModelScanTechnologiesEnum["SCA"] = "SCA";
+  ApplicationModelScanTechnologiesEnum['NONE'] = 'NONE';
+  ApplicationModelScanTechnologiesEnum['DAST'] = 'DAST';
+  ApplicationModelScanTechnologiesEnum['SAST'] = 'SAST';
+  ApplicationModelScanTechnologiesEnum['IAST'] = 'IAST';
+  ApplicationModelScanTechnologiesEnum['SCA'] = 'SCA';
 })(
   ApplicationModelScanTechnologiesEnum ||
-    (ApplicationModelScanTechnologiesEnum = {}),
+    (ApplicationModelScanTechnologiesEnum = {})
 );
 export var ApplicationUpdateModelBusinessImpactEnum;
 (function (ApplicationUpdateModelBusinessImpactEnum) {
-  ApplicationUpdateModelBusinessImpactEnum["Unspecified"] = "Unspecified";
-  ApplicationUpdateModelBusinessImpactEnum["Low"] = "Low";
-  ApplicationUpdateModelBusinessImpactEnum["Medium"] = "Medium";
-  ApplicationUpdateModelBusinessImpactEnum["High"] = "High";
-  ApplicationUpdateModelBusinessImpactEnum["Critical"] = "Critical";
+  ApplicationUpdateModelBusinessImpactEnum['Unspecified'] = 'Unspecified';
+  ApplicationUpdateModelBusinessImpactEnum['Low'] = 'Low';
+  ApplicationUpdateModelBusinessImpactEnum['Medium'] = 'Medium';
+  ApplicationUpdateModelBusinessImpactEnum['High'] = 'High';
+  ApplicationUpdateModelBusinessImpactEnum['Critical'] = 'Critical';
 })(
   ApplicationUpdateModelBusinessImpactEnum ||
-    (ApplicationUpdateModelBusinessImpactEnum = {}),
+    (ApplicationUpdateModelBusinessImpactEnum = {})
 );
 export var ApplicationUpdateModelTestingStatusEnum;
 (function (ApplicationUpdateModelTestingStatusEnum) {
-  ApplicationUpdateModelTestingStatusEnum["NotStarted"] = "NotStarted";
-  ApplicationUpdateModelTestingStatusEnum["InProgress"] = "InProgress";
-  ApplicationUpdateModelTestingStatusEnum["Completed"] = "Completed";
+  ApplicationUpdateModelTestingStatusEnum['NotStarted'] = 'NotStarted';
+  ApplicationUpdateModelTestingStatusEnum['InProgress'] = 'InProgress';
+  ApplicationUpdateModelTestingStatusEnum['Completed'] = 'Completed';
 })(
   ApplicationUpdateModelTestingStatusEnum ||
-    (ApplicationUpdateModelTestingStatusEnum = {}),
+    (ApplicationUpdateModelTestingStatusEnum = {})
 );
 export var ApplicationUpdateModelCollateralDamagePotentialEnum;
 (function (ApplicationUpdateModelCollateralDamagePotentialEnum) {
-  ApplicationUpdateModelCollateralDamagePotentialEnum["NotDefined"] =
-    "NotDefined";
-  ApplicationUpdateModelCollateralDamagePotentialEnum["None"] = "None";
-  ApplicationUpdateModelCollateralDamagePotentialEnum["Low"] = "Low";
-  ApplicationUpdateModelCollateralDamagePotentialEnum["LowMedium"] =
-    "LowMedium";
-  ApplicationUpdateModelCollateralDamagePotentialEnum["MediumHigh"] =
-    "MediumHigh";
-  ApplicationUpdateModelCollateralDamagePotentialEnum["High"] = "High";
+  ApplicationUpdateModelCollateralDamagePotentialEnum['NotDefined'] =
+    'NotDefined';
+  ApplicationUpdateModelCollateralDamagePotentialEnum['None'] = 'None';
+  ApplicationUpdateModelCollateralDamagePotentialEnum['Low'] = 'Low';
+  ApplicationUpdateModelCollateralDamagePotentialEnum['LowMedium'] =
+    'LowMedium';
+  ApplicationUpdateModelCollateralDamagePotentialEnum['MediumHigh'] =
+    'MediumHigh';
+  ApplicationUpdateModelCollateralDamagePotentialEnum['High'] = 'High';
 })(
   ApplicationUpdateModelCollateralDamagePotentialEnum ||
-    (ApplicationUpdateModelCollateralDamagePotentialEnum = {}),
+    (ApplicationUpdateModelCollateralDamagePotentialEnum = {})
 );
 export var ApplicationUpdateModelTargetDistributionEnum;
 (function (ApplicationUpdateModelTargetDistributionEnum) {
-  ApplicationUpdateModelTargetDistributionEnum["NotDefined"] = "NotDefined";
-  ApplicationUpdateModelTargetDistributionEnum["None"] = "None";
-  ApplicationUpdateModelTargetDistributionEnum["Low"] = "Low";
-  ApplicationUpdateModelTargetDistributionEnum["Medium"] = "Medium";
-  ApplicationUpdateModelTargetDistributionEnum["High"] = "High";
+  ApplicationUpdateModelTargetDistributionEnum['NotDefined'] = 'NotDefined';
+  ApplicationUpdateModelTargetDistributionEnum['None'] = 'None';
+  ApplicationUpdateModelTargetDistributionEnum['Low'] = 'Low';
+  ApplicationUpdateModelTargetDistributionEnum['Medium'] = 'Medium';
+  ApplicationUpdateModelTargetDistributionEnum['High'] = 'High';
 })(
   ApplicationUpdateModelTargetDistributionEnum ||
-    (ApplicationUpdateModelTargetDistributionEnum = {}),
+    (ApplicationUpdateModelTargetDistributionEnum = {})
 );
 export var ApplicationUpdateModelConfidentialityRequirementEnum;
 (function (ApplicationUpdateModelConfidentialityRequirementEnum) {
-  ApplicationUpdateModelConfidentialityRequirementEnum["NotDefined"] =
-    "NotDefined";
-  ApplicationUpdateModelConfidentialityRequirementEnum["Low"] = "Low";
-  ApplicationUpdateModelConfidentialityRequirementEnum["Medium"] = "Medium";
-  ApplicationUpdateModelConfidentialityRequirementEnum["High"] = "High";
+  ApplicationUpdateModelConfidentialityRequirementEnum['NotDefined'] =
+    'NotDefined';
+  ApplicationUpdateModelConfidentialityRequirementEnum['Low'] = 'Low';
+  ApplicationUpdateModelConfidentialityRequirementEnum['Medium'] = 'Medium';
+  ApplicationUpdateModelConfidentialityRequirementEnum['High'] = 'High';
 })(
   ApplicationUpdateModelConfidentialityRequirementEnum ||
-    (ApplicationUpdateModelConfidentialityRequirementEnum = {}),
+    (ApplicationUpdateModelConfidentialityRequirementEnum = {})
 );
 export var ApplicationUpdateModelIntegrityRequirementEnum;
 (function (ApplicationUpdateModelIntegrityRequirementEnum) {
-  ApplicationUpdateModelIntegrityRequirementEnum["NotDefined"] = "NotDefined";
-  ApplicationUpdateModelIntegrityRequirementEnum["Low"] = "Low";
-  ApplicationUpdateModelIntegrityRequirementEnum["Medium"] = "Medium";
-  ApplicationUpdateModelIntegrityRequirementEnum["High"] = "High";
+  ApplicationUpdateModelIntegrityRequirementEnum['NotDefined'] = 'NotDefined';
+  ApplicationUpdateModelIntegrityRequirementEnum['Low'] = 'Low';
+  ApplicationUpdateModelIntegrityRequirementEnum['Medium'] = 'Medium';
+  ApplicationUpdateModelIntegrityRequirementEnum['High'] = 'High';
 })(
   ApplicationUpdateModelIntegrityRequirementEnum ||
-    (ApplicationUpdateModelIntegrityRequirementEnum = {}),
+    (ApplicationUpdateModelIntegrityRequirementEnum = {})
 );
 export var ApplicationUpdateModelAvailabilityRequirementEnum;
 (function (ApplicationUpdateModelAvailabilityRequirementEnum) {
-  ApplicationUpdateModelAvailabilityRequirementEnum["NotDefined"] =
-    "NotDefined";
-  ApplicationUpdateModelAvailabilityRequirementEnum["Low"] = "Low";
-  ApplicationUpdateModelAvailabilityRequirementEnum["Medium"] = "Medium";
-  ApplicationUpdateModelAvailabilityRequirementEnum["High"] = "High";
+  ApplicationUpdateModelAvailabilityRequirementEnum['NotDefined'] =
+    'NotDefined';
+  ApplicationUpdateModelAvailabilityRequirementEnum['Low'] = 'Low';
+  ApplicationUpdateModelAvailabilityRequirementEnum['Medium'] = 'Medium';
+  ApplicationUpdateModelAvailabilityRequirementEnum['High'] = 'High';
 })(
   ApplicationUpdateModelAvailabilityRequirementEnum ||
-    (ApplicationUpdateModelAvailabilityRequirementEnum = {}),
+    (ApplicationUpdateModelAvailabilityRequirementEnum = {})
 );
 export var ApplicationUpdateModelPreferredOfferingTypeEnum;
 (function (ApplicationUpdateModelPreferredOfferingTypeEnum) {
-  ApplicationUpdateModelPreferredOfferingTypeEnum["None"] = "None";
-  ApplicationUpdateModelPreferredOfferingTypeEnum["ScanExecution"] =
-    "ScanExecution";
-  ApplicationUpdateModelPreferredOfferingTypeEnum["Applications"] =
-    "Applications";
+  ApplicationUpdateModelPreferredOfferingTypeEnum['None'] = 'None';
+  ApplicationUpdateModelPreferredOfferingTypeEnum['ScanExecution'] =
+    'ScanExecution';
+  ApplicationUpdateModelPreferredOfferingTypeEnum['Applications'] =
+    'Applications';
 })(
   ApplicationUpdateModelPreferredOfferingTypeEnum ||
-    (ApplicationUpdateModelPreferredOfferingTypeEnum = {}),
+    (ApplicationUpdateModelPreferredOfferingTypeEnum = {})
 );
+export var AssemblySecurityRuleSetEnum;
+(function (AssemblySecurityRuleSetEnum) {
+  AssemblySecurityRuleSetEnum['None'] = 'None';
+  AssemblySecurityRuleSetEnum['Level1'] = 'Level1';
+  AssemblySecurityRuleSetEnum['Level2'] = 'Level2';
+})(AssemblySecurityRuleSetEnum || (AssemblySecurityRuleSetEnum = {}));
 export var AssetGroupModelIssuesStatusInheritanceEnum;
 (function (AssetGroupModelIssuesStatusInheritanceEnum) {
-  AssetGroupModelIssuesStatusInheritanceEnum["None"] = "None";
-  AssetGroupModelIssuesStatusInheritanceEnum["Noise"] = "Noise";
-  AssetGroupModelIssuesStatusInheritanceEnum["Fixed"] = "Fixed";
+  AssetGroupModelIssuesStatusInheritanceEnum['None'] = 'None';
+  AssetGroupModelIssuesStatusInheritanceEnum['Noise'] = 'Noise';
+  AssetGroupModelIssuesStatusInheritanceEnum['Fixed'] = 'Fixed';
 })(
   AssetGroupModelIssuesStatusInheritanceEnum ||
-    (AssetGroupModelIssuesStatusInheritanceEnum = {}),
+    (AssetGroupModelIssuesStatusInheritanceEnum = {})
 );
 export var AuditEffectedEntityEntityTypeEnum;
 (function (AuditEffectedEntityEntityTypeEnum) {
-  AuditEffectedEntityEntityTypeEnum["Organization"] = "Organization";
-  AuditEffectedEntityEntityTypeEnum["AssetGroup"] = "AssetGroup";
-  AuditEffectedEntityEntityTypeEnum["User"] = "User";
-  AuditEffectedEntityEntityTypeEnum["UserRole"] = "UserRole";
-  AuditEffectedEntityEntityTypeEnum["App"] = "App";
-  AuditEffectedEntityEntityTypeEnum["Scan"] = "Scan";
-  AuditEffectedEntityEntityTypeEnum["ScanExecution"] = "ScanExecution";
-  AuditEffectedEntityEntityTypeEnum["Presence"] = "Presence";
-  AuditEffectedEntityEntityTypeEnum["IssueBulk"] = "IssueBulk";
-  AuditEffectedEntityEntityTypeEnum["FixGroup"] = "FixGroup";
-  AuditEffectedEntityEntityTypeEnum["Policy"] = "Policy";
-  AuditEffectedEntityEntityTypeEnum["Session"] = "Session";
-  AuditEffectedEntityEntityTypeEnum["BusinessUnit"] = "BusinessUnit";
-  AuditEffectedEntityEntityTypeEnum["Domain"] = "Domain";
-  AuditEffectedEntityEntityTypeEnum["TestPolicy"] = "TestPolicy";
-  AuditEffectedEntityEntityTypeEnum["CustomFields"] = "CustomFields";
-  AuditEffectedEntityEntityTypeEnum["ScanTemplate"] = "ScanTemplate";
-  AuditEffectedEntityEntityTypeEnum["OrgSetting"] = "OrgSetting";
+  AuditEffectedEntityEntityTypeEnum['Organization'] = 'Organization';
+  AuditEffectedEntityEntityTypeEnum['AssetGroup'] = 'AssetGroup';
+  AuditEffectedEntityEntityTypeEnum['User'] = 'User';
+  AuditEffectedEntityEntityTypeEnum['UserRole'] = 'UserRole';
+  AuditEffectedEntityEntityTypeEnum['App'] = 'App';
+  AuditEffectedEntityEntityTypeEnum['Scan'] = 'Scan';
+  AuditEffectedEntityEntityTypeEnum['ScanExecution'] = 'ScanExecution';
+  AuditEffectedEntityEntityTypeEnum['Presence'] = 'Presence';
+  AuditEffectedEntityEntityTypeEnum['IssueBulk'] = 'IssueBulk';
+  AuditEffectedEntityEntityTypeEnum['FixGroup'] = 'FixGroup';
+  AuditEffectedEntityEntityTypeEnum['Policy'] = 'Policy';
+  AuditEffectedEntityEntityTypeEnum['Session'] = 'Session';
+  AuditEffectedEntityEntityTypeEnum['BusinessUnit'] = 'BusinessUnit';
+  AuditEffectedEntityEntityTypeEnum['Domain'] = 'Domain';
+  AuditEffectedEntityEntityTypeEnum['TestPolicy'] = 'TestPolicy';
+  AuditEffectedEntityEntityTypeEnum['CustomFields'] = 'CustomFields';
+  AuditEffectedEntityEntityTypeEnum['ScanTemplate'] = 'ScanTemplate';
+  AuditEffectedEntityEntityTypeEnum['OrgSetting'] = 'OrgSetting';
 })(
-  AuditEffectedEntityEntityTypeEnum || (AuditEffectedEntityEntityTypeEnum = {}),
+  AuditEffectedEntityEntityTypeEnum || (AuditEffectedEntityEntityTypeEnum = {})
 );
 export var AuditModelActionEnum;
 (function (AuditModelActionEnum) {
-  AuditModelActionEnum["Login"] = "Login";
-  AuditModelActionEnum["Create"] = "Create";
-  AuditModelActionEnum["Update"] = "Update";
-  AuditModelActionEnum["Delete"] = "Delete";
+  AuditModelActionEnum['Login'] = 'Login';
+  AuditModelActionEnum['Create'] = 'Create';
+  AuditModelActionEnum['Update'] = 'Update';
+  AuditModelActionEnum['Delete'] = 'Delete';
 })(AuditModelActionEnum || (AuditModelActionEnum = {}));
 export var AuditModelActivityEnum;
 (function (AuditModelActivityEnum) {
-  AuditModelActivityEnum["Login"] = "Login";
-  AuditModelActivityEnum["Create"] = "Create";
-  AuditModelActivityEnum["Update"] = "Update";
-  AuditModelActivityEnum["Delete"] = "Delete";
-  AuditModelActivityEnum["Reset"] = "Reset";
-  AuditModelActivityEnum["Associate"] = "Associate";
-  AuditModelActivityEnum["Disassociate"] = "Disassociate";
-  AuditModelActivityEnum["CreateReport"] = "CreateReport";
-  AuditModelActivityEnum["InviteUser"] = "InviteUser";
-  AuditModelActivityEnum["Add"] = "Add";
-  AuditModelActivityEnum["Remove"] = "Remove";
-  AuditModelActivityEnum["UpdateIssuesBulk"] = "UpdateIssuesBulk";
-  AuditModelActivityEnum["DeleteScanExecutions"] = "DeleteScanExecutions";
-  AuditModelActivityEnum["BlockDomain"] = "BlockDomain";
-  AuditModelActivityEnum["AllowDomain"] = "AllowDomain";
+  AuditModelActivityEnum['Login'] = 'Login';
+  AuditModelActivityEnum['Create'] = 'Create';
+  AuditModelActivityEnum['Update'] = 'Update';
+  AuditModelActivityEnum['Delete'] = 'Delete';
+  AuditModelActivityEnum['Reset'] = 'Reset';
+  AuditModelActivityEnum['Associate'] = 'Associate';
+  AuditModelActivityEnum['Disassociate'] = 'Disassociate';
+  AuditModelActivityEnum['CreateReport'] = 'CreateReport';
+  AuditModelActivityEnum['InviteUser'] = 'InviteUser';
+  AuditModelActivityEnum['Add'] = 'Add';
+  AuditModelActivityEnum['Remove'] = 'Remove';
+  AuditModelActivityEnum['UpdateIssuesBulk'] = 'UpdateIssuesBulk';
+  AuditModelActivityEnum['DeleteScanExecutions'] = 'DeleteScanExecutions';
+  AuditModelActivityEnum['BlockDomain'] = 'BlockDomain';
+  AuditModelActivityEnum['AllowDomain'] = 'AllowDomain';
 })(AuditModelActivityEnum || (AuditModelActivityEnum = {}));
 export var AuditModelEntityTypeEnum;
 (function (AuditModelEntityTypeEnum) {
-  AuditModelEntityTypeEnum["Organization"] = "Organization";
-  AuditModelEntityTypeEnum["AssetGroup"] = "AssetGroup";
-  AuditModelEntityTypeEnum["User"] = "User";
-  AuditModelEntityTypeEnum["UserRole"] = "UserRole";
-  AuditModelEntityTypeEnum["App"] = "App";
-  AuditModelEntityTypeEnum["Scan"] = "Scan";
-  AuditModelEntityTypeEnum["ScanExecution"] = "ScanExecution";
-  AuditModelEntityTypeEnum["Presence"] = "Presence";
-  AuditModelEntityTypeEnum["IssueBulk"] = "IssueBulk";
-  AuditModelEntityTypeEnum["FixGroup"] = "FixGroup";
-  AuditModelEntityTypeEnum["Policy"] = "Policy";
-  AuditModelEntityTypeEnum["Session"] = "Session";
-  AuditModelEntityTypeEnum["BusinessUnit"] = "BusinessUnit";
-  AuditModelEntityTypeEnum["Domain"] = "Domain";
-  AuditModelEntityTypeEnum["TestPolicy"] = "TestPolicy";
-  AuditModelEntityTypeEnum["CustomFields"] = "CustomFields";
-  AuditModelEntityTypeEnum["ScanTemplate"] = "ScanTemplate";
-  AuditModelEntityTypeEnum["OrgSetting"] = "OrgSetting";
+  AuditModelEntityTypeEnum['Organization'] = 'Organization';
+  AuditModelEntityTypeEnum['AssetGroup'] = 'AssetGroup';
+  AuditModelEntityTypeEnum['User'] = 'User';
+  AuditModelEntityTypeEnum['UserRole'] = 'UserRole';
+  AuditModelEntityTypeEnum['App'] = 'App';
+  AuditModelEntityTypeEnum['Scan'] = 'Scan';
+  AuditModelEntityTypeEnum['ScanExecution'] = 'ScanExecution';
+  AuditModelEntityTypeEnum['Presence'] = 'Presence';
+  AuditModelEntityTypeEnum['IssueBulk'] = 'IssueBulk';
+  AuditModelEntityTypeEnum['FixGroup'] = 'FixGroup';
+  AuditModelEntityTypeEnum['Policy'] = 'Policy';
+  AuditModelEntityTypeEnum['Session'] = 'Session';
+  AuditModelEntityTypeEnum['BusinessUnit'] = 'BusinessUnit';
+  AuditModelEntityTypeEnum['Domain'] = 'Domain';
+  AuditModelEntityTypeEnum['TestPolicy'] = 'TestPolicy';
+  AuditModelEntityTypeEnum['CustomFields'] = 'CustomFields';
+  AuditModelEntityTypeEnum['ScanTemplate'] = 'ScanTemplate';
+  AuditModelEntityTypeEnum['OrgSetting'] = 'OrgSetting';
 })(AuditModelEntityTypeEnum || (AuditModelEntityTypeEnum = {}));
 export var BlockedDomainModelUrlTypeEnum;
 (function (BlockedDomainModelUrlTypeEnum) {
-  BlockedDomainModelUrlTypeEnum["Domain"] = "Domain";
-  BlockedDomainModelUrlTypeEnum["IpAddress"] = "IpAddress";
+  BlockedDomainModelUrlTypeEnum['Domain'] = 'Domain';
+  BlockedDomainModelUrlTypeEnum['IpAddress'] = 'IpAddress';
 })(BlockedDomainModelUrlTypeEnum || (BlockedDomainModelUrlTypeEnum = {}));
 export var ChartCreateModelMetricsEnum;
 (function (ChartCreateModelMetricsEnum) {
-  ChartCreateModelMetricsEnum["RiskRating"] = "RiskRating";
-  ChartCreateModelMetricsEnum["TestingStatus"] = "TestingStatus";
-  ChartCreateModelMetricsEnum["Issues"] = "Issues";
-  ChartCreateModelMetricsEnum["MTTR"] = "MTTR";
-  ChartCreateModelMetricsEnum["ScanExecutions"] = "ScanExecutions";
+  ChartCreateModelMetricsEnum['RiskRating'] = 'RiskRating';
+  ChartCreateModelMetricsEnum['TestingStatus'] = 'TestingStatus';
+  ChartCreateModelMetricsEnum['Issues'] = 'Issues';
+  ChartCreateModelMetricsEnum['MTTR'] = 'MTTR';
+  ChartCreateModelMetricsEnum['ScanExecutions'] = 'ScanExecutions';
 })(ChartCreateModelMetricsEnum || (ChartCreateModelMetricsEnum = {}));
 export var ChartFilterModelMinSeverityEnum;
 (function (ChartFilterModelMinSeverityEnum) {
-  ChartFilterModelMinSeverityEnum["Undetermined"] = "Undetermined";
-  ChartFilterModelMinSeverityEnum["Informational"] = "Informational";
-  ChartFilterModelMinSeverityEnum["Low"] = "Low";
-  ChartFilterModelMinSeverityEnum["Medium"] = "Medium";
-  ChartFilterModelMinSeverityEnum["High"] = "High";
-  ChartFilterModelMinSeverityEnum["Critical"] = "Critical";
+  ChartFilterModelMinSeverityEnum['Undetermined'] = 'Undetermined';
+  ChartFilterModelMinSeverityEnum['Informational'] = 'Informational';
+  ChartFilterModelMinSeverityEnum['Low'] = 'Low';
+  ChartFilterModelMinSeverityEnum['Medium'] = 'Medium';
+  ChartFilterModelMinSeverityEnum['High'] = 'High';
+  ChartFilterModelMinSeverityEnum['Critical'] = 'Critical';
 })(ChartFilterModelMinSeverityEnum || (ChartFilterModelMinSeverityEnum = {}));
 export var ComplianceStatusCategoryEnum;
 (function (ComplianceStatusCategoryEnum) {
-  ComplianceStatusCategoryEnum["Custom"] = "Custom";
-  ComplianceStatusCategoryEnum["Security"] = "Security";
-  ComplianceStatusCategoryEnum["Regulation"] = "Regulation";
-  ComplianceStatusCategoryEnum["IndustryStandard"] = "IndustryStandard";
+  ComplianceStatusCategoryEnum['Custom'] = 'Custom';
+  ComplianceStatusCategoryEnum['Security'] = 'Security';
+  ComplianceStatusCategoryEnum['Regulation'] = 'Regulation';
+  ComplianceStatusCategoryEnum['IndustryStandard'] = 'IndustryStandard';
 })(ComplianceStatusCategoryEnum || (ComplianceStatusCategoryEnum = {}));
+export var ConstructorInfoAttributesEnum;
+(function (ConstructorInfoAttributesEnum) {
+  ConstructorInfoAttributesEnum['PrivateScope'] = 'PrivateScope';
+  ConstructorInfoAttributesEnum['Private'] = 'Private';
+  ConstructorInfoAttributesEnum['FamANDAssem'] = 'FamANDAssem';
+  ConstructorInfoAttributesEnum['Assembly'] = 'Assembly';
+  ConstructorInfoAttributesEnum['Family'] = 'Family';
+  ConstructorInfoAttributesEnum['FamORAssem'] = 'FamORAssem';
+  ConstructorInfoAttributesEnum['Public'] = 'Public';
+  ConstructorInfoAttributesEnum['MemberAccessMask'] = 'MemberAccessMask';
+  ConstructorInfoAttributesEnum['UnmanagedExport'] = 'UnmanagedExport';
+  ConstructorInfoAttributesEnum['Static'] = 'Static';
+  ConstructorInfoAttributesEnum['Final'] = 'Final';
+  ConstructorInfoAttributesEnum['Virtual'] = 'Virtual';
+  ConstructorInfoAttributesEnum['HideBySig'] = 'HideBySig';
+  ConstructorInfoAttributesEnum['NewSlot'] = 'NewSlot';
+  ConstructorInfoAttributesEnum['CheckAccessOnOverride'] =
+    'CheckAccessOnOverride';
+  ConstructorInfoAttributesEnum['Abstract'] = 'Abstract';
+  ConstructorInfoAttributesEnum['SpecialName'] = 'SpecialName';
+  ConstructorInfoAttributesEnum['RTSpecialName'] = 'RTSpecialName';
+  ConstructorInfoAttributesEnum['PinvokeImpl'] = 'PinvokeImpl';
+  ConstructorInfoAttributesEnum['HasSecurity'] = 'HasSecurity';
+  ConstructorInfoAttributesEnum['RequireSecObject'] = 'RequireSecObject';
+  ConstructorInfoAttributesEnum['ReservedMask'] = 'ReservedMask';
+})(ConstructorInfoAttributesEnum || (ConstructorInfoAttributesEnum = {}));
+export var ConstructorInfoMethodImplementationFlagsEnum;
+(function (ConstructorInfoMethodImplementationFlagsEnum) {
+  ConstructorInfoMethodImplementationFlagsEnum['IL'] = 'IL';
+  ConstructorInfoMethodImplementationFlagsEnum['Native'] = 'Native';
+  ConstructorInfoMethodImplementationFlagsEnum['OPTIL'] = 'OPTIL';
+  ConstructorInfoMethodImplementationFlagsEnum['CodeTypeMask'] = 'CodeTypeMask';
+  ConstructorInfoMethodImplementationFlagsEnum['ManagedMask'] = 'ManagedMask';
+  ConstructorInfoMethodImplementationFlagsEnum['NoInlining'] = 'NoInlining';
+  ConstructorInfoMethodImplementationFlagsEnum['ForwardRef'] = 'ForwardRef';
+  ConstructorInfoMethodImplementationFlagsEnum['Synchronized'] = 'Synchronized';
+  ConstructorInfoMethodImplementationFlagsEnum['NoOptimization'] =
+    'NoOptimization';
+  ConstructorInfoMethodImplementationFlagsEnum['PreserveSig'] = 'PreserveSig';
+  ConstructorInfoMethodImplementationFlagsEnum['AggressiveInlining'] =
+    'AggressiveInlining';
+  ConstructorInfoMethodImplementationFlagsEnum['AggressiveOptimization'] =
+    'AggressiveOptimization';
+  ConstructorInfoMethodImplementationFlagsEnum['InternalCall'] = 'InternalCall';
+  ConstructorInfoMethodImplementationFlagsEnum['MaxMethodImplVal'] =
+    'MaxMethodImplVal';
+})(
+  ConstructorInfoMethodImplementationFlagsEnum ||
+    (ConstructorInfoMethodImplementationFlagsEnum = {})
+);
+export var ConstructorInfoCallingConventionEnum;
+(function (ConstructorInfoCallingConventionEnum) {
+  ConstructorInfoCallingConventionEnum['Standard'] = 'Standard';
+  ConstructorInfoCallingConventionEnum['VarArgs'] = 'VarArgs';
+  ConstructorInfoCallingConventionEnum['Any'] = 'Any';
+  ConstructorInfoCallingConventionEnum['HasThis'] = 'HasThis';
+  ConstructorInfoCallingConventionEnum['ExplicitThis'] = 'ExplicitThis';
+})(
+  ConstructorInfoCallingConventionEnum ||
+    (ConstructorInfoCallingConventionEnum = {})
+);
+export var ConstructorInfoMemberTypeEnum;
+(function (ConstructorInfoMemberTypeEnum) {
+  ConstructorInfoMemberTypeEnum['Constructor'] = 'Constructor';
+  ConstructorInfoMemberTypeEnum['Event'] = 'Event';
+  ConstructorInfoMemberTypeEnum['Field'] = 'Field';
+  ConstructorInfoMemberTypeEnum['Method'] = 'Method';
+  ConstructorInfoMemberTypeEnum['Property'] = 'Property';
+  ConstructorInfoMemberTypeEnum['TypeInfo'] = 'TypeInfo';
+  ConstructorInfoMemberTypeEnum['Custom'] = 'Custom';
+  ConstructorInfoMemberTypeEnum['NestedType'] = 'NestedType';
+  ConstructorInfoMemberTypeEnum['All'] = 'All';
+})(ConstructorInfoMemberTypeEnum || (ConstructorInfoMemberTypeEnum = {}));
 export var CorrelationGroupModelStatusEnum;
 (function (CorrelationGroupModelStatusEnum) {
-  CorrelationGroupModelStatusEnum["Open"] = "Open";
-  CorrelationGroupModelStatusEnum["InProgress"] = "InProgress";
-  CorrelationGroupModelStatusEnum["Reopened"] = "Reopened";
-  CorrelationGroupModelStatusEnum["Noise"] = "Noise";
-  CorrelationGroupModelStatusEnum["Passed"] = "Passed";
-  CorrelationGroupModelStatusEnum["Fixed"] = "Fixed";
-  CorrelationGroupModelStatusEnum["New"] = "New";
+  CorrelationGroupModelStatusEnum['Open'] = 'Open';
+  CorrelationGroupModelStatusEnum['InProgress'] = 'InProgress';
+  CorrelationGroupModelStatusEnum['Reopened'] = 'Reopened';
+  CorrelationGroupModelStatusEnum['Noise'] = 'Noise';
+  CorrelationGroupModelStatusEnum['Passed'] = 'Passed';
+  CorrelationGroupModelStatusEnum['Fixed'] = 'Fixed';
+  CorrelationGroupModelStatusEnum['New'] = 'New';
 })(CorrelationGroupModelStatusEnum || (CorrelationGroupModelStatusEnum = {}));
 export var CorrelationGroupModelSeverityEnum;
 (function (CorrelationGroupModelSeverityEnum) {
-  CorrelationGroupModelSeverityEnum["Undetermined"] = "Undetermined";
-  CorrelationGroupModelSeverityEnum["Informational"] = "Informational";
-  CorrelationGroupModelSeverityEnum["Low"] = "Low";
-  CorrelationGroupModelSeverityEnum["Medium"] = "Medium";
-  CorrelationGroupModelSeverityEnum["High"] = "High";
-  CorrelationGroupModelSeverityEnum["Critical"] = "Critical";
+  CorrelationGroupModelSeverityEnum['Undetermined'] = 'Undetermined';
+  CorrelationGroupModelSeverityEnum['Informational'] = 'Informational';
+  CorrelationGroupModelSeverityEnum['Low'] = 'Low';
+  CorrelationGroupModelSeverityEnum['Medium'] = 'Medium';
+  CorrelationGroupModelSeverityEnum['High'] = 'High';
+  CorrelationGroupModelSeverityEnum['Critical'] = 'Critical';
 })(
-  CorrelationGroupModelSeverityEnum || (CorrelationGroupModelSeverityEnum = {}),
+  CorrelationGroupModelSeverityEnum || (CorrelationGroupModelSeverityEnum = {})
 );
 export var CountPerFinalStatusStatusEnum;
 (function (CountPerFinalStatusStatusEnum) {
-  CountPerFinalStatusStatusEnum["Completed"] = "Completed";
-  CountPerFinalStatusStatusEnum["Failed"] = "Failed";
-  CountPerFinalStatusStatusEnum["Other"] = "Other";
+  CountPerFinalStatusStatusEnum['Completed'] = 'Completed';
+  CountPerFinalStatusStatusEnum['Failed'] = 'Failed';
+  CountPerFinalStatusStatusEnum['Other'] = 'Other';
 })(CountPerFinalStatusStatusEnum || (CountPerFinalStatusStatusEnum = {}));
 export var CountPerTechnologiesTechnologiesEnum;
 (function (CountPerTechnologiesTechnologiesEnum) {
-  CountPerTechnologiesTechnologiesEnum["NONE"] = "NONE";
-  CountPerTechnologiesTechnologiesEnum["DAST"] = "DAST";
-  CountPerTechnologiesTechnologiesEnum["SAST"] = "SAST";
-  CountPerTechnologiesTechnologiesEnum["IAST"] = "IAST";
-  CountPerTechnologiesTechnologiesEnum["SCA"] = "SCA";
+  CountPerTechnologiesTechnologiesEnum['NONE'] = 'NONE';
+  CountPerTechnologiesTechnologiesEnum['DAST'] = 'DAST';
+  CountPerTechnologiesTechnologiesEnum['SAST'] = 'SAST';
+  CountPerTechnologiesTechnologiesEnum['IAST'] = 'IAST';
+  CountPerTechnologiesTechnologiesEnum['SCA'] = 'SCA';
 })(
   CountPerTechnologiesTechnologiesEnum ||
-    (CountPerTechnologiesTechnologiesEnum = {}),
+    (CountPerTechnologiesTechnologiesEnum = {})
 );
 export var CustomFieldModelValueTypeEnum;
 (function (CustomFieldModelValueTypeEnum) {
-  CustomFieldModelValueTypeEnum["String"] = "String";
-  CustomFieldModelValueTypeEnum["DateTime"] = "DateTime";
+  CustomFieldModelValueTypeEnum['String'] = 'String';
+  CustomFieldModelValueTypeEnum['DateTime'] = 'DateTime';
 })(CustomFieldModelValueTypeEnum || (CustomFieldModelValueTypeEnum = {}));
 export var CustomFieldRequestModelValueTypeEnum;
 (function (CustomFieldRequestModelValueTypeEnum) {
-  CustomFieldRequestModelValueTypeEnum["String"] = "String";
-  CustomFieldRequestModelValueTypeEnum["DateTime"] = "DateTime";
+  CustomFieldRequestModelValueTypeEnum['String'] = 'String';
+  CustomFieldRequestModelValueTypeEnum['DateTime'] = 'DateTime';
 })(
   CustomFieldRequestModelValueTypeEnum ||
-    (CustomFieldRequestModelValueTypeEnum = {}),
+    (CustomFieldRequestModelValueTypeEnum = {})
 );
 export var CustomFieldResponseModelValueTypeEnum;
 (function (CustomFieldResponseModelValueTypeEnum) {
-  CustomFieldResponseModelValueTypeEnum["String"] = "String";
-  CustomFieldResponseModelValueTypeEnum["DateTime"] = "DateTime";
+  CustomFieldResponseModelValueTypeEnum['String'] = 'String';
+  CustomFieldResponseModelValueTypeEnum['DateTime'] = 'DateTime';
 })(
   CustomFieldResponseModelValueTypeEnum ||
-    (CustomFieldResponseModelValueTypeEnum = {}),
+    (CustomFieldResponseModelValueTypeEnum = {})
 );
 export var DastScanExecutionModelStatusEnum;
 (function (DastScanExecutionModelStatusEnum) {
-  DastScanExecutionModelStatusEnum["Running"] = "Running";
-  DastScanExecutionModelStatusEnum["Stopping"] = "Stopping";
-  DastScanExecutionModelStatusEnum["Pausing"] = "Pausing";
-  DastScanExecutionModelStatusEnum["InQueue"] = "InQueue";
-  DastScanExecutionModelStatusEnum["Paused"] = "Paused";
-  DastScanExecutionModelStatusEnum["Ready"] = "Ready";
-  DastScanExecutionModelStatusEnum["Failed"] = "Failed";
+  DastScanExecutionModelStatusEnum['Running'] = 'Running';
+  DastScanExecutionModelStatusEnum['Stopping'] = 'Stopping';
+  DastScanExecutionModelStatusEnum['Pausing'] = 'Pausing';
+  DastScanExecutionModelStatusEnum['InQueue'] = 'InQueue';
+  DastScanExecutionModelStatusEnum['Paused'] = 'Paused';
+  DastScanExecutionModelStatusEnum['Ready'] = 'Ready';
+  DastScanExecutionModelStatusEnum['Failed'] = 'Failed';
 })(DastScanExecutionModelStatusEnum || (DastScanExecutionModelStatusEnum = {}));
 export var DastScanExecutionModelResultEnum;
 (function (DastScanExecutionModelResultEnum) {
-  DastScanExecutionModelResultEnum["None"] = "None";
-  DastScanExecutionModelResultEnum["NoIssues"] = "NoIssues";
-  DastScanExecutionModelResultEnum["Informational"] = "Informational";
-  DastScanExecutionModelResultEnum["Low"] = "Low";
-  DastScanExecutionModelResultEnum["Medium"] = "Medium";
-  DastScanExecutionModelResultEnum["High"] = "High";
-  DastScanExecutionModelResultEnum["Critical"] = "Critical";
+  DastScanExecutionModelResultEnum['None'] = 'None';
+  DastScanExecutionModelResultEnum['NoIssues'] = 'NoIssues';
+  DastScanExecutionModelResultEnum['Informational'] = 'Informational';
+  DastScanExecutionModelResultEnum['Low'] = 'Low';
+  DastScanExecutionModelResultEnum['Medium'] = 'Medium';
+  DastScanExecutionModelResultEnum['High'] = 'High';
+  DastScanExecutionModelResultEnum['Critical'] = 'Critical';
 })(DastScanExecutionModelResultEnum || (DastScanExecutionModelResultEnum = {}));
 export var DastScanExecutionModelReadStatusEnum;
 (function (DastScanExecutionModelReadStatusEnum) {
-  DastScanExecutionModelReadStatusEnum["None"] = "None";
-  DastScanExecutionModelReadStatusEnum["Unread"] = "Unread";
-  DastScanExecutionModelReadStatusEnum["Read"] = "Read";
+  DastScanExecutionModelReadStatusEnum['None'] = 'None';
+  DastScanExecutionModelReadStatusEnum['Unread'] = 'Unread';
+  DastScanExecutionModelReadStatusEnum['Read'] = 'Read';
 })(
   DastScanExecutionModelReadStatusEnum ||
-    (DastScanExecutionModelReadStatusEnum = {}),
+    (DastScanExecutionModelReadStatusEnum = {})
 );
 export var DastScanExecutionModelAvailableReportsEnum;
 (function (DastScanExecutionModelAvailableReportsEnum) {
-  DastScanExecutionModelAvailableReportsEnum["Xml"] = "Xml";
-  DastScanExecutionModelAvailableReportsEnum["Pdf"] = "Pdf";
-  DastScanExecutionModelAvailableReportsEnum["Html"] = "Html";
-  DastScanExecutionModelAvailableReportsEnum["CompliancePdf"] = "CompliancePdf";
-  DastScanExecutionModelAvailableReportsEnum["OwaspTop10Pdf"] = "OwaspTop10Pdf";
-  DastScanExecutionModelAvailableReportsEnum["Sans25Pdf"] = "Sans25Pdf";
-  DastScanExecutionModelAvailableReportsEnum["RawXml"] = "RawXml";
-  DastScanExecutionModelAvailableReportsEnum["Zip"] = "Zip";
-  DastScanExecutionModelAvailableReportsEnum["Json"] = "Json";
+  DastScanExecutionModelAvailableReportsEnum['Xml'] = 'Xml';
+  DastScanExecutionModelAvailableReportsEnum['Pdf'] = 'Pdf';
+  DastScanExecutionModelAvailableReportsEnum['Html'] = 'Html';
+  DastScanExecutionModelAvailableReportsEnum['CompliancePdf'] = 'CompliancePdf';
+  DastScanExecutionModelAvailableReportsEnum['OwaspTop10Pdf'] = 'OwaspTop10Pdf';
+  DastScanExecutionModelAvailableReportsEnum['Sans25Pdf'] = 'Sans25Pdf';
+  DastScanExecutionModelAvailableReportsEnum['RawXml'] = 'RawXml';
+  DastScanExecutionModelAvailableReportsEnum['Zip'] = 'Zip';
+  DastScanExecutionModelAvailableReportsEnum['Json'] = 'Json';
 })(
   DastScanExecutionModelAvailableReportsEnum ||
-    (DastScanExecutionModelAvailableReportsEnum = {}),
+    (DastScanExecutionModelAvailableReportsEnum = {})
 );
 export var DastScanExecutionModelExecutionProgressEnum;
 (function (DastScanExecutionModelExecutionProgressEnum) {
-  DastScanExecutionModelExecutionProgressEnum["Pending"] = "Pending";
-  DastScanExecutionModelExecutionProgressEnum["Running"] = "Running";
-  DastScanExecutionModelExecutionProgressEnum["UnderReview"] = "UnderReview";
-  DastScanExecutionModelExecutionProgressEnum["RunningManually"] =
-    "RunningManually";
-  DastScanExecutionModelExecutionProgressEnum["Paused"] = "Paused";
-  DastScanExecutionModelExecutionProgressEnum["Completed"] = "Completed";
+  DastScanExecutionModelExecutionProgressEnum['Pending'] = 'Pending';
+  DastScanExecutionModelExecutionProgressEnum['Running'] = 'Running';
+  DastScanExecutionModelExecutionProgressEnum['UnderReview'] = 'UnderReview';
+  DastScanExecutionModelExecutionProgressEnum['RunningManually'] =
+    'RunningManually';
+  DastScanExecutionModelExecutionProgressEnum['Paused'] = 'Paused';
+  DastScanExecutionModelExecutionProgressEnum['Completed'] = 'Completed';
 })(
   DastScanExecutionModelExecutionProgressEnum ||
-    (DastScanExecutionModelExecutionProgressEnum = {}),
+    (DastScanExecutionModelExecutionProgressEnum = {})
 );
 export var DastScanModelTechnologyEnum;
 (function (DastScanModelTechnologyEnum) {
-  DastScanModelTechnologyEnum["DynamicAnalyzer"] = "DynamicAnalyzer";
-  DastScanModelTechnologyEnum["StaticAnalyzer"] = "StaticAnalyzer";
-  DastScanModelTechnologyEnum["IFA"] = "IFA";
-  DastScanModelTechnologyEnum["DastAutomation"] = "DastAutomation";
-  DastScanModelTechnologyEnum["IASTAnalyzer"] = "IASTAnalyzer";
-  DastScanModelTechnologyEnum["ScaAnalyzer"] = "ScaAnalyzer";
+  DastScanModelTechnologyEnum['DynamicAnalyzer'] = 'DynamicAnalyzer';
+  DastScanModelTechnologyEnum['StaticAnalyzer'] = 'StaticAnalyzer';
+  DastScanModelTechnologyEnum['IFA'] = 'IFA';
+  DastScanModelTechnologyEnum['DastAutomation'] = 'DastAutomation';
+  DastScanModelTechnologyEnum['IASTAnalyzer'] = 'IASTAnalyzer';
+  DastScanModelTechnologyEnum['ScaAnalyzer'] = 'ScaAnalyzer';
 })(DastScanModelTechnologyEnum || (DastScanModelTechnologyEnum = {}));
 export var DastScanModelIastAgentStatusEnum;
 (function (DastScanModelIastAgentStatusEnum) {
-  DastScanModelIastAgentStatusEnum["None"] = "None";
-  DastScanModelIastAgentStatusEnum["Active"] = "Active";
-  DastScanModelIastAgentStatusEnum["KeyNeverUsed"] = "KeyNeverUsed";
-  DastScanModelIastAgentStatusEnum["Inactive"] = "Inactive";
+  DastScanModelIastAgentStatusEnum['None'] = 'None';
+  DastScanModelIastAgentStatusEnum['Active'] = 'Active';
+  DastScanModelIastAgentStatusEnum['KeyNeverUsed'] = 'KeyNeverUsed';
+  DastScanModelIastAgentStatusEnum['Inactive'] = 'Inactive';
 })(DastScanModelIastAgentStatusEnum || (DastScanModelIastAgentStatusEnum = {}));
 export var DastScanModelIastAgentTypeEnum;
 (function (DastScanModelIastAgentTypeEnum) {
-  DastScanModelIastAgentTypeEnum["Java"] = "Java";
-  DastScanModelIastAgentTypeEnum["DotNet"] = "DotNet";
-  DastScanModelIastAgentTypeEnum["NodeJS"] = "NodeJS";
-  DastScanModelIastAgentTypeEnum["PhpWindows"] = "PhpWindows";
-  DastScanModelIastAgentTypeEnum["PhpRedHat"] = "PhpRedHat";
-  DastScanModelIastAgentTypeEnum["PhpUbuntu"] = "PhpUbuntu";
-  DastScanModelIastAgentTypeEnum["Kubernetes"] = "Kubernetes";
+  DastScanModelIastAgentTypeEnum['Java'] = 'Java';
+  DastScanModelIastAgentTypeEnum['DotNet'] = 'DotNet';
+  DastScanModelIastAgentTypeEnum['NodeJS'] = 'NodeJS';
+  DastScanModelIastAgentTypeEnum['PhpWindows'] = 'PhpWindows';
+  DastScanModelIastAgentTypeEnum['PhpRedHat'] = 'PhpRedHat';
+  DastScanModelIastAgentTypeEnum['PhpUbuntu'] = 'PhpUbuntu';
+  DastScanModelIastAgentTypeEnum['Kubernetes'] = 'Kubernetes';
 })(DastScanModelIastAgentTypeEnum || (DastScanModelIastAgentTypeEnum = {}));
 export var DastScanModelOfferingTypeEnum;
 (function (DastScanModelOfferingTypeEnum) {
-  DastScanModelOfferingTypeEnum["None"] = "None";
-  DastScanModelOfferingTypeEnum["Trial"] = "Trial";
-  DastScanModelOfferingTypeEnum["HTrial"] = "HTrial";
-  DastScanModelOfferingTypeEnum["Applications"] = "Applications";
-  DastScanModelOfferingTypeEnum["ScanExecution"] = "ScanExecution";
-  DastScanModelOfferingTypeEnum["AnalyzerConcurrent"] = "AnalyzerConcurrent";
-  DastScanModelOfferingTypeEnum["ConsultantServices"] = "ConsultantServices";
-  DastScanModelOfferingTypeEnum["Premium"] = "Premium";
-  DastScanModelOfferingTypeEnum["OpenSourcePerApplication"] =
-    "OpenSourcePerApplication";
-  DastScanModelOfferingTypeEnum["OpenSourcePremium"] = "OpenSourcePremium";
-  DastScanModelOfferingTypeEnum["OpenSourceConcurrent"] =
-    "OpenSourceConcurrent";
-  DastScanModelOfferingTypeEnum["IASTConcurrent"] = "IASTConcurrent";
-  DastScanModelOfferingTypeEnum["IASTPayPerApp"] = "IASTPayPerApp";
-  DastScanModelOfferingTypeEnum["Promotional"] = "Promotional";
-  DastScanModelOfferingTypeEnum["Silver"] = "Silver";
-  DastScanModelOfferingTypeEnum["Gold"] = "Gold";
-  DastScanModelOfferingTypeEnum["Platinum"] = "Platinum";
-  DastScanModelOfferingTypeEnum["SCAPerApplication"] = "SCAPerApplication";
-  DastScanModelOfferingTypeEnum["ContributingUser"] = "ContributingUser";
-  DastScanModelOfferingTypeEnum["SilverContribUser"] = "SilverContribUser";
-  DastScanModelOfferingTypeEnum["GoldContribUser"] = "GoldContribUser";
-  DastScanModelOfferingTypeEnum["PlatinumContribUser"] = "PlatinumContribUser";
-  DastScanModelOfferingTypeEnum["SilverPerApp"] = "SilverPerApp";
-  DastScanModelOfferingTypeEnum["GoldPerApp"] = "GoldPerApp";
-  DastScanModelOfferingTypeEnum["PlatinumPerApp"] = "PlatinumPerApp";
+  DastScanModelOfferingTypeEnum['None'] = 'None';
+  DastScanModelOfferingTypeEnum['Trial'] = 'Trial';
+  DastScanModelOfferingTypeEnum['HTrial'] = 'HTrial';
+  DastScanModelOfferingTypeEnum['Applications'] = 'Applications';
+  DastScanModelOfferingTypeEnum['ScanExecution'] = 'ScanExecution';
+  DastScanModelOfferingTypeEnum['AnalyzerConcurrent'] = 'AnalyzerConcurrent';
+  DastScanModelOfferingTypeEnum['ConsultantServices'] = 'ConsultantServices';
+  DastScanModelOfferingTypeEnum['Premium'] = 'Premium';
+  DastScanModelOfferingTypeEnum['OpenSourcePerApplication'] =
+    'OpenSourcePerApplication';
+  DastScanModelOfferingTypeEnum['OpenSourcePremium'] = 'OpenSourcePremium';
+  DastScanModelOfferingTypeEnum['OpenSourceConcurrent'] =
+    'OpenSourceConcurrent';
+  DastScanModelOfferingTypeEnum['IASTConcurrent'] = 'IASTConcurrent';
+  DastScanModelOfferingTypeEnum['IASTPayPerApp'] = 'IASTPayPerApp';
+  DastScanModelOfferingTypeEnum['Promotional'] = 'Promotional';
+  DastScanModelOfferingTypeEnum['Silver'] = 'Silver';
+  DastScanModelOfferingTypeEnum['Gold'] = 'Gold';
+  DastScanModelOfferingTypeEnum['Platinum'] = 'Platinum';
+  DastScanModelOfferingTypeEnum['SCAPerApplication'] = 'SCAPerApplication';
+  DastScanModelOfferingTypeEnum['ContributingUser'] = 'ContributingUser';
+  DastScanModelOfferingTypeEnum['SilverContribUser'] = 'SilverContribUser';
+  DastScanModelOfferingTypeEnum['GoldContribUser'] = 'GoldContribUser';
+  DastScanModelOfferingTypeEnum['PlatinumContribUser'] = 'PlatinumContribUser';
+  DastScanModelOfferingTypeEnum['SilverPerApp'] = 'SilverPerApp';
+  DastScanModelOfferingTypeEnum['GoldPerApp'] = 'GoldPerApp';
+  DastScanModelOfferingTypeEnum['PlatinumPerApp'] = 'PlatinumPerApp';
 })(DastScanModelOfferingTypeEnum || (DastScanModelOfferingTypeEnum = {}));
 export var DastScanModelLoginConfigurationTypeEnum;
 (function (DastScanModelLoginConfigurationTypeEnum) {
-  DastScanModelLoginConfigurationTypeEnum["None"] = "None";
-  DastScanModelLoginConfigurationTypeEnum["LoginSequence"] = "LoginSequence";
-  DastScanModelLoginConfigurationTypeEnum["LoginFile"] = "LoginFile";
-  DastScanModelLoginConfigurationTypeEnum["AutomaticLogin"] = "AutomaticLogin";
-  DastScanModelLoginConfigurationTypeEnum["LoginRequests"] = "LoginRequests";
-  DastScanModelLoginConfigurationTypeEnum["ApiKeyLogin"] = "ApiKeyLogin";
+  DastScanModelLoginConfigurationTypeEnum['None'] = 'None';
+  DastScanModelLoginConfigurationTypeEnum['LoginSequence'] = 'LoginSequence';
+  DastScanModelLoginConfigurationTypeEnum['LoginFile'] = 'LoginFile';
+  DastScanModelLoginConfigurationTypeEnum['AutomaticLogin'] = 'AutomaticLogin';
+  DastScanModelLoginConfigurationTypeEnum['LoginRequests'] = 'LoginRequests';
+  DastScanModelLoginConfigurationTypeEnum['ApiKeyLogin'] = 'ApiKeyLogin';
 })(
   DastScanModelLoginConfigurationTypeEnum ||
-    (DastScanModelLoginConfigurationTypeEnum = {}),
+    (DastScanModelLoginConfigurationTypeEnum = {})
 );
 export var DastScanModelTestOperationEnum;
 (function (DastScanModelTestOperationEnum) {
-  DastScanModelTestOperationEnum["None"] = "None";
-  DastScanModelTestOperationEnum["Retest"] = "Retest";
-  DastScanModelTestOperationEnum["ContinueTest"] = "ContinueTest";
-  DastScanModelTestOperationEnum["ReportOnly"] = "ReportOnly";
+  DastScanModelTestOperationEnum['None'] = 'None';
+  DastScanModelTestOperationEnum['Retest'] = 'Retest';
+  DastScanModelTestOperationEnum['ContinueTest'] = 'ContinueTest';
+  DastScanModelTestOperationEnum['ReportOnly'] = 'ReportOnly';
 })(DastScanModelTestOperationEnum || (DastScanModelTestOperationEnum = {}));
 export var DastScanModelScanMethodEnum;
 (function (DastScanModelScanMethodEnum) {
-  DastScanModelScanMethodEnum["Configured"] = "Configured";
-  DastScanModelScanMethodEnum["APIPostman"] = "APIPostman";
-  DastScanModelScanMethodEnum["APIOpenAPI"] = "APIOpenAPI";
-  DastScanModelScanMethodEnum["APIRecordedTraffic"] = "APIRecordedTraffic";
-  DastScanModelScanMethodEnum["Template"] = "Template";
-  DastScanModelScanMethodEnum["ScanFile"] = "ScanFile";
+  DastScanModelScanMethodEnum['Configured'] = 'Configured';
+  DastScanModelScanMethodEnum['APIPostman'] = 'APIPostman';
+  DastScanModelScanMethodEnum['APIOpenAPI'] = 'APIOpenAPI';
+  DastScanModelScanMethodEnum['APIRecordedTraffic'] = 'APIRecordedTraffic';
+  DastScanModelScanMethodEnum['Template'] = 'Template';
+  DastScanModelScanMethodEnum['ScanFile'] = 'ScanFile';
 })(DastScanModelScanMethodEnum || (DastScanModelScanMethodEnum = {}));
 export var DastTemplateConfigurationLoginConfigurationTypeEnum;
 (function (DastTemplateConfigurationLoginConfigurationTypeEnum) {
-  DastTemplateConfigurationLoginConfigurationTypeEnum["None"] = "None";
-  DastTemplateConfigurationLoginConfigurationTypeEnum["LoginSequence"] =
-    "LoginSequence";
-  DastTemplateConfigurationLoginConfigurationTypeEnum["LoginFile"] =
-    "LoginFile";
-  DastTemplateConfigurationLoginConfigurationTypeEnum["AutomaticLogin"] =
-    "AutomaticLogin";
-  DastTemplateConfigurationLoginConfigurationTypeEnum["LoginRequests"] =
-    "LoginRequests";
-  DastTemplateConfigurationLoginConfigurationTypeEnum["ApiKeyLogin"] =
-    "ApiKeyLogin";
+  DastTemplateConfigurationLoginConfigurationTypeEnum['None'] = 'None';
+  DastTemplateConfigurationLoginConfigurationTypeEnum['LoginSequence'] =
+    'LoginSequence';
+  DastTemplateConfigurationLoginConfigurationTypeEnum['LoginFile'] =
+    'LoginFile';
+  DastTemplateConfigurationLoginConfigurationTypeEnum['AutomaticLogin'] =
+    'AutomaticLogin';
+  DastTemplateConfigurationLoginConfigurationTypeEnum['LoginRequests'] =
+    'LoginRequests';
+  DastTemplateConfigurationLoginConfigurationTypeEnum['ApiKeyLogin'] =
+    'ApiKeyLogin';
 })(
   DastTemplateConfigurationLoginConfigurationTypeEnum ||
-    (DastTemplateConfigurationLoginConfigurationTypeEnum = {}),
+    (DastTemplateConfigurationLoginConfigurationTypeEnum = {})
 );
 export var DastTemplateConfigurationDastScanMethodEnum;
 (function (DastTemplateConfigurationDastScanMethodEnum) {
-  DastTemplateConfigurationDastScanMethodEnum["Configured"] = "Configured";
-  DastTemplateConfigurationDastScanMethodEnum["APIPostman"] = "APIPostman";
-  DastTemplateConfigurationDastScanMethodEnum["APIOpenAPI"] = "APIOpenAPI";
-  DastTemplateConfigurationDastScanMethodEnum["APIRecordedTraffic"] =
-    "APIRecordedTraffic";
-  DastTemplateConfigurationDastScanMethodEnum["Template"] = "Template";
-  DastTemplateConfigurationDastScanMethodEnum["ScanFile"] = "ScanFile";
+  DastTemplateConfigurationDastScanMethodEnum['Configured'] = 'Configured';
+  DastTemplateConfigurationDastScanMethodEnum['APIPostman'] = 'APIPostman';
+  DastTemplateConfigurationDastScanMethodEnum['APIOpenAPI'] = 'APIOpenAPI';
+  DastTemplateConfigurationDastScanMethodEnum['APIRecordedTraffic'] =
+    'APIRecordedTraffic';
+  DastTemplateConfigurationDastScanMethodEnum['Template'] = 'Template';
+  DastTemplateConfigurationDastScanMethodEnum['ScanFile'] = 'ScanFile';
 })(
   DastTemplateConfigurationDastScanMethodEnum ||
-    (DastTemplateConfigurationDastScanMethodEnum = {}),
+    (DastTemplateConfigurationDastScanMethodEnum = {})
 );
 export var DastUserScanConfigurationExtendedOtpHashTypeEnum;
 (function (DastUserScanConfigurationExtendedOtpHashTypeEnum) {
-  DastUserScanConfigurationExtendedOtpHashTypeEnum["None"] = "None";
-  DastUserScanConfigurationExtendedOtpHashTypeEnum["Sha1"] = "Sha1";
-  DastUserScanConfigurationExtendedOtpHashTypeEnum["Sha256"] = "Sha256";
-  DastUserScanConfigurationExtendedOtpHashTypeEnum["Sha512"] = "Sha512";
+  DastUserScanConfigurationExtendedOtpHashTypeEnum['None'] = 'None';
+  DastUserScanConfigurationExtendedOtpHashTypeEnum['Sha1'] = 'Sha1';
+  DastUserScanConfigurationExtendedOtpHashTypeEnum['Sha256'] = 'Sha256';
+  DastUserScanConfigurationExtendedOtpHashTypeEnum['Sha512'] = 'Sha512';
 })(
   DastUserScanConfigurationExtendedOtpHashTypeEnum ||
-    (DastUserScanConfigurationExtendedOtpHashTypeEnum = {}),
+    (DastUserScanConfigurationExtendedOtpHashTypeEnum = {})
 );
 export var DastUserScanConfigurationExtendedPredefinedTestPolicyEnum;
 (function (DastUserScanConfigurationExtendedPredefinedTestPolicyEnum) {
-  DastUserScanConfigurationExtendedPredefinedTestPolicyEnum["Complete"] =
-    "Complete";
-  DastUserScanConfigurationExtendedPredefinedTestPolicyEnum["Default"] =
-    "Default";
-  DastUserScanConfigurationExtendedPredefinedTestPolicyEnum["OwaspTop10Api"] =
-    "OwaspTop10Api";
-  DastUserScanConfigurationExtendedPredefinedTestPolicyEnum["OwaspTop10"] =
-    "OwaspTop10";
-  DastUserScanConfigurationExtendedPredefinedTestPolicyEnum["ProductionSite"] =
-    "ProductionSite";
-  DastUserScanConfigurationExtendedPredefinedTestPolicyEnum["Custom"] =
-    "Custom";
+  DastUserScanConfigurationExtendedPredefinedTestPolicyEnum['Complete'] =
+    'Complete';
+  DastUserScanConfigurationExtendedPredefinedTestPolicyEnum['Default'] =
+    'Default';
+  DastUserScanConfigurationExtendedPredefinedTestPolicyEnum['OwaspTop10Api'] =
+    'OwaspTop10Api';
+  DastUserScanConfigurationExtendedPredefinedTestPolicyEnum['OwaspTop10'] =
+    'OwaspTop10';
+  DastUserScanConfigurationExtendedPredefinedTestPolicyEnum['ProductionSite'] =
+    'ProductionSite';
+  DastUserScanConfigurationExtendedPredefinedTestPolicyEnum['Custom'] =
+    'Custom';
 })(
   DastUserScanConfigurationExtendedPredefinedTestPolicyEnum ||
-    (DastUserScanConfigurationExtendedPredefinedTestPolicyEnum = {}),
+    (DastUserScanConfigurationExtendedPredefinedTestPolicyEnum = {})
 );
 export var DastUserScanConfigurationExtendedTestOptimizationLevelEnum;
 (function (DastUserScanConfigurationExtendedTestOptimizationLevelEnum) {
-  DastUserScanConfigurationExtendedTestOptimizationLevelEnum["NoOptimization"] =
-    "NoOptimization";
-  DastUserScanConfigurationExtendedTestOptimizationLevelEnum["Fast"] = "Fast";
-  DastUserScanConfigurationExtendedTestOptimizationLevelEnum["Faster"] =
-    "Faster";
-  DastUserScanConfigurationExtendedTestOptimizationLevelEnum["Fastest"] =
-    "Fastest";
+  DastUserScanConfigurationExtendedTestOptimizationLevelEnum['NoOptimization'] =
+    'NoOptimization';
+  DastUserScanConfigurationExtendedTestOptimizationLevelEnum['Fast'] = 'Fast';
+  DastUserScanConfigurationExtendedTestOptimizationLevelEnum['Faster'] =
+    'Faster';
+  DastUserScanConfigurationExtendedTestOptimizationLevelEnum['Fastest'] =
+    'Fastest';
 })(
   DastUserScanConfigurationExtendedTestOptimizationLevelEnum ||
-    (DastUserScanConfigurationExtendedTestOptimizationLevelEnum = {}),
+    (DastUserScanConfigurationExtendedTestOptimizationLevelEnum = {})
 );
 export var DomainModelUrlTypeEnum;
 (function (DomainModelUrlTypeEnum) {
-  DomainModelUrlTypeEnum["Domain"] = "Domain";
-  DomainModelUrlTypeEnum["IpAddress"] = "IpAddress";
+  DomainModelUrlTypeEnum['Domain'] = 'Domain';
+  DomainModelUrlTypeEnum['IpAddress'] = 'IpAddress';
 })(DomainModelUrlTypeEnum || (DomainModelUrlTypeEnum = {}));
 export var DomainModelTypeEnum;
 (function (DomainModelTypeEnum) {
-  DomainModelTypeEnum["Support"] = "Support";
-  DomainModelTypeEnum["Html"] = "Html";
-  DomainModelTypeEnum["Email"] = "Email";
-  DomainModelTypeEnum["DnsComparison"] = "DnsComparison";
-  DomainModelTypeEnum["Manually"] = "Manually";
+  DomainModelTypeEnum['Support'] = 'Support';
+  DomainModelTypeEnum['Html'] = 'Html';
+  DomainModelTypeEnum['Email'] = 'Email';
+  DomainModelTypeEnum['DnsComparison'] = 'DnsComparison';
+  DomainModelTypeEnum['Manually'] = 'Manually';
 })(DomainModelTypeEnum || (DomainModelTypeEnum = {}));
 export var DomainModelStatusEnum;
 (function (DomainModelStatusEnum) {
-  DomainModelStatusEnum["None"] = "None";
-  DomainModelStatusEnum["Verified"] = "Verified";
-  DomainModelStatusEnum["Pending"] = "Pending";
+  DomainModelStatusEnum['None'] = 'None';
+  DomainModelStatusEnum['Verified'] = 'Verified';
+  DomainModelStatusEnum['Pending'] = 'Pending';
 })(DomainModelStatusEnum || (DomainModelStatusEnum = {}));
 export var DomainOwnershipModelMailPrefixEnum;
 (function (DomainOwnershipModelMailPrefixEnum) {
-  DomainOwnershipModelMailPrefixEnum["Admin"] = "Admin";
-  DomainOwnershipModelMailPrefixEnum["Administrator"] = "Administrator";
-  DomainOwnershipModelMailPrefixEnum["HostMaster"] = "HostMaster";
-  DomainOwnershipModelMailPrefixEnum["Root"] = "Root";
-  DomainOwnershipModelMailPrefixEnum["WebMaster"] = "WebMaster";
-  DomainOwnershipModelMailPrefixEnum["PostMaster"] = "PostMaster";
+  DomainOwnershipModelMailPrefixEnum['Admin'] = 'Admin';
+  DomainOwnershipModelMailPrefixEnum['Administrator'] = 'Administrator';
+  DomainOwnershipModelMailPrefixEnum['HostMaster'] = 'HostMaster';
+  DomainOwnershipModelMailPrefixEnum['Root'] = 'Root';
+  DomainOwnershipModelMailPrefixEnum['WebMaster'] = 'WebMaster';
+  DomainOwnershipModelMailPrefixEnum['PostMaster'] = 'PostMaster';
 })(
   DomainOwnershipModelMailPrefixEnum ||
-    (DomainOwnershipModelMailPrefixEnum = {}),
+    (DomainOwnershipModelMailPrefixEnum = {})
 );
 export var DomainOwnershipModelVerificationModelMailPrefixEnum;
 (function (DomainOwnershipModelVerificationModelMailPrefixEnum) {
-  DomainOwnershipModelVerificationModelMailPrefixEnum["Admin"] = "Admin";
-  DomainOwnershipModelVerificationModelMailPrefixEnum["Administrator"] =
-    "Administrator";
-  DomainOwnershipModelVerificationModelMailPrefixEnum["HostMaster"] =
-    "HostMaster";
-  DomainOwnershipModelVerificationModelMailPrefixEnum["Root"] = "Root";
-  DomainOwnershipModelVerificationModelMailPrefixEnum["WebMaster"] =
-    "WebMaster";
-  DomainOwnershipModelVerificationModelMailPrefixEnum["PostMaster"] =
-    "PostMaster";
+  DomainOwnershipModelVerificationModelMailPrefixEnum['Admin'] = 'Admin';
+  DomainOwnershipModelVerificationModelMailPrefixEnum['Administrator'] =
+    'Administrator';
+  DomainOwnershipModelVerificationModelMailPrefixEnum['HostMaster'] =
+    'HostMaster';
+  DomainOwnershipModelVerificationModelMailPrefixEnum['Root'] = 'Root';
+  DomainOwnershipModelVerificationModelMailPrefixEnum['WebMaster'] =
+    'WebMaster';
+  DomainOwnershipModelVerificationModelMailPrefixEnum['PostMaster'] =
+    'PostMaster';
 })(
   DomainOwnershipModelVerificationModelMailPrefixEnum ||
-    (DomainOwnershipModelVerificationModelMailPrefixEnum = {}),
+    (DomainOwnershipModelVerificationModelMailPrefixEnum = {})
 );
+export var EventInfoMemberTypeEnum;
+(function (EventInfoMemberTypeEnum) {
+  EventInfoMemberTypeEnum['Constructor'] = 'Constructor';
+  EventInfoMemberTypeEnum['Event'] = 'Event';
+  EventInfoMemberTypeEnum['Field'] = 'Field';
+  EventInfoMemberTypeEnum['Method'] = 'Method';
+  EventInfoMemberTypeEnum['Property'] = 'Property';
+  EventInfoMemberTypeEnum['TypeInfo'] = 'TypeInfo';
+  EventInfoMemberTypeEnum['Custom'] = 'Custom';
+  EventInfoMemberTypeEnum['NestedType'] = 'NestedType';
+  EventInfoMemberTypeEnum['All'] = 'All';
+})(EventInfoMemberTypeEnum || (EventInfoMemberTypeEnum = {}));
+export var EventInfoAttributesEnum;
+(function (EventInfoAttributesEnum) {
+  EventInfoAttributesEnum['None'] = 'None';
+  EventInfoAttributesEnum['SpecialName'] = 'SpecialName';
+  EventInfoAttributesEnum['RTSpecialName'] = 'RTSpecialName';
+})(EventInfoAttributesEnum || (EventInfoAttributesEnum = {}));
 export var ExcludeExceptionModelTypeEnum;
 (function (ExcludeExceptionModelTypeEnum) {
-  ExcludeExceptionModelTypeEnum["Exclude"] = "Exclude";
-  ExcludeExceptionModelTypeEnum["Exception"] = "Exception";
+  ExcludeExceptionModelTypeEnum['Exclude'] = 'Exclude';
+  ExcludeExceptionModelTypeEnum['Exception'] = 'Exception';
 })(ExcludeExceptionModelTypeEnum || (ExcludeExceptionModelTypeEnum = {}));
 export var ExploreItemTrafficTypeEnum;
 (function (ExploreItemTrafficTypeEnum) {
-  ExploreItemTrafficTypeEnum["Undefined"] = "Undefined";
-  ExploreItemTrafficTypeEnum["Manual"] = "Manual";
-  ExploreItemTrafficTypeEnum["MultiStep"] = "MultiStep";
-  ExploreItemTrafficTypeEnum["Llm"] = "Llm";
+  ExploreItemTrafficTypeEnum['Undefined'] = 'Undefined';
+  ExploreItemTrafficTypeEnum['Manual'] = 'Manual';
+  ExploreItemTrafficTypeEnum['MultiStep'] = 'MultiStep';
+  ExploreItemTrafficTypeEnum['Llm'] = 'Llm';
 })(ExploreItemTrafficTypeEnum || (ExploreItemTrafficTypeEnum = {}));
+export var FieldInfoMemberTypeEnum;
+(function (FieldInfoMemberTypeEnum) {
+  FieldInfoMemberTypeEnum['Constructor'] = 'Constructor';
+  FieldInfoMemberTypeEnum['Event'] = 'Event';
+  FieldInfoMemberTypeEnum['Field'] = 'Field';
+  FieldInfoMemberTypeEnum['Method'] = 'Method';
+  FieldInfoMemberTypeEnum['Property'] = 'Property';
+  FieldInfoMemberTypeEnum['TypeInfo'] = 'TypeInfo';
+  FieldInfoMemberTypeEnum['Custom'] = 'Custom';
+  FieldInfoMemberTypeEnum['NestedType'] = 'NestedType';
+  FieldInfoMemberTypeEnum['All'] = 'All';
+})(FieldInfoMemberTypeEnum || (FieldInfoMemberTypeEnum = {}));
+export var FieldInfoAttributesEnum;
+(function (FieldInfoAttributesEnum) {
+  FieldInfoAttributesEnum['PrivateScope'] = 'PrivateScope';
+  FieldInfoAttributesEnum['Private'] = 'Private';
+  FieldInfoAttributesEnum['FamANDAssem'] = 'FamANDAssem';
+  FieldInfoAttributesEnum['Assembly'] = 'Assembly';
+  FieldInfoAttributesEnum['Family'] = 'Family';
+  FieldInfoAttributesEnum['FamORAssem'] = 'FamORAssem';
+  FieldInfoAttributesEnum['Public'] = 'Public';
+  FieldInfoAttributesEnum['FieldAccessMask'] = 'FieldAccessMask';
+  FieldInfoAttributesEnum['Static'] = 'Static';
+  FieldInfoAttributesEnum['InitOnly'] = 'InitOnly';
+  FieldInfoAttributesEnum['Literal'] = 'Literal';
+  FieldInfoAttributesEnum['NotSerialized'] = 'NotSerialized';
+  FieldInfoAttributesEnum['HasFieldRVA'] = 'HasFieldRVA';
+  FieldInfoAttributesEnum['SpecialName'] = 'SpecialName';
+  FieldInfoAttributesEnum['RTSpecialName'] = 'RTSpecialName';
+  FieldInfoAttributesEnum['HasFieldMarshal'] = 'HasFieldMarshal';
+  FieldInfoAttributesEnum['PinvokeImpl'] = 'PinvokeImpl';
+  FieldInfoAttributesEnum['HasDefault'] = 'HasDefault';
+  FieldInfoAttributesEnum['ReservedMask'] = 'ReservedMask';
+})(FieldInfoAttributesEnum || (FieldInfoAttributesEnum = {}));
 export var FixGroupFixGroupTypeEnum;
 (function (FixGroupFixGroupTypeEnum) {
-  FixGroupFixGroupTypeEnum["OpenSourceLib"] = "OpenSourceLib";
-  FixGroupFixGroupTypeEnum["FixLocation"] = "FixLocation";
-  FixGroupFixGroupTypeEnum["Api"] = "Api";
+  FixGroupFixGroupTypeEnum['OpenSourceLib'] = 'OpenSourceLib';
+  FixGroupFixGroupTypeEnum['FixLocation'] = 'FixLocation';
+  FixGroupFixGroupTypeEnum['Api'] = 'Api';
 })(FixGroupFixGroupTypeEnum || (FixGroupFixGroupTypeEnum = {}));
 export var FixGroupFixLocationEntityTypeEnum;
 (function (FixGroupFixLocationEntityTypeEnum) {
-  FixGroupFixLocationEntityTypeEnum["None"] = "None";
-  FixGroupFixLocationEntityTypeEnum["ImplementationOf"] = "ImplementationOf";
-  FixGroupFixLocationEntityTypeEnum["UsageOf"] = "UsageOf";
+  FixGroupFixLocationEntityTypeEnum['None'] = 'None';
+  FixGroupFixLocationEntityTypeEnum['ImplementationOf'] = 'ImplementationOf';
+  FixGroupFixLocationEntityTypeEnum['UsageOf'] = 'UsageOf';
 })(
-  FixGroupFixLocationEntityTypeEnum || (FixGroupFixLocationEntityTypeEnum = {}),
+  FixGroupFixLocationEntityTypeEnum || (FixGroupFixLocationEntityTypeEnum = {})
 );
 export var FixGroupSeverityEnum;
 (function (FixGroupSeverityEnum) {
-  FixGroupSeverityEnum["Undetermined"] = "Undetermined";
-  FixGroupSeverityEnum["Informational"] = "Informational";
-  FixGroupSeverityEnum["Low"] = "Low";
-  FixGroupSeverityEnum["Medium"] = "Medium";
-  FixGroupSeverityEnum["High"] = "High";
-  FixGroupSeverityEnum["Critical"] = "Critical";
+  FixGroupSeverityEnum['Undetermined'] = 'Undetermined';
+  FixGroupSeverityEnum['Informational'] = 'Informational';
+  FixGroupSeverityEnum['Low'] = 'Low';
+  FixGroupSeverityEnum['Medium'] = 'Medium';
+  FixGroupSeverityEnum['High'] = 'High';
+  FixGroupSeverityEnum['Critical'] = 'Critical';
 })(FixGroupSeverityEnum || (FixGroupSeverityEnum = {}));
 export var FixGroupStatusEnum;
 (function (FixGroupStatusEnum) {
-  FixGroupStatusEnum["Open"] = "Open";
-  FixGroupStatusEnum["InProgress"] = "InProgress";
-  FixGroupStatusEnum["Reopened"] = "Reopened";
-  FixGroupStatusEnum["Noise"] = "Noise";
-  FixGroupStatusEnum["Passed"] = "Passed";
-  FixGroupStatusEnum["Fixed"] = "Fixed";
-  FixGroupStatusEnum["New"] = "New";
+  FixGroupStatusEnum['Open'] = 'Open';
+  FixGroupStatusEnum['InProgress'] = 'InProgress';
+  FixGroupStatusEnum['Reopened'] = 'Reopened';
+  FixGroupStatusEnum['Noise'] = 'Noise';
+  FixGroupStatusEnum['Passed'] = 'Passed';
+  FixGroupStatusEnum['Fixed'] = 'Fixed';
+  FixGroupStatusEnum['New'] = 'New';
 })(FixGroupStatusEnum || (FixGroupStatusEnum = {}));
 export var FixGroupUpdateStatusEnum;
 (function (FixGroupUpdateStatusEnum) {
-  FixGroupUpdateStatusEnum["Open"] = "Open";
-  FixGroupUpdateStatusEnum["InProgress"] = "InProgress";
-  FixGroupUpdateStatusEnum["Noise"] = "Noise";
-  FixGroupUpdateStatusEnum["Passed"] = "Passed";
-  FixGroupUpdateStatusEnum["Fixed"] = "Fixed";
-  FixGroupUpdateStatusEnum["New"] = "New";
+  FixGroupUpdateStatusEnum['Open'] = 'Open';
+  FixGroupUpdateStatusEnum['InProgress'] = 'InProgress';
+  FixGroupUpdateStatusEnum['Noise'] = 'Noise';
+  FixGroupUpdateStatusEnum['Passed'] = 'Passed';
+  FixGroupUpdateStatusEnum['Fixed'] = 'Fixed';
+  FixGroupUpdateStatusEnum['New'] = 'New';
 })(FixGroupUpdateStatusEnum || (FixGroupUpdateStatusEnum = {}));
 export var GeneralScanExecutionModelStatusEnum;
 (function (GeneralScanExecutionModelStatusEnum) {
-  GeneralScanExecutionModelStatusEnum["Running"] = "Running";
-  GeneralScanExecutionModelStatusEnum["Stopping"] = "Stopping";
-  GeneralScanExecutionModelStatusEnum["Pausing"] = "Pausing";
-  GeneralScanExecutionModelStatusEnum["InQueue"] = "InQueue";
-  GeneralScanExecutionModelStatusEnum["Paused"] = "Paused";
-  GeneralScanExecutionModelStatusEnum["Ready"] = "Ready";
-  GeneralScanExecutionModelStatusEnum["Failed"] = "Failed";
+  GeneralScanExecutionModelStatusEnum['Running'] = 'Running';
+  GeneralScanExecutionModelStatusEnum['Stopping'] = 'Stopping';
+  GeneralScanExecutionModelStatusEnum['Pausing'] = 'Pausing';
+  GeneralScanExecutionModelStatusEnum['InQueue'] = 'InQueue';
+  GeneralScanExecutionModelStatusEnum['Paused'] = 'Paused';
+  GeneralScanExecutionModelStatusEnum['Ready'] = 'Ready';
+  GeneralScanExecutionModelStatusEnum['Failed'] = 'Failed';
 })(
   GeneralScanExecutionModelStatusEnum ||
-    (GeneralScanExecutionModelStatusEnum = {}),
+    (GeneralScanExecutionModelStatusEnum = {})
 );
 export var GeneralScanExecutionModelResultEnum;
 (function (GeneralScanExecutionModelResultEnum) {
-  GeneralScanExecutionModelResultEnum["None"] = "None";
-  GeneralScanExecutionModelResultEnum["NoIssues"] = "NoIssues";
-  GeneralScanExecutionModelResultEnum["Informational"] = "Informational";
-  GeneralScanExecutionModelResultEnum["Low"] = "Low";
-  GeneralScanExecutionModelResultEnum["Medium"] = "Medium";
-  GeneralScanExecutionModelResultEnum["High"] = "High";
-  GeneralScanExecutionModelResultEnum["Critical"] = "Critical";
+  GeneralScanExecutionModelResultEnum['None'] = 'None';
+  GeneralScanExecutionModelResultEnum['NoIssues'] = 'NoIssues';
+  GeneralScanExecutionModelResultEnum['Informational'] = 'Informational';
+  GeneralScanExecutionModelResultEnum['Low'] = 'Low';
+  GeneralScanExecutionModelResultEnum['Medium'] = 'Medium';
+  GeneralScanExecutionModelResultEnum['High'] = 'High';
+  GeneralScanExecutionModelResultEnum['Critical'] = 'Critical';
 })(
   GeneralScanExecutionModelResultEnum ||
-    (GeneralScanExecutionModelResultEnum = {}),
+    (GeneralScanExecutionModelResultEnum = {})
 );
 export var GeneralScanExecutionModelReadStatusEnum;
 (function (GeneralScanExecutionModelReadStatusEnum) {
-  GeneralScanExecutionModelReadStatusEnum["None"] = "None";
-  GeneralScanExecutionModelReadStatusEnum["Unread"] = "Unread";
-  GeneralScanExecutionModelReadStatusEnum["Read"] = "Read";
+  GeneralScanExecutionModelReadStatusEnum['None'] = 'None';
+  GeneralScanExecutionModelReadStatusEnum['Unread'] = 'Unread';
+  GeneralScanExecutionModelReadStatusEnum['Read'] = 'Read';
 })(
   GeneralScanExecutionModelReadStatusEnum ||
-    (GeneralScanExecutionModelReadStatusEnum = {}),
+    (GeneralScanExecutionModelReadStatusEnum = {})
 );
 export var GeneralScanExecutionModelAvailableReportsEnum;
 (function (GeneralScanExecutionModelAvailableReportsEnum) {
-  GeneralScanExecutionModelAvailableReportsEnum["Xml"] = "Xml";
-  GeneralScanExecutionModelAvailableReportsEnum["Pdf"] = "Pdf";
-  GeneralScanExecutionModelAvailableReportsEnum["Html"] = "Html";
-  GeneralScanExecutionModelAvailableReportsEnum["CompliancePdf"] =
-    "CompliancePdf";
-  GeneralScanExecutionModelAvailableReportsEnum["OwaspTop10Pdf"] =
-    "OwaspTop10Pdf";
-  GeneralScanExecutionModelAvailableReportsEnum["Sans25Pdf"] = "Sans25Pdf";
-  GeneralScanExecutionModelAvailableReportsEnum["RawXml"] = "RawXml";
-  GeneralScanExecutionModelAvailableReportsEnum["Zip"] = "Zip";
-  GeneralScanExecutionModelAvailableReportsEnum["Json"] = "Json";
+  GeneralScanExecutionModelAvailableReportsEnum['Xml'] = 'Xml';
+  GeneralScanExecutionModelAvailableReportsEnum['Pdf'] = 'Pdf';
+  GeneralScanExecutionModelAvailableReportsEnum['Html'] = 'Html';
+  GeneralScanExecutionModelAvailableReportsEnum['CompliancePdf'] =
+    'CompliancePdf';
+  GeneralScanExecutionModelAvailableReportsEnum['OwaspTop10Pdf'] =
+    'OwaspTop10Pdf';
+  GeneralScanExecutionModelAvailableReportsEnum['Sans25Pdf'] = 'Sans25Pdf';
+  GeneralScanExecutionModelAvailableReportsEnum['RawXml'] = 'RawXml';
+  GeneralScanExecutionModelAvailableReportsEnum['Zip'] = 'Zip';
+  GeneralScanExecutionModelAvailableReportsEnum['Json'] = 'Json';
 })(
   GeneralScanExecutionModelAvailableReportsEnum ||
-    (GeneralScanExecutionModelAvailableReportsEnum = {}),
+    (GeneralScanExecutionModelAvailableReportsEnum = {})
 );
 export var GeneralScanExecutionModelExecutionProgressEnum;
 (function (GeneralScanExecutionModelExecutionProgressEnum) {
-  GeneralScanExecutionModelExecutionProgressEnum["Pending"] = "Pending";
-  GeneralScanExecutionModelExecutionProgressEnum["Running"] = "Running";
-  GeneralScanExecutionModelExecutionProgressEnum["UnderReview"] = "UnderReview";
-  GeneralScanExecutionModelExecutionProgressEnum["RunningManually"] =
-    "RunningManually";
-  GeneralScanExecutionModelExecutionProgressEnum["Paused"] = "Paused";
-  GeneralScanExecutionModelExecutionProgressEnum["Completed"] = "Completed";
+  GeneralScanExecutionModelExecutionProgressEnum['Pending'] = 'Pending';
+  GeneralScanExecutionModelExecutionProgressEnum['Running'] = 'Running';
+  GeneralScanExecutionModelExecutionProgressEnum['UnderReview'] = 'UnderReview';
+  GeneralScanExecutionModelExecutionProgressEnum['RunningManually'] =
+    'RunningManually';
+  GeneralScanExecutionModelExecutionProgressEnum['Paused'] = 'Paused';
+  GeneralScanExecutionModelExecutionProgressEnum['Completed'] = 'Completed';
 })(
   GeneralScanExecutionModelExecutionProgressEnum ||
-    (GeneralScanExecutionModelExecutionProgressEnum = {}),
+    (GeneralScanExecutionModelExecutionProgressEnum = {})
 );
 export var GlobalEnvironmentInfoExternalIdpModeEnum;
 (function (GlobalEnvironmentInfoExternalIdpModeEnum) {
-  GlobalEnvironmentInfoExternalIdpModeEnum["Disabled"] = "Disabled";
-  GlobalEnvironmentInfoExternalIdpModeEnum["AutoOnboard"] = "AutoOnboard";
-  GlobalEnvironmentInfoExternalIdpModeEnum["ManualOnboard"] = "ManualOnboard";
-  GlobalEnvironmentInfoExternalIdpModeEnum["GroupsAccess"] = "GroupsAccess";
-  GlobalEnvironmentInfoExternalIdpModeEnum["MapGroupsToRoles"] =
-    "MapGroupsToRoles";
+  GlobalEnvironmentInfoExternalIdpModeEnum['Disabled'] = 'Disabled';
+  GlobalEnvironmentInfoExternalIdpModeEnum['AutoOnboard'] = 'AutoOnboard';
+  GlobalEnvironmentInfoExternalIdpModeEnum['ManualOnboard'] = 'ManualOnboard';
+  GlobalEnvironmentInfoExternalIdpModeEnum['GroupsAccess'] = 'GroupsAccess';
+  GlobalEnvironmentInfoExternalIdpModeEnum['MapGroupsToRoles'] =
+    'MapGroupsToRoles';
 })(
   GlobalEnvironmentInfoExternalIdpModeEnum ||
-    (GlobalEnvironmentInfoExternalIdpModeEnum = {}),
+    (GlobalEnvironmentInfoExternalIdpModeEnum = {})
 );
+export var IEdmEntityContainerSchemaElementKindEnum;
+(function (IEdmEntityContainerSchemaElementKindEnum) {
+  IEdmEntityContainerSchemaElementKindEnum['None'] = 'None';
+  IEdmEntityContainerSchemaElementKindEnum['TypeDefinition'] = 'TypeDefinition';
+  IEdmEntityContainerSchemaElementKindEnum['Term'] = 'Term';
+  IEdmEntityContainerSchemaElementKindEnum['Action'] = 'Action';
+  IEdmEntityContainerSchemaElementKindEnum['EntityContainer'] =
+    'EntityContainer';
+  IEdmEntityContainerSchemaElementKindEnum['Function'] = 'Function';
+})(
+  IEdmEntityContainerSchemaElementKindEnum ||
+    (IEdmEntityContainerSchemaElementKindEnum = {})
+);
+export var IEdmEntityContainerElementContainerElementKindEnum;
+(function (IEdmEntityContainerElementContainerElementKindEnum) {
+  IEdmEntityContainerElementContainerElementKindEnum['None'] = 'None';
+  IEdmEntityContainerElementContainerElementKindEnum['EntitySet'] = 'EntitySet';
+  IEdmEntityContainerElementContainerElementKindEnum['ActionImport'] =
+    'ActionImport';
+  IEdmEntityContainerElementContainerElementKindEnum['FunctionImport'] =
+    'FunctionImport';
+  IEdmEntityContainerElementContainerElementKindEnum['Singleton'] = 'Singleton';
+})(
+  IEdmEntityContainerElementContainerElementKindEnum ||
+    (IEdmEntityContainerElementContainerElementKindEnum = {})
+);
+export var IEdmEntityTypeTypeKindEnum;
+(function (IEdmEntityTypeTypeKindEnum) {
+  IEdmEntityTypeTypeKindEnum['None'] = 'None';
+  IEdmEntityTypeTypeKindEnum['Primitive'] = 'Primitive';
+  IEdmEntityTypeTypeKindEnum['Entity'] = 'Entity';
+  IEdmEntityTypeTypeKindEnum['Complex'] = 'Complex';
+  IEdmEntityTypeTypeKindEnum['Collection'] = 'Collection';
+  IEdmEntityTypeTypeKindEnum['EntityReference'] = 'EntityReference';
+  IEdmEntityTypeTypeKindEnum['Enum'] = 'Enum';
+  IEdmEntityTypeTypeKindEnum['TypeDefinition'] = 'TypeDefinition';
+  IEdmEntityTypeTypeKindEnum['Untyped'] = 'Untyped';
+  IEdmEntityTypeTypeKindEnum['Path'] = 'Path';
+})(IEdmEntityTypeTypeKindEnum || (IEdmEntityTypeTypeKindEnum = {}));
+export var IEdmEntityTypeSchemaElementKindEnum;
+(function (IEdmEntityTypeSchemaElementKindEnum) {
+  IEdmEntityTypeSchemaElementKindEnum['None'] = 'None';
+  IEdmEntityTypeSchemaElementKindEnum['TypeDefinition'] = 'TypeDefinition';
+  IEdmEntityTypeSchemaElementKindEnum['Term'] = 'Term';
+  IEdmEntityTypeSchemaElementKindEnum['Action'] = 'Action';
+  IEdmEntityTypeSchemaElementKindEnum['EntityContainer'] = 'EntityContainer';
+  IEdmEntityTypeSchemaElementKindEnum['Function'] = 'Function';
+})(
+  IEdmEntityTypeSchemaElementKindEnum ||
+    (IEdmEntityTypeSchemaElementKindEnum = {})
+);
+export var IEdmExpressionExpressionKindEnum;
+(function (IEdmExpressionExpressionKindEnum) {
+  IEdmExpressionExpressionKindEnum['None'] = 'None';
+  IEdmExpressionExpressionKindEnum['BinaryConstant'] = 'BinaryConstant';
+  IEdmExpressionExpressionKindEnum['BooleanConstant'] = 'BooleanConstant';
+  IEdmExpressionExpressionKindEnum['DateTimeOffsetConstant'] =
+    'DateTimeOffsetConstant';
+  IEdmExpressionExpressionKindEnum['DecimalConstant'] = 'DecimalConstant';
+  IEdmExpressionExpressionKindEnum['FloatingConstant'] = 'FloatingConstant';
+  IEdmExpressionExpressionKindEnum['GuidConstant'] = 'GuidConstant';
+  IEdmExpressionExpressionKindEnum['IntegerConstant'] = 'IntegerConstant';
+  IEdmExpressionExpressionKindEnum['StringConstant'] = 'StringConstant';
+  IEdmExpressionExpressionKindEnum['DurationConstant'] = 'DurationConstant';
+  IEdmExpressionExpressionKindEnum['Null'] = 'Null';
+  IEdmExpressionExpressionKindEnum['Record'] = 'Record';
+  IEdmExpressionExpressionKindEnum['Collection'] = 'Collection';
+  IEdmExpressionExpressionKindEnum['Path'] = 'Path';
+  IEdmExpressionExpressionKindEnum['If'] = 'If';
+  IEdmExpressionExpressionKindEnum['Cast'] = 'Cast';
+  IEdmExpressionExpressionKindEnum['IsOf'] = 'IsOf';
+  IEdmExpressionExpressionKindEnum['FunctionApplication'] =
+    'FunctionApplication';
+  IEdmExpressionExpressionKindEnum['LabeledExpressionReference'] =
+    'LabeledExpressionReference';
+  IEdmExpressionExpressionKindEnum['Labeled'] = 'Labeled';
+  IEdmExpressionExpressionKindEnum['PropertyPath'] = 'PropertyPath';
+  IEdmExpressionExpressionKindEnum['NavigationPropertyPath'] =
+    'NavigationPropertyPath';
+  IEdmExpressionExpressionKindEnum['DateConstant'] = 'DateConstant';
+  IEdmExpressionExpressionKindEnum['TimeOfDayConstant'] = 'TimeOfDayConstant';
+  IEdmExpressionExpressionKindEnum['EnumMember'] = 'EnumMember';
+  IEdmExpressionExpressionKindEnum['AnnotationPath'] = 'AnnotationPath';
+})(IEdmExpressionExpressionKindEnum || (IEdmExpressionExpressionKindEnum = {}));
+export var IEdmNavigationPropertyPropertyKindEnum;
+(function (IEdmNavigationPropertyPropertyKindEnum) {
+  IEdmNavigationPropertyPropertyKindEnum['None'] = 'None';
+  IEdmNavigationPropertyPropertyKindEnum['Structural'] = 'Structural';
+  IEdmNavigationPropertyPropertyKindEnum['Navigation'] = 'Navigation';
+})(
+  IEdmNavigationPropertyPropertyKindEnum ||
+    (IEdmNavigationPropertyPropertyKindEnum = {})
+);
+export var IEdmNavigationPropertyOnDeleteEnum;
+(function (IEdmNavigationPropertyOnDeleteEnum) {
+  IEdmNavigationPropertyOnDeleteEnum['None'] = 'None';
+  IEdmNavigationPropertyOnDeleteEnum['Cascade'] = 'Cascade';
+})(
+  IEdmNavigationPropertyOnDeleteEnum ||
+    (IEdmNavigationPropertyOnDeleteEnum = {})
+);
+export var IEdmPathExpressionExpressionKindEnum;
+(function (IEdmPathExpressionExpressionKindEnum) {
+  IEdmPathExpressionExpressionKindEnum['None'] = 'None';
+  IEdmPathExpressionExpressionKindEnum['BinaryConstant'] = 'BinaryConstant';
+  IEdmPathExpressionExpressionKindEnum['BooleanConstant'] = 'BooleanConstant';
+  IEdmPathExpressionExpressionKindEnum['DateTimeOffsetConstant'] =
+    'DateTimeOffsetConstant';
+  IEdmPathExpressionExpressionKindEnum['DecimalConstant'] = 'DecimalConstant';
+  IEdmPathExpressionExpressionKindEnum['FloatingConstant'] = 'FloatingConstant';
+  IEdmPathExpressionExpressionKindEnum['GuidConstant'] = 'GuidConstant';
+  IEdmPathExpressionExpressionKindEnum['IntegerConstant'] = 'IntegerConstant';
+  IEdmPathExpressionExpressionKindEnum['StringConstant'] = 'StringConstant';
+  IEdmPathExpressionExpressionKindEnum['DurationConstant'] = 'DurationConstant';
+  IEdmPathExpressionExpressionKindEnum['Null'] = 'Null';
+  IEdmPathExpressionExpressionKindEnum['Record'] = 'Record';
+  IEdmPathExpressionExpressionKindEnum['Collection'] = 'Collection';
+  IEdmPathExpressionExpressionKindEnum['Path'] = 'Path';
+  IEdmPathExpressionExpressionKindEnum['If'] = 'If';
+  IEdmPathExpressionExpressionKindEnum['Cast'] = 'Cast';
+  IEdmPathExpressionExpressionKindEnum['IsOf'] = 'IsOf';
+  IEdmPathExpressionExpressionKindEnum['FunctionApplication'] =
+    'FunctionApplication';
+  IEdmPathExpressionExpressionKindEnum['LabeledExpressionReference'] =
+    'LabeledExpressionReference';
+  IEdmPathExpressionExpressionKindEnum['Labeled'] = 'Labeled';
+  IEdmPathExpressionExpressionKindEnum['PropertyPath'] = 'PropertyPath';
+  IEdmPathExpressionExpressionKindEnum['NavigationPropertyPath'] =
+    'NavigationPropertyPath';
+  IEdmPathExpressionExpressionKindEnum['DateConstant'] = 'DateConstant';
+  IEdmPathExpressionExpressionKindEnum['TimeOfDayConstant'] =
+    'TimeOfDayConstant';
+  IEdmPathExpressionExpressionKindEnum['EnumMember'] = 'EnumMember';
+  IEdmPathExpressionExpressionKindEnum['AnnotationPath'] = 'AnnotationPath';
+})(
+  IEdmPathExpressionExpressionKindEnum ||
+    (IEdmPathExpressionExpressionKindEnum = {})
+);
+export var IEdmPropertyPropertyKindEnum;
+(function (IEdmPropertyPropertyKindEnum) {
+  IEdmPropertyPropertyKindEnum['None'] = 'None';
+  IEdmPropertyPropertyKindEnum['Structural'] = 'Structural';
+  IEdmPropertyPropertyKindEnum['Navigation'] = 'Navigation';
+})(IEdmPropertyPropertyKindEnum || (IEdmPropertyPropertyKindEnum = {}));
+export var IEdmSchemaElementSchemaElementKindEnum;
+(function (IEdmSchemaElementSchemaElementKindEnum) {
+  IEdmSchemaElementSchemaElementKindEnum['None'] = 'None';
+  IEdmSchemaElementSchemaElementKindEnum['TypeDefinition'] = 'TypeDefinition';
+  IEdmSchemaElementSchemaElementKindEnum['Term'] = 'Term';
+  IEdmSchemaElementSchemaElementKindEnum['Action'] = 'Action';
+  IEdmSchemaElementSchemaElementKindEnum['EntityContainer'] = 'EntityContainer';
+  IEdmSchemaElementSchemaElementKindEnum['Function'] = 'Function';
+})(
+  IEdmSchemaElementSchemaElementKindEnum ||
+    (IEdmSchemaElementSchemaElementKindEnum = {})
+);
+export var IEdmStructuralPropertyPropertyKindEnum;
+(function (IEdmStructuralPropertyPropertyKindEnum) {
+  IEdmStructuralPropertyPropertyKindEnum['None'] = 'None';
+  IEdmStructuralPropertyPropertyKindEnum['Structural'] = 'Structural';
+  IEdmStructuralPropertyPropertyKindEnum['Navigation'] = 'Navigation';
+})(
+  IEdmStructuralPropertyPropertyKindEnum ||
+    (IEdmStructuralPropertyPropertyKindEnum = {})
+);
+export var IEdmStructuredTypeTypeKindEnum;
+(function (IEdmStructuredTypeTypeKindEnum) {
+  IEdmStructuredTypeTypeKindEnum['None'] = 'None';
+  IEdmStructuredTypeTypeKindEnum['Primitive'] = 'Primitive';
+  IEdmStructuredTypeTypeKindEnum['Entity'] = 'Entity';
+  IEdmStructuredTypeTypeKindEnum['Complex'] = 'Complex';
+  IEdmStructuredTypeTypeKindEnum['Collection'] = 'Collection';
+  IEdmStructuredTypeTypeKindEnum['EntityReference'] = 'EntityReference';
+  IEdmStructuredTypeTypeKindEnum['Enum'] = 'Enum';
+  IEdmStructuredTypeTypeKindEnum['TypeDefinition'] = 'TypeDefinition';
+  IEdmStructuredTypeTypeKindEnum['Untyped'] = 'Untyped';
+  IEdmStructuredTypeTypeKindEnum['Path'] = 'Path';
+})(IEdmStructuredTypeTypeKindEnum || (IEdmStructuredTypeTypeKindEnum = {}));
+export var IEdmTermSchemaElementKindEnum;
+(function (IEdmTermSchemaElementKindEnum) {
+  IEdmTermSchemaElementKindEnum['None'] = 'None';
+  IEdmTermSchemaElementKindEnum['TypeDefinition'] = 'TypeDefinition';
+  IEdmTermSchemaElementKindEnum['Term'] = 'Term';
+  IEdmTermSchemaElementKindEnum['Action'] = 'Action';
+  IEdmTermSchemaElementKindEnum['EntityContainer'] = 'EntityContainer';
+  IEdmTermSchemaElementKindEnum['Function'] = 'Function';
+})(IEdmTermSchemaElementKindEnum || (IEdmTermSchemaElementKindEnum = {}));
+export var IEdmTypeTypeKindEnum;
+(function (IEdmTypeTypeKindEnum) {
+  IEdmTypeTypeKindEnum['None'] = 'None';
+  IEdmTypeTypeKindEnum['Primitive'] = 'Primitive';
+  IEdmTypeTypeKindEnum['Entity'] = 'Entity';
+  IEdmTypeTypeKindEnum['Complex'] = 'Complex';
+  IEdmTypeTypeKindEnum['Collection'] = 'Collection';
+  IEdmTypeTypeKindEnum['EntityReference'] = 'EntityReference';
+  IEdmTypeTypeKindEnum['Enum'] = 'Enum';
+  IEdmTypeTypeKindEnum['TypeDefinition'] = 'TypeDefinition';
+  IEdmTypeTypeKindEnum['Untyped'] = 'Untyped';
+  IEdmTypeTypeKindEnum['Path'] = 'Path';
+})(IEdmTypeTypeKindEnum || (IEdmTypeTypeKindEnum = {}));
+export var IpAddressAddressFamilyEnum;
+(function (IpAddressAddressFamilyEnum) {
+  IpAddressAddressFamilyEnum['Unspecified'] = 'Unspecified';
+  IpAddressAddressFamilyEnum['Unix'] = 'Unix';
+  IpAddressAddressFamilyEnum['InterNetwork'] = 'InterNetwork';
+  IpAddressAddressFamilyEnum['ImpLink'] = 'ImpLink';
+  IpAddressAddressFamilyEnum['Pup'] = 'Pup';
+  IpAddressAddressFamilyEnum['Chaos'] = 'Chaos';
+  IpAddressAddressFamilyEnum['NS'] = 'NS';
+  IpAddressAddressFamilyEnum['Iso'] = 'Iso';
+  IpAddressAddressFamilyEnum['Ecma'] = 'Ecma';
+  IpAddressAddressFamilyEnum['DataKit'] = 'DataKit';
+  IpAddressAddressFamilyEnum['Ccitt'] = 'Ccitt';
+  IpAddressAddressFamilyEnum['Sna'] = 'Sna';
+  IpAddressAddressFamilyEnum['DecNet'] = 'DecNet';
+  IpAddressAddressFamilyEnum['DataLink'] = 'DataLink';
+  IpAddressAddressFamilyEnum['Lat'] = 'Lat';
+  IpAddressAddressFamilyEnum['HyperChannel'] = 'HyperChannel';
+  IpAddressAddressFamilyEnum['AppleTalk'] = 'AppleTalk';
+  IpAddressAddressFamilyEnum['NetBios'] = 'NetBios';
+  IpAddressAddressFamilyEnum['VoiceView'] = 'VoiceView';
+  IpAddressAddressFamilyEnum['FireFox'] = 'FireFox';
+  IpAddressAddressFamilyEnum['Banyan'] = 'Banyan';
+  IpAddressAddressFamilyEnum['Atm'] = 'Atm';
+  IpAddressAddressFamilyEnum['InterNetworkV6'] = 'InterNetworkV6';
+  IpAddressAddressFamilyEnum['Cluster'] = 'Cluster';
+  IpAddressAddressFamilyEnum['Ieee12844'] = 'Ieee12844';
+  IpAddressAddressFamilyEnum['Irda'] = 'Irda';
+  IpAddressAddressFamilyEnum['NetworkDesigners'] = 'NetworkDesigners';
+  IpAddressAddressFamilyEnum['Max'] = 'Max';
+  IpAddressAddressFamilyEnum['Packet'] = 'Packet';
+  IpAddressAddressFamilyEnum['ControllerAreaNetwork'] = 'ControllerAreaNetwork';
+  IpAddressAddressFamilyEnum['Unknown'] = 'Unknown';
+})(IpAddressAddressFamilyEnum || (IpAddressAddressFamilyEnum = {}));
 export var IastScanExecutionModelStatusEnum;
 (function (IastScanExecutionModelStatusEnum) {
-  IastScanExecutionModelStatusEnum["Running"] = "Running";
-  IastScanExecutionModelStatusEnum["Stopping"] = "Stopping";
-  IastScanExecutionModelStatusEnum["Pausing"] = "Pausing";
-  IastScanExecutionModelStatusEnum["InQueue"] = "InQueue";
-  IastScanExecutionModelStatusEnum["Paused"] = "Paused";
-  IastScanExecutionModelStatusEnum["Ready"] = "Ready";
-  IastScanExecutionModelStatusEnum["Failed"] = "Failed";
+  IastScanExecutionModelStatusEnum['Running'] = 'Running';
+  IastScanExecutionModelStatusEnum['Stopping'] = 'Stopping';
+  IastScanExecutionModelStatusEnum['Pausing'] = 'Pausing';
+  IastScanExecutionModelStatusEnum['InQueue'] = 'InQueue';
+  IastScanExecutionModelStatusEnum['Paused'] = 'Paused';
+  IastScanExecutionModelStatusEnum['Ready'] = 'Ready';
+  IastScanExecutionModelStatusEnum['Failed'] = 'Failed';
 })(IastScanExecutionModelStatusEnum || (IastScanExecutionModelStatusEnum = {}));
 export var IastScanExecutionModelResultEnum;
 (function (IastScanExecutionModelResultEnum) {
-  IastScanExecutionModelResultEnum["None"] = "None";
-  IastScanExecutionModelResultEnum["NoIssues"] = "NoIssues";
-  IastScanExecutionModelResultEnum["Informational"] = "Informational";
-  IastScanExecutionModelResultEnum["Low"] = "Low";
-  IastScanExecutionModelResultEnum["Medium"] = "Medium";
-  IastScanExecutionModelResultEnum["High"] = "High";
-  IastScanExecutionModelResultEnum["Critical"] = "Critical";
+  IastScanExecutionModelResultEnum['None'] = 'None';
+  IastScanExecutionModelResultEnum['NoIssues'] = 'NoIssues';
+  IastScanExecutionModelResultEnum['Informational'] = 'Informational';
+  IastScanExecutionModelResultEnum['Low'] = 'Low';
+  IastScanExecutionModelResultEnum['Medium'] = 'Medium';
+  IastScanExecutionModelResultEnum['High'] = 'High';
+  IastScanExecutionModelResultEnum['Critical'] = 'Critical';
 })(IastScanExecutionModelResultEnum || (IastScanExecutionModelResultEnum = {}));
 export var IastScanExecutionModelReadStatusEnum;
 (function (IastScanExecutionModelReadStatusEnum) {
-  IastScanExecutionModelReadStatusEnum["None"] = "None";
-  IastScanExecutionModelReadStatusEnum["Unread"] = "Unread";
-  IastScanExecutionModelReadStatusEnum["Read"] = "Read";
+  IastScanExecutionModelReadStatusEnum['None'] = 'None';
+  IastScanExecutionModelReadStatusEnum['Unread'] = 'Unread';
+  IastScanExecutionModelReadStatusEnum['Read'] = 'Read';
 })(
   IastScanExecutionModelReadStatusEnum ||
-    (IastScanExecutionModelReadStatusEnum = {}),
+    (IastScanExecutionModelReadStatusEnum = {})
 );
 export var IastScanExecutionModelAvailableReportsEnum;
 (function (IastScanExecutionModelAvailableReportsEnum) {
-  IastScanExecutionModelAvailableReportsEnum["Xml"] = "Xml";
-  IastScanExecutionModelAvailableReportsEnum["Pdf"] = "Pdf";
-  IastScanExecutionModelAvailableReportsEnum["Html"] = "Html";
-  IastScanExecutionModelAvailableReportsEnum["CompliancePdf"] = "CompliancePdf";
-  IastScanExecutionModelAvailableReportsEnum["OwaspTop10Pdf"] = "OwaspTop10Pdf";
-  IastScanExecutionModelAvailableReportsEnum["Sans25Pdf"] = "Sans25Pdf";
-  IastScanExecutionModelAvailableReportsEnum["RawXml"] = "RawXml";
-  IastScanExecutionModelAvailableReportsEnum["Zip"] = "Zip";
-  IastScanExecutionModelAvailableReportsEnum["Json"] = "Json";
+  IastScanExecutionModelAvailableReportsEnum['Xml'] = 'Xml';
+  IastScanExecutionModelAvailableReportsEnum['Pdf'] = 'Pdf';
+  IastScanExecutionModelAvailableReportsEnum['Html'] = 'Html';
+  IastScanExecutionModelAvailableReportsEnum['CompliancePdf'] = 'CompliancePdf';
+  IastScanExecutionModelAvailableReportsEnum['OwaspTop10Pdf'] = 'OwaspTop10Pdf';
+  IastScanExecutionModelAvailableReportsEnum['Sans25Pdf'] = 'Sans25Pdf';
+  IastScanExecutionModelAvailableReportsEnum['RawXml'] = 'RawXml';
+  IastScanExecutionModelAvailableReportsEnum['Zip'] = 'Zip';
+  IastScanExecutionModelAvailableReportsEnum['Json'] = 'Json';
 })(
   IastScanExecutionModelAvailableReportsEnum ||
-    (IastScanExecutionModelAvailableReportsEnum = {}),
+    (IastScanExecutionModelAvailableReportsEnum = {})
 );
 export var IastScanExecutionModelExecutionProgressEnum;
 (function (IastScanExecutionModelExecutionProgressEnum) {
-  IastScanExecutionModelExecutionProgressEnum["Pending"] = "Pending";
-  IastScanExecutionModelExecutionProgressEnum["Running"] = "Running";
-  IastScanExecutionModelExecutionProgressEnum["UnderReview"] = "UnderReview";
-  IastScanExecutionModelExecutionProgressEnum["RunningManually"] =
-    "RunningManually";
-  IastScanExecutionModelExecutionProgressEnum["Paused"] = "Paused";
-  IastScanExecutionModelExecutionProgressEnum["Completed"] = "Completed";
+  IastScanExecutionModelExecutionProgressEnum['Pending'] = 'Pending';
+  IastScanExecutionModelExecutionProgressEnum['Running'] = 'Running';
+  IastScanExecutionModelExecutionProgressEnum['UnderReview'] = 'UnderReview';
+  IastScanExecutionModelExecutionProgressEnum['RunningManually'] =
+    'RunningManually';
+  IastScanExecutionModelExecutionProgressEnum['Paused'] = 'Paused';
+  IastScanExecutionModelExecutionProgressEnum['Completed'] = 'Completed';
 })(
   IastScanExecutionModelExecutionProgressEnum ||
-    (IastScanExecutionModelExecutionProgressEnum = {}),
+    (IastScanExecutionModelExecutionProgressEnum = {})
 );
 export var IastScanModelTechnologyEnum;
 (function (IastScanModelTechnologyEnum) {
-  IastScanModelTechnologyEnum["DynamicAnalyzer"] = "DynamicAnalyzer";
-  IastScanModelTechnologyEnum["StaticAnalyzer"] = "StaticAnalyzer";
-  IastScanModelTechnologyEnum["IFA"] = "IFA";
-  IastScanModelTechnologyEnum["DastAutomation"] = "DastAutomation";
-  IastScanModelTechnologyEnum["IASTAnalyzer"] = "IASTAnalyzer";
-  IastScanModelTechnologyEnum["ScaAnalyzer"] = "ScaAnalyzer";
+  IastScanModelTechnologyEnum['DynamicAnalyzer'] = 'DynamicAnalyzer';
+  IastScanModelTechnologyEnum['StaticAnalyzer'] = 'StaticAnalyzer';
+  IastScanModelTechnologyEnum['IFA'] = 'IFA';
+  IastScanModelTechnologyEnum['DastAutomation'] = 'DastAutomation';
+  IastScanModelTechnologyEnum['IASTAnalyzer'] = 'IASTAnalyzer';
+  IastScanModelTechnologyEnum['ScaAnalyzer'] = 'ScaAnalyzer';
 })(IastScanModelTechnologyEnum || (IastScanModelTechnologyEnum = {}));
 export var IastScanModelIastAgentStatusEnum;
 (function (IastScanModelIastAgentStatusEnum) {
-  IastScanModelIastAgentStatusEnum["None"] = "None";
-  IastScanModelIastAgentStatusEnum["Active"] = "Active";
-  IastScanModelIastAgentStatusEnum["KeyNeverUsed"] = "KeyNeverUsed";
-  IastScanModelIastAgentStatusEnum["Inactive"] = "Inactive";
+  IastScanModelIastAgentStatusEnum['None'] = 'None';
+  IastScanModelIastAgentStatusEnum['Active'] = 'Active';
+  IastScanModelIastAgentStatusEnum['KeyNeverUsed'] = 'KeyNeverUsed';
+  IastScanModelIastAgentStatusEnum['Inactive'] = 'Inactive';
 })(IastScanModelIastAgentStatusEnum || (IastScanModelIastAgentStatusEnum = {}));
 export var IastScanModelIastAgentTypeEnum;
 (function (IastScanModelIastAgentTypeEnum) {
-  IastScanModelIastAgentTypeEnum["Java"] = "Java";
-  IastScanModelIastAgentTypeEnum["DotNet"] = "DotNet";
-  IastScanModelIastAgentTypeEnum["NodeJS"] = "NodeJS";
-  IastScanModelIastAgentTypeEnum["PhpWindows"] = "PhpWindows";
-  IastScanModelIastAgentTypeEnum["PhpRedHat"] = "PhpRedHat";
-  IastScanModelIastAgentTypeEnum["PhpUbuntu"] = "PhpUbuntu";
-  IastScanModelIastAgentTypeEnum["Kubernetes"] = "Kubernetes";
+  IastScanModelIastAgentTypeEnum['Java'] = 'Java';
+  IastScanModelIastAgentTypeEnum['DotNet'] = 'DotNet';
+  IastScanModelIastAgentTypeEnum['NodeJS'] = 'NodeJS';
+  IastScanModelIastAgentTypeEnum['PhpWindows'] = 'PhpWindows';
+  IastScanModelIastAgentTypeEnum['PhpRedHat'] = 'PhpRedHat';
+  IastScanModelIastAgentTypeEnum['PhpUbuntu'] = 'PhpUbuntu';
+  IastScanModelIastAgentTypeEnum['Kubernetes'] = 'Kubernetes';
 })(IastScanModelIastAgentTypeEnum || (IastScanModelIastAgentTypeEnum = {}));
 export var IastScanModelOfferingTypeEnum;
 (function (IastScanModelOfferingTypeEnum) {
-  IastScanModelOfferingTypeEnum["None"] = "None";
-  IastScanModelOfferingTypeEnum["Trial"] = "Trial";
-  IastScanModelOfferingTypeEnum["HTrial"] = "HTrial";
-  IastScanModelOfferingTypeEnum["Applications"] = "Applications";
-  IastScanModelOfferingTypeEnum["ScanExecution"] = "ScanExecution";
-  IastScanModelOfferingTypeEnum["AnalyzerConcurrent"] = "AnalyzerConcurrent";
-  IastScanModelOfferingTypeEnum["ConsultantServices"] = "ConsultantServices";
-  IastScanModelOfferingTypeEnum["Premium"] = "Premium";
-  IastScanModelOfferingTypeEnum["OpenSourcePerApplication"] =
-    "OpenSourcePerApplication";
-  IastScanModelOfferingTypeEnum["OpenSourcePremium"] = "OpenSourcePremium";
-  IastScanModelOfferingTypeEnum["OpenSourceConcurrent"] =
-    "OpenSourceConcurrent";
-  IastScanModelOfferingTypeEnum["IASTConcurrent"] = "IASTConcurrent";
-  IastScanModelOfferingTypeEnum["IASTPayPerApp"] = "IASTPayPerApp";
-  IastScanModelOfferingTypeEnum["Promotional"] = "Promotional";
-  IastScanModelOfferingTypeEnum["Silver"] = "Silver";
-  IastScanModelOfferingTypeEnum["Gold"] = "Gold";
-  IastScanModelOfferingTypeEnum["Platinum"] = "Platinum";
-  IastScanModelOfferingTypeEnum["SCAPerApplication"] = "SCAPerApplication";
-  IastScanModelOfferingTypeEnum["ContributingUser"] = "ContributingUser";
-  IastScanModelOfferingTypeEnum["SilverContribUser"] = "SilverContribUser";
-  IastScanModelOfferingTypeEnum["GoldContribUser"] = "GoldContribUser";
-  IastScanModelOfferingTypeEnum["PlatinumContribUser"] = "PlatinumContribUser";
-  IastScanModelOfferingTypeEnum["SilverPerApp"] = "SilverPerApp";
-  IastScanModelOfferingTypeEnum["GoldPerApp"] = "GoldPerApp";
-  IastScanModelOfferingTypeEnum["PlatinumPerApp"] = "PlatinumPerApp";
+  IastScanModelOfferingTypeEnum['None'] = 'None';
+  IastScanModelOfferingTypeEnum['Trial'] = 'Trial';
+  IastScanModelOfferingTypeEnum['HTrial'] = 'HTrial';
+  IastScanModelOfferingTypeEnum['Applications'] = 'Applications';
+  IastScanModelOfferingTypeEnum['ScanExecution'] = 'ScanExecution';
+  IastScanModelOfferingTypeEnum['AnalyzerConcurrent'] = 'AnalyzerConcurrent';
+  IastScanModelOfferingTypeEnum['ConsultantServices'] = 'ConsultantServices';
+  IastScanModelOfferingTypeEnum['Premium'] = 'Premium';
+  IastScanModelOfferingTypeEnum['OpenSourcePerApplication'] =
+    'OpenSourcePerApplication';
+  IastScanModelOfferingTypeEnum['OpenSourcePremium'] = 'OpenSourcePremium';
+  IastScanModelOfferingTypeEnum['OpenSourceConcurrent'] =
+    'OpenSourceConcurrent';
+  IastScanModelOfferingTypeEnum['IASTConcurrent'] = 'IASTConcurrent';
+  IastScanModelOfferingTypeEnum['IASTPayPerApp'] = 'IASTPayPerApp';
+  IastScanModelOfferingTypeEnum['Promotional'] = 'Promotional';
+  IastScanModelOfferingTypeEnum['Silver'] = 'Silver';
+  IastScanModelOfferingTypeEnum['Gold'] = 'Gold';
+  IastScanModelOfferingTypeEnum['Platinum'] = 'Platinum';
+  IastScanModelOfferingTypeEnum['SCAPerApplication'] = 'SCAPerApplication';
+  IastScanModelOfferingTypeEnum['ContributingUser'] = 'ContributingUser';
+  IastScanModelOfferingTypeEnum['SilverContribUser'] = 'SilverContribUser';
+  IastScanModelOfferingTypeEnum['GoldContribUser'] = 'GoldContribUser';
+  IastScanModelOfferingTypeEnum['PlatinumContribUser'] = 'PlatinumContribUser';
+  IastScanModelOfferingTypeEnum['SilverPerApp'] = 'SilverPerApp';
+  IastScanModelOfferingTypeEnum['GoldPerApp'] = 'GoldPerApp';
+  IastScanModelOfferingTypeEnum['PlatinumPerApp'] = 'PlatinumPerApp';
 })(IastScanModelOfferingTypeEnum || (IastScanModelOfferingTypeEnum = {}));
 export var InviteResultInviteStatusEnum;
 (function (InviteResultInviteStatusEnum) {
-  InviteResultInviteStatusEnum["Success"] = "Success";
-  InviteResultInviteStatusEnum["BlockedEmail"] = "BlockedEmail";
-  InviteResultInviteStatusEnum["InvalidEmail"] = "InvalidEmail";
-  InviteResultInviteStatusEnum["AlreadyExist"] = "AlreadyExist";
-  InviteResultInviteStatusEnum["Failed"] = "Failed";
-  InviteResultInviteStatusEnum["EmailSentRecently"] = "EmailSentRecently";
+  InviteResultInviteStatusEnum['Success'] = 'Success';
+  InviteResultInviteStatusEnum['BlockedEmail'] = 'BlockedEmail';
+  InviteResultInviteStatusEnum['InvalidEmail'] = 'InvalidEmail';
+  InviteResultInviteStatusEnum['AlreadyExist'] = 'AlreadyExist';
+  InviteResultInviteStatusEnum['Failed'] = 'Failed';
+  InviteResultInviteStatusEnum['EmailSentRecently'] = 'EmailSentRecently';
 })(InviteResultInviteStatusEnum || (InviteResultInviteStatusEnum = {}));
 export var IssueModelSeverityEnum;
 (function (IssueModelSeverityEnum) {
-  IssueModelSeverityEnum["Undetermined"] = "Undetermined";
-  IssueModelSeverityEnum["Informational"] = "Informational";
-  IssueModelSeverityEnum["Low"] = "Low";
-  IssueModelSeverityEnum["Medium"] = "Medium";
-  IssueModelSeverityEnum["High"] = "High";
-  IssueModelSeverityEnum["Critical"] = "Critical";
+  IssueModelSeverityEnum['Undetermined'] = 'Undetermined';
+  IssueModelSeverityEnum['Informational'] = 'Informational';
+  IssueModelSeverityEnum['Low'] = 'Low';
+  IssueModelSeverityEnum['Medium'] = 'Medium';
+  IssueModelSeverityEnum['High'] = 'High';
+  IssueModelSeverityEnum['Critical'] = 'Critical';
 })(IssueModelSeverityEnum || (IssueModelSeverityEnum = {}));
 export var IssueModelStatusEnum;
 (function (IssueModelStatusEnum) {
-  IssueModelStatusEnum["Open"] = "Open";
-  IssueModelStatusEnum["InProgress"] = "InProgress";
-  IssueModelStatusEnum["Reopened"] = "Reopened";
-  IssueModelStatusEnum["Noise"] = "Noise";
-  IssueModelStatusEnum["Passed"] = "Passed";
-  IssueModelStatusEnum["Fixed"] = "Fixed";
-  IssueModelStatusEnum["New"] = "New";
+  IssueModelStatusEnum['Open'] = 'Open';
+  IssueModelStatusEnum['InProgress'] = 'InProgress';
+  IssueModelStatusEnum['Reopened'] = 'Reopened';
+  IssueModelStatusEnum['Noise'] = 'Noise';
+  IssueModelStatusEnum['Passed'] = 'Passed';
+  IssueModelStatusEnum['Fixed'] = 'Fixed';
+  IssueModelStatusEnum['New'] = 'New';
 })(IssueModelStatusEnum || (IssueModelStatusEnum = {}));
 export var IssueModelAppPkgStatusEnum;
 (function (IssueModelAppPkgStatusEnum) {
-  IssueModelAppPkgStatusEnum["Discovered"] = "Discovered";
-  IssueModelAppPkgStatusEnum["Rediscovered"] = "Rediscovered";
-  IssueModelAppPkgStatusEnum["Removed"] = "Removed";
+  IssueModelAppPkgStatusEnum['Discovered'] = 'Discovered';
+  IssueModelAppPkgStatusEnum['Rediscovered'] = 'Rediscovered';
+  IssueModelAppPkgStatusEnum['Removed'] = 'Removed';
 })(IssueModelAppPkgStatusEnum || (IssueModelAppPkgStatusEnum = {}));
 export var IssueModelFgStatusEnum;
 (function (IssueModelFgStatusEnum) {
-  IssueModelFgStatusEnum["Open"] = "Open";
-  IssueModelFgStatusEnum["InProgress"] = "InProgress";
-  IssueModelFgStatusEnum["Reopened"] = "Reopened";
-  IssueModelFgStatusEnum["Noise"] = "Noise";
-  IssueModelFgStatusEnum["Passed"] = "Passed";
-  IssueModelFgStatusEnum["Fixed"] = "Fixed";
-  IssueModelFgStatusEnum["New"] = "New";
+  IssueModelFgStatusEnum['Open'] = 'Open';
+  IssueModelFgStatusEnum['InProgress'] = 'InProgress';
+  IssueModelFgStatusEnum['Reopened'] = 'Reopened';
+  IssueModelFgStatusEnum['Noise'] = 'Noise';
+  IssueModelFgStatusEnum['Passed'] = 'Passed';
+  IssueModelFgStatusEnum['Fixed'] = 'Fixed';
+  IssueModelFgStatusEnum['New'] = 'New';
 })(IssueModelFgStatusEnum || (IssueModelFgStatusEnum = {}));
 export var IssueModelCvssVersionEnum;
 (function (IssueModelCvssVersionEnum) {
-  IssueModelCvssVersionEnum["None"] = "None";
-  IssueModelCvssVersionEnum["Cvss20"] = "Cvss20";
-  IssueModelCvssVersionEnum["Cvss30"] = "Cvss30";
-  IssueModelCvssVersionEnum["Cvss31"] = "Cvss31";
+  IssueModelCvssVersionEnum['None'] = 'None';
+  IssueModelCvssVersionEnum['Cvss20'] = 'Cvss20';
+  IssueModelCvssVersionEnum['Cvss30'] = 'Cvss30';
+  IssueModelCvssVersionEnum['Cvss31'] = 'Cvss31';
 })(IssueModelCvssVersionEnum || (IssueModelCvssVersionEnum = {}));
 export var IssueModelDiffResultEnum;
 (function (IssueModelDiffResultEnum) {
-  IssueModelDiffResultEnum["NoChange"] = "NoChange";
-  IssueModelDiffResultEnum["Added"] = "Added";
-  IssueModelDiffResultEnum["Removed"] = "Removed";
+  IssueModelDiffResultEnum['NoChange'] = 'NoChange';
+  IssueModelDiffResultEnum['Added'] = 'Added';
+  IssueModelDiffResultEnum['Removed'] = 'Removed';
 })(IssueModelDiffResultEnum || (IssueModelDiffResultEnum = {}));
 export var IssueModelReplayScriptFrameworksEnum;
 (function (IssueModelReplayScriptFrameworksEnum) {
-  IssueModelReplayScriptFrameworksEnum["None"] = "None";
-  IssueModelReplayScriptFrameworksEnum["Python"] = "Python";
-  IssueModelReplayScriptFrameworksEnum["JsConsole"] = "JsConsole";
+  IssueModelReplayScriptFrameworksEnum['None'] = 'None';
+  IssueModelReplayScriptFrameworksEnum['Python'] = 'Python';
+  IssueModelReplayScriptFrameworksEnum['JsConsole'] = 'JsConsole';
 })(
   IssueModelReplayScriptFrameworksEnum ||
-    (IssueModelReplayScriptFrameworksEnum = {}),
+    (IssueModelReplayScriptFrameworksEnum = {})
 );
 export var IssuesReportJobApplyPoliciesEnum;
 (function (IssuesReportJobApplyPoliciesEnum) {
-  IssuesReportJobApplyPoliciesEnum["None"] = "None";
-  IssuesReportJobApplyPoliciesEnum["All"] = "All";
-  IssuesReportJobApplyPoliciesEnum["Select"] = "Select";
+  IssuesReportJobApplyPoliciesEnum['None'] = 'None';
+  IssuesReportJobApplyPoliciesEnum['All'] = 'All';
+  IssuesReportJobApplyPoliciesEnum['Select'] = 'Select';
 })(IssuesReportJobApplyPoliciesEnum || (IssuesReportJobApplyPoliciesEnum = {}));
 export var JobsStatisticsModelScanTechnologyEnum;
 (function (JobsStatisticsModelScanTechnologyEnum) {
-  JobsStatisticsModelScanTechnologyEnum["DynamicAnalyzer"] = "DynamicAnalyzer";
-  JobsStatisticsModelScanTechnologyEnum["StaticAnalyzer"] = "StaticAnalyzer";
-  JobsStatisticsModelScanTechnologyEnum["IFA"] = "IFA";
-  JobsStatisticsModelScanTechnologyEnum["DastAutomation"] = "DastAutomation";
-  JobsStatisticsModelScanTechnologyEnum["IASTAnalyzer"] = "IASTAnalyzer";
-  JobsStatisticsModelScanTechnologyEnum["ScaAnalyzer"] = "ScaAnalyzer";
+  JobsStatisticsModelScanTechnologyEnum['DynamicAnalyzer'] = 'DynamicAnalyzer';
+  JobsStatisticsModelScanTechnologyEnum['StaticAnalyzer'] = 'StaticAnalyzer';
+  JobsStatisticsModelScanTechnologyEnum['IFA'] = 'IFA';
+  JobsStatisticsModelScanTechnologyEnum['DastAutomation'] = 'DastAutomation';
+  JobsStatisticsModelScanTechnologyEnum['IASTAnalyzer'] = 'IASTAnalyzer';
+  JobsStatisticsModelScanTechnologyEnum['ScaAnalyzer'] = 'ScaAnalyzer';
 })(
   JobsStatisticsModelScanTechnologyEnum ||
-    (JobsStatisticsModelScanTechnologyEnum = {}),
+    (JobsStatisticsModelScanTechnologyEnum = {})
 );
 export var LibraryModelHighestIssueSeverityEnum;
 (function (LibraryModelHighestIssueSeverityEnum) {
-  LibraryModelHighestIssueSeverityEnum["Undetermined"] = "Undetermined";
-  LibraryModelHighestIssueSeverityEnum["Informational"] = "Informational";
-  LibraryModelHighestIssueSeverityEnum["Low"] = "Low";
-  LibraryModelHighestIssueSeverityEnum["Medium"] = "Medium";
-  LibraryModelHighestIssueSeverityEnum["High"] = "High";
-  LibraryModelHighestIssueSeverityEnum["Critical"] = "Critical";
+  LibraryModelHighestIssueSeverityEnum['Undetermined'] = 'Undetermined';
+  LibraryModelHighestIssueSeverityEnum['Informational'] = 'Informational';
+  LibraryModelHighestIssueSeverityEnum['Low'] = 'Low';
+  LibraryModelHighestIssueSeverityEnum['Medium'] = 'Medium';
+  LibraryModelHighestIssueSeverityEnum['High'] = 'High';
+  LibraryModelHighestIssueSeverityEnum['Critical'] = 'Critical';
 })(
   LibraryModelHighestIssueSeverityEnum ||
-    (LibraryModelHighestIssueSeverityEnum = {}),
+    (LibraryModelHighestIssueSeverityEnum = {})
 );
 export var LibraryModelStatusEnum;
 (function (LibraryModelStatusEnum) {
-  LibraryModelStatusEnum["Discovered"] = "Discovered";
-  LibraryModelStatusEnum["Rediscovered"] = "Rediscovered";
-  LibraryModelStatusEnum["Removed"] = "Removed";
+  LibraryModelStatusEnum['Discovered'] = 'Discovered';
+  LibraryModelStatusEnum['Rediscovered'] = 'Rediscovered';
+  LibraryModelStatusEnum['Removed'] = 'Removed';
 })(LibraryModelStatusEnum || (LibraryModelStatusEnum = {}));
 export var LicenseLibraryModelRiskLevelEnum;
 (function (LicenseLibraryModelRiskLevelEnum) {
-  LicenseLibraryModelRiskLevelEnum["Undefined"] = "Undefined";
-  LicenseLibraryModelRiskLevelEnum["Unknown"] = "Unknown";
-  LicenseLibraryModelRiskLevelEnum["Low"] = "Low";
-  LicenseLibraryModelRiskLevelEnum["Medium"] = "Medium";
-  LicenseLibraryModelRiskLevelEnum["High"] = "High";
+  LicenseLibraryModelRiskLevelEnum['Undefined'] = 'Undefined';
+  LicenseLibraryModelRiskLevelEnum['Unknown'] = 'Unknown';
+  LicenseLibraryModelRiskLevelEnum['Low'] = 'Low';
+  LicenseLibraryModelRiskLevelEnum['Medium'] = 'Medium';
+  LicenseLibraryModelRiskLevelEnum['High'] = 'High';
 })(LicenseLibraryModelRiskLevelEnum || (LicenseLibraryModelRiskLevelEnum = {}));
 export var LicenseLibraryModelCopyrightRiskScoreEnum;
 (function (LicenseLibraryModelCopyrightRiskScoreEnum) {
-  LicenseLibraryModelCopyrightRiskScoreEnum["UNDEFINED"] = "UNDEFINED";
-  LicenseLibraryModelCopyrightRiskScoreEnum["ONE"] = "ONE";
-  LicenseLibraryModelCopyrightRiskScoreEnum["TWO"] = "TWO";
-  LicenseLibraryModelCopyrightRiskScoreEnum["THREE"] = "THREE";
-  LicenseLibraryModelCopyrightRiskScoreEnum["FOUR"] = "FOUR";
-  LicenseLibraryModelCopyrightRiskScoreEnum["FIVE"] = "FIVE";
-  LicenseLibraryModelCopyrightRiskScoreEnum["SIX"] = "SIX";
-  LicenseLibraryModelCopyrightRiskScoreEnum["SEVEN"] = "SEVEN";
+  LicenseLibraryModelCopyrightRiskScoreEnum['UNDEFINED'] = 'UNDEFINED';
+  LicenseLibraryModelCopyrightRiskScoreEnum['ONE'] = 'ONE';
+  LicenseLibraryModelCopyrightRiskScoreEnum['TWO'] = 'TWO';
+  LicenseLibraryModelCopyrightRiskScoreEnum['THREE'] = 'THREE';
+  LicenseLibraryModelCopyrightRiskScoreEnum['FOUR'] = 'FOUR';
+  LicenseLibraryModelCopyrightRiskScoreEnum['FIVE'] = 'FIVE';
+  LicenseLibraryModelCopyrightRiskScoreEnum['SIX'] = 'SIX';
+  LicenseLibraryModelCopyrightRiskScoreEnum['SEVEN'] = 'SEVEN';
 })(
   LicenseLibraryModelCopyrightRiskScoreEnum ||
-    (LicenseLibraryModelCopyrightRiskScoreEnum = {}),
+    (LicenseLibraryModelCopyrightRiskScoreEnum = {})
 );
 export var LicenseLibraryModelPatentRiskScoreEnum;
 (function (LicenseLibraryModelPatentRiskScoreEnum) {
-  LicenseLibraryModelPatentRiskScoreEnum["UNDEFINED"] = "UNDEFINED";
-  LicenseLibraryModelPatentRiskScoreEnum["ONE"] = "ONE";
-  LicenseLibraryModelPatentRiskScoreEnum["TWO"] = "TWO";
-  LicenseLibraryModelPatentRiskScoreEnum["THREE"] = "THREE";
-  LicenseLibraryModelPatentRiskScoreEnum["FOUR"] = "FOUR";
+  LicenseLibraryModelPatentRiskScoreEnum['UNDEFINED'] = 'UNDEFINED';
+  LicenseLibraryModelPatentRiskScoreEnum['ONE'] = 'ONE';
+  LicenseLibraryModelPatentRiskScoreEnum['TWO'] = 'TWO';
+  LicenseLibraryModelPatentRiskScoreEnum['THREE'] = 'THREE';
+  LicenseLibraryModelPatentRiskScoreEnum['FOUR'] = 'FOUR';
 })(
   LicenseLibraryModelPatentRiskScoreEnum ||
-    (LicenseLibraryModelPatentRiskScoreEnum = {}),
+    (LicenseLibraryModelPatentRiskScoreEnum = {})
 );
 export var LicenseLibraryModelLinkingEnum;
 (function (LicenseLibraryModelLinkingEnum) {
-  LicenseLibraryModelLinkingEnum["Undefined"] = "Undefined";
-  LicenseLibraryModelLinkingEnum["Viral"] = "Viral";
-  LicenseLibraryModelLinkingEnum["NonViral"] = "Non_Viral";
-  LicenseLibraryModelLinkingEnum["Dynamic"] = "Dynamic";
+  LicenseLibraryModelLinkingEnum['Undefined'] = 'Undefined';
+  LicenseLibraryModelLinkingEnum['Viral'] = 'Viral';
+  LicenseLibraryModelLinkingEnum['NonViral'] = 'Non_Viral';
+  LicenseLibraryModelLinkingEnum['Dynamic'] = 'Dynamic';
 })(LicenseLibraryModelLinkingEnum || (LicenseLibraryModelLinkingEnum = {}));
 export var LicenseLibraryModelCopyLeftEnum;
 (function (LicenseLibraryModelCopyLeftEnum) {
-  LicenseLibraryModelCopyLeftEnum["Undefined"] = "Undefined";
-  LicenseLibraryModelCopyLeftEnum["No"] = "No";
-  LicenseLibraryModelCopyLeftEnum["Partial"] = "Partial";
-  LicenseLibraryModelCopyLeftEnum["Full"] = "Full";
+  LicenseLibraryModelCopyLeftEnum['Undefined'] = 'Undefined';
+  LicenseLibraryModelCopyLeftEnum['No'] = 'No';
+  LicenseLibraryModelCopyLeftEnum['Partial'] = 'Partial';
+  LicenseLibraryModelCopyLeftEnum['Full'] = 'Full';
 })(LicenseLibraryModelCopyLeftEnum || (LicenseLibraryModelCopyLeftEnum = {}));
 export var LicenseLibraryModelRoyaltyFreeEnum;
 (function (LicenseLibraryModelRoyaltyFreeEnum) {
-  LicenseLibraryModelRoyaltyFreeEnum["Yes"] = "Yes";
-  LicenseLibraryModelRoyaltyFreeEnum["Conditional"] = "Conditional";
-  LicenseLibraryModelRoyaltyFreeEnum["No"] = "No";
-  LicenseLibraryModelRoyaltyFreeEnum["Undefined"] = "Undefined";
+  LicenseLibraryModelRoyaltyFreeEnum['Yes'] = 'Yes';
+  LicenseLibraryModelRoyaltyFreeEnum['Conditional'] = 'Conditional';
+  LicenseLibraryModelRoyaltyFreeEnum['No'] = 'No';
+  LicenseLibraryModelRoyaltyFreeEnum['Undefined'] = 'Undefined';
 })(
   LicenseLibraryModelRoyaltyFreeEnum ||
-    (LicenseLibraryModelRoyaltyFreeEnum = {}),
+    (LicenseLibraryModelRoyaltyFreeEnum = {})
 );
 export var LicenseLibraryModelStatusEnum;
 (function (LicenseLibraryModelStatusEnum) {
-  LicenseLibraryModelStatusEnum["Discovered"] = "Discovered";
-  LicenseLibraryModelStatusEnum["Rediscovered"] = "Rediscovered";
-  LicenseLibraryModelStatusEnum["Removed"] = "Removed";
+  LicenseLibraryModelStatusEnum['Discovered'] = 'Discovered';
+  LicenseLibraryModelStatusEnum['Rediscovered'] = 'Rediscovered';
+  LicenseLibraryModelStatusEnum['Removed'] = 'Removed';
 })(LicenseLibraryModelStatusEnum || (LicenseLibraryModelStatusEnum = {}));
 export var LicenseModelRiskLevelEnum;
 (function (LicenseModelRiskLevelEnum) {
-  LicenseModelRiskLevelEnum["Undefined"] = "Undefined";
-  LicenseModelRiskLevelEnum["Unknown"] = "Unknown";
-  LicenseModelRiskLevelEnum["Low"] = "Low";
-  LicenseModelRiskLevelEnum["Medium"] = "Medium";
-  LicenseModelRiskLevelEnum["High"] = "High";
+  LicenseModelRiskLevelEnum['Undefined'] = 'Undefined';
+  LicenseModelRiskLevelEnum['Unknown'] = 'Unknown';
+  LicenseModelRiskLevelEnum['Low'] = 'Low';
+  LicenseModelRiskLevelEnum['Medium'] = 'Medium';
+  LicenseModelRiskLevelEnum['High'] = 'High';
 })(LicenseModelRiskLevelEnum || (LicenseModelRiskLevelEnum = {}));
 export var LicenseModelCopyrightRiskScoreEnum;
 (function (LicenseModelCopyrightRiskScoreEnum) {
-  LicenseModelCopyrightRiskScoreEnum["UNDEFINED"] = "UNDEFINED";
-  LicenseModelCopyrightRiskScoreEnum["ONE"] = "ONE";
-  LicenseModelCopyrightRiskScoreEnum["TWO"] = "TWO";
-  LicenseModelCopyrightRiskScoreEnum["THREE"] = "THREE";
-  LicenseModelCopyrightRiskScoreEnum["FOUR"] = "FOUR";
-  LicenseModelCopyrightRiskScoreEnum["FIVE"] = "FIVE";
-  LicenseModelCopyrightRiskScoreEnum["SIX"] = "SIX";
-  LicenseModelCopyrightRiskScoreEnum["SEVEN"] = "SEVEN";
+  LicenseModelCopyrightRiskScoreEnum['UNDEFINED'] = 'UNDEFINED';
+  LicenseModelCopyrightRiskScoreEnum['ONE'] = 'ONE';
+  LicenseModelCopyrightRiskScoreEnum['TWO'] = 'TWO';
+  LicenseModelCopyrightRiskScoreEnum['THREE'] = 'THREE';
+  LicenseModelCopyrightRiskScoreEnum['FOUR'] = 'FOUR';
+  LicenseModelCopyrightRiskScoreEnum['FIVE'] = 'FIVE';
+  LicenseModelCopyrightRiskScoreEnum['SIX'] = 'SIX';
+  LicenseModelCopyrightRiskScoreEnum['SEVEN'] = 'SEVEN';
 })(
   LicenseModelCopyrightRiskScoreEnum ||
-    (LicenseModelCopyrightRiskScoreEnum = {}),
+    (LicenseModelCopyrightRiskScoreEnum = {})
 );
 export var LicenseModelPatentRiskScoreEnum;
 (function (LicenseModelPatentRiskScoreEnum) {
-  LicenseModelPatentRiskScoreEnum["UNDEFINED"] = "UNDEFINED";
-  LicenseModelPatentRiskScoreEnum["ONE"] = "ONE";
-  LicenseModelPatentRiskScoreEnum["TWO"] = "TWO";
-  LicenseModelPatentRiskScoreEnum["THREE"] = "THREE";
-  LicenseModelPatentRiskScoreEnum["FOUR"] = "FOUR";
+  LicenseModelPatentRiskScoreEnum['UNDEFINED'] = 'UNDEFINED';
+  LicenseModelPatentRiskScoreEnum['ONE'] = 'ONE';
+  LicenseModelPatentRiskScoreEnum['TWO'] = 'TWO';
+  LicenseModelPatentRiskScoreEnum['THREE'] = 'THREE';
+  LicenseModelPatentRiskScoreEnum['FOUR'] = 'FOUR';
 })(LicenseModelPatentRiskScoreEnum || (LicenseModelPatentRiskScoreEnum = {}));
 export var LicenseModelLinkingEnum;
 (function (LicenseModelLinkingEnum) {
-  LicenseModelLinkingEnum["Undefined"] = "Undefined";
-  LicenseModelLinkingEnum["Viral"] = "Viral";
-  LicenseModelLinkingEnum["NonViral"] = "Non_Viral";
-  LicenseModelLinkingEnum["Dynamic"] = "Dynamic";
+  LicenseModelLinkingEnum['Undefined'] = 'Undefined';
+  LicenseModelLinkingEnum['Viral'] = 'Viral';
+  LicenseModelLinkingEnum['NonViral'] = 'Non_Viral';
+  LicenseModelLinkingEnum['Dynamic'] = 'Dynamic';
 })(LicenseModelLinkingEnum || (LicenseModelLinkingEnum = {}));
 export var LicenseModelCopyLeftEnum;
 (function (LicenseModelCopyLeftEnum) {
-  LicenseModelCopyLeftEnum["Undefined"] = "Undefined";
-  LicenseModelCopyLeftEnum["No"] = "No";
-  LicenseModelCopyLeftEnum["Partial"] = "Partial";
-  LicenseModelCopyLeftEnum["Full"] = "Full";
+  LicenseModelCopyLeftEnum['Undefined'] = 'Undefined';
+  LicenseModelCopyLeftEnum['No'] = 'No';
+  LicenseModelCopyLeftEnum['Partial'] = 'Partial';
+  LicenseModelCopyLeftEnum['Full'] = 'Full';
 })(LicenseModelCopyLeftEnum || (LicenseModelCopyLeftEnum = {}));
 export var LicenseModelRoyaltyFreeEnum;
 (function (LicenseModelRoyaltyFreeEnum) {
-  LicenseModelRoyaltyFreeEnum["Yes"] = "Yes";
-  LicenseModelRoyaltyFreeEnum["Conditional"] = "Conditional";
-  LicenseModelRoyaltyFreeEnum["No"] = "No";
-  LicenseModelRoyaltyFreeEnum["Undefined"] = "Undefined";
+  LicenseModelRoyaltyFreeEnum['Yes'] = 'Yes';
+  LicenseModelRoyaltyFreeEnum['Conditional'] = 'Conditional';
+  LicenseModelRoyaltyFreeEnum['No'] = 'No';
+  LicenseModelRoyaltyFreeEnum['Undefined'] = 'Undefined';
 })(LicenseModelRoyaltyFreeEnum || (LicenseModelRoyaltyFreeEnum = {}));
 export var LicenseReportOptionsReportFileTypeEnum;
 (function (LicenseReportOptionsReportFileTypeEnum) {
-  LicenseReportOptionsReportFileTypeEnum["Pdf"] = "Pdf";
-  LicenseReportOptionsReportFileTypeEnum["Html"] = "Html";
-  LicenseReportOptionsReportFileTypeEnum["Xml"] = "Xml";
-  LicenseReportOptionsReportFileTypeEnum["Csv"] = "Csv";
-  LicenseReportOptionsReportFileTypeEnum["Sarif"] = "Sarif";
+  LicenseReportOptionsReportFileTypeEnum['Pdf'] = 'Pdf';
+  LicenseReportOptionsReportFileTypeEnum['Html'] = 'Html';
+  LicenseReportOptionsReportFileTypeEnum['Xml'] = 'Xml';
+  LicenseReportOptionsReportFileTypeEnum['Csv'] = 'Csv';
+  LicenseReportOptionsReportFileTypeEnum['Sarif'] = 'Sarif';
 })(
   LicenseReportOptionsReportFileTypeEnum ||
-    (LicenseReportOptionsReportFileTypeEnum = {}),
+    (LicenseReportOptionsReportFileTypeEnum = {})
 );
 export var MhsPayloadAscpSignatureMhsErrorEnum;
 (function (MhsPayloadAscpSignatureMhsErrorEnum) {
-  MhsPayloadAscpSignatureMhsErrorEnum["None"] = "None";
-  MhsPayloadAscpSignatureMhsErrorEnum["GeneralError"] = "GeneralError";
-  MhsPayloadAscpSignatureMhsErrorEnum["InvalidInput"] = "InvalidInput";
-  MhsPayloadAscpSignatureMhsErrorEnum["MissingCapabilities"] =
-    "MissingCapabilities";
+  MhsPayloadAscpSignatureMhsErrorEnum['None'] = 'None';
+  MhsPayloadAscpSignatureMhsErrorEnum['GeneralError'] = 'GeneralError';
+  MhsPayloadAscpSignatureMhsErrorEnum['InvalidInput'] = 'InvalidInput';
+  MhsPayloadAscpSignatureMhsErrorEnum['MissingCapabilities'] =
+    'MissingCapabilities';
   MhsPayloadAscpSignatureMhsErrorEnum[
-    "MHSLicenseGeneralStructureUnrecognized"
-  ] = "MHSLicenseGeneralStructureUnrecognized";
-  MhsPayloadAscpSignatureMhsErrorEnum["MHSLicenseCertificateInvalid"] =
-    "MHSLicenseCertificateInvalid";
-  MhsPayloadAscpSignatureMhsErrorEnum["MHSLicensePasetoSignatureInvalid"] =
-    "MHSLicensePasetoSignatureInvalid";
+    'MHSLicenseGeneralStructureUnrecognized'
+  ] = 'MHSLicenseGeneralStructureUnrecognized';
+  MhsPayloadAscpSignatureMhsErrorEnum['MHSLicenseCertificateInvalid'] =
+    'MHSLicenseCertificateInvalid';
+  MhsPayloadAscpSignatureMhsErrorEnum['MHSLicensePasetoSignatureInvalid'] =
+    'MHSLicensePasetoSignatureInvalid';
   MhsPayloadAscpSignatureMhsErrorEnum[
-    "MHSLicensePasetoRawPayloadUnrecognized"
-  ] = "MHSLicensePasetoRawPayloadUnrecognized";
-  MhsPayloadAscpSignatureMhsErrorEnum["MHSLicenseInvalidAs360Fingerprint"] =
-    "MHSLicenseInvalidAs360Fingerprint";
-  MhsPayloadAscpSignatureMhsErrorEnum["MHSLicenseDeploymentIdMismatch"] =
-    "MHSLicenseDeploymentIdMismatch";
+    'MHSLicensePasetoRawPayloadUnrecognized'
+  ] = 'MHSLicensePasetoRawPayloadUnrecognized';
+  MhsPayloadAscpSignatureMhsErrorEnum['MHSLicenseInvalidAs360Fingerprint'] =
+    'MHSLicenseInvalidAs360Fingerprint';
+  MhsPayloadAscpSignatureMhsErrorEnum['MHSLicenseDeploymentIdMismatch'] =
+    'MHSLicenseDeploymentIdMismatch';
   MhsPayloadAscpSignatureMhsErrorEnum[
-    "MHSLicenseIssuedEarlierThanCurrentlyUsed"
-  ] = "MHSLicenseIssuedEarlierThanCurrentlyUsed";
-  MhsPayloadAscpSignatureMhsErrorEnum["MHSLicenseHasNoRelevantEntitlements"] =
-    "MHSLicenseHasNoRelevantEntitlements";
-  MhsPayloadAscpSignatureMhsErrorEnum["MHSLicenseWasAlreadyUploaded"] =
-    "MHSLicenseWasAlreadyUploaded";
-  MhsPayloadAscpSignatureMhsErrorEnum["MHSLicenseOldFeatureIsMissing"] =
-    "MHSLicenseOldFeatureIsMissing";
-  MhsPayloadAscpSignatureMhsErrorEnum["MHSLicenseChangingPreviousMhsValue"] =
-    "MHSLicenseChangingPreviousMhsValue";
-  MhsPayloadAscpSignatureMhsErrorEnum["MHSLicenseWasIssuedTooLongAgo"] =
-    "MHSLicenseWasIssuedTooLongAgo";
-  MhsPayloadAscpSignatureMhsErrorEnum["MHSLicenseInvalidASoCFingerprint"] =
-    "MHSLicenseInvalidASoCFingerprint";
+    'MHSLicenseIssuedEarlierThanCurrentlyUsed'
+  ] = 'MHSLicenseIssuedEarlierThanCurrentlyUsed';
+  MhsPayloadAscpSignatureMhsErrorEnum['MHSLicenseHasNoRelevantEntitlements'] =
+    'MHSLicenseHasNoRelevantEntitlements';
+  MhsPayloadAscpSignatureMhsErrorEnum['MHSLicenseWasAlreadyUploaded'] =
+    'MHSLicenseWasAlreadyUploaded';
+  MhsPayloadAscpSignatureMhsErrorEnum['MHSLicenseOldFeatureIsMissing'] =
+    'MHSLicenseOldFeatureIsMissing';
+  MhsPayloadAscpSignatureMhsErrorEnum['MHSLicenseChangingPreviousMhsValue'] =
+    'MHSLicenseChangingPreviousMhsValue';
+  MhsPayloadAscpSignatureMhsErrorEnum['MHSLicenseWasIssuedTooLongAgo'] =
+    'MHSLicenseWasIssuedTooLongAgo';
+  MhsPayloadAscpSignatureMhsErrorEnum['MHSLicenseInvalidASoCFingerprint'] =
+    'MHSLicenseInvalidASoCFingerprint';
 })(
   MhsPayloadAscpSignatureMhsErrorEnum ||
-    (MhsPayloadAscpSignatureMhsErrorEnum = {}),
+    (MhsPayloadAscpSignatureMhsErrorEnum = {})
 );
+export var MemberInfoMemberTypeEnum;
+(function (MemberInfoMemberTypeEnum) {
+  MemberInfoMemberTypeEnum['Constructor'] = 'Constructor';
+  MemberInfoMemberTypeEnum['Event'] = 'Event';
+  MemberInfoMemberTypeEnum['Field'] = 'Field';
+  MemberInfoMemberTypeEnum['Method'] = 'Method';
+  MemberInfoMemberTypeEnum['Property'] = 'Property';
+  MemberInfoMemberTypeEnum['TypeInfo'] = 'TypeInfo';
+  MemberInfoMemberTypeEnum['Custom'] = 'Custom';
+  MemberInfoMemberTypeEnum['NestedType'] = 'NestedType';
+  MemberInfoMemberTypeEnum['All'] = 'All';
+})(MemberInfoMemberTypeEnum || (MemberInfoMemberTypeEnum = {}));
+export var MethodBaseMemberTypeEnum;
+(function (MethodBaseMemberTypeEnum) {
+  MethodBaseMemberTypeEnum['Constructor'] = 'Constructor';
+  MethodBaseMemberTypeEnum['Event'] = 'Event';
+  MethodBaseMemberTypeEnum['Field'] = 'Field';
+  MethodBaseMemberTypeEnum['Method'] = 'Method';
+  MethodBaseMemberTypeEnum['Property'] = 'Property';
+  MethodBaseMemberTypeEnum['TypeInfo'] = 'TypeInfo';
+  MethodBaseMemberTypeEnum['Custom'] = 'Custom';
+  MethodBaseMemberTypeEnum['NestedType'] = 'NestedType';
+  MethodBaseMemberTypeEnum['All'] = 'All';
+})(MethodBaseMemberTypeEnum || (MethodBaseMemberTypeEnum = {}));
+export var MethodBaseAttributesEnum;
+(function (MethodBaseAttributesEnum) {
+  MethodBaseAttributesEnum['PrivateScope'] = 'PrivateScope';
+  MethodBaseAttributesEnum['Private'] = 'Private';
+  MethodBaseAttributesEnum['FamANDAssem'] = 'FamANDAssem';
+  MethodBaseAttributesEnum['Assembly'] = 'Assembly';
+  MethodBaseAttributesEnum['Family'] = 'Family';
+  MethodBaseAttributesEnum['FamORAssem'] = 'FamORAssem';
+  MethodBaseAttributesEnum['Public'] = 'Public';
+  MethodBaseAttributesEnum['MemberAccessMask'] = 'MemberAccessMask';
+  MethodBaseAttributesEnum['UnmanagedExport'] = 'UnmanagedExport';
+  MethodBaseAttributesEnum['Static'] = 'Static';
+  MethodBaseAttributesEnum['Final'] = 'Final';
+  MethodBaseAttributesEnum['Virtual'] = 'Virtual';
+  MethodBaseAttributesEnum['HideBySig'] = 'HideBySig';
+  MethodBaseAttributesEnum['NewSlot'] = 'NewSlot';
+  MethodBaseAttributesEnum['CheckAccessOnOverride'] = 'CheckAccessOnOverride';
+  MethodBaseAttributesEnum['Abstract'] = 'Abstract';
+  MethodBaseAttributesEnum['SpecialName'] = 'SpecialName';
+  MethodBaseAttributesEnum['RTSpecialName'] = 'RTSpecialName';
+  MethodBaseAttributesEnum['PinvokeImpl'] = 'PinvokeImpl';
+  MethodBaseAttributesEnum['HasSecurity'] = 'HasSecurity';
+  MethodBaseAttributesEnum['RequireSecObject'] = 'RequireSecObject';
+  MethodBaseAttributesEnum['ReservedMask'] = 'ReservedMask';
+})(MethodBaseAttributesEnum || (MethodBaseAttributesEnum = {}));
+export var MethodBaseMethodImplementationFlagsEnum;
+(function (MethodBaseMethodImplementationFlagsEnum) {
+  MethodBaseMethodImplementationFlagsEnum['IL'] = 'IL';
+  MethodBaseMethodImplementationFlagsEnum['Native'] = 'Native';
+  MethodBaseMethodImplementationFlagsEnum['OPTIL'] = 'OPTIL';
+  MethodBaseMethodImplementationFlagsEnum['CodeTypeMask'] = 'CodeTypeMask';
+  MethodBaseMethodImplementationFlagsEnum['ManagedMask'] = 'ManagedMask';
+  MethodBaseMethodImplementationFlagsEnum['NoInlining'] = 'NoInlining';
+  MethodBaseMethodImplementationFlagsEnum['ForwardRef'] = 'ForwardRef';
+  MethodBaseMethodImplementationFlagsEnum['Synchronized'] = 'Synchronized';
+  MethodBaseMethodImplementationFlagsEnum['NoOptimization'] = 'NoOptimization';
+  MethodBaseMethodImplementationFlagsEnum['PreserveSig'] = 'PreserveSig';
+  MethodBaseMethodImplementationFlagsEnum['AggressiveInlining'] =
+    'AggressiveInlining';
+  MethodBaseMethodImplementationFlagsEnum['AggressiveOptimization'] =
+    'AggressiveOptimization';
+  MethodBaseMethodImplementationFlagsEnum['InternalCall'] = 'InternalCall';
+  MethodBaseMethodImplementationFlagsEnum['MaxMethodImplVal'] =
+    'MaxMethodImplVal';
+})(
+  MethodBaseMethodImplementationFlagsEnum ||
+    (MethodBaseMethodImplementationFlagsEnum = {})
+);
+export var MethodBaseCallingConventionEnum;
+(function (MethodBaseCallingConventionEnum) {
+  MethodBaseCallingConventionEnum['Standard'] = 'Standard';
+  MethodBaseCallingConventionEnum['VarArgs'] = 'VarArgs';
+  MethodBaseCallingConventionEnum['Any'] = 'Any';
+  MethodBaseCallingConventionEnum['HasThis'] = 'HasThis';
+  MethodBaseCallingConventionEnum['ExplicitThis'] = 'ExplicitThis';
+})(MethodBaseCallingConventionEnum || (MethodBaseCallingConventionEnum = {}));
+export var MethodInfoAttributesEnum;
+(function (MethodInfoAttributesEnum) {
+  MethodInfoAttributesEnum['PrivateScope'] = 'PrivateScope';
+  MethodInfoAttributesEnum['Private'] = 'Private';
+  MethodInfoAttributesEnum['FamANDAssem'] = 'FamANDAssem';
+  MethodInfoAttributesEnum['Assembly'] = 'Assembly';
+  MethodInfoAttributesEnum['Family'] = 'Family';
+  MethodInfoAttributesEnum['FamORAssem'] = 'FamORAssem';
+  MethodInfoAttributesEnum['Public'] = 'Public';
+  MethodInfoAttributesEnum['MemberAccessMask'] = 'MemberAccessMask';
+  MethodInfoAttributesEnum['UnmanagedExport'] = 'UnmanagedExport';
+  MethodInfoAttributesEnum['Static'] = 'Static';
+  MethodInfoAttributesEnum['Final'] = 'Final';
+  MethodInfoAttributesEnum['Virtual'] = 'Virtual';
+  MethodInfoAttributesEnum['HideBySig'] = 'HideBySig';
+  MethodInfoAttributesEnum['NewSlot'] = 'NewSlot';
+  MethodInfoAttributesEnum['CheckAccessOnOverride'] = 'CheckAccessOnOverride';
+  MethodInfoAttributesEnum['Abstract'] = 'Abstract';
+  MethodInfoAttributesEnum['SpecialName'] = 'SpecialName';
+  MethodInfoAttributesEnum['RTSpecialName'] = 'RTSpecialName';
+  MethodInfoAttributesEnum['PinvokeImpl'] = 'PinvokeImpl';
+  MethodInfoAttributesEnum['HasSecurity'] = 'HasSecurity';
+  MethodInfoAttributesEnum['RequireSecObject'] = 'RequireSecObject';
+  MethodInfoAttributesEnum['ReservedMask'] = 'ReservedMask';
+})(MethodInfoAttributesEnum || (MethodInfoAttributesEnum = {}));
+export var MethodInfoMethodImplementationFlagsEnum;
+(function (MethodInfoMethodImplementationFlagsEnum) {
+  MethodInfoMethodImplementationFlagsEnum['IL'] = 'IL';
+  MethodInfoMethodImplementationFlagsEnum['Native'] = 'Native';
+  MethodInfoMethodImplementationFlagsEnum['OPTIL'] = 'OPTIL';
+  MethodInfoMethodImplementationFlagsEnum['CodeTypeMask'] = 'CodeTypeMask';
+  MethodInfoMethodImplementationFlagsEnum['ManagedMask'] = 'ManagedMask';
+  MethodInfoMethodImplementationFlagsEnum['NoInlining'] = 'NoInlining';
+  MethodInfoMethodImplementationFlagsEnum['ForwardRef'] = 'ForwardRef';
+  MethodInfoMethodImplementationFlagsEnum['Synchronized'] = 'Synchronized';
+  MethodInfoMethodImplementationFlagsEnum['NoOptimization'] = 'NoOptimization';
+  MethodInfoMethodImplementationFlagsEnum['PreserveSig'] = 'PreserveSig';
+  MethodInfoMethodImplementationFlagsEnum['AggressiveInlining'] =
+    'AggressiveInlining';
+  MethodInfoMethodImplementationFlagsEnum['AggressiveOptimization'] =
+    'AggressiveOptimization';
+  MethodInfoMethodImplementationFlagsEnum['InternalCall'] = 'InternalCall';
+  MethodInfoMethodImplementationFlagsEnum['MaxMethodImplVal'] =
+    'MaxMethodImplVal';
+})(
+  MethodInfoMethodImplementationFlagsEnum ||
+    (MethodInfoMethodImplementationFlagsEnum = {})
+);
+export var MethodInfoCallingConventionEnum;
+(function (MethodInfoCallingConventionEnum) {
+  MethodInfoCallingConventionEnum['Standard'] = 'Standard';
+  MethodInfoCallingConventionEnum['VarArgs'] = 'VarArgs';
+  MethodInfoCallingConventionEnum['Any'] = 'Any';
+  MethodInfoCallingConventionEnum['HasThis'] = 'HasThis';
+  MethodInfoCallingConventionEnum['ExplicitThis'] = 'ExplicitThis';
+})(MethodInfoCallingConventionEnum || (MethodInfoCallingConventionEnum = {}));
+export var MethodInfoMemberTypeEnum;
+(function (MethodInfoMemberTypeEnum) {
+  MethodInfoMemberTypeEnum['Constructor'] = 'Constructor';
+  MethodInfoMemberTypeEnum['Event'] = 'Event';
+  MethodInfoMemberTypeEnum['Field'] = 'Field';
+  MethodInfoMemberTypeEnum['Method'] = 'Method';
+  MethodInfoMemberTypeEnum['Property'] = 'Property';
+  MethodInfoMemberTypeEnum['TypeInfo'] = 'TypeInfo';
+  MethodInfoMemberTypeEnum['Custom'] = 'Custom';
+  MethodInfoMemberTypeEnum['NestedType'] = 'NestedType';
+  MethodInfoMemberTypeEnum['All'] = 'All';
+})(MethodInfoMemberTypeEnum || (MethodInfoMemberTypeEnum = {}));
 export var MinPresenceDataStatusEnum;
 (function (MinPresenceDataStatusEnum) {
-  MinPresenceDataStatusEnum["Active"] = "Active";
-  MinPresenceDataStatusEnum["NeverUsed"] = "NeverUsed";
-  MinPresenceDataStatusEnum["KeyExpired"] = "KeyExpired";
-  MinPresenceDataStatusEnum["KeyNeverUsed"] = "KeyNeverUsed";
-  MinPresenceDataStatusEnum["Inactive"] = "Inactive";
-  MinPresenceDataStatusEnum["Disable"] = "Disable";
+  MinPresenceDataStatusEnum['Active'] = 'Active';
+  MinPresenceDataStatusEnum['NeverUsed'] = 'NeverUsed';
+  MinPresenceDataStatusEnum['KeyExpired'] = 'KeyExpired';
+  MinPresenceDataStatusEnum['KeyNeverUsed'] = 'KeyNeverUsed';
+  MinPresenceDataStatusEnum['Inactive'] = 'Inactive';
+  MinPresenceDataStatusEnum['Disable'] = 'Disable';
 })(MinPresenceDataStatusEnum || (MinPresenceDataStatusEnum = {}));
 export var MinScanExecutionModelStatusEnum;
 (function (MinScanExecutionModelStatusEnum) {
-  MinScanExecutionModelStatusEnum["Running"] = "Running";
-  MinScanExecutionModelStatusEnum["Stopping"] = "Stopping";
-  MinScanExecutionModelStatusEnum["Pausing"] = "Pausing";
-  MinScanExecutionModelStatusEnum["InQueue"] = "InQueue";
-  MinScanExecutionModelStatusEnum["Paused"] = "Paused";
-  MinScanExecutionModelStatusEnum["Ready"] = "Ready";
-  MinScanExecutionModelStatusEnum["Failed"] = "Failed";
+  MinScanExecutionModelStatusEnum['Running'] = 'Running';
+  MinScanExecutionModelStatusEnum['Stopping'] = 'Stopping';
+  MinScanExecutionModelStatusEnum['Pausing'] = 'Pausing';
+  MinScanExecutionModelStatusEnum['InQueue'] = 'InQueue';
+  MinScanExecutionModelStatusEnum['Paused'] = 'Paused';
+  MinScanExecutionModelStatusEnum['Ready'] = 'Ready';
+  MinScanExecutionModelStatusEnum['Failed'] = 'Failed';
 })(MinScanExecutionModelStatusEnum || (MinScanExecutionModelStatusEnum = {}));
 export var MinScanExecutionModelExecutionProgressEnum;
 (function (MinScanExecutionModelExecutionProgressEnum) {
-  MinScanExecutionModelExecutionProgressEnum["Pending"] = "Pending";
-  MinScanExecutionModelExecutionProgressEnum["Running"] = "Running";
-  MinScanExecutionModelExecutionProgressEnum["UnderReview"] = "UnderReview";
-  MinScanExecutionModelExecutionProgressEnum["RunningManually"] =
-    "RunningManually";
-  MinScanExecutionModelExecutionProgressEnum["Paused"] = "Paused";
-  MinScanExecutionModelExecutionProgressEnum["Completed"] = "Completed";
+  MinScanExecutionModelExecutionProgressEnum['Pending'] = 'Pending';
+  MinScanExecutionModelExecutionProgressEnum['Running'] = 'Running';
+  MinScanExecutionModelExecutionProgressEnum['UnderReview'] = 'UnderReview';
+  MinScanExecutionModelExecutionProgressEnum['RunningManually'] =
+    'RunningManually';
+  MinScanExecutionModelExecutionProgressEnum['Paused'] = 'Paused';
+  MinScanExecutionModelExecutionProgressEnum['Completed'] = 'Completed';
 })(
   MinScanExecutionModelExecutionProgressEnum ||
-    (MinScanExecutionModelExecutionProgressEnum = {}),
+    (MinScanExecutionModelExecutionProgressEnum = {})
 );
 export var MinScanModelTechnologyEnum;
 (function (MinScanModelTechnologyEnum) {
-  MinScanModelTechnologyEnum["DynamicAnalyzer"] = "DynamicAnalyzer";
-  MinScanModelTechnologyEnum["StaticAnalyzer"] = "StaticAnalyzer";
-  MinScanModelTechnologyEnum["IFA"] = "IFA";
-  MinScanModelTechnologyEnum["DastAutomation"] = "DastAutomation";
-  MinScanModelTechnologyEnum["IASTAnalyzer"] = "IASTAnalyzer";
-  MinScanModelTechnologyEnum["ScaAnalyzer"] = "ScaAnalyzer";
+  MinScanModelTechnologyEnum['DynamicAnalyzer'] = 'DynamicAnalyzer';
+  MinScanModelTechnologyEnum['StaticAnalyzer'] = 'StaticAnalyzer';
+  MinScanModelTechnologyEnum['IFA'] = 'IFA';
+  MinScanModelTechnologyEnum['DastAutomation'] = 'DastAutomation';
+  MinScanModelTechnologyEnum['IASTAnalyzer'] = 'IASTAnalyzer';
+  MinScanModelTechnologyEnum['ScaAnalyzer'] = 'ScaAnalyzer';
 })(MinScanModelTechnologyEnum || (MinScanModelTechnologyEnum = {}));
 export var MinScanModelIastAgentTypeEnum;
 (function (MinScanModelIastAgentTypeEnum) {
-  MinScanModelIastAgentTypeEnum["Java"] = "Java";
-  MinScanModelIastAgentTypeEnum["DotNet"] = "DotNet";
-  MinScanModelIastAgentTypeEnum["NodeJS"] = "NodeJS";
-  MinScanModelIastAgentTypeEnum["PhpWindows"] = "PhpWindows";
-  MinScanModelIastAgentTypeEnum["PhpRedHat"] = "PhpRedHat";
-  MinScanModelIastAgentTypeEnum["PhpUbuntu"] = "PhpUbuntu";
-  MinScanModelIastAgentTypeEnum["Kubernetes"] = "Kubernetes";
+  MinScanModelIastAgentTypeEnum['Java'] = 'Java';
+  MinScanModelIastAgentTypeEnum['DotNet'] = 'DotNet';
+  MinScanModelIastAgentTypeEnum['NodeJS'] = 'NodeJS';
+  MinScanModelIastAgentTypeEnum['PhpWindows'] = 'PhpWindows';
+  MinScanModelIastAgentTypeEnum['PhpRedHat'] = 'PhpRedHat';
+  MinScanModelIastAgentTypeEnum['PhpUbuntu'] = 'PhpUbuntu';
+  MinScanModelIastAgentTypeEnum['Kubernetes'] = 'Kubernetes';
 })(MinScanModelIastAgentTypeEnum || (MinScanModelIastAgentTypeEnum = {}));
 export var MinScanModelIastAgentStatusEnum;
 (function (MinScanModelIastAgentStatusEnum) {
-  MinScanModelIastAgentStatusEnum["None"] = "None";
-  MinScanModelIastAgentStatusEnum["Active"] = "Active";
-  MinScanModelIastAgentStatusEnum["KeyNeverUsed"] = "KeyNeverUsed";
-  MinScanModelIastAgentStatusEnum["Inactive"] = "Inactive";
+  MinScanModelIastAgentStatusEnum['None'] = 'None';
+  MinScanModelIastAgentStatusEnum['Active'] = 'Active';
+  MinScanModelIastAgentStatusEnum['KeyNeverUsed'] = 'KeyNeverUsed';
+  MinScanModelIastAgentStatusEnum['Inactive'] = 'Inactive';
 })(MinScanModelIastAgentStatusEnum || (MinScanModelIastAgentStatusEnum = {}));
 export var MonitoredServiceModelServiceTypeEnum;
 (function (MonitoredServiceModelServiceTypeEnum) {
-  MonitoredServiceModelServiceTypeEnum["ASCP"] = "ASCP";
-  MonitoredServiceModelServiceTypeEnum["SAST"] = "SAST";
-  MonitoredServiceModelServiceTypeEnum["DAST"] = "DAST";
-  MonitoredServiceModelServiceTypeEnum["SCA"] = "SCA";
+  MonitoredServiceModelServiceTypeEnum['ASCP'] = 'ASCP';
+  MonitoredServiceModelServiceTypeEnum['SAST'] = 'SAST';
+  MonitoredServiceModelServiceTypeEnum['DAST'] = 'DAST';
+  MonitoredServiceModelServiceTypeEnum['SCA'] = 'SCA';
 })(
   MonitoredServiceModelServiceTypeEnum ||
-    (MonitoredServiceModelServiceTypeEnum = {}),
+    (MonitoredServiceModelServiceTypeEnum = {})
 );
 export var MonitoredServiceModelStatusEnum;
 (function (MonitoredServiceModelStatusEnum) {
-  MonitoredServiceModelStatusEnum["Operational"] = "Operational";
-  MonitoredServiceModelStatusEnum["Overloaded"] = "Overloaded";
-  MonitoredServiceModelStatusEnum["OutOfService"] = "OutOfService";
-  MonitoredServiceModelStatusEnum["OutOfOrder"] = "OutOfOrder";
-  MonitoredServiceModelStatusEnum["MonitoringDisabled"] = "MonitoringDisabled";
+  MonitoredServiceModelStatusEnum['Operational'] = 'Operational';
+  MonitoredServiceModelStatusEnum['Overloaded'] = 'Overloaded';
+  MonitoredServiceModelStatusEnum['OutOfService'] = 'OutOfService';
+  MonitoredServiceModelStatusEnum['OutOfOrder'] = 'OutOfOrder';
+  MonitoredServiceModelStatusEnum['MonitoringDisabled'] = 'MonitoringDisabled';
 })(MonitoredServiceModelStatusEnum || (MonitoredServiceModelStatusEnum = {}));
 export var NewAssetGroupModelIssuesStatusInheritanceEnum;
 (function (NewAssetGroupModelIssuesStatusInheritanceEnum) {
-  NewAssetGroupModelIssuesStatusInheritanceEnum["None"] = "None";
-  NewAssetGroupModelIssuesStatusInheritanceEnum["Noise"] = "Noise";
-  NewAssetGroupModelIssuesStatusInheritanceEnum["Fixed"] = "Fixed";
+  NewAssetGroupModelIssuesStatusInheritanceEnum['None'] = 'None';
+  NewAssetGroupModelIssuesStatusInheritanceEnum['Noise'] = 'Noise';
+  NewAssetGroupModelIssuesStatusInheritanceEnum['Fixed'] = 'Fixed';
 })(
   NewAssetGroupModelIssuesStatusInheritanceEnum ||
-    (NewAssetGroupModelIssuesStatusInheritanceEnum = {}),
+    (NewAssetGroupModelIssuesStatusInheritanceEnum = {})
 );
 export var NewChartModelMetricsEnum;
 (function (NewChartModelMetricsEnum) {
-  NewChartModelMetricsEnum["RiskRating"] = "RiskRating";
-  NewChartModelMetricsEnum["TestingStatus"] = "TestingStatus";
-  NewChartModelMetricsEnum["Issues"] = "Issues";
-  NewChartModelMetricsEnum["MTTR"] = "MTTR";
-  NewChartModelMetricsEnum["ScanExecutions"] = "ScanExecutions";
+  NewChartModelMetricsEnum['RiskRating'] = 'RiskRating';
+  NewChartModelMetricsEnum['TestingStatus'] = 'TestingStatus';
+  NewChartModelMetricsEnum['Issues'] = 'Issues';
+  NewChartModelMetricsEnum['MTTR'] = 'MTTR';
+  NewChartModelMetricsEnum['ScanExecutions'] = 'ScanExecutions';
 })(NewChartModelMetricsEnum || (NewChartModelMetricsEnum = {}));
 export var NewDastScanTestOperationEnum;
 (function (NewDastScanTestOperationEnum) {
-  NewDastScanTestOperationEnum["None"] = "None";
-  NewDastScanTestOperationEnum["Retest"] = "Retest";
-  NewDastScanTestOperationEnum["ContinueTest"] = "ContinueTest";
-  NewDastScanTestOperationEnum["ReportOnly"] = "ReportOnly";
+  NewDastScanTestOperationEnum['None'] = 'None';
+  NewDastScanTestOperationEnum['Retest'] = 'Retest';
+  NewDastScanTestOperationEnum['ContinueTest'] = 'ContinueTest';
+  NewDastScanTestOperationEnum['ReportOnly'] = 'ReportOnly';
 })(NewDastScanTestOperationEnum || (NewDastScanTestOperationEnum = {}));
 export var NewIastScanAgentTypeEnum;
 (function (NewIastScanAgentTypeEnum) {
-  NewIastScanAgentTypeEnum["Java"] = "Java";
-  NewIastScanAgentTypeEnum["DotNet"] = "DotNet";
-  NewIastScanAgentTypeEnum["PhpWindows"] = "PhpWindows";
-  NewIastScanAgentTypeEnum["PhpRedHat"] = "PhpRedHat";
-  NewIastScanAgentTypeEnum["PhpUbuntu"] = "PhpUbuntu";
-  NewIastScanAgentTypeEnum["Kubernetes"] = "Kubernetes";
+  NewIastScanAgentTypeEnum['Java'] = 'Java';
+  NewIastScanAgentTypeEnum['DotNet'] = 'DotNet';
+  NewIastScanAgentTypeEnum['PhpWindows'] = 'PhpWindows';
+  NewIastScanAgentTypeEnum['PhpRedHat'] = 'PhpRedHat';
+  NewIastScanAgentTypeEnum['PhpUbuntu'] = 'PhpUbuntu';
+  NewIastScanAgentTypeEnum['Kubernetes'] = 'Kubernetes';
 })(NewIastScanAgentTypeEnum || (NewIastScanAgentTypeEnum = {}));
 export var NewOrgSettingsModelSettingTypeEnum;
 (function (NewOrgSettingsModelSettingTypeEnum) {
-  NewOrgSettingsModelSettingTypeEnum["ReportTitle"] = "ReportTitle";
-  NewOrgSettingsModelSettingTypeEnum["ReportHeader"] = "ReportHeader";
-  NewOrgSettingsModelSettingTypeEnum["ReportFooter"] = "ReportFooter";
-  NewOrgSettingsModelSettingTypeEnum["MainLogoFileName"] = "MainLogoFileName";
-  NewOrgSettingsModelSettingTypeEnum["AdditionalLogoFileName"] =
-    "AdditionalLogoFileName";
+  NewOrgSettingsModelSettingTypeEnum['ReportTitle'] = 'ReportTitle';
+  NewOrgSettingsModelSettingTypeEnum['ReportHeader'] = 'ReportHeader';
+  NewOrgSettingsModelSettingTypeEnum['ReportFooter'] = 'ReportFooter';
+  NewOrgSettingsModelSettingTypeEnum['MainLogoFileName'] = 'MainLogoFileName';
+  NewOrgSettingsModelSettingTypeEnum['AdditionalLogoFileName'] =
+    'AdditionalLogoFileName';
 })(
   NewOrgSettingsModelSettingTypeEnum ||
-    (NewOrgSettingsModelSettingTypeEnum = {}),
+    (NewOrgSettingsModelSettingTypeEnum = {})
 );
 export var NewWebhookRequestMethodEnum;
 (function (NewWebhookRequestMethodEnum) {
-  NewWebhookRequestMethodEnum["GET"] = "GET";
-  NewWebhookRequestMethodEnum["POST"] = "POST";
-  NewWebhookRequestMethodEnum["PUT"] = "PUT";
+  NewWebhookRequestMethodEnum['GET'] = 'GET';
+  NewWebhookRequestMethodEnum['POST'] = 'POST';
+  NewWebhookRequestMethodEnum['PUT'] = 'PUT';
 })(NewWebhookRequestMethodEnum || (NewWebhookRequestMethodEnum = {}));
 export var NewWebhookEventEnum;
 (function (NewWebhookEventEnum) {
-  NewWebhookEventEnum["ScanExecutionCompleted"] = "ScanExecutionCompleted";
-  NewWebhookEventEnum["ApplicationUpdated"] = "ApplicationUpdated";
-  NewWebhookEventEnum["NewPatchRequest"] = "NewPatchRequest";
+  NewWebhookEventEnum['ScanExecutionCompleted'] = 'ScanExecutionCompleted';
+  NewWebhookEventEnum['ApplicationUpdated'] = 'ApplicationUpdated';
+  NewWebhookEventEnum['NewPatchRequest'] = 'NewPatchRequest';
 })(NewWebhookEventEnum || (NewWebhookEventEnum = {}));
 export var OnBoardResultOnBoardStatusEnum;
 (function (OnBoardResultOnBoardStatusEnum) {
-  OnBoardResultOnBoardStatusEnum["Success"] = "Success";
-  OnBoardResultOnBoardStatusEnum["NotFound"] = "NotFound";
-  OnBoardResultOnBoardStatusEnum["Ambiguous"] = "Ambiguous";
-  OnBoardResultOnBoardStatusEnum["AlreadyExist"] = "AlreadyExist";
-  OnBoardResultOnBoardStatusEnum["Failed"] = "Failed";
+  OnBoardResultOnBoardStatusEnum['Success'] = 'Success';
+  OnBoardResultOnBoardStatusEnum['NotFound'] = 'NotFound';
+  OnBoardResultOnBoardStatusEnum['Ambiguous'] = 'Ambiguous';
+  OnBoardResultOnBoardStatusEnum['AlreadyExist'] = 'AlreadyExist';
+  OnBoardResultOnBoardStatusEnum['Failed'] = 'Failed';
 })(OnBoardResultOnBoardStatusEnum || (OnBoardResultOnBoardStatusEnum = {}));
 export var OnBoardUsersModelExternalIdTypeEnum;
 (function (OnBoardUsersModelExternalIdTypeEnum) {
-  OnBoardUsersModelExternalIdTypeEnum["Username"] = "Username";
-  OnBoardUsersModelExternalIdTypeEnum["Email"] = "Email";
+  OnBoardUsersModelExternalIdTypeEnum['Username'] = 'Username';
+  OnBoardUsersModelExternalIdTypeEnum['Email'] = 'Email';
 })(
   OnBoardUsersModelExternalIdTypeEnum ||
-    (OnBoardUsersModelExternalIdTypeEnum = {}),
+    (OnBoardUsersModelExternalIdTypeEnum = {})
 );
 export var OneTimePasswordHashTypeEnum;
 (function (OneTimePasswordHashTypeEnum) {
-  OneTimePasswordHashTypeEnum["None"] = "None";
-  OneTimePasswordHashTypeEnum["Sha1"] = "Sha1";
-  OneTimePasswordHashTypeEnum["Sha256"] = "Sha256";
-  OneTimePasswordHashTypeEnum["Sha512"] = "Sha512";
+  OneTimePasswordHashTypeEnum['None'] = 'None';
+  OneTimePasswordHashTypeEnum['Sha1'] = 'Sha1';
+  OneTimePasswordHashTypeEnum['Sha256'] = 'Sha256';
+  OneTimePasswordHashTypeEnum['Sha512'] = 'Sha512';
 })(OneTimePasswordHashTypeEnum || (OneTimePasswordHashTypeEnum = {}));
+export var OrderByClauseDirectionEnum;
+(function (OrderByClauseDirectionEnum) {
+  OrderByClauseDirectionEnum['Ascending'] = 'Ascending';
+  OrderByClauseDirectionEnum['Descending'] = 'Descending';
+})(OrderByClauseDirectionEnum || (OrderByClauseDirectionEnum = {}));
+export var OrderByNodeDirectionEnum;
+(function (OrderByNodeDirectionEnum) {
+  OrderByNodeDirectionEnum['Ascending'] = 'Ascending';
+  OrderByNodeDirectionEnum['Descending'] = 'Descending';
+})(OrderByNodeDirectionEnum || (OrderByNodeDirectionEnum = {}));
 export var OrgLibraryModelStatusEnum;
 (function (OrgLibraryModelStatusEnum) {
-  OrgLibraryModelStatusEnum["Discovered"] = "Discovered";
-  OrgLibraryModelStatusEnum["Rediscovered"] = "Rediscovered";
-  OrgLibraryModelStatusEnum["Removed"] = "Removed";
+  OrgLibraryModelStatusEnum['Discovered'] = 'Discovered';
+  OrgLibraryModelStatusEnum['Rediscovered'] = 'Rediscovered';
+  OrgLibraryModelStatusEnum['Removed'] = 'Removed';
 })(OrgLibraryModelStatusEnum || (OrgLibraryModelStatusEnum = {}));
 export var OrgSettingsModelSettingTypeEnum;
 (function (OrgSettingsModelSettingTypeEnum) {
-  OrgSettingsModelSettingTypeEnum["ReportTitle"] = "ReportTitle";
-  OrgSettingsModelSettingTypeEnum["ReportHeader"] = "ReportHeader";
-  OrgSettingsModelSettingTypeEnum["ReportFooter"] = "ReportFooter";
-  OrgSettingsModelSettingTypeEnum["MainLogoFileName"] = "MainLogoFileName";
-  OrgSettingsModelSettingTypeEnum["AdditionalLogoFileName"] =
-    "AdditionalLogoFileName";
-  OrgSettingsModelSettingTypeEnum["LdapProvider"] = "LdapProvider";
-  OrgSettingsModelSettingTypeEnum["LdapDomain"] = "LdapDomain";
-  OrgSettingsModelSettingTypeEnum["LdapTargetOU"] = "LdapTargetOU";
-  OrgSettingsModelSettingTypeEnum["LdapUsername"] = "LdapUsername";
-  OrgSettingsModelSettingTypeEnum["LdapPassword"] = "LdapPassword";
-  OrgSettingsModelSettingTypeEnum["LdapEnableSSL"] = "LdapEnableSSL";
-  OrgSettingsModelSettingTypeEnum["SsoUrl"] = "SsoUrl";
-  OrgSettingsModelSettingTypeEnum["SsoClientId"] = "SsoClientId";
-  OrgSettingsModelSettingTypeEnum["SsoClientSecret"] = "SsoClientSecret";
-  OrgSettingsModelSettingTypeEnum["OnBoardingMode"] = "OnBoardingMode";
+  OrgSettingsModelSettingTypeEnum['ReportTitle'] = 'ReportTitle';
+  OrgSettingsModelSettingTypeEnum['ReportHeader'] = 'ReportHeader';
+  OrgSettingsModelSettingTypeEnum['ReportFooter'] = 'ReportFooter';
+  OrgSettingsModelSettingTypeEnum['MainLogoFileName'] = 'MainLogoFileName';
+  OrgSettingsModelSettingTypeEnum['AdditionalLogoFileName'] =
+    'AdditionalLogoFileName';
+  OrgSettingsModelSettingTypeEnum['LdapProvider'] = 'LdapProvider';
+  OrgSettingsModelSettingTypeEnum['LdapDomain'] = 'LdapDomain';
+  OrgSettingsModelSettingTypeEnum['LdapTargetOU'] = 'LdapTargetOU';
+  OrgSettingsModelSettingTypeEnum['LdapUsername'] = 'LdapUsername';
+  OrgSettingsModelSettingTypeEnum['LdapPassword'] = 'LdapPassword';
+  OrgSettingsModelSettingTypeEnum['LdapEnableSSL'] = 'LdapEnableSSL';
+  OrgSettingsModelSettingTypeEnum['SsoUrl'] = 'SsoUrl';
+  OrgSettingsModelSettingTypeEnum['SsoClientId'] = 'SsoClientId';
+  OrgSettingsModelSettingTypeEnum['SsoClientSecret'] = 'SsoClientSecret';
+  OrgSettingsModelSettingTypeEnum['OnBoardingMode'] = 'OnBoardingMode';
 })(OrgSettingsModelSettingTypeEnum || (OrgSettingsModelSettingTypeEnum = {}));
+export var ParameterInfoAttributesEnum;
+(function (ParameterInfoAttributesEnum) {
+  ParameterInfoAttributesEnum['None'] = 'None';
+  ParameterInfoAttributesEnum['In'] = 'In';
+  ParameterInfoAttributesEnum['Out'] = 'Out';
+  ParameterInfoAttributesEnum['Lcid'] = 'Lcid';
+  ParameterInfoAttributesEnum['Retval'] = 'Retval';
+  ParameterInfoAttributesEnum['Optional'] = 'Optional';
+  ParameterInfoAttributesEnum['HasDefault'] = 'HasDefault';
+  ParameterInfoAttributesEnum['HasFieldMarshal'] = 'HasFieldMarshal';
+  ParameterInfoAttributesEnum['Reserved3'] = 'Reserved3';
+  ParameterInfoAttributesEnum['Reserved4'] = 'Reserved4';
+  ParameterInfoAttributesEnum['ReservedMask'] = 'ReservedMask';
+})(ParameterInfoAttributesEnum || (ParameterInfoAttributesEnum = {}));
 export var PolicyAssociationModelTypeEnum;
 (function (PolicyAssociationModelTypeEnum) {
-  PolicyAssociationModelTypeEnum["None"] = "None";
-  PolicyAssociationModelTypeEnum["OwaspTop102017"] = "OwaspTop10_2017";
-  PolicyAssociationModelTypeEnum["Sans25"] = "Sans25";
-  PolicyAssociationModelTypeEnum["EuGdpr2016"] = "EuGdpr_2016";
-  PolicyAssociationModelTypeEnum["PCI"] = "PCI";
-  PolicyAssociationModelTypeEnum["Hipaa"] = "Hipaa";
-  PolicyAssociationModelTypeEnum["OwaspTop10Mobile2016"] =
-    "OwaspTop10Mobile_2016";
-  PolicyAssociationModelTypeEnum["ISO27001"] = "ISO27001";
-  PolicyAssociationModelTypeEnum["ISO27002"] = "ISO27002";
-  PolicyAssociationModelTypeEnum["Wasc"] = "Wasc";
-  PolicyAssociationModelTypeEnum["Nist"] = "Nist";
-  PolicyAssociationModelTypeEnum["Sox"] = "Sox";
-  PolicyAssociationModelTypeEnum["Fisma"] = "Fisma";
-  PolicyAssociationModelTypeEnum["Fippa"] = "Fippa";
-  PolicyAssociationModelTypeEnum["Efta"] = "Efta";
-  PolicyAssociationModelTypeEnum["DisaStig"] = "DisaStig";
-  PolicyAssociationModelTypeEnum["Padss"] = "Padss";
-  PolicyAssociationModelTypeEnum["OwaspTop102021"] = "OwaspTop10_2021";
-  PolicyAssociationModelTypeEnum["OwaspTop10OpenApi2019"] =
-    "OwaspTop10OpenApi_2019";
-  PolicyAssociationModelTypeEnum["Ccpa"] = "Ccpa";
-  PolicyAssociationModelTypeEnum["FedRamp"] = "FedRamp";
-  PolicyAssociationModelTypeEnum["Popia"] = "Popia";
-  PolicyAssociationModelTypeEnum["OwaspTop10Api2023"] = "OwaspTop10Api_2023";
-  PolicyAssociationModelTypeEnum["Sans252023"] = "Sans25_2023";
-  PolicyAssociationModelTypeEnum["OwaspTop10CloudNativeApp"] =
-    "OwaspTop10CloudNativeApp";
-  PolicyAssociationModelTypeEnum["Nis2"] = "Nis2";
-  PolicyAssociationModelTypeEnum["Dora"] = "Dora";
-  PolicyAssociationModelTypeEnum["OwaspAsvs"] = "OwaspAsvs";
-  PolicyAssociationModelTypeEnum["Sans252024"] = "Sans25_2024";
-  PolicyAssociationModelTypeEnum["OwaspTop10Llm2025"] = "OwaspTop10Llm_2025";
-  PolicyAssociationModelTypeEnum["Itsg33"] = "Itsg33";
+  PolicyAssociationModelTypeEnum['None'] = 'None';
+  PolicyAssociationModelTypeEnum['OwaspTop102017'] = 'OwaspTop10_2017';
+  PolicyAssociationModelTypeEnum['Sans25'] = 'Sans25';
+  PolicyAssociationModelTypeEnum['EuGdpr2016'] = 'EuGdpr_2016';
+  PolicyAssociationModelTypeEnum['PCI'] = 'PCI';
+  PolicyAssociationModelTypeEnum['Hipaa'] = 'Hipaa';
+  PolicyAssociationModelTypeEnum['OwaspTop10Mobile2016'] =
+    'OwaspTop10Mobile_2016';
+  PolicyAssociationModelTypeEnum['ISO27001'] = 'ISO27001';
+  PolicyAssociationModelTypeEnum['ISO27002'] = 'ISO27002';
+  PolicyAssociationModelTypeEnum['Wasc'] = 'Wasc';
+  PolicyAssociationModelTypeEnum['Nist'] = 'Nist';
+  PolicyAssociationModelTypeEnum['Sox'] = 'Sox';
+  PolicyAssociationModelTypeEnum['Fisma'] = 'Fisma';
+  PolicyAssociationModelTypeEnum['Fippa'] = 'Fippa';
+  PolicyAssociationModelTypeEnum['Efta'] = 'Efta';
+  PolicyAssociationModelTypeEnum['DisaStig'] = 'DisaStig';
+  PolicyAssociationModelTypeEnum['Padss'] = 'Padss';
+  PolicyAssociationModelTypeEnum['OwaspTop102021'] = 'OwaspTop10_2021';
+  PolicyAssociationModelTypeEnum['OwaspTop10OpenApi2019'] =
+    'OwaspTop10OpenApi_2019';
+  PolicyAssociationModelTypeEnum['Ccpa'] = 'Ccpa';
+  PolicyAssociationModelTypeEnum['FedRamp'] = 'FedRamp';
+  PolicyAssociationModelTypeEnum['Popia'] = 'Popia';
+  PolicyAssociationModelTypeEnum['OwaspTop10Api2023'] = 'OwaspTop10Api_2023';
+  PolicyAssociationModelTypeEnum['Sans252023'] = 'Sans25_2023';
+  PolicyAssociationModelTypeEnum['OwaspTop10CloudNativeApp'] =
+    'OwaspTop10CloudNativeApp';
+  PolicyAssociationModelTypeEnum['Nis2'] = 'Nis2';
+  PolicyAssociationModelTypeEnum['Dora'] = 'Dora';
+  PolicyAssociationModelTypeEnum['OwaspAsvs'] = 'OwaspAsvs';
+  PolicyAssociationModelTypeEnum['Sans252024'] = 'Sans25_2024';
+  PolicyAssociationModelTypeEnum['OwaspTop10Llm2025'] = 'OwaspTop10Llm_2025';
+  PolicyAssociationModelTypeEnum['Itsg33'] = 'Itsg33';
 })(PolicyAssociationModelTypeEnum || (PolicyAssociationModelTypeEnum = {}));
 export var PolicyAssociationModelCategoryEnum;
 (function (PolicyAssociationModelCategoryEnum) {
-  PolicyAssociationModelCategoryEnum["Custom"] = "Custom";
-  PolicyAssociationModelCategoryEnum["Security"] = "Security";
-  PolicyAssociationModelCategoryEnum["Regulation"] = "Regulation";
-  PolicyAssociationModelCategoryEnum["IndustryStandard"] = "IndustryStandard";
+  PolicyAssociationModelCategoryEnum['Custom'] = 'Custom';
+  PolicyAssociationModelCategoryEnum['Security'] = 'Security';
+  PolicyAssociationModelCategoryEnum['Regulation'] = 'Regulation';
+  PolicyAssociationModelCategoryEnum['IndustryStandard'] = 'IndustryStandard';
 })(
   PolicyAssociationModelCategoryEnum ||
-    (PolicyAssociationModelCategoryEnum = {}),
+    (PolicyAssociationModelCategoryEnum = {})
 );
 export var PolicyAssociationModelRegionEnum;
 (function (PolicyAssociationModelRegionEnum) {
-  PolicyAssociationModelRegionEnum["Global"] = "Global";
-  PolicyAssociationModelRegionEnum["US"] = "US";
-  PolicyAssociationModelRegionEnum["UK"] = "UK";
-  PolicyAssociationModelRegionEnum["Canada"] = "Canada";
-  PolicyAssociationModelRegionEnum["EU"] = "EU";
-  PolicyAssociationModelRegionEnum["Japan"] = "Japan";
-  PolicyAssociationModelRegionEnum["AUS"] = "AUS";
-  PolicyAssociationModelRegionEnum["SouthAfrica"] = "SouthAfrica";
+  PolicyAssociationModelRegionEnum['Global'] = 'Global';
+  PolicyAssociationModelRegionEnum['US'] = 'US';
+  PolicyAssociationModelRegionEnum['UK'] = 'UK';
+  PolicyAssociationModelRegionEnum['Canada'] = 'Canada';
+  PolicyAssociationModelRegionEnum['EU'] = 'EU';
+  PolicyAssociationModelRegionEnum['Japan'] = 'Japan';
+  PolicyAssociationModelRegionEnum['AUS'] = 'AUS';
+  PolicyAssociationModelRegionEnum['SouthAfrica'] = 'SouthAfrica';
 })(PolicyAssociationModelRegionEnum || (PolicyAssociationModelRegionEnum = {}));
 export var PolicyModelTypeEnum;
 (function (PolicyModelTypeEnum) {
-  PolicyModelTypeEnum["None"] = "None";
-  PolicyModelTypeEnum["OwaspTop102017"] = "OwaspTop10_2017";
-  PolicyModelTypeEnum["Sans25"] = "Sans25";
-  PolicyModelTypeEnum["EuGdpr2016"] = "EuGdpr_2016";
-  PolicyModelTypeEnum["PCI"] = "PCI";
-  PolicyModelTypeEnum["Hipaa"] = "Hipaa";
-  PolicyModelTypeEnum["OwaspTop10Mobile2016"] = "OwaspTop10Mobile_2016";
-  PolicyModelTypeEnum["ISO27001"] = "ISO27001";
-  PolicyModelTypeEnum["ISO27002"] = "ISO27002";
-  PolicyModelTypeEnum["Wasc"] = "Wasc";
-  PolicyModelTypeEnum["Nist"] = "Nist";
-  PolicyModelTypeEnum["Sox"] = "Sox";
-  PolicyModelTypeEnum["Fisma"] = "Fisma";
-  PolicyModelTypeEnum["Fippa"] = "Fippa";
-  PolicyModelTypeEnum["Efta"] = "Efta";
-  PolicyModelTypeEnum["DisaStig"] = "DisaStig";
-  PolicyModelTypeEnum["Padss"] = "Padss";
-  PolicyModelTypeEnum["OwaspTop102021"] = "OwaspTop10_2021";
-  PolicyModelTypeEnum["OwaspTop10OpenApi2019"] = "OwaspTop10OpenApi_2019";
-  PolicyModelTypeEnum["Ccpa"] = "Ccpa";
-  PolicyModelTypeEnum["FedRamp"] = "FedRamp";
-  PolicyModelTypeEnum["Popia"] = "Popia";
-  PolicyModelTypeEnum["OwaspTop10Api2023"] = "OwaspTop10Api_2023";
-  PolicyModelTypeEnum["Sans252023"] = "Sans25_2023";
-  PolicyModelTypeEnum["OwaspTop10CloudNativeApp"] = "OwaspTop10CloudNativeApp";
-  PolicyModelTypeEnum["Nis2"] = "Nis2";
-  PolicyModelTypeEnum["Dora"] = "Dora";
-  PolicyModelTypeEnum["OwaspAsvs"] = "OwaspAsvs";
-  PolicyModelTypeEnum["Sans252024"] = "Sans25_2024";
-  PolicyModelTypeEnum["OwaspTop10Llm2025"] = "OwaspTop10Llm_2025";
-  PolicyModelTypeEnum["Itsg33"] = "Itsg33";
+  PolicyModelTypeEnum['None'] = 'None';
+  PolicyModelTypeEnum['OwaspTop102017'] = 'OwaspTop10_2017';
+  PolicyModelTypeEnum['Sans25'] = 'Sans25';
+  PolicyModelTypeEnum['EuGdpr2016'] = 'EuGdpr_2016';
+  PolicyModelTypeEnum['PCI'] = 'PCI';
+  PolicyModelTypeEnum['Hipaa'] = 'Hipaa';
+  PolicyModelTypeEnum['OwaspTop10Mobile2016'] = 'OwaspTop10Mobile_2016';
+  PolicyModelTypeEnum['ISO27001'] = 'ISO27001';
+  PolicyModelTypeEnum['ISO27002'] = 'ISO27002';
+  PolicyModelTypeEnum['Wasc'] = 'Wasc';
+  PolicyModelTypeEnum['Nist'] = 'Nist';
+  PolicyModelTypeEnum['Sox'] = 'Sox';
+  PolicyModelTypeEnum['Fisma'] = 'Fisma';
+  PolicyModelTypeEnum['Fippa'] = 'Fippa';
+  PolicyModelTypeEnum['Efta'] = 'Efta';
+  PolicyModelTypeEnum['DisaStig'] = 'DisaStig';
+  PolicyModelTypeEnum['Padss'] = 'Padss';
+  PolicyModelTypeEnum['OwaspTop102021'] = 'OwaspTop10_2021';
+  PolicyModelTypeEnum['OwaspTop10OpenApi2019'] = 'OwaspTop10OpenApi_2019';
+  PolicyModelTypeEnum['Ccpa'] = 'Ccpa';
+  PolicyModelTypeEnum['FedRamp'] = 'FedRamp';
+  PolicyModelTypeEnum['Popia'] = 'Popia';
+  PolicyModelTypeEnum['OwaspTop10Api2023'] = 'OwaspTop10Api_2023';
+  PolicyModelTypeEnum['Sans252023'] = 'Sans25_2023';
+  PolicyModelTypeEnum['OwaspTop10CloudNativeApp'] = 'OwaspTop10CloudNativeApp';
+  PolicyModelTypeEnum['Nis2'] = 'Nis2';
+  PolicyModelTypeEnum['Dora'] = 'Dora';
+  PolicyModelTypeEnum['OwaspAsvs'] = 'OwaspAsvs';
+  PolicyModelTypeEnum['Sans252024'] = 'Sans25_2024';
+  PolicyModelTypeEnum['OwaspTop10Llm2025'] = 'OwaspTop10Llm_2025';
+  PolicyModelTypeEnum['Itsg33'] = 'Itsg33';
 })(PolicyModelTypeEnum || (PolicyModelTypeEnum = {}));
 export var PolicyModelCategoryEnum;
 (function (PolicyModelCategoryEnum) {
-  PolicyModelCategoryEnum["Custom"] = "Custom";
-  PolicyModelCategoryEnum["Security"] = "Security";
-  PolicyModelCategoryEnum["Regulation"] = "Regulation";
-  PolicyModelCategoryEnum["IndustryStandard"] = "IndustryStandard";
+  PolicyModelCategoryEnum['Custom'] = 'Custom';
+  PolicyModelCategoryEnum['Security'] = 'Security';
+  PolicyModelCategoryEnum['Regulation'] = 'Regulation';
+  PolicyModelCategoryEnum['IndustryStandard'] = 'IndustryStandard';
 })(PolicyModelCategoryEnum || (PolicyModelCategoryEnum = {}));
 export var PolicyModelRegionEnum;
 (function (PolicyModelRegionEnum) {
-  PolicyModelRegionEnum["Global"] = "Global";
-  PolicyModelRegionEnum["US"] = "US";
-  PolicyModelRegionEnum["UK"] = "UK";
-  PolicyModelRegionEnum["Canada"] = "Canada";
-  PolicyModelRegionEnum["EU"] = "EU";
-  PolicyModelRegionEnum["Japan"] = "Japan";
-  PolicyModelRegionEnum["AUS"] = "AUS";
-  PolicyModelRegionEnum["SouthAfrica"] = "SouthAfrica";
+  PolicyModelRegionEnum['Global'] = 'Global';
+  PolicyModelRegionEnum['US'] = 'US';
+  PolicyModelRegionEnum['UK'] = 'UK';
+  PolicyModelRegionEnum['Canada'] = 'Canada';
+  PolicyModelRegionEnum['EU'] = 'EU';
+  PolicyModelRegionEnum['Japan'] = 'Japan';
+  PolicyModelRegionEnum['AUS'] = 'AUS';
+  PolicyModelRegionEnum['SouthAfrica'] = 'SouthAfrica';
 })(PolicyModelRegionEnum || (PolicyModelRegionEnum = {}));
 export var PresenceStatusEnum;
 (function (PresenceStatusEnum) {
-  PresenceStatusEnum["Active"] = "Active";
-  PresenceStatusEnum["NeverUsed"] = "NeverUsed";
-  PresenceStatusEnum["KeyExpired"] = "KeyExpired";
-  PresenceStatusEnum["KeyNeverUsed"] = "KeyNeverUsed";
-  PresenceStatusEnum["Inactive"] = "Inactive";
-  PresenceStatusEnum["Disable"] = "Disable";
+  PresenceStatusEnum['Active'] = 'Active';
+  PresenceStatusEnum['NeverUsed'] = 'NeverUsed';
+  PresenceStatusEnum['KeyExpired'] = 'KeyExpired';
+  PresenceStatusEnum['KeyNeverUsed'] = 'KeyNeverUsed';
+  PresenceStatusEnum['Inactive'] = 'Inactive';
+  PresenceStatusEnum['Disable'] = 'Disable';
 })(PresenceStatusEnum || (PresenceStatusEnum = {}));
 export var PresenceGitPlatformEnum;
 (function (PresenceGitPlatformEnum) {
-  PresenceGitPlatformEnum["GitHub"] = "GitHub";
+  PresenceGitPlatformEnum['GitHub'] = 'GitHub';
 })(PresenceGitPlatformEnum || (PresenceGitPlatformEnum = {}));
+export var PropertyInfoMemberTypeEnum;
+(function (PropertyInfoMemberTypeEnum) {
+  PropertyInfoMemberTypeEnum['Constructor'] = 'Constructor';
+  PropertyInfoMemberTypeEnum['Event'] = 'Event';
+  PropertyInfoMemberTypeEnum['Field'] = 'Field';
+  PropertyInfoMemberTypeEnum['Method'] = 'Method';
+  PropertyInfoMemberTypeEnum['Property'] = 'Property';
+  PropertyInfoMemberTypeEnum['TypeInfo'] = 'TypeInfo';
+  PropertyInfoMemberTypeEnum['Custom'] = 'Custom';
+  PropertyInfoMemberTypeEnum['NestedType'] = 'NestedType';
+  PropertyInfoMemberTypeEnum['All'] = 'All';
+})(PropertyInfoMemberTypeEnum || (PropertyInfoMemberTypeEnum = {}));
+export var PropertyInfoAttributesEnum;
+(function (PropertyInfoAttributesEnum) {
+  PropertyInfoAttributesEnum['None'] = 'None';
+  PropertyInfoAttributesEnum['SpecialName'] = 'SpecialName';
+  PropertyInfoAttributesEnum['RTSpecialName'] = 'RTSpecialName';
+  PropertyInfoAttributesEnum['HasDefault'] = 'HasDefault';
+  PropertyInfoAttributesEnum['Reserved2'] = 'Reserved2';
+  PropertyInfoAttributesEnum['Reserved3'] = 'Reserved3';
+  PropertyInfoAttributesEnum['Reserved4'] = 'Reserved4';
+  PropertyInfoAttributesEnum['ReservedMask'] = 'ReservedMask';
+})(PropertyInfoAttributesEnum || (PropertyInfoAttributesEnum = {}));
 export var RfAnalysisStatusUpdateModelStatusEnum;
 (function (RfAnalysisStatusUpdateModelStatusEnum) {
-  RfAnalysisStatusUpdateModelStatusEnum["InProgress"] = "InProgress";
-  RfAnalysisStatusUpdateModelStatusEnum["CompleteSuccess"] = "CompleteSuccess";
-  RfAnalysisStatusUpdateModelStatusEnum["CompleteFail"] = "CompleteFail";
+  RfAnalysisStatusUpdateModelStatusEnum['InProgress'] = 'InProgress';
+  RfAnalysisStatusUpdateModelStatusEnum['CompleteSuccess'] = 'CompleteSuccess';
+  RfAnalysisStatusUpdateModelStatusEnum['CompleteFail'] = 'CompleteFail';
 })(
   RfAnalysisStatusUpdateModelStatusEnum ||
-    (RfAnalysisStatusUpdateModelStatusEnum = {}),
+    (RfAnalysisStatusUpdateModelStatusEnum = {})
 );
 export var RfNewTriageModelProposedSeverityEnum;
 (function (RfNewTriageModelProposedSeverityEnum) {
-  RfNewTriageModelProposedSeverityEnum["Undetermined"] = "Undetermined";
-  RfNewTriageModelProposedSeverityEnum["Informational"] = "Informational";
-  RfNewTriageModelProposedSeverityEnum["Low"] = "Low";
-  RfNewTriageModelProposedSeverityEnum["Medium"] = "Medium";
-  RfNewTriageModelProposedSeverityEnum["High"] = "High";
-  RfNewTriageModelProposedSeverityEnum["Critical"] = "Critical";
+  RfNewTriageModelProposedSeverityEnum['Undetermined'] = 'Undetermined';
+  RfNewTriageModelProposedSeverityEnum['Informational'] = 'Informational';
+  RfNewTriageModelProposedSeverityEnum['Low'] = 'Low';
+  RfNewTriageModelProposedSeverityEnum['Medium'] = 'Medium';
+  RfNewTriageModelProposedSeverityEnum['High'] = 'High';
+  RfNewTriageModelProposedSeverityEnum['Critical'] = 'Critical';
 })(
   RfNewTriageModelProposedSeverityEnum ||
-    (RfNewTriageModelProposedSeverityEnum = {}),
+    (RfNewTriageModelProposedSeverityEnum = {})
 );
 export var RfNewTriageModelProposedStatusEnum;
 (function (RfNewTriageModelProposedStatusEnum) {
-  RfNewTriageModelProposedStatusEnum["Open"] = "Open";
-  RfNewTriageModelProposedStatusEnum["InProgress"] = "InProgress";
-  RfNewTriageModelProposedStatusEnum["Reopened"] = "Reopened";
-  RfNewTriageModelProposedStatusEnum["Noise"] = "Noise";
-  RfNewTriageModelProposedStatusEnum["Passed"] = "Passed";
-  RfNewTriageModelProposedStatusEnum["Fixed"] = "Fixed";
-  RfNewTriageModelProposedStatusEnum["New"] = "New";
+  RfNewTriageModelProposedStatusEnum['Open'] = 'Open';
+  RfNewTriageModelProposedStatusEnum['InProgress'] = 'InProgress';
+  RfNewTriageModelProposedStatusEnum['Reopened'] = 'Reopened';
+  RfNewTriageModelProposedStatusEnum['Noise'] = 'Noise';
+  RfNewTriageModelProposedStatusEnum['Passed'] = 'Passed';
+  RfNewTriageModelProposedStatusEnum['Fixed'] = 'Fixed';
+  RfNewTriageModelProposedStatusEnum['New'] = 'New';
 })(
   RfNewTriageModelProposedStatusEnum ||
-    (RfNewTriageModelProposedStatusEnum = {}),
+    (RfNewTriageModelProposedStatusEnum = {})
 );
 export var RfPatchModelGitRepoPlatformEnum;
 (function (RfPatchModelGitRepoPlatformEnum) {
-  RfPatchModelGitRepoPlatformEnum["GitHub"] = "GitHub";
+  RfPatchModelGitRepoPlatformEnum['GitHub'] = 'GitHub';
 })(RfPatchModelGitRepoPlatformEnum || (RfPatchModelGitRepoPlatformEnum = {}));
 export var RfPatchModelStatusEnum;
 (function (RfPatchModelStatusEnum) {
-  RfPatchModelStatusEnum["None"] = "None";
-  RfPatchModelStatusEnum["Pending"] = "Pending";
-  RfPatchModelStatusEnum["InProgress"] = "InProgress";
-  RfPatchModelStatusEnum["CompleteSuccess"] = "CompleteSuccess";
-  RfPatchModelStatusEnum["CompleteFail"] = "CompleteFail";
+  RfPatchModelStatusEnum['None'] = 'None';
+  RfPatchModelStatusEnum['Pending'] = 'Pending';
+  RfPatchModelStatusEnum['InProgress'] = 'InProgress';
+  RfPatchModelStatusEnum['CompleteSuccess'] = 'CompleteSuccess';
+  RfPatchModelStatusEnum['CompleteFail'] = 'CompleteFail';
 })(RfPatchModelStatusEnum || (RfPatchModelStatusEnum = {}));
 export var RfTriageModelProposedSeverityEnum;
 (function (RfTriageModelProposedSeverityEnum) {
-  RfTriageModelProposedSeverityEnum["Undetermined"] = "Undetermined";
-  RfTriageModelProposedSeverityEnum["Informational"] = "Informational";
-  RfTriageModelProposedSeverityEnum["Low"] = "Low";
-  RfTriageModelProposedSeverityEnum["Medium"] = "Medium";
-  RfTriageModelProposedSeverityEnum["High"] = "High";
-  RfTriageModelProposedSeverityEnum["Critical"] = "Critical";
+  RfTriageModelProposedSeverityEnum['Undetermined'] = 'Undetermined';
+  RfTriageModelProposedSeverityEnum['Informational'] = 'Informational';
+  RfTriageModelProposedSeverityEnum['Low'] = 'Low';
+  RfTriageModelProposedSeverityEnum['Medium'] = 'Medium';
+  RfTriageModelProposedSeverityEnum['High'] = 'High';
+  RfTriageModelProposedSeverityEnum['Critical'] = 'Critical';
 })(
-  RfTriageModelProposedSeverityEnum || (RfTriageModelProposedSeverityEnum = {}),
+  RfTriageModelProposedSeverityEnum || (RfTriageModelProposedSeverityEnum = {})
 );
 export var RfTriageModelProposedStatusEnum;
 (function (RfTriageModelProposedStatusEnum) {
-  RfTriageModelProposedStatusEnum["Open"] = "Open";
-  RfTriageModelProposedStatusEnum["InProgress"] = "InProgress";
-  RfTriageModelProposedStatusEnum["Reopened"] = "Reopened";
-  RfTriageModelProposedStatusEnum["Noise"] = "Noise";
-  RfTriageModelProposedStatusEnum["Passed"] = "Passed";
-  RfTriageModelProposedStatusEnum["Fixed"] = "Fixed";
-  RfTriageModelProposedStatusEnum["New"] = "New";
+  RfTriageModelProposedStatusEnum['Open'] = 'Open';
+  RfTriageModelProposedStatusEnum['InProgress'] = 'InProgress';
+  RfTriageModelProposedStatusEnum['Reopened'] = 'Reopened';
+  RfTriageModelProposedStatusEnum['Noise'] = 'Noise';
+  RfTriageModelProposedStatusEnum['Passed'] = 'Passed';
+  RfTriageModelProposedStatusEnum['Fixed'] = 'Fixed';
+  RfTriageModelProposedStatusEnum['New'] = 'New';
 })(RfTriageModelProposedStatusEnum || (RfTriageModelProposedStatusEnum = {}));
 export var RfUpdatePatchModelGitRepoPlatformEnum;
 (function (RfUpdatePatchModelGitRepoPlatformEnum) {
-  RfUpdatePatchModelGitRepoPlatformEnum["GitHub"] = "GitHub";
+  RfUpdatePatchModelGitRepoPlatformEnum['GitHub'] = 'GitHub';
 })(
   RfUpdatePatchModelGitRepoPlatformEnum ||
-    (RfUpdatePatchModelGitRepoPlatformEnum = {}),
+    (RfUpdatePatchModelGitRepoPlatformEnum = {})
 );
 export var RfUpdatePatchModelStatusEnum;
 (function (RfUpdatePatchModelStatusEnum) {
-  RfUpdatePatchModelStatusEnum["InProgress"] = "InProgress";
-  RfUpdatePatchModelStatusEnum["CompleteSuccess"] = "CompleteSuccess";
-  RfUpdatePatchModelStatusEnum["CompleteFail"] = "CompleteFail";
+  RfUpdatePatchModelStatusEnum['InProgress'] = 'InProgress';
+  RfUpdatePatchModelStatusEnum['CompleteSuccess'] = 'CompleteSuccess';
+  RfUpdatePatchModelStatusEnum['CompleteFail'] = 'CompleteFail';
 })(RfUpdatePatchModelStatusEnum || (RfUpdatePatchModelStatusEnum = {}));
 export var RegistrationResultRegisterResultEnum;
 (function (RegistrationResultRegisterResultEnum) {
-  RegistrationResultRegisterResultEnum["Success"] = "Success";
-  RegistrationResultRegisterResultEnum["VerificationRequired"] =
-    "VerificationRequired";
-  RegistrationResultRegisterResultEnum["Failed"] = "Failed";
+  RegistrationResultRegisterResultEnum['Success'] = 'Success';
+  RegistrationResultRegisterResultEnum['VerificationRequired'] =
+    'VerificationRequired';
+  RegistrationResultRegisterResultEnum['Failed'] = 'Failed';
 })(
   RegistrationResultRegisterResultEnum ||
-    (RegistrationResultRegisterResultEnum = {}),
+    (RegistrationResultRegisterResultEnum = {})
 );
 export var RegistrationResultRegisterErrorEnum;
 (function (RegistrationResultRegisterErrorEnum) {
-  RegistrationResultRegisterErrorEnum["None"] = "None";
-  RegistrationResultRegisterErrorEnum["InvalidLicense"] = "InvalidLicense";
-  RegistrationResultRegisterErrorEnum["AlreadyUsedTheService"] =
-    "AlreadyUsedTheService";
-  RegistrationResultRegisterErrorEnum["ShouldFillRegistrationForm"] =
-    "ShouldFillRegistrationForm";
+  RegistrationResultRegisterErrorEnum['None'] = 'None';
+  RegistrationResultRegisterErrorEnum['InvalidLicense'] = 'InvalidLicense';
+  RegistrationResultRegisterErrorEnum['AlreadyUsedTheService'] =
+    'AlreadyUsedTheService';
+  RegistrationResultRegisterErrorEnum['ShouldFillRegistrationForm'] =
+    'ShouldFillRegistrationForm';
 })(
   RegistrationResultRegisterErrorEnum ||
-    (RegistrationResultRegisterErrorEnum = {}),
+    (RegistrationResultRegisterErrorEnum = {})
 );
 export var RegistrationResultMhsErrorEnum;
 (function (RegistrationResultMhsErrorEnum) {
-  RegistrationResultMhsErrorEnum["None"] = "None";
-  RegistrationResultMhsErrorEnum["GeneralError"] = "GeneralError";
-  RegistrationResultMhsErrorEnum["InvalidInput"] = "InvalidInput";
-  RegistrationResultMhsErrorEnum["MissingCapabilities"] = "MissingCapabilities";
-  RegistrationResultMhsErrorEnum["MHSLicenseGeneralStructureUnrecognized"] =
-    "MHSLicenseGeneralStructureUnrecognized";
-  RegistrationResultMhsErrorEnum["MHSLicenseCertificateInvalid"] =
-    "MHSLicenseCertificateInvalid";
-  RegistrationResultMhsErrorEnum["MHSLicensePasetoSignatureInvalid"] =
-    "MHSLicensePasetoSignatureInvalid";
-  RegistrationResultMhsErrorEnum["MHSLicensePasetoRawPayloadUnrecognized"] =
-    "MHSLicensePasetoRawPayloadUnrecognized";
-  RegistrationResultMhsErrorEnum["MHSLicenseInvalidAs360Fingerprint"] =
-    "MHSLicenseInvalidAs360Fingerprint";
-  RegistrationResultMhsErrorEnum["MHSLicenseDeploymentIdMismatch"] =
-    "MHSLicenseDeploymentIdMismatch";
-  RegistrationResultMhsErrorEnum["MHSLicenseIssuedEarlierThanCurrentlyUsed"] =
-    "MHSLicenseIssuedEarlierThanCurrentlyUsed";
-  RegistrationResultMhsErrorEnum["MHSLicenseHasNoRelevantEntitlements"] =
-    "MHSLicenseHasNoRelevantEntitlements";
-  RegistrationResultMhsErrorEnum["MHSLicenseWasAlreadyUploaded"] =
-    "MHSLicenseWasAlreadyUploaded";
-  RegistrationResultMhsErrorEnum["MHSLicenseOldFeatureIsMissing"] =
-    "MHSLicenseOldFeatureIsMissing";
-  RegistrationResultMhsErrorEnum["MHSLicenseChangingPreviousMhsValue"] =
-    "MHSLicenseChangingPreviousMhsValue";
-  RegistrationResultMhsErrorEnum["MHSLicenseWasIssuedTooLongAgo"] =
-    "MHSLicenseWasIssuedTooLongAgo";
-  RegistrationResultMhsErrorEnum["MHSLicenseInvalidASoCFingerprint"] =
-    "MHSLicenseInvalidASoCFingerprint";
+  RegistrationResultMhsErrorEnum['None'] = 'None';
+  RegistrationResultMhsErrorEnum['GeneralError'] = 'GeneralError';
+  RegistrationResultMhsErrorEnum['InvalidInput'] = 'InvalidInput';
+  RegistrationResultMhsErrorEnum['MissingCapabilities'] = 'MissingCapabilities';
+  RegistrationResultMhsErrorEnum['MHSLicenseGeneralStructureUnrecognized'] =
+    'MHSLicenseGeneralStructureUnrecognized';
+  RegistrationResultMhsErrorEnum['MHSLicenseCertificateInvalid'] =
+    'MHSLicenseCertificateInvalid';
+  RegistrationResultMhsErrorEnum['MHSLicensePasetoSignatureInvalid'] =
+    'MHSLicensePasetoSignatureInvalid';
+  RegistrationResultMhsErrorEnum['MHSLicensePasetoRawPayloadUnrecognized'] =
+    'MHSLicensePasetoRawPayloadUnrecognized';
+  RegistrationResultMhsErrorEnum['MHSLicenseInvalidAs360Fingerprint'] =
+    'MHSLicenseInvalidAs360Fingerprint';
+  RegistrationResultMhsErrorEnum['MHSLicenseDeploymentIdMismatch'] =
+    'MHSLicenseDeploymentIdMismatch';
+  RegistrationResultMhsErrorEnum['MHSLicenseIssuedEarlierThanCurrentlyUsed'] =
+    'MHSLicenseIssuedEarlierThanCurrentlyUsed';
+  RegistrationResultMhsErrorEnum['MHSLicenseHasNoRelevantEntitlements'] =
+    'MHSLicenseHasNoRelevantEntitlements';
+  RegistrationResultMhsErrorEnum['MHSLicenseWasAlreadyUploaded'] =
+    'MHSLicenseWasAlreadyUploaded';
+  RegistrationResultMhsErrorEnum['MHSLicenseOldFeatureIsMissing'] =
+    'MHSLicenseOldFeatureIsMissing';
+  RegistrationResultMhsErrorEnum['MHSLicenseChangingPreviousMhsValue'] =
+    'MHSLicenseChangingPreviousMhsValue';
+  RegistrationResultMhsErrorEnum['MHSLicenseWasIssuedTooLongAgo'] =
+    'MHSLicenseWasIssuedTooLongAgo';
+  RegistrationResultMhsErrorEnum['MHSLicenseInvalidASoCFingerprint'] =
+    'MHSLicenseInvalidASoCFingerprint';
 })(RegistrationResultMhsErrorEnum || (RegistrationResultMhsErrorEnum = {}));
 export var RegulationReportJobApplyPoliciesEnum;
 (function (RegulationReportJobApplyPoliciesEnum) {
-  RegulationReportJobApplyPoliciesEnum["None"] = "None";
-  RegulationReportJobApplyPoliciesEnum["All"] = "All";
-  RegulationReportJobApplyPoliciesEnum["Select"] = "Select";
+  RegulationReportJobApplyPoliciesEnum['None'] = 'None';
+  RegulationReportJobApplyPoliciesEnum['All'] = 'All';
+  RegulationReportJobApplyPoliciesEnum['Select'] = 'Select';
 })(
   RegulationReportJobApplyPoliciesEnum ||
-    (RegulationReportJobApplyPoliciesEnum = {}),
+    (RegulationReportJobApplyPoliciesEnum = {})
 );
 export var RegulationReportOptionsReportFileTypeEnum;
 (function (RegulationReportOptionsReportFileTypeEnum) {
-  RegulationReportOptionsReportFileTypeEnum["Pdf"] = "Pdf";
-  RegulationReportOptionsReportFileTypeEnum["Html"] = "Html";
-  RegulationReportOptionsReportFileTypeEnum["Xml"] = "Xml";
-  RegulationReportOptionsReportFileTypeEnum["Csv"] = "Csv";
-  RegulationReportOptionsReportFileTypeEnum["Sarif"] = "Sarif";
+  RegulationReportOptionsReportFileTypeEnum['Pdf'] = 'Pdf';
+  RegulationReportOptionsReportFileTypeEnum['Html'] = 'Html';
+  RegulationReportOptionsReportFileTypeEnum['Xml'] = 'Xml';
+  RegulationReportOptionsReportFileTypeEnum['Csv'] = 'Csv';
+  RegulationReportOptionsReportFileTypeEnum['Sarif'] = 'Sarif';
 })(
   RegulationReportOptionsReportFileTypeEnum ||
-    (RegulationReportOptionsReportFileTypeEnum = {}),
+    (RegulationReportOptionsReportFileTypeEnum = {})
 );
 export var RegulationReportOptionsRegulationReportTypeEnum;
 (function (RegulationReportOptionsRegulationReportTypeEnum) {
-  RegulationReportOptionsRegulationReportTypeEnum["None"] = "None";
-  RegulationReportOptionsRegulationReportTypeEnum["OwaspTop102017"] =
-    "OwaspTop10_2017";
-  RegulationReportOptionsRegulationReportTypeEnum["Sans25"] = "Sans25";
-  RegulationReportOptionsRegulationReportTypeEnum["EuGdpr2016"] = "EuGdpr_2016";
-  RegulationReportOptionsRegulationReportTypeEnum["PCI"] = "PCI";
-  RegulationReportOptionsRegulationReportTypeEnum["Hipaa"] = "Hipaa";
-  RegulationReportOptionsRegulationReportTypeEnum["OwaspTop10Mobile2016"] =
-    "OwaspTop10Mobile_2016";
-  RegulationReportOptionsRegulationReportTypeEnum["ISO27001"] = "ISO27001";
-  RegulationReportOptionsRegulationReportTypeEnum["ISO27002"] = "ISO27002";
-  RegulationReportOptionsRegulationReportTypeEnum["Wasc"] = "Wasc";
-  RegulationReportOptionsRegulationReportTypeEnum["Nist"] = "Nist";
-  RegulationReportOptionsRegulationReportTypeEnum["Sox"] = "Sox";
-  RegulationReportOptionsRegulationReportTypeEnum["Fisma"] = "Fisma";
-  RegulationReportOptionsRegulationReportTypeEnum["Fippa"] = "Fippa";
-  RegulationReportOptionsRegulationReportTypeEnum["Efta"] = "Efta";
-  RegulationReportOptionsRegulationReportTypeEnum["DisaStig"] = "DisaStig";
-  RegulationReportOptionsRegulationReportTypeEnum["Padss"] = "Padss";
-  RegulationReportOptionsRegulationReportTypeEnum["OwaspTop102021"] =
-    "OwaspTop10_2021";
-  RegulationReportOptionsRegulationReportTypeEnum["OwaspTop10OpenApi2019"] =
-    "OwaspTop10OpenApi_2019";
-  RegulationReportOptionsRegulationReportTypeEnum["Ccpa"] = "Ccpa";
-  RegulationReportOptionsRegulationReportTypeEnum["FedRamp"] = "FedRamp";
-  RegulationReportOptionsRegulationReportTypeEnum["Popia"] = "Popia";
-  RegulationReportOptionsRegulationReportTypeEnum["OwaspTop10Api2023"] =
-    "OwaspTop10Api_2023";
-  RegulationReportOptionsRegulationReportTypeEnum["Sans252023"] = "Sans25_2023";
-  RegulationReportOptionsRegulationReportTypeEnum["OwaspTop10CloudNativeApp"] =
-    "OwaspTop10CloudNativeApp";
-  RegulationReportOptionsRegulationReportTypeEnum["Nis2"] = "Nis2";
-  RegulationReportOptionsRegulationReportTypeEnum["Dora"] = "Dora";
-  RegulationReportOptionsRegulationReportTypeEnum["OwaspAsvs"] = "OwaspAsvs";
-  RegulationReportOptionsRegulationReportTypeEnum["Sans252024"] = "Sans25_2024";
-  RegulationReportOptionsRegulationReportTypeEnum["OwaspTop10Llm2025"] =
-    "OwaspTop10Llm_2025";
-  RegulationReportOptionsRegulationReportTypeEnum["Itsg33"] = "Itsg33";
+  RegulationReportOptionsRegulationReportTypeEnum['None'] = 'None';
+  RegulationReportOptionsRegulationReportTypeEnum['OwaspTop102017'] =
+    'OwaspTop10_2017';
+  RegulationReportOptionsRegulationReportTypeEnum['Sans25'] = 'Sans25';
+  RegulationReportOptionsRegulationReportTypeEnum['EuGdpr2016'] = 'EuGdpr_2016';
+  RegulationReportOptionsRegulationReportTypeEnum['PCI'] = 'PCI';
+  RegulationReportOptionsRegulationReportTypeEnum['Hipaa'] = 'Hipaa';
+  RegulationReportOptionsRegulationReportTypeEnum['OwaspTop10Mobile2016'] =
+    'OwaspTop10Mobile_2016';
+  RegulationReportOptionsRegulationReportTypeEnum['ISO27001'] = 'ISO27001';
+  RegulationReportOptionsRegulationReportTypeEnum['ISO27002'] = 'ISO27002';
+  RegulationReportOptionsRegulationReportTypeEnum['Wasc'] = 'Wasc';
+  RegulationReportOptionsRegulationReportTypeEnum['Nist'] = 'Nist';
+  RegulationReportOptionsRegulationReportTypeEnum['Sox'] = 'Sox';
+  RegulationReportOptionsRegulationReportTypeEnum['Fisma'] = 'Fisma';
+  RegulationReportOptionsRegulationReportTypeEnum['Fippa'] = 'Fippa';
+  RegulationReportOptionsRegulationReportTypeEnum['Efta'] = 'Efta';
+  RegulationReportOptionsRegulationReportTypeEnum['DisaStig'] = 'DisaStig';
+  RegulationReportOptionsRegulationReportTypeEnum['Padss'] = 'Padss';
+  RegulationReportOptionsRegulationReportTypeEnum['OwaspTop102021'] =
+    'OwaspTop10_2021';
+  RegulationReportOptionsRegulationReportTypeEnum['OwaspTop10OpenApi2019'] =
+    'OwaspTop10OpenApi_2019';
+  RegulationReportOptionsRegulationReportTypeEnum['Ccpa'] = 'Ccpa';
+  RegulationReportOptionsRegulationReportTypeEnum['FedRamp'] = 'FedRamp';
+  RegulationReportOptionsRegulationReportTypeEnum['Popia'] = 'Popia';
+  RegulationReportOptionsRegulationReportTypeEnum['OwaspTop10Api2023'] =
+    'OwaspTop10Api_2023';
+  RegulationReportOptionsRegulationReportTypeEnum['Sans252023'] = 'Sans25_2023';
+  RegulationReportOptionsRegulationReportTypeEnum['OwaspTop10CloudNativeApp'] =
+    'OwaspTop10CloudNativeApp';
+  RegulationReportOptionsRegulationReportTypeEnum['Nis2'] = 'Nis2';
+  RegulationReportOptionsRegulationReportTypeEnum['Dora'] = 'Dora';
+  RegulationReportOptionsRegulationReportTypeEnum['OwaspAsvs'] = 'OwaspAsvs';
+  RegulationReportOptionsRegulationReportTypeEnum['Sans252024'] = 'Sans25_2024';
+  RegulationReportOptionsRegulationReportTypeEnum['OwaspTop10Llm2025'] =
+    'OwaspTop10Llm_2025';
+  RegulationReportOptionsRegulationReportTypeEnum['Itsg33'] = 'Itsg33';
 })(
   RegulationReportOptionsRegulationReportTypeEnum ||
-    (RegulationReportOptionsRegulationReportTypeEnum = {}),
+    (RegulationReportOptionsRegulationReportTypeEnum = {})
 );
 export var RepoDetailsPlatformEnum;
 (function (RepoDetailsPlatformEnum) {
-  RepoDetailsPlatformEnum["GitHub"] = "GitHub";
+  RepoDetailsPlatformEnum['GitHub'] = 'GitHub';
 })(RepoDetailsPlatformEnum || (RepoDetailsPlatformEnum = {}));
 export var ReportStatusModelStatusEnum;
 (function (ReportStatusModelStatusEnum) {
-  ReportStatusModelStatusEnum["Pending"] = "Pending";
-  ReportStatusModelStatusEnum["Starting"] = "Starting";
-  ReportStatusModelStatusEnum["Running"] = "Running";
-  ReportStatusModelStatusEnum["Failed"] = "Failed";
-  ReportStatusModelStatusEnum["Ready"] = "Ready";
-  ReportStatusModelStatusEnum["Deleted"] = "Deleted";
+  ReportStatusModelStatusEnum['Pending'] = 'Pending';
+  ReportStatusModelStatusEnum['Starting'] = 'Starting';
+  ReportStatusModelStatusEnum['Running'] = 'Running';
+  ReportStatusModelStatusEnum['Failed'] = 'Failed';
+  ReportStatusModelStatusEnum['Ready'] = 'Ready';
+  ReportStatusModelStatusEnum['Deleted'] = 'Deleted';
 })(ReportStatusModelStatusEnum || (ReportStatusModelStatusEnum = {}));
 export var ScxSubscriptionOfferingTypeEnum;
 (function (ScxSubscriptionOfferingTypeEnum) {
-  ScxSubscriptionOfferingTypeEnum["None"] = "None";
-  ScxSubscriptionOfferingTypeEnum["Trial"] = "Trial";
-  ScxSubscriptionOfferingTypeEnum["HTrial"] = "HTrial";
-  ScxSubscriptionOfferingTypeEnum["Applications"] = "Applications";
-  ScxSubscriptionOfferingTypeEnum["ScanExecution"] = "ScanExecution";
-  ScxSubscriptionOfferingTypeEnum["AnalyzerConcurrent"] = "AnalyzerConcurrent";
-  ScxSubscriptionOfferingTypeEnum["ConsultantServices"] = "ConsultantServices";
-  ScxSubscriptionOfferingTypeEnum["Premium"] = "Premium";
-  ScxSubscriptionOfferingTypeEnum["OpenSourcePerApplication"] =
-    "OpenSourcePerApplication";
-  ScxSubscriptionOfferingTypeEnum["OpenSourcePremium"] = "OpenSourcePremium";
-  ScxSubscriptionOfferingTypeEnum["OpenSourceConcurrent"] =
-    "OpenSourceConcurrent";
-  ScxSubscriptionOfferingTypeEnum["IASTConcurrent"] = "IASTConcurrent";
-  ScxSubscriptionOfferingTypeEnum["IASTPayPerApp"] = "IASTPayPerApp";
-  ScxSubscriptionOfferingTypeEnum["Promotional"] = "Promotional";
-  ScxSubscriptionOfferingTypeEnum["Silver"] = "Silver";
-  ScxSubscriptionOfferingTypeEnum["Gold"] = "Gold";
-  ScxSubscriptionOfferingTypeEnum["Platinum"] = "Platinum";
-  ScxSubscriptionOfferingTypeEnum["SCAPerApplication"] = "SCAPerApplication";
-  ScxSubscriptionOfferingTypeEnum["ContributingUser"] = "ContributingUser";
-  ScxSubscriptionOfferingTypeEnum["SilverContribUser"] = "SilverContribUser";
-  ScxSubscriptionOfferingTypeEnum["GoldContribUser"] = "GoldContribUser";
-  ScxSubscriptionOfferingTypeEnum["PlatinumContribUser"] =
-    "PlatinumContribUser";
-  ScxSubscriptionOfferingTypeEnum["SilverPerApp"] = "SilverPerApp";
-  ScxSubscriptionOfferingTypeEnum["GoldPerApp"] = "GoldPerApp";
-  ScxSubscriptionOfferingTypeEnum["PlatinumPerApp"] = "PlatinumPerApp";
+  ScxSubscriptionOfferingTypeEnum['None'] = 'None';
+  ScxSubscriptionOfferingTypeEnum['Trial'] = 'Trial';
+  ScxSubscriptionOfferingTypeEnum['HTrial'] = 'HTrial';
+  ScxSubscriptionOfferingTypeEnum['Applications'] = 'Applications';
+  ScxSubscriptionOfferingTypeEnum['ScanExecution'] = 'ScanExecution';
+  ScxSubscriptionOfferingTypeEnum['AnalyzerConcurrent'] = 'AnalyzerConcurrent';
+  ScxSubscriptionOfferingTypeEnum['ConsultantServices'] = 'ConsultantServices';
+  ScxSubscriptionOfferingTypeEnum['Premium'] = 'Premium';
+  ScxSubscriptionOfferingTypeEnum['OpenSourcePerApplication'] =
+    'OpenSourcePerApplication';
+  ScxSubscriptionOfferingTypeEnum['OpenSourcePremium'] = 'OpenSourcePremium';
+  ScxSubscriptionOfferingTypeEnum['OpenSourceConcurrent'] =
+    'OpenSourceConcurrent';
+  ScxSubscriptionOfferingTypeEnum['IASTConcurrent'] = 'IASTConcurrent';
+  ScxSubscriptionOfferingTypeEnum['IASTPayPerApp'] = 'IASTPayPerApp';
+  ScxSubscriptionOfferingTypeEnum['Promotional'] = 'Promotional';
+  ScxSubscriptionOfferingTypeEnum['Silver'] = 'Silver';
+  ScxSubscriptionOfferingTypeEnum['Gold'] = 'Gold';
+  ScxSubscriptionOfferingTypeEnum['Platinum'] = 'Platinum';
+  ScxSubscriptionOfferingTypeEnum['SCAPerApplication'] = 'SCAPerApplication';
+  ScxSubscriptionOfferingTypeEnum['ContributingUser'] = 'ContributingUser';
+  ScxSubscriptionOfferingTypeEnum['SilverContribUser'] = 'SilverContribUser';
+  ScxSubscriptionOfferingTypeEnum['GoldContribUser'] = 'GoldContribUser';
+  ScxSubscriptionOfferingTypeEnum['PlatinumContribUser'] =
+    'PlatinumContribUser';
+  ScxSubscriptionOfferingTypeEnum['SilverPerApp'] = 'SilverPerApp';
+  ScxSubscriptionOfferingTypeEnum['GoldPerApp'] = 'GoldPerApp';
+  ScxSubscriptionOfferingTypeEnum['PlatinumPerApp'] = 'PlatinumPerApp';
 })(ScxSubscriptionOfferingTypeEnum || (ScxSubscriptionOfferingTypeEnum = {}));
 export var SastScanExecutionModelStatusEnum;
 (function (SastScanExecutionModelStatusEnum) {
-  SastScanExecutionModelStatusEnum["Running"] = "Running";
-  SastScanExecutionModelStatusEnum["Stopping"] = "Stopping";
-  SastScanExecutionModelStatusEnum["Pausing"] = "Pausing";
-  SastScanExecutionModelStatusEnum["InQueue"] = "InQueue";
-  SastScanExecutionModelStatusEnum["Paused"] = "Paused";
-  SastScanExecutionModelStatusEnum["Ready"] = "Ready";
-  SastScanExecutionModelStatusEnum["Failed"] = "Failed";
+  SastScanExecutionModelStatusEnum['Running'] = 'Running';
+  SastScanExecutionModelStatusEnum['Stopping'] = 'Stopping';
+  SastScanExecutionModelStatusEnum['Pausing'] = 'Pausing';
+  SastScanExecutionModelStatusEnum['InQueue'] = 'InQueue';
+  SastScanExecutionModelStatusEnum['Paused'] = 'Paused';
+  SastScanExecutionModelStatusEnum['Ready'] = 'Ready';
+  SastScanExecutionModelStatusEnum['Failed'] = 'Failed';
 })(SastScanExecutionModelStatusEnum || (SastScanExecutionModelStatusEnum = {}));
 export var SastScanExecutionModelResultEnum;
 (function (SastScanExecutionModelResultEnum) {
-  SastScanExecutionModelResultEnum["None"] = "None";
-  SastScanExecutionModelResultEnum["NoIssues"] = "NoIssues";
-  SastScanExecutionModelResultEnum["Informational"] = "Informational";
-  SastScanExecutionModelResultEnum["Low"] = "Low";
-  SastScanExecutionModelResultEnum["Medium"] = "Medium";
-  SastScanExecutionModelResultEnum["High"] = "High";
-  SastScanExecutionModelResultEnum["Critical"] = "Critical";
+  SastScanExecutionModelResultEnum['None'] = 'None';
+  SastScanExecutionModelResultEnum['NoIssues'] = 'NoIssues';
+  SastScanExecutionModelResultEnum['Informational'] = 'Informational';
+  SastScanExecutionModelResultEnum['Low'] = 'Low';
+  SastScanExecutionModelResultEnum['Medium'] = 'Medium';
+  SastScanExecutionModelResultEnum['High'] = 'High';
+  SastScanExecutionModelResultEnum['Critical'] = 'Critical';
 })(SastScanExecutionModelResultEnum || (SastScanExecutionModelResultEnum = {}));
 export var SastScanExecutionModelReadStatusEnum;
 (function (SastScanExecutionModelReadStatusEnum) {
-  SastScanExecutionModelReadStatusEnum["None"] = "None";
-  SastScanExecutionModelReadStatusEnum["Unread"] = "Unread";
-  SastScanExecutionModelReadStatusEnum["Read"] = "Read";
+  SastScanExecutionModelReadStatusEnum['None'] = 'None';
+  SastScanExecutionModelReadStatusEnum['Unread'] = 'Unread';
+  SastScanExecutionModelReadStatusEnum['Read'] = 'Read';
 })(
   SastScanExecutionModelReadStatusEnum ||
-    (SastScanExecutionModelReadStatusEnum = {}),
+    (SastScanExecutionModelReadStatusEnum = {})
 );
 export var SastScanExecutionModelAvailableReportsEnum;
 (function (SastScanExecutionModelAvailableReportsEnum) {
-  SastScanExecutionModelAvailableReportsEnum["Xml"] = "Xml";
-  SastScanExecutionModelAvailableReportsEnum["Pdf"] = "Pdf";
-  SastScanExecutionModelAvailableReportsEnum["Html"] = "Html";
-  SastScanExecutionModelAvailableReportsEnum["CompliancePdf"] = "CompliancePdf";
-  SastScanExecutionModelAvailableReportsEnum["OwaspTop10Pdf"] = "OwaspTop10Pdf";
-  SastScanExecutionModelAvailableReportsEnum["Sans25Pdf"] = "Sans25Pdf";
-  SastScanExecutionModelAvailableReportsEnum["RawXml"] = "RawXml";
-  SastScanExecutionModelAvailableReportsEnum["Zip"] = "Zip";
-  SastScanExecutionModelAvailableReportsEnum["Json"] = "Json";
+  SastScanExecutionModelAvailableReportsEnum['Xml'] = 'Xml';
+  SastScanExecutionModelAvailableReportsEnum['Pdf'] = 'Pdf';
+  SastScanExecutionModelAvailableReportsEnum['Html'] = 'Html';
+  SastScanExecutionModelAvailableReportsEnum['CompliancePdf'] = 'CompliancePdf';
+  SastScanExecutionModelAvailableReportsEnum['OwaspTop10Pdf'] = 'OwaspTop10Pdf';
+  SastScanExecutionModelAvailableReportsEnum['Sans25Pdf'] = 'Sans25Pdf';
+  SastScanExecutionModelAvailableReportsEnum['RawXml'] = 'RawXml';
+  SastScanExecutionModelAvailableReportsEnum['Zip'] = 'Zip';
+  SastScanExecutionModelAvailableReportsEnum['Json'] = 'Json';
 })(
   SastScanExecutionModelAvailableReportsEnum ||
-    (SastScanExecutionModelAvailableReportsEnum = {}),
+    (SastScanExecutionModelAvailableReportsEnum = {})
 );
 export var SastScanExecutionModelExecutionProgressEnum;
 (function (SastScanExecutionModelExecutionProgressEnum) {
-  SastScanExecutionModelExecutionProgressEnum["Pending"] = "Pending";
-  SastScanExecutionModelExecutionProgressEnum["Running"] = "Running";
-  SastScanExecutionModelExecutionProgressEnum["UnderReview"] = "UnderReview";
-  SastScanExecutionModelExecutionProgressEnum["RunningManually"] =
-    "RunningManually";
-  SastScanExecutionModelExecutionProgressEnum["Paused"] = "Paused";
-  SastScanExecutionModelExecutionProgressEnum["Completed"] = "Completed";
+  SastScanExecutionModelExecutionProgressEnum['Pending'] = 'Pending';
+  SastScanExecutionModelExecutionProgressEnum['Running'] = 'Running';
+  SastScanExecutionModelExecutionProgressEnum['UnderReview'] = 'UnderReview';
+  SastScanExecutionModelExecutionProgressEnum['RunningManually'] =
+    'RunningManually';
+  SastScanExecutionModelExecutionProgressEnum['Paused'] = 'Paused';
+  SastScanExecutionModelExecutionProgressEnum['Completed'] = 'Completed';
 })(
   SastScanExecutionModelExecutionProgressEnum ||
-    (SastScanExecutionModelExecutionProgressEnum = {}),
+    (SastScanExecutionModelExecutionProgressEnum = {})
 );
 export var SastScanExecutionModelRapidFixAnalysisStatusEnum;
 (function (SastScanExecutionModelRapidFixAnalysisStatusEnum) {
-  SastScanExecutionModelRapidFixAnalysisStatusEnum["None"] = "None";
-  SastScanExecutionModelRapidFixAnalysisStatusEnum["Pending"] = "Pending";
-  SastScanExecutionModelRapidFixAnalysisStatusEnum["InProgress"] = "InProgress";
-  SastScanExecutionModelRapidFixAnalysisStatusEnum["CompleteSuccess"] =
-    "CompleteSuccess";
-  SastScanExecutionModelRapidFixAnalysisStatusEnum["CompleteFail"] =
-    "CompleteFail";
+  SastScanExecutionModelRapidFixAnalysisStatusEnum['None'] = 'None';
+  SastScanExecutionModelRapidFixAnalysisStatusEnum['Pending'] = 'Pending';
+  SastScanExecutionModelRapidFixAnalysisStatusEnum['InProgress'] = 'InProgress';
+  SastScanExecutionModelRapidFixAnalysisStatusEnum['CompleteSuccess'] =
+    'CompleteSuccess';
+  SastScanExecutionModelRapidFixAnalysisStatusEnum['CompleteFail'] =
+    'CompleteFail';
 })(
   SastScanExecutionModelRapidFixAnalysisStatusEnum ||
-    (SastScanExecutionModelRapidFixAnalysisStatusEnum = {}),
+    (SastScanExecutionModelRapidFixAnalysisStatusEnum = {})
 );
 export var SastScanModelTechnologyEnum;
 (function (SastScanModelTechnologyEnum) {
-  SastScanModelTechnologyEnum["DynamicAnalyzer"] = "DynamicAnalyzer";
-  SastScanModelTechnologyEnum["StaticAnalyzer"] = "StaticAnalyzer";
-  SastScanModelTechnologyEnum["IFA"] = "IFA";
-  SastScanModelTechnologyEnum["DastAutomation"] = "DastAutomation";
-  SastScanModelTechnologyEnum["IASTAnalyzer"] = "IASTAnalyzer";
-  SastScanModelTechnologyEnum["ScaAnalyzer"] = "ScaAnalyzer";
+  SastScanModelTechnologyEnum['DynamicAnalyzer'] = 'DynamicAnalyzer';
+  SastScanModelTechnologyEnum['StaticAnalyzer'] = 'StaticAnalyzer';
+  SastScanModelTechnologyEnum['IFA'] = 'IFA';
+  SastScanModelTechnologyEnum['DastAutomation'] = 'DastAutomation';
+  SastScanModelTechnologyEnum['IASTAnalyzer'] = 'IASTAnalyzer';
+  SastScanModelTechnologyEnum['ScaAnalyzer'] = 'ScaAnalyzer';
 })(SastScanModelTechnologyEnum || (SastScanModelTechnologyEnum = {}));
 export var SastScanModelIastAgentStatusEnum;
 (function (SastScanModelIastAgentStatusEnum) {
-  SastScanModelIastAgentStatusEnum["None"] = "None";
-  SastScanModelIastAgentStatusEnum["Active"] = "Active";
-  SastScanModelIastAgentStatusEnum["KeyNeverUsed"] = "KeyNeverUsed";
-  SastScanModelIastAgentStatusEnum["Inactive"] = "Inactive";
+  SastScanModelIastAgentStatusEnum['None'] = 'None';
+  SastScanModelIastAgentStatusEnum['Active'] = 'Active';
+  SastScanModelIastAgentStatusEnum['KeyNeverUsed'] = 'KeyNeverUsed';
+  SastScanModelIastAgentStatusEnum['Inactive'] = 'Inactive';
 })(SastScanModelIastAgentStatusEnum || (SastScanModelIastAgentStatusEnum = {}));
 export var SastScanModelIastAgentTypeEnum;
 (function (SastScanModelIastAgentTypeEnum) {
-  SastScanModelIastAgentTypeEnum["Java"] = "Java";
-  SastScanModelIastAgentTypeEnum["DotNet"] = "DotNet";
-  SastScanModelIastAgentTypeEnum["NodeJS"] = "NodeJS";
-  SastScanModelIastAgentTypeEnum["PhpWindows"] = "PhpWindows";
-  SastScanModelIastAgentTypeEnum["PhpRedHat"] = "PhpRedHat";
-  SastScanModelIastAgentTypeEnum["PhpUbuntu"] = "PhpUbuntu";
-  SastScanModelIastAgentTypeEnum["Kubernetes"] = "Kubernetes";
+  SastScanModelIastAgentTypeEnum['Java'] = 'Java';
+  SastScanModelIastAgentTypeEnum['DotNet'] = 'DotNet';
+  SastScanModelIastAgentTypeEnum['NodeJS'] = 'NodeJS';
+  SastScanModelIastAgentTypeEnum['PhpWindows'] = 'PhpWindows';
+  SastScanModelIastAgentTypeEnum['PhpRedHat'] = 'PhpRedHat';
+  SastScanModelIastAgentTypeEnum['PhpUbuntu'] = 'PhpUbuntu';
+  SastScanModelIastAgentTypeEnum['Kubernetes'] = 'Kubernetes';
 })(SastScanModelIastAgentTypeEnum || (SastScanModelIastAgentTypeEnum = {}));
 export var SastScanModelOfferingTypeEnum;
 (function (SastScanModelOfferingTypeEnum) {
-  SastScanModelOfferingTypeEnum["None"] = "None";
-  SastScanModelOfferingTypeEnum["Trial"] = "Trial";
-  SastScanModelOfferingTypeEnum["HTrial"] = "HTrial";
-  SastScanModelOfferingTypeEnum["Applications"] = "Applications";
-  SastScanModelOfferingTypeEnum["ScanExecution"] = "ScanExecution";
-  SastScanModelOfferingTypeEnum["AnalyzerConcurrent"] = "AnalyzerConcurrent";
-  SastScanModelOfferingTypeEnum["ConsultantServices"] = "ConsultantServices";
-  SastScanModelOfferingTypeEnum["Premium"] = "Premium";
-  SastScanModelOfferingTypeEnum["OpenSourcePerApplication"] =
-    "OpenSourcePerApplication";
-  SastScanModelOfferingTypeEnum["OpenSourcePremium"] = "OpenSourcePremium";
-  SastScanModelOfferingTypeEnum["OpenSourceConcurrent"] =
-    "OpenSourceConcurrent";
-  SastScanModelOfferingTypeEnum["IASTConcurrent"] = "IASTConcurrent";
-  SastScanModelOfferingTypeEnum["IASTPayPerApp"] = "IASTPayPerApp";
-  SastScanModelOfferingTypeEnum["Promotional"] = "Promotional";
-  SastScanModelOfferingTypeEnum["Silver"] = "Silver";
-  SastScanModelOfferingTypeEnum["Gold"] = "Gold";
-  SastScanModelOfferingTypeEnum["Platinum"] = "Platinum";
-  SastScanModelOfferingTypeEnum["SCAPerApplication"] = "SCAPerApplication";
-  SastScanModelOfferingTypeEnum["ContributingUser"] = "ContributingUser";
-  SastScanModelOfferingTypeEnum["SilverContribUser"] = "SilverContribUser";
-  SastScanModelOfferingTypeEnum["GoldContribUser"] = "GoldContribUser";
-  SastScanModelOfferingTypeEnum["PlatinumContribUser"] = "PlatinumContribUser";
-  SastScanModelOfferingTypeEnum["SilverPerApp"] = "SilverPerApp";
-  SastScanModelOfferingTypeEnum["GoldPerApp"] = "GoldPerApp";
-  SastScanModelOfferingTypeEnum["PlatinumPerApp"] = "PlatinumPerApp";
+  SastScanModelOfferingTypeEnum['None'] = 'None';
+  SastScanModelOfferingTypeEnum['Trial'] = 'Trial';
+  SastScanModelOfferingTypeEnum['HTrial'] = 'HTrial';
+  SastScanModelOfferingTypeEnum['Applications'] = 'Applications';
+  SastScanModelOfferingTypeEnum['ScanExecution'] = 'ScanExecution';
+  SastScanModelOfferingTypeEnum['AnalyzerConcurrent'] = 'AnalyzerConcurrent';
+  SastScanModelOfferingTypeEnum['ConsultantServices'] = 'ConsultantServices';
+  SastScanModelOfferingTypeEnum['Premium'] = 'Premium';
+  SastScanModelOfferingTypeEnum['OpenSourcePerApplication'] =
+    'OpenSourcePerApplication';
+  SastScanModelOfferingTypeEnum['OpenSourcePremium'] = 'OpenSourcePremium';
+  SastScanModelOfferingTypeEnum['OpenSourceConcurrent'] =
+    'OpenSourceConcurrent';
+  SastScanModelOfferingTypeEnum['IASTConcurrent'] = 'IASTConcurrent';
+  SastScanModelOfferingTypeEnum['IASTPayPerApp'] = 'IASTPayPerApp';
+  SastScanModelOfferingTypeEnum['Promotional'] = 'Promotional';
+  SastScanModelOfferingTypeEnum['Silver'] = 'Silver';
+  SastScanModelOfferingTypeEnum['Gold'] = 'Gold';
+  SastScanModelOfferingTypeEnum['Platinum'] = 'Platinum';
+  SastScanModelOfferingTypeEnum['SCAPerApplication'] = 'SCAPerApplication';
+  SastScanModelOfferingTypeEnum['ContributingUser'] = 'ContributingUser';
+  SastScanModelOfferingTypeEnum['SilverContribUser'] = 'SilverContribUser';
+  SastScanModelOfferingTypeEnum['GoldContribUser'] = 'GoldContribUser';
+  SastScanModelOfferingTypeEnum['PlatinumContribUser'] = 'PlatinumContribUser';
+  SastScanModelOfferingTypeEnum['SilverPerApp'] = 'SilverPerApp';
+  SastScanModelOfferingTypeEnum['GoldPerApp'] = 'GoldPerApp';
+  SastScanModelOfferingTypeEnum['PlatinumPerApp'] = 'PlatinumPerApp';
 })(SastScanModelOfferingTypeEnum || (SastScanModelOfferingTypeEnum = {}));
 export var SastScanModelGitRepoPlatformEnum;
 (function (SastScanModelGitRepoPlatformEnum) {
-  SastScanModelGitRepoPlatformEnum["GitHub"] = "GitHub";
+  SastScanModelGitRepoPlatformEnum['GitHub'] = 'GitHub';
 })(SastScanModelGitRepoPlatformEnum || (SastScanModelGitRepoPlatformEnum = {}));
 export var SbomReportOptionsSbomFormatEnum;
 (function (SbomReportOptionsSbomFormatEnum) {
-  SbomReportOptionsSbomFormatEnum["SPDXJson"] = "SPDX_Json";
-  SbomReportOptionsSbomFormatEnum["SPDXText"] = "SPDX_Text";
+  SbomReportOptionsSbomFormatEnum['SPDXJson'] = 'SPDX_Json';
+  SbomReportOptionsSbomFormatEnum['SPDXText'] = 'SPDX_Text';
 })(SbomReportOptionsSbomFormatEnum || (SbomReportOptionsSbomFormatEnum = {}));
 export var ScaScanExecutionModelStatusEnum;
 (function (ScaScanExecutionModelStatusEnum) {
-  ScaScanExecutionModelStatusEnum["Running"] = "Running";
-  ScaScanExecutionModelStatusEnum["Stopping"] = "Stopping";
-  ScaScanExecutionModelStatusEnum["Pausing"] = "Pausing";
-  ScaScanExecutionModelStatusEnum["InQueue"] = "InQueue";
-  ScaScanExecutionModelStatusEnum["Paused"] = "Paused";
-  ScaScanExecutionModelStatusEnum["Ready"] = "Ready";
-  ScaScanExecutionModelStatusEnum["Failed"] = "Failed";
+  ScaScanExecutionModelStatusEnum['Running'] = 'Running';
+  ScaScanExecutionModelStatusEnum['Stopping'] = 'Stopping';
+  ScaScanExecutionModelStatusEnum['Pausing'] = 'Pausing';
+  ScaScanExecutionModelStatusEnum['InQueue'] = 'InQueue';
+  ScaScanExecutionModelStatusEnum['Paused'] = 'Paused';
+  ScaScanExecutionModelStatusEnum['Ready'] = 'Ready';
+  ScaScanExecutionModelStatusEnum['Failed'] = 'Failed';
 })(ScaScanExecutionModelStatusEnum || (ScaScanExecutionModelStatusEnum = {}));
 export var ScaScanExecutionModelResultEnum;
 (function (ScaScanExecutionModelResultEnum) {
-  ScaScanExecutionModelResultEnum["None"] = "None";
-  ScaScanExecutionModelResultEnum["NoIssues"] = "NoIssues";
-  ScaScanExecutionModelResultEnum["Informational"] = "Informational";
-  ScaScanExecutionModelResultEnum["Low"] = "Low";
-  ScaScanExecutionModelResultEnum["Medium"] = "Medium";
-  ScaScanExecutionModelResultEnum["High"] = "High";
-  ScaScanExecutionModelResultEnum["Critical"] = "Critical";
+  ScaScanExecutionModelResultEnum['None'] = 'None';
+  ScaScanExecutionModelResultEnum['NoIssues'] = 'NoIssues';
+  ScaScanExecutionModelResultEnum['Informational'] = 'Informational';
+  ScaScanExecutionModelResultEnum['Low'] = 'Low';
+  ScaScanExecutionModelResultEnum['Medium'] = 'Medium';
+  ScaScanExecutionModelResultEnum['High'] = 'High';
+  ScaScanExecutionModelResultEnum['Critical'] = 'Critical';
 })(ScaScanExecutionModelResultEnum || (ScaScanExecutionModelResultEnum = {}));
 export var ScaScanExecutionModelReadStatusEnum;
 (function (ScaScanExecutionModelReadStatusEnum) {
-  ScaScanExecutionModelReadStatusEnum["None"] = "None";
-  ScaScanExecutionModelReadStatusEnum["Unread"] = "Unread";
-  ScaScanExecutionModelReadStatusEnum["Read"] = "Read";
+  ScaScanExecutionModelReadStatusEnum['None'] = 'None';
+  ScaScanExecutionModelReadStatusEnum['Unread'] = 'Unread';
+  ScaScanExecutionModelReadStatusEnum['Read'] = 'Read';
 })(
   ScaScanExecutionModelReadStatusEnum ||
-    (ScaScanExecutionModelReadStatusEnum = {}),
+    (ScaScanExecutionModelReadStatusEnum = {})
 );
 export var ScaScanExecutionModelAvailableReportsEnum;
 (function (ScaScanExecutionModelAvailableReportsEnum) {
-  ScaScanExecutionModelAvailableReportsEnum["Xml"] = "Xml";
-  ScaScanExecutionModelAvailableReportsEnum["Pdf"] = "Pdf";
-  ScaScanExecutionModelAvailableReportsEnum["Html"] = "Html";
-  ScaScanExecutionModelAvailableReportsEnum["CompliancePdf"] = "CompliancePdf";
-  ScaScanExecutionModelAvailableReportsEnum["OwaspTop10Pdf"] = "OwaspTop10Pdf";
-  ScaScanExecutionModelAvailableReportsEnum["Sans25Pdf"] = "Sans25Pdf";
-  ScaScanExecutionModelAvailableReportsEnum["RawXml"] = "RawXml";
-  ScaScanExecutionModelAvailableReportsEnum["Zip"] = "Zip";
-  ScaScanExecutionModelAvailableReportsEnum["Json"] = "Json";
+  ScaScanExecutionModelAvailableReportsEnum['Xml'] = 'Xml';
+  ScaScanExecutionModelAvailableReportsEnum['Pdf'] = 'Pdf';
+  ScaScanExecutionModelAvailableReportsEnum['Html'] = 'Html';
+  ScaScanExecutionModelAvailableReportsEnum['CompliancePdf'] = 'CompliancePdf';
+  ScaScanExecutionModelAvailableReportsEnum['OwaspTop10Pdf'] = 'OwaspTop10Pdf';
+  ScaScanExecutionModelAvailableReportsEnum['Sans25Pdf'] = 'Sans25Pdf';
+  ScaScanExecutionModelAvailableReportsEnum['RawXml'] = 'RawXml';
+  ScaScanExecutionModelAvailableReportsEnum['Zip'] = 'Zip';
+  ScaScanExecutionModelAvailableReportsEnum['Json'] = 'Json';
 })(
   ScaScanExecutionModelAvailableReportsEnum ||
-    (ScaScanExecutionModelAvailableReportsEnum = {}),
+    (ScaScanExecutionModelAvailableReportsEnum = {})
 );
 export var ScaScanExecutionModelExecutionProgressEnum;
 (function (ScaScanExecutionModelExecutionProgressEnum) {
-  ScaScanExecutionModelExecutionProgressEnum["Pending"] = "Pending";
-  ScaScanExecutionModelExecutionProgressEnum["Running"] = "Running";
-  ScaScanExecutionModelExecutionProgressEnum["UnderReview"] = "UnderReview";
-  ScaScanExecutionModelExecutionProgressEnum["RunningManually"] =
-    "RunningManually";
-  ScaScanExecutionModelExecutionProgressEnum["Paused"] = "Paused";
-  ScaScanExecutionModelExecutionProgressEnum["Completed"] = "Completed";
+  ScaScanExecutionModelExecutionProgressEnum['Pending'] = 'Pending';
+  ScaScanExecutionModelExecutionProgressEnum['Running'] = 'Running';
+  ScaScanExecutionModelExecutionProgressEnum['UnderReview'] = 'UnderReview';
+  ScaScanExecutionModelExecutionProgressEnum['RunningManually'] =
+    'RunningManually';
+  ScaScanExecutionModelExecutionProgressEnum['Paused'] = 'Paused';
+  ScaScanExecutionModelExecutionProgressEnum['Completed'] = 'Completed';
 })(
   ScaScanExecutionModelExecutionProgressEnum ||
-    (ScaScanExecutionModelExecutionProgressEnum = {}),
+    (ScaScanExecutionModelExecutionProgressEnum = {})
 );
 export var ScaScanExecutionModelScanMethodEnum;
 (function (ScaScanExecutionModelScanMethodEnum) {
-  ScaScanExecutionModelScanMethodEnum["None"] = "None";
-  ScaScanExecutionModelScanMethodEnum["Hash"] = "Hash";
-  ScaScanExecutionModelScanMethodEnum["Config"] = "Config";
-  ScaScanExecutionModelScanMethodEnum["SBOM"] = "SBOM";
+  ScaScanExecutionModelScanMethodEnum['None'] = 'None';
+  ScaScanExecutionModelScanMethodEnum['Hash'] = 'Hash';
+  ScaScanExecutionModelScanMethodEnum['Config'] = 'Config';
+  ScaScanExecutionModelScanMethodEnum['SBOM'] = 'SBOM';
 })(
   ScaScanExecutionModelScanMethodEnum ||
-    (ScaScanExecutionModelScanMethodEnum = {}),
+    (ScaScanExecutionModelScanMethodEnum = {})
 );
 export var ScaScanModelTechnologyEnum;
 (function (ScaScanModelTechnologyEnum) {
-  ScaScanModelTechnologyEnum["DynamicAnalyzer"] = "DynamicAnalyzer";
-  ScaScanModelTechnologyEnum["StaticAnalyzer"] = "StaticAnalyzer";
-  ScaScanModelTechnologyEnum["IFA"] = "IFA";
-  ScaScanModelTechnologyEnum["DastAutomation"] = "DastAutomation";
-  ScaScanModelTechnologyEnum["IASTAnalyzer"] = "IASTAnalyzer";
-  ScaScanModelTechnologyEnum["ScaAnalyzer"] = "ScaAnalyzer";
+  ScaScanModelTechnologyEnum['DynamicAnalyzer'] = 'DynamicAnalyzer';
+  ScaScanModelTechnologyEnum['StaticAnalyzer'] = 'StaticAnalyzer';
+  ScaScanModelTechnologyEnum['IFA'] = 'IFA';
+  ScaScanModelTechnologyEnum['DastAutomation'] = 'DastAutomation';
+  ScaScanModelTechnologyEnum['IASTAnalyzer'] = 'IASTAnalyzer';
+  ScaScanModelTechnologyEnum['ScaAnalyzer'] = 'ScaAnalyzer';
 })(ScaScanModelTechnologyEnum || (ScaScanModelTechnologyEnum = {}));
 export var ScaScanModelIastAgentStatusEnum;
 (function (ScaScanModelIastAgentStatusEnum) {
-  ScaScanModelIastAgentStatusEnum["None"] = "None";
-  ScaScanModelIastAgentStatusEnum["Active"] = "Active";
-  ScaScanModelIastAgentStatusEnum["KeyNeverUsed"] = "KeyNeverUsed";
-  ScaScanModelIastAgentStatusEnum["Inactive"] = "Inactive";
+  ScaScanModelIastAgentStatusEnum['None'] = 'None';
+  ScaScanModelIastAgentStatusEnum['Active'] = 'Active';
+  ScaScanModelIastAgentStatusEnum['KeyNeverUsed'] = 'KeyNeverUsed';
+  ScaScanModelIastAgentStatusEnum['Inactive'] = 'Inactive';
 })(ScaScanModelIastAgentStatusEnum || (ScaScanModelIastAgentStatusEnum = {}));
 export var ScaScanModelIastAgentTypeEnum;
 (function (ScaScanModelIastAgentTypeEnum) {
-  ScaScanModelIastAgentTypeEnum["Java"] = "Java";
-  ScaScanModelIastAgentTypeEnum["DotNet"] = "DotNet";
-  ScaScanModelIastAgentTypeEnum["NodeJS"] = "NodeJS";
-  ScaScanModelIastAgentTypeEnum["PhpWindows"] = "PhpWindows";
-  ScaScanModelIastAgentTypeEnum["PhpRedHat"] = "PhpRedHat";
-  ScaScanModelIastAgentTypeEnum["PhpUbuntu"] = "PhpUbuntu";
-  ScaScanModelIastAgentTypeEnum["Kubernetes"] = "Kubernetes";
+  ScaScanModelIastAgentTypeEnum['Java'] = 'Java';
+  ScaScanModelIastAgentTypeEnum['DotNet'] = 'DotNet';
+  ScaScanModelIastAgentTypeEnum['NodeJS'] = 'NodeJS';
+  ScaScanModelIastAgentTypeEnum['PhpWindows'] = 'PhpWindows';
+  ScaScanModelIastAgentTypeEnum['PhpRedHat'] = 'PhpRedHat';
+  ScaScanModelIastAgentTypeEnum['PhpUbuntu'] = 'PhpUbuntu';
+  ScaScanModelIastAgentTypeEnum['Kubernetes'] = 'Kubernetes';
 })(ScaScanModelIastAgentTypeEnum || (ScaScanModelIastAgentTypeEnum = {}));
 export var ScaScanModelOfferingTypeEnum;
 (function (ScaScanModelOfferingTypeEnum) {
-  ScaScanModelOfferingTypeEnum["None"] = "None";
-  ScaScanModelOfferingTypeEnum["Trial"] = "Trial";
-  ScaScanModelOfferingTypeEnum["HTrial"] = "HTrial";
-  ScaScanModelOfferingTypeEnum["Applications"] = "Applications";
-  ScaScanModelOfferingTypeEnum["ScanExecution"] = "ScanExecution";
-  ScaScanModelOfferingTypeEnum["AnalyzerConcurrent"] = "AnalyzerConcurrent";
-  ScaScanModelOfferingTypeEnum["ConsultantServices"] = "ConsultantServices";
-  ScaScanModelOfferingTypeEnum["Premium"] = "Premium";
-  ScaScanModelOfferingTypeEnum["OpenSourcePerApplication"] =
-    "OpenSourcePerApplication";
-  ScaScanModelOfferingTypeEnum["OpenSourcePremium"] = "OpenSourcePremium";
-  ScaScanModelOfferingTypeEnum["OpenSourceConcurrent"] = "OpenSourceConcurrent";
-  ScaScanModelOfferingTypeEnum["IASTConcurrent"] = "IASTConcurrent";
-  ScaScanModelOfferingTypeEnum["IASTPayPerApp"] = "IASTPayPerApp";
-  ScaScanModelOfferingTypeEnum["Promotional"] = "Promotional";
-  ScaScanModelOfferingTypeEnum["Silver"] = "Silver";
-  ScaScanModelOfferingTypeEnum["Gold"] = "Gold";
-  ScaScanModelOfferingTypeEnum["Platinum"] = "Platinum";
-  ScaScanModelOfferingTypeEnum["SCAPerApplication"] = "SCAPerApplication";
-  ScaScanModelOfferingTypeEnum["ContributingUser"] = "ContributingUser";
-  ScaScanModelOfferingTypeEnum["SilverContribUser"] = "SilverContribUser";
-  ScaScanModelOfferingTypeEnum["GoldContribUser"] = "GoldContribUser";
-  ScaScanModelOfferingTypeEnum["PlatinumContribUser"] = "PlatinumContribUser";
-  ScaScanModelOfferingTypeEnum["SilverPerApp"] = "SilverPerApp";
-  ScaScanModelOfferingTypeEnum["GoldPerApp"] = "GoldPerApp";
-  ScaScanModelOfferingTypeEnum["PlatinumPerApp"] = "PlatinumPerApp";
+  ScaScanModelOfferingTypeEnum['None'] = 'None';
+  ScaScanModelOfferingTypeEnum['Trial'] = 'Trial';
+  ScaScanModelOfferingTypeEnum['HTrial'] = 'HTrial';
+  ScaScanModelOfferingTypeEnum['Applications'] = 'Applications';
+  ScaScanModelOfferingTypeEnum['ScanExecution'] = 'ScanExecution';
+  ScaScanModelOfferingTypeEnum['AnalyzerConcurrent'] = 'AnalyzerConcurrent';
+  ScaScanModelOfferingTypeEnum['ConsultantServices'] = 'ConsultantServices';
+  ScaScanModelOfferingTypeEnum['Premium'] = 'Premium';
+  ScaScanModelOfferingTypeEnum['OpenSourcePerApplication'] =
+    'OpenSourcePerApplication';
+  ScaScanModelOfferingTypeEnum['OpenSourcePremium'] = 'OpenSourcePremium';
+  ScaScanModelOfferingTypeEnum['OpenSourceConcurrent'] = 'OpenSourceConcurrent';
+  ScaScanModelOfferingTypeEnum['IASTConcurrent'] = 'IASTConcurrent';
+  ScaScanModelOfferingTypeEnum['IASTPayPerApp'] = 'IASTPayPerApp';
+  ScaScanModelOfferingTypeEnum['Promotional'] = 'Promotional';
+  ScaScanModelOfferingTypeEnum['Silver'] = 'Silver';
+  ScaScanModelOfferingTypeEnum['Gold'] = 'Gold';
+  ScaScanModelOfferingTypeEnum['Platinum'] = 'Platinum';
+  ScaScanModelOfferingTypeEnum['SCAPerApplication'] = 'SCAPerApplication';
+  ScaScanModelOfferingTypeEnum['ContributingUser'] = 'ContributingUser';
+  ScaScanModelOfferingTypeEnum['SilverContribUser'] = 'SilverContribUser';
+  ScaScanModelOfferingTypeEnum['GoldContribUser'] = 'GoldContribUser';
+  ScaScanModelOfferingTypeEnum['PlatinumContribUser'] = 'PlatinumContribUser';
+  ScaScanModelOfferingTypeEnum['SilverPerApp'] = 'SilverPerApp';
+  ScaScanModelOfferingTypeEnum['GoldPerApp'] = 'GoldPerApp';
+  ScaScanModelOfferingTypeEnum['PlatinumPerApp'] = 'PlatinumPerApp';
 })(ScaScanModelOfferingTypeEnum || (ScaScanModelOfferingTypeEnum = {}));
 export var ScaScanModelGitRepoPlatformEnum;
 (function (ScaScanModelGitRepoPlatformEnum) {
-  ScaScanModelGitRepoPlatformEnum["GitHub"] = "GitHub";
+  ScaScanModelGitRepoPlatformEnum['GitHub'] = 'GitHub';
 })(ScaScanModelGitRepoPlatformEnum || (ScaScanModelGitRepoPlatformEnum = {}));
 export var ScanExecutionModelStatusEnum;
 (function (ScanExecutionModelStatusEnum) {
-  ScanExecutionModelStatusEnum["Running"] = "Running";
-  ScanExecutionModelStatusEnum["Stopping"] = "Stopping";
-  ScanExecutionModelStatusEnum["Pausing"] = "Pausing";
-  ScanExecutionModelStatusEnum["InQueue"] = "InQueue";
-  ScanExecutionModelStatusEnum["Paused"] = "Paused";
-  ScanExecutionModelStatusEnum["Ready"] = "Ready";
-  ScanExecutionModelStatusEnum["Failed"] = "Failed";
+  ScanExecutionModelStatusEnum['Running'] = 'Running';
+  ScanExecutionModelStatusEnum['Stopping'] = 'Stopping';
+  ScanExecutionModelStatusEnum['Pausing'] = 'Pausing';
+  ScanExecutionModelStatusEnum['InQueue'] = 'InQueue';
+  ScanExecutionModelStatusEnum['Paused'] = 'Paused';
+  ScanExecutionModelStatusEnum['Ready'] = 'Ready';
+  ScanExecutionModelStatusEnum['Failed'] = 'Failed';
 })(ScanExecutionModelStatusEnum || (ScanExecutionModelStatusEnum = {}));
 export var ScanExecutionModelResultEnum;
 (function (ScanExecutionModelResultEnum) {
-  ScanExecutionModelResultEnum["None"] = "None";
-  ScanExecutionModelResultEnum["NoIssues"] = "NoIssues";
-  ScanExecutionModelResultEnum["Informational"] = "Informational";
-  ScanExecutionModelResultEnum["Low"] = "Low";
-  ScanExecutionModelResultEnum["Medium"] = "Medium";
-  ScanExecutionModelResultEnum["High"] = "High";
-  ScanExecutionModelResultEnum["Critical"] = "Critical";
+  ScanExecutionModelResultEnum['None'] = 'None';
+  ScanExecutionModelResultEnum['NoIssues'] = 'NoIssues';
+  ScanExecutionModelResultEnum['Informational'] = 'Informational';
+  ScanExecutionModelResultEnum['Low'] = 'Low';
+  ScanExecutionModelResultEnum['Medium'] = 'Medium';
+  ScanExecutionModelResultEnum['High'] = 'High';
+  ScanExecutionModelResultEnum['Critical'] = 'Critical';
 })(ScanExecutionModelResultEnum || (ScanExecutionModelResultEnum = {}));
 export var ScanExecutionModelReadStatusEnum;
 (function (ScanExecutionModelReadStatusEnum) {
-  ScanExecutionModelReadStatusEnum["None"] = "None";
-  ScanExecutionModelReadStatusEnum["Unread"] = "Unread";
-  ScanExecutionModelReadStatusEnum["Read"] = "Read";
+  ScanExecutionModelReadStatusEnum['None'] = 'None';
+  ScanExecutionModelReadStatusEnum['Unread'] = 'Unread';
+  ScanExecutionModelReadStatusEnum['Read'] = 'Read';
 })(ScanExecutionModelReadStatusEnum || (ScanExecutionModelReadStatusEnum = {}));
 export var ScanExecutionModelAvailableReportsEnum;
 (function (ScanExecutionModelAvailableReportsEnum) {
-  ScanExecutionModelAvailableReportsEnum["Xml"] = "Xml";
-  ScanExecutionModelAvailableReportsEnum["Pdf"] = "Pdf";
-  ScanExecutionModelAvailableReportsEnum["Html"] = "Html";
-  ScanExecutionModelAvailableReportsEnum["CompliancePdf"] = "CompliancePdf";
-  ScanExecutionModelAvailableReportsEnum["OwaspTop10Pdf"] = "OwaspTop10Pdf";
-  ScanExecutionModelAvailableReportsEnum["Sans25Pdf"] = "Sans25Pdf";
-  ScanExecutionModelAvailableReportsEnum["RawXml"] = "RawXml";
-  ScanExecutionModelAvailableReportsEnum["Zip"] = "Zip";
-  ScanExecutionModelAvailableReportsEnum["Json"] = "Json";
+  ScanExecutionModelAvailableReportsEnum['Xml'] = 'Xml';
+  ScanExecutionModelAvailableReportsEnum['Pdf'] = 'Pdf';
+  ScanExecutionModelAvailableReportsEnum['Html'] = 'Html';
+  ScanExecutionModelAvailableReportsEnum['CompliancePdf'] = 'CompliancePdf';
+  ScanExecutionModelAvailableReportsEnum['OwaspTop10Pdf'] = 'OwaspTop10Pdf';
+  ScanExecutionModelAvailableReportsEnum['Sans25Pdf'] = 'Sans25Pdf';
+  ScanExecutionModelAvailableReportsEnum['RawXml'] = 'RawXml';
+  ScanExecutionModelAvailableReportsEnum['Zip'] = 'Zip';
+  ScanExecutionModelAvailableReportsEnum['Json'] = 'Json';
 })(
   ScanExecutionModelAvailableReportsEnum ||
-    (ScanExecutionModelAvailableReportsEnum = {}),
+    (ScanExecutionModelAvailableReportsEnum = {})
 );
 export var ScanExecutionModelExecutionProgressEnum;
 (function (ScanExecutionModelExecutionProgressEnum) {
-  ScanExecutionModelExecutionProgressEnum["Pending"] = "Pending";
-  ScanExecutionModelExecutionProgressEnum["Running"] = "Running";
-  ScanExecutionModelExecutionProgressEnum["UnderReview"] = "UnderReview";
-  ScanExecutionModelExecutionProgressEnum["RunningManually"] =
-    "RunningManually";
-  ScanExecutionModelExecutionProgressEnum["Paused"] = "Paused";
-  ScanExecutionModelExecutionProgressEnum["Completed"] = "Completed";
+  ScanExecutionModelExecutionProgressEnum['Pending'] = 'Pending';
+  ScanExecutionModelExecutionProgressEnum['Running'] = 'Running';
+  ScanExecutionModelExecutionProgressEnum['UnderReview'] = 'UnderReview';
+  ScanExecutionModelExecutionProgressEnum['RunningManually'] =
+    'RunningManually';
+  ScanExecutionModelExecutionProgressEnum['Paused'] = 'Paused';
+  ScanExecutionModelExecutionProgressEnum['Completed'] = 'Completed';
 })(
   ScanExecutionModelExecutionProgressEnum ||
-    (ScanExecutionModelExecutionProgressEnum = {}),
+    (ScanExecutionModelExecutionProgressEnum = {})
 );
 export var ScanFileModelFileTypeEnum;
 (function (ScanFileModelFileTypeEnum) {
-  ScanFileModelFileTypeEnum["DastScan"] = "DastScan";
-  ScanFileModelFileTypeEnum["DastScanTemplate"] = "DastScanTemplate";
-  ScanFileModelFileTypeEnum["DastLoginSequence"] = "DastLoginSequence";
-  ScanFileModelFileTypeEnum["DastManualExplore"] = "DastManualExplore";
-  ScanFileModelFileTypeEnum["DastMultiStep"] = "DastMultiStep";
-  ScanFileModelFileTypeEnum["DastOpenAPI"] = "DastOpenAPI";
-  ScanFileModelFileTypeEnum["DastLlmExplore"] = "DastLlmExplore";
+  ScanFileModelFileTypeEnum['DastScan'] = 'DastScan';
+  ScanFileModelFileTypeEnum['DastScanTemplate'] = 'DastScanTemplate';
+  ScanFileModelFileTypeEnum['DastLoginSequence'] = 'DastLoginSequence';
+  ScanFileModelFileTypeEnum['DastManualExplore'] = 'DastManualExplore';
+  ScanFileModelFileTypeEnum['DastMultiStep'] = 'DastMultiStep';
+  ScanFileModelFileTypeEnum['DastOpenAPI'] = 'DastOpenAPI';
+  ScanFileModelFileTypeEnum['DastLlmExplore'] = 'DastLlmExplore';
 })(ScanFileModelFileTypeEnum || (ScanFileModelFileTypeEnum = {}));
 export var SecurityReportJobApplyPoliciesEnum;
 (function (SecurityReportJobApplyPoliciesEnum) {
-  SecurityReportJobApplyPoliciesEnum["None"] = "None";
-  SecurityReportJobApplyPoliciesEnum["All"] = "All";
-  SecurityReportJobApplyPoliciesEnum["Select"] = "Select";
+  SecurityReportJobApplyPoliciesEnum['None'] = 'None';
+  SecurityReportJobApplyPoliciesEnum['All'] = 'All';
+  SecurityReportJobApplyPoliciesEnum['Select'] = 'Select';
 })(
   SecurityReportJobApplyPoliciesEnum ||
-    (SecurityReportJobApplyPoliciesEnum = {}),
+    (SecurityReportJobApplyPoliciesEnum = {})
 );
 export var SecurityReportOptionsReportFileTypeEnum;
 (function (SecurityReportOptionsReportFileTypeEnum) {
-  SecurityReportOptionsReportFileTypeEnum["Pdf"] = "Pdf";
-  SecurityReportOptionsReportFileTypeEnum["Html"] = "Html";
-  SecurityReportOptionsReportFileTypeEnum["Xml"] = "Xml";
-  SecurityReportOptionsReportFileTypeEnum["Csv"] = "Csv";
-  SecurityReportOptionsReportFileTypeEnum["Sarif"] = "Sarif";
+  SecurityReportOptionsReportFileTypeEnum['Pdf'] = 'Pdf';
+  SecurityReportOptionsReportFileTypeEnum['Html'] = 'Html';
+  SecurityReportOptionsReportFileTypeEnum['Xml'] = 'Xml';
+  SecurityReportOptionsReportFileTypeEnum['Csv'] = 'Csv';
+  SecurityReportOptionsReportFileTypeEnum['Sarif'] = 'Sarif';
 })(
   SecurityReportOptionsReportFileTypeEnum ||
-    (SecurityReportOptionsReportFileTypeEnum = {}),
+    (SecurityReportOptionsReportFileTypeEnum = {})
 );
+export var SingleValueNodeKindEnum;
+(function (SingleValueNodeKindEnum) {
+  SingleValueNodeKindEnum['None'] = 'None';
+  SingleValueNodeKindEnum['Constant'] = 'Constant';
+  SingleValueNodeKindEnum['Convert'] = 'Convert';
+  SingleValueNodeKindEnum['NonResourceRangeVariableReference'] =
+    'NonResourceRangeVariableReference';
+  SingleValueNodeKindEnum['BinaryOperator'] = 'BinaryOperator';
+  SingleValueNodeKindEnum['UnaryOperator'] = 'UnaryOperator';
+  SingleValueNodeKindEnum['SingleValuePropertyAccess'] =
+    'SingleValuePropertyAccess';
+  SingleValueNodeKindEnum['CollectionPropertyAccess'] =
+    'CollectionPropertyAccess';
+  SingleValueNodeKindEnum['SingleValueFunctionCall'] =
+    'SingleValueFunctionCall';
+  SingleValueNodeKindEnum['Any'] = 'Any';
+  SingleValueNodeKindEnum['CollectionNavigationNode'] =
+    'CollectionNavigationNode';
+  SingleValueNodeKindEnum['SingleNavigationNode'] = 'SingleNavigationNode';
+  SingleValueNodeKindEnum['SingleValueOpenPropertyAccess'] =
+    'SingleValueOpenPropertyAccess';
+  SingleValueNodeKindEnum['SingleResourceCast'] = 'SingleResourceCast';
+  SingleValueNodeKindEnum['All'] = 'All';
+  SingleValueNodeKindEnum['CollectionResourceCast'] = 'CollectionResourceCast';
+  SingleValueNodeKindEnum['ResourceRangeVariableReference'] =
+    'ResourceRangeVariableReference';
+  SingleValueNodeKindEnum['SingleResourceFunctionCall'] =
+    'SingleResourceFunctionCall';
+  SingleValueNodeKindEnum['CollectionFunctionCall'] = 'CollectionFunctionCall';
+  SingleValueNodeKindEnum['CollectionResourceFunctionCall'] =
+    'CollectionResourceFunctionCall';
+  SingleValueNodeKindEnum['NamedFunctionParameter'] = 'NamedFunctionParameter';
+  SingleValueNodeKindEnum['ParameterAlias'] = 'ParameterAlias';
+  SingleValueNodeKindEnum['EntitySet'] = 'EntitySet';
+  SingleValueNodeKindEnum['KeyLookup'] = 'KeyLookup';
+  SingleValueNodeKindEnum['SearchTerm'] = 'SearchTerm';
+  SingleValueNodeKindEnum['CollectionOpenPropertyAccess'] =
+    'CollectionOpenPropertyAccess';
+  SingleValueNodeKindEnum['CollectionComplexNode'] = 'CollectionComplexNode';
+  SingleValueNodeKindEnum['SingleComplexNode'] = 'SingleComplexNode';
+  SingleValueNodeKindEnum['Count'] = 'Count';
+  SingleValueNodeKindEnum['SingleValueCast'] = 'SingleValueCast';
+  SingleValueNodeKindEnum['CollectionPropertyNode'] = 'CollectionPropertyNode';
+  SingleValueNodeKindEnum['AggregatedCollectionPropertyNode'] =
+    'AggregatedCollectionPropertyNode';
+  SingleValueNodeKindEnum['In'] = 'In';
+  SingleValueNodeKindEnum['CollectionConstant'] = 'CollectionConstant';
+})(SingleValueNodeKindEnum || (SingleValueNodeKindEnum = {}));
+export var StructLayoutAttributeValueEnum;
+(function (StructLayoutAttributeValueEnum) {
+  StructLayoutAttributeValueEnum['Sequential'] = 'Sequential';
+  StructLayoutAttributeValueEnum['Explicit'] = 'Explicit';
+  StructLayoutAttributeValueEnum['Auto'] = 'Auto';
+})(StructLayoutAttributeValueEnum || (StructLayoutAttributeValueEnum = {}));
 export var SubscriptionInfoModelOfferingTypeEnum;
 (function (SubscriptionInfoModelOfferingTypeEnum) {
-  SubscriptionInfoModelOfferingTypeEnum["None"] = "None";
-  SubscriptionInfoModelOfferingTypeEnum["Trial"] = "Trial";
-  SubscriptionInfoModelOfferingTypeEnum["Metered"] = "Metered";
-  SubscriptionInfoModelOfferingTypeEnum["PayPerApplication"] =
-    "PayPerApplication";
-  SubscriptionInfoModelOfferingTypeEnum["HTrial"] = "HTrial";
-  SubscriptionInfoModelOfferingTypeEnum["PayPerScanExec"] = "PayPerScanExec";
-  SubscriptionInfoModelOfferingTypeEnum["Premium"] = "Premium";
-  SubscriptionInfoModelOfferingTypeEnum["AnalyzerConcurrent"] =
-    "AnalyzerConcurrent";
-  SubscriptionInfoModelOfferingTypeEnum["OpenSourcePerApplication"] =
-    "OpenSourcePerApplication";
-  SubscriptionInfoModelOfferingTypeEnum["OpenSourcePremium"] =
-    "OpenSourcePremium";
-  SubscriptionInfoModelOfferingTypeEnum["OpenSourceConcurrent"] =
-    "OpenSourceConcurrent";
-  SubscriptionInfoModelOfferingTypeEnum["IASTConcurrent"] = "IASTConcurrent";
-  SubscriptionInfoModelOfferingTypeEnum["IASTPayPerApp"] = "IASTPayPerApp";
-  SubscriptionInfoModelOfferingTypeEnum["Promotional"] = "Promotional";
-  SubscriptionInfoModelOfferingTypeEnum["Silver"] = "Silver";
-  SubscriptionInfoModelOfferingTypeEnum["Gold"] = "Gold";
-  SubscriptionInfoModelOfferingTypeEnum["Platinum"] = "Platinum";
-  SubscriptionInfoModelOfferingTypeEnum["SCAPerApplication"] =
-    "SCAPerApplication";
-  SubscriptionInfoModelOfferingTypeEnum["ContributingUser"] =
-    "ContributingUser";
-  SubscriptionInfoModelOfferingTypeEnum["SilverContribUser"] =
-    "SilverContribUser";
-  SubscriptionInfoModelOfferingTypeEnum["GoldContribUser"] = "GoldContribUser";
-  SubscriptionInfoModelOfferingTypeEnum["PlatinumContribUser"] =
-    "PlatinumContribUser";
-  SubscriptionInfoModelOfferingTypeEnum["SilverPerApp"] = "SilverPerApp";
-  SubscriptionInfoModelOfferingTypeEnum["GoldPerApp"] = "GoldPerApp";
-  SubscriptionInfoModelOfferingTypeEnum["PlatinumPerApp"] = "PlatinumPerApp";
-  SubscriptionInfoModelOfferingTypeEnum["ConsultantServices"] =
-    "ConsultantServices";
+  SubscriptionInfoModelOfferingTypeEnum['None'] = 'None';
+  SubscriptionInfoModelOfferingTypeEnum['Trial'] = 'Trial';
+  SubscriptionInfoModelOfferingTypeEnum['Metered'] = 'Metered';
+  SubscriptionInfoModelOfferingTypeEnum['PayPerApplication'] =
+    'PayPerApplication';
+  SubscriptionInfoModelOfferingTypeEnum['HTrial'] = 'HTrial';
+  SubscriptionInfoModelOfferingTypeEnum['PayPerScanExec'] = 'PayPerScanExec';
+  SubscriptionInfoModelOfferingTypeEnum['Premium'] = 'Premium';
+  SubscriptionInfoModelOfferingTypeEnum['AnalyzerConcurrent'] =
+    'AnalyzerConcurrent';
+  SubscriptionInfoModelOfferingTypeEnum['OpenSourcePerApplication'] =
+    'OpenSourcePerApplication';
+  SubscriptionInfoModelOfferingTypeEnum['OpenSourcePremium'] =
+    'OpenSourcePremium';
+  SubscriptionInfoModelOfferingTypeEnum['OpenSourceConcurrent'] =
+    'OpenSourceConcurrent';
+  SubscriptionInfoModelOfferingTypeEnum['IASTConcurrent'] = 'IASTConcurrent';
+  SubscriptionInfoModelOfferingTypeEnum['IASTPayPerApp'] = 'IASTPayPerApp';
+  SubscriptionInfoModelOfferingTypeEnum['Promotional'] = 'Promotional';
+  SubscriptionInfoModelOfferingTypeEnum['Silver'] = 'Silver';
+  SubscriptionInfoModelOfferingTypeEnum['Gold'] = 'Gold';
+  SubscriptionInfoModelOfferingTypeEnum['Platinum'] = 'Platinum';
+  SubscriptionInfoModelOfferingTypeEnum['SCAPerApplication'] =
+    'SCAPerApplication';
+  SubscriptionInfoModelOfferingTypeEnum['ContributingUser'] =
+    'ContributingUser';
+  SubscriptionInfoModelOfferingTypeEnum['SilverContribUser'] =
+    'SilverContribUser';
+  SubscriptionInfoModelOfferingTypeEnum['GoldContribUser'] = 'GoldContribUser';
+  SubscriptionInfoModelOfferingTypeEnum['PlatinumContribUser'] =
+    'PlatinumContribUser';
+  SubscriptionInfoModelOfferingTypeEnum['SilverPerApp'] = 'SilverPerApp';
+  SubscriptionInfoModelOfferingTypeEnum['GoldPerApp'] = 'GoldPerApp';
+  SubscriptionInfoModelOfferingTypeEnum['PlatinumPerApp'] = 'PlatinumPerApp';
+  SubscriptionInfoModelOfferingTypeEnum['ConsultantServices'] =
+    'ConsultantServices';
 })(
   SubscriptionInfoModelOfferingTypeEnum ||
-    (SubscriptionInfoModelOfferingTypeEnum = {}),
+    (SubscriptionInfoModelOfferingTypeEnum = {})
 );
 export var TenantInfoIssuesStatusInheritanceEnum;
 (function (TenantInfoIssuesStatusInheritanceEnum) {
-  TenantInfoIssuesStatusInheritanceEnum["None"] = "None";
-  TenantInfoIssuesStatusInheritanceEnum["Noise"] = "Noise";
-  TenantInfoIssuesStatusInheritanceEnum["Fixed"] = "Fixed";
+  TenantInfoIssuesStatusInheritanceEnum['None'] = 'None';
+  TenantInfoIssuesStatusInheritanceEnum['Noise'] = 'Noise';
+  TenantInfoIssuesStatusInheritanceEnum['Fixed'] = 'Fixed';
 })(
   TenantInfoIssuesStatusInheritanceEnum ||
-    (TenantInfoIssuesStatusInheritanceEnum = {}),
+    (TenantInfoIssuesStatusInheritanceEnum = {})
 );
 export var TenantInfoSubscriptionTechnologiesEnum;
 (function (TenantInfoSubscriptionTechnologiesEnum) {
-  TenantInfoSubscriptionTechnologiesEnum["None"] = "None";
-  TenantInfoSubscriptionTechnologiesEnum["DynamicAnalyzer"] = "DynamicAnalyzer";
-  TenantInfoSubscriptionTechnologiesEnum["StaticAnalyzer"] = "StaticAnalyzer";
-  TenantInfoSubscriptionTechnologiesEnum["IASTAnalyzer"] = "IASTAnalyzer";
-  TenantInfoSubscriptionTechnologiesEnum["ScaAnalyzer"] = "ScaAnalyzer";
+  TenantInfoSubscriptionTechnologiesEnum['None'] = 'None';
+  TenantInfoSubscriptionTechnologiesEnum['DynamicAnalyzer'] = 'DynamicAnalyzer';
+  TenantInfoSubscriptionTechnologiesEnum['StaticAnalyzer'] = 'StaticAnalyzer';
+  TenantInfoSubscriptionTechnologiesEnum['IASTAnalyzer'] = 'IASTAnalyzer';
+  TenantInfoSubscriptionTechnologiesEnum['ScaAnalyzer'] = 'ScaAnalyzer';
 })(
   TenantInfoSubscriptionTechnologiesEnum ||
-    (TenantInfoSubscriptionTechnologiesEnum = {}),
+    (TenantInfoSubscriptionTechnologiesEnum = {})
 );
 export var TenantInfoActiveTechnologiesEnum;
 (function (TenantInfoActiveTechnologiesEnum) {
-  TenantInfoActiveTechnologiesEnum["None"] = "None";
-  TenantInfoActiveTechnologiesEnum["DynamicAnalyzer"] = "DynamicAnalyzer";
-  TenantInfoActiveTechnologiesEnum["StaticAnalyzer"] = "StaticAnalyzer";
-  TenantInfoActiveTechnologiesEnum["IASTAnalyzer"] = "IASTAnalyzer";
-  TenantInfoActiveTechnologiesEnum["ScaAnalyzer"] = "ScaAnalyzer";
+  TenantInfoActiveTechnologiesEnum['None'] = 'None';
+  TenantInfoActiveTechnologiesEnum['DynamicAnalyzer'] = 'DynamicAnalyzer';
+  TenantInfoActiveTechnologiesEnum['StaticAnalyzer'] = 'StaticAnalyzer';
+  TenantInfoActiveTechnologiesEnum['IASTAnalyzer'] = 'IASTAnalyzer';
+  TenantInfoActiveTechnologiesEnum['ScaAnalyzer'] = 'ScaAnalyzer';
 })(TenantInfoActiveTechnologiesEnum || (TenantInfoActiveTechnologiesEnum = {}));
 export var TenantInfoModelSubscriptionTechnologiesEnum;
 (function (TenantInfoModelSubscriptionTechnologiesEnum) {
-  TenantInfoModelSubscriptionTechnologiesEnum["None"] = "None";
-  TenantInfoModelSubscriptionTechnologiesEnum["DynamicAnalyzer"] =
-    "DynamicAnalyzer";
-  TenantInfoModelSubscriptionTechnologiesEnum["StaticAnalyzer"] =
-    "StaticAnalyzer";
-  TenantInfoModelSubscriptionTechnologiesEnum["IASTAnalyzer"] = "IASTAnalyzer";
-  TenantInfoModelSubscriptionTechnologiesEnum["ScaAnalyzer"] = "ScaAnalyzer";
+  TenantInfoModelSubscriptionTechnologiesEnum['None'] = 'None';
+  TenantInfoModelSubscriptionTechnologiesEnum['DynamicAnalyzer'] =
+    'DynamicAnalyzer';
+  TenantInfoModelSubscriptionTechnologiesEnum['StaticAnalyzer'] =
+    'StaticAnalyzer';
+  TenantInfoModelSubscriptionTechnologiesEnum['IASTAnalyzer'] = 'IASTAnalyzer';
+  TenantInfoModelSubscriptionTechnologiesEnum['ScaAnalyzer'] = 'ScaAnalyzer';
 })(
   TenantInfoModelSubscriptionTechnologiesEnum ||
-    (TenantInfoModelSubscriptionTechnologiesEnum = {}),
+    (TenantInfoModelSubscriptionTechnologiesEnum = {})
 );
 export var TestsSettingsTestOptimizationLevelEnum;
 (function (TestsSettingsTestOptimizationLevelEnum) {
-  TestsSettingsTestOptimizationLevelEnum["NoOptimization"] = "NoOptimization";
-  TestsSettingsTestOptimizationLevelEnum["Fast"] = "Fast";
-  TestsSettingsTestOptimizationLevelEnum["Faster"] = "Faster";
-  TestsSettingsTestOptimizationLevelEnum["Fastest"] = "Fastest";
+  TestsSettingsTestOptimizationLevelEnum['NoOptimization'] = 'NoOptimization';
+  TestsSettingsTestOptimizationLevelEnum['Fast'] = 'Fast';
+  TestsSettingsTestOptimizationLevelEnum['Faster'] = 'Faster';
+  TestsSettingsTestOptimizationLevelEnum['Fastest'] = 'Fastest';
 })(
   TestsSettingsTestOptimizationLevelEnum ||
-    (TestsSettingsTestOptimizationLevelEnum = {}),
+    (TestsSettingsTestOptimizationLevelEnum = {})
 );
 export var TimeFrameIntervalEnum;
 (function (TimeFrameIntervalEnum) {
-  TimeFrameIntervalEnum["Day"] = "Day";
-  TimeFrameIntervalEnum["Week"] = "Week";
-  TimeFrameIntervalEnum["Month"] = "Month";
-  TimeFrameIntervalEnum["Quarter"] = "Quarter";
-  TimeFrameIntervalEnum["Year"] = "Year";
+  TimeFrameIntervalEnum['Day'] = 'Day';
+  TimeFrameIntervalEnum['Week'] = 'Week';
+  TimeFrameIntervalEnum['Month'] = 'Month';
+  TimeFrameIntervalEnum['Quarter'] = 'Quarter';
+  TimeFrameIntervalEnum['Year'] = 'Year';
 })(TimeFrameIntervalEnum || (TimeFrameIntervalEnum = {}));
+export var TransformationNodeKindEnum;
+(function (TransformationNodeKindEnum) {
+  TransformationNodeKindEnum['Aggregate'] = 'Aggregate';
+  TransformationNodeKindEnum['GroupBy'] = 'GroupBy';
+  TransformationNodeKindEnum['Filter'] = 'Filter';
+  TransformationNodeKindEnum['Compute'] = 'Compute';
+  TransformationNodeKindEnum['Expand'] = 'Expand';
+})(TransformationNodeKindEnum || (TransformationNodeKindEnum = {}));
+export var TypeMemberTypeEnum;
+(function (TypeMemberTypeEnum) {
+  TypeMemberTypeEnum['Constructor'] = 'Constructor';
+  TypeMemberTypeEnum['Event'] = 'Event';
+  TypeMemberTypeEnum['Field'] = 'Field';
+  TypeMemberTypeEnum['Method'] = 'Method';
+  TypeMemberTypeEnum['Property'] = 'Property';
+  TypeMemberTypeEnum['TypeInfo'] = 'TypeInfo';
+  TypeMemberTypeEnum['Custom'] = 'Custom';
+  TypeMemberTypeEnum['NestedType'] = 'NestedType';
+  TypeMemberTypeEnum['All'] = 'All';
+})(TypeMemberTypeEnum || (TypeMemberTypeEnum = {}));
+export var TypeGenericParameterAttributesEnum;
+(function (TypeGenericParameterAttributesEnum) {
+  TypeGenericParameterAttributesEnum['None'] = 'None';
+  TypeGenericParameterAttributesEnum['Covariant'] = 'Covariant';
+  TypeGenericParameterAttributesEnum['Contravariant'] = 'Contravariant';
+  TypeGenericParameterAttributesEnum['VarianceMask'] = 'VarianceMask';
+  TypeGenericParameterAttributesEnum['ReferenceTypeConstraint'] =
+    'ReferenceTypeConstraint';
+  TypeGenericParameterAttributesEnum['NotNullableValueTypeConstraint'] =
+    'NotNullableValueTypeConstraint';
+  TypeGenericParameterAttributesEnum['DefaultConstructorConstraint'] =
+    'DefaultConstructorConstraint';
+  TypeGenericParameterAttributesEnum['SpecialConstraintMask'] =
+    'SpecialConstraintMask';
+})(
+  TypeGenericParameterAttributesEnum ||
+    (TypeGenericParameterAttributesEnum = {})
+);
+export var TypeAttributesEnum;
+(function (TypeAttributesEnum) {
+  TypeAttributesEnum['NotPublic'] = 'NotPublic';
+  TypeAttributesEnum['Public'] = 'Public';
+  TypeAttributesEnum['NestedPublic'] = 'NestedPublic';
+  TypeAttributesEnum['NestedPrivate'] = 'NestedPrivate';
+  TypeAttributesEnum['NestedFamily'] = 'NestedFamily';
+  TypeAttributesEnum['NestedAssembly'] = 'NestedAssembly';
+  TypeAttributesEnum['NestedFamANDAssem'] = 'NestedFamANDAssem';
+  TypeAttributesEnum['VisibilityMask'] = 'VisibilityMask';
+  TypeAttributesEnum['SequentialLayout'] = 'SequentialLayout';
+  TypeAttributesEnum['ExplicitLayout'] = 'ExplicitLayout';
+  TypeAttributesEnum['LayoutMask'] = 'LayoutMask';
+  TypeAttributesEnum['Interface'] = 'Interface';
+  TypeAttributesEnum['Abstract'] = 'Abstract';
+  TypeAttributesEnum['Sealed'] = 'Sealed';
+  TypeAttributesEnum['SpecialName'] = 'SpecialName';
+  TypeAttributesEnum['RTSpecialName'] = 'RTSpecialName';
+  TypeAttributesEnum['Import'] = 'Import';
+  TypeAttributesEnum['Serializable'] = 'Serializable';
+  TypeAttributesEnum['WindowsRuntime'] = 'WindowsRuntime';
+  TypeAttributesEnum['UnicodeClass'] = 'UnicodeClass';
+  TypeAttributesEnum['AutoClass'] = 'AutoClass';
+  TypeAttributesEnum['StringFormatMask'] = 'StringFormatMask';
+  TypeAttributesEnum['HasSecurity'] = 'HasSecurity';
+  TypeAttributesEnum['ReservedMask'] = 'ReservedMask';
+  TypeAttributesEnum['BeforeFieldInit'] = 'BeforeFieldInit';
+  TypeAttributesEnum['CustomFormatMask'] = 'CustomFormatMask';
+})(TypeAttributesEnum || (TypeAttributesEnum = {}));
+export var TypeInfoMemberTypeEnum;
+(function (TypeInfoMemberTypeEnum) {
+  TypeInfoMemberTypeEnum['Constructor'] = 'Constructor';
+  TypeInfoMemberTypeEnum['Event'] = 'Event';
+  TypeInfoMemberTypeEnum['Field'] = 'Field';
+  TypeInfoMemberTypeEnum['Method'] = 'Method';
+  TypeInfoMemberTypeEnum['Property'] = 'Property';
+  TypeInfoMemberTypeEnum['TypeInfo'] = 'TypeInfo';
+  TypeInfoMemberTypeEnum['Custom'] = 'Custom';
+  TypeInfoMemberTypeEnum['NestedType'] = 'NestedType';
+  TypeInfoMemberTypeEnum['All'] = 'All';
+})(TypeInfoMemberTypeEnum || (TypeInfoMemberTypeEnum = {}));
+export var TypeInfoGenericParameterAttributesEnum;
+(function (TypeInfoGenericParameterAttributesEnum) {
+  TypeInfoGenericParameterAttributesEnum['None'] = 'None';
+  TypeInfoGenericParameterAttributesEnum['Covariant'] = 'Covariant';
+  TypeInfoGenericParameterAttributesEnum['Contravariant'] = 'Contravariant';
+  TypeInfoGenericParameterAttributesEnum['VarianceMask'] = 'VarianceMask';
+  TypeInfoGenericParameterAttributesEnum['ReferenceTypeConstraint'] =
+    'ReferenceTypeConstraint';
+  TypeInfoGenericParameterAttributesEnum['NotNullableValueTypeConstraint'] =
+    'NotNullableValueTypeConstraint';
+  TypeInfoGenericParameterAttributesEnum['DefaultConstructorConstraint'] =
+    'DefaultConstructorConstraint';
+  TypeInfoGenericParameterAttributesEnum['SpecialConstraintMask'] =
+    'SpecialConstraintMask';
+})(
+  TypeInfoGenericParameterAttributesEnum ||
+    (TypeInfoGenericParameterAttributesEnum = {})
+);
+export var TypeInfoAttributesEnum;
+(function (TypeInfoAttributesEnum) {
+  TypeInfoAttributesEnum['NotPublic'] = 'NotPublic';
+  TypeInfoAttributesEnum['Public'] = 'Public';
+  TypeInfoAttributesEnum['NestedPublic'] = 'NestedPublic';
+  TypeInfoAttributesEnum['NestedPrivate'] = 'NestedPrivate';
+  TypeInfoAttributesEnum['NestedFamily'] = 'NestedFamily';
+  TypeInfoAttributesEnum['NestedAssembly'] = 'NestedAssembly';
+  TypeInfoAttributesEnum['NestedFamANDAssem'] = 'NestedFamANDAssem';
+  TypeInfoAttributesEnum['VisibilityMask'] = 'VisibilityMask';
+  TypeInfoAttributesEnum['SequentialLayout'] = 'SequentialLayout';
+  TypeInfoAttributesEnum['ExplicitLayout'] = 'ExplicitLayout';
+  TypeInfoAttributesEnum['LayoutMask'] = 'LayoutMask';
+  TypeInfoAttributesEnum['Interface'] = 'Interface';
+  TypeInfoAttributesEnum['Abstract'] = 'Abstract';
+  TypeInfoAttributesEnum['Sealed'] = 'Sealed';
+  TypeInfoAttributesEnum['SpecialName'] = 'SpecialName';
+  TypeInfoAttributesEnum['RTSpecialName'] = 'RTSpecialName';
+  TypeInfoAttributesEnum['Import'] = 'Import';
+  TypeInfoAttributesEnum['Serializable'] = 'Serializable';
+  TypeInfoAttributesEnum['WindowsRuntime'] = 'WindowsRuntime';
+  TypeInfoAttributesEnum['UnicodeClass'] = 'UnicodeClass';
+  TypeInfoAttributesEnum['AutoClass'] = 'AutoClass';
+  TypeInfoAttributesEnum['StringFormatMask'] = 'StringFormatMask';
+  TypeInfoAttributesEnum['HasSecurity'] = 'HasSecurity';
+  TypeInfoAttributesEnum['ReservedMask'] = 'ReservedMask';
+  TypeInfoAttributesEnum['BeforeFieldInit'] = 'BeforeFieldInit';
+  TypeInfoAttributesEnum['CustomFormatMask'] = 'CustomFormatMask';
+})(TypeInfoAttributesEnum || (TypeInfoAttributesEnum = {}));
 export var UpdateAssetGroupModelIssuesStatusInheritanceEnum;
 (function (UpdateAssetGroupModelIssuesStatusInheritanceEnum) {
-  UpdateAssetGroupModelIssuesStatusInheritanceEnum["None"] = "None";
-  UpdateAssetGroupModelIssuesStatusInheritanceEnum["Noise"] = "Noise";
-  UpdateAssetGroupModelIssuesStatusInheritanceEnum["Fixed"] = "Fixed";
+  UpdateAssetGroupModelIssuesStatusInheritanceEnum['None'] = 'None';
+  UpdateAssetGroupModelIssuesStatusInheritanceEnum['Noise'] = 'Noise';
+  UpdateAssetGroupModelIssuesStatusInheritanceEnum['Fixed'] = 'Fixed';
 })(
   UpdateAssetGroupModelIssuesStatusInheritanceEnum ||
-    (UpdateAssetGroupModelIssuesStatusInheritanceEnum = {}),
+    (UpdateAssetGroupModelIssuesStatusInheritanceEnum = {})
 );
 export var UpdateFullDastScanTestOperationEnum;
 (function (UpdateFullDastScanTestOperationEnum) {
-  UpdateFullDastScanTestOperationEnum["None"] = "None";
-  UpdateFullDastScanTestOperationEnum["Retest"] = "Retest";
-  UpdateFullDastScanTestOperationEnum["ContinueTest"] = "ContinueTest";
-  UpdateFullDastScanTestOperationEnum["ReportOnly"] = "ReportOnly";
+  UpdateFullDastScanTestOperationEnum['None'] = 'None';
+  UpdateFullDastScanTestOperationEnum['Retest'] = 'Retest';
+  UpdateFullDastScanTestOperationEnum['ContinueTest'] = 'ContinueTest';
+  UpdateFullDastScanTestOperationEnum['ReportOnly'] = 'ReportOnly';
 })(
   UpdateFullDastScanTestOperationEnum ||
-    (UpdateFullDastScanTestOperationEnum = {}),
+    (UpdateFullDastScanTestOperationEnum = {})
 );
 export var UpdateIssueStatusEnum;
 (function (UpdateIssueStatusEnum) {
-  UpdateIssueStatusEnum["Open"] = "Open";
-  UpdateIssueStatusEnum["InProgress"] = "InProgress";
-  UpdateIssueStatusEnum["Reopened"] = "Reopened";
-  UpdateIssueStatusEnum["Noise"] = "Noise";
-  UpdateIssueStatusEnum["Passed"] = "Passed";
-  UpdateIssueStatusEnum["Fixed"] = "Fixed";
-  UpdateIssueStatusEnum["New"] = "New";
+  UpdateIssueStatusEnum['Open'] = 'Open';
+  UpdateIssueStatusEnum['InProgress'] = 'InProgress';
+  UpdateIssueStatusEnum['Reopened'] = 'Reopened';
+  UpdateIssueStatusEnum['Noise'] = 'Noise';
+  UpdateIssueStatusEnum['Passed'] = 'Passed';
+  UpdateIssueStatusEnum['Fixed'] = 'Fixed';
+  UpdateIssueStatusEnum['New'] = 'New';
 })(UpdateIssueStatusEnum || (UpdateIssueStatusEnum = {}));
 export var UpdateIssuesByIdStatusEnum;
 (function (UpdateIssuesByIdStatusEnum) {
-  UpdateIssuesByIdStatusEnum["Open"] = "Open";
-  UpdateIssuesByIdStatusEnum["InProgress"] = "InProgress";
-  UpdateIssuesByIdStatusEnum["Reopened"] = "Reopened";
-  UpdateIssuesByIdStatusEnum["Noise"] = "Noise";
-  UpdateIssuesByIdStatusEnum["Passed"] = "Passed";
-  UpdateIssuesByIdStatusEnum["Fixed"] = "Fixed";
-  UpdateIssuesByIdStatusEnum["New"] = "New";
+  UpdateIssuesByIdStatusEnum['Open'] = 'Open';
+  UpdateIssuesByIdStatusEnum['InProgress'] = 'InProgress';
+  UpdateIssuesByIdStatusEnum['Reopened'] = 'Reopened';
+  UpdateIssuesByIdStatusEnum['Noise'] = 'Noise';
+  UpdateIssuesByIdStatusEnum['Passed'] = 'Passed';
+  UpdateIssuesByIdStatusEnum['Fixed'] = 'Fixed';
+  UpdateIssuesByIdStatusEnum['New'] = 'New';
 })(UpdateIssuesByIdStatusEnum || (UpdateIssuesByIdStatusEnum = {}));
 export var UpdateOneTimePasswordHashTypeEnum;
 (function (UpdateOneTimePasswordHashTypeEnum) {
-  UpdateOneTimePasswordHashTypeEnum["None"] = "None";
-  UpdateOneTimePasswordHashTypeEnum["Sha1"] = "Sha1";
-  UpdateOneTimePasswordHashTypeEnum["Sha256"] = "Sha256";
-  UpdateOneTimePasswordHashTypeEnum["Sha512"] = "Sha512";
+  UpdateOneTimePasswordHashTypeEnum['None'] = 'None';
+  UpdateOneTimePasswordHashTypeEnum['Sha1'] = 'Sha1';
+  UpdateOneTimePasswordHashTypeEnum['Sha256'] = 'Sha256';
+  UpdateOneTimePasswordHashTypeEnum['Sha512'] = 'Sha512';
 })(
-  UpdateOneTimePasswordHashTypeEnum || (UpdateOneTimePasswordHashTypeEnum = {}),
+  UpdateOneTimePasswordHashTypeEnum || (UpdateOneTimePasswordHashTypeEnum = {})
 );
 export var UpdateTestsSettingsTestOptimizationLevelEnum;
 (function (UpdateTestsSettingsTestOptimizationLevelEnum) {
-  UpdateTestsSettingsTestOptimizationLevelEnum["NoOptimization"] =
-    "NoOptimization";
-  UpdateTestsSettingsTestOptimizationLevelEnum["Fast"] = "Fast";
-  UpdateTestsSettingsTestOptimizationLevelEnum["Faster"] = "Faster";
-  UpdateTestsSettingsTestOptimizationLevelEnum["Fastest"] = "Fastest";
+  UpdateTestsSettingsTestOptimizationLevelEnum['NoOptimization'] =
+    'NoOptimization';
+  UpdateTestsSettingsTestOptimizationLevelEnum['Fast'] = 'Fast';
+  UpdateTestsSettingsTestOptimizationLevelEnum['Faster'] = 'Faster';
+  UpdateTestsSettingsTestOptimizationLevelEnum['Fastest'] = 'Fastest';
 })(
   UpdateTestsSettingsTestOptimizationLevelEnum ||
-    (UpdateTestsSettingsTestOptimizationLevelEnum = {}),
+    (UpdateTestsSettingsTestOptimizationLevelEnum = {})
 );
 export var UpdateWebhookRequestMethodEnum;
 (function (UpdateWebhookRequestMethodEnum) {
-  UpdateWebhookRequestMethodEnum["GET"] = "GET";
-  UpdateWebhookRequestMethodEnum["POST"] = "POST";
-  UpdateWebhookRequestMethodEnum["PUT"] = "PUT";
+  UpdateWebhookRequestMethodEnum['GET'] = 'GET';
+  UpdateWebhookRequestMethodEnum['POST'] = 'POST';
+  UpdateWebhookRequestMethodEnum['PUT'] = 'PUT';
 })(UpdateWebhookRequestMethodEnum || (UpdateWebhookRequestMethodEnum = {}));
 export var UserInfoReasonForNotEligibleToTrialEnum;
 (function (UserInfoReasonForNotEligibleToTrialEnum) {
-  UserInfoReasonForNotEligibleToTrialEnum["None"] = "None";
-  UserInfoReasonForNotEligibleToTrialEnum["AlreadyUsedTheService"] =
-    "AlreadyUsedTheService";
-  UserInfoReasonForNotEligibleToTrialEnum["ShouldFillRegistrationForm"] =
-    "ShouldFillRegistrationForm";
+  UserInfoReasonForNotEligibleToTrialEnum['None'] = 'None';
+  UserInfoReasonForNotEligibleToTrialEnum['AlreadyUsedTheService'] =
+    'AlreadyUsedTheService';
+  UserInfoReasonForNotEligibleToTrialEnum['ShouldFillRegistrationForm'] =
+    'ShouldFillRegistrationForm';
 })(
   UserInfoReasonForNotEligibleToTrialEnum ||
-    (UserInfoReasonForNotEligibleToTrialEnum = {}),
+    (UserInfoReasonForNotEligibleToTrialEnum = {})
 );
 export var UserModelStatusEnum;
 (function (UserModelStatusEnum) {
-  UserModelStatusEnum["Active"] = "Active";
-  UserModelStatusEnum["BlockNewScans"] = "BlockNewScans";
-  UserModelStatusEnum["BlockAccess"] = "BlockAccess";
-  UserModelStatusEnum["PendingActivation"] = "PendingActivation";
-  UserModelStatusEnum["BlockAccessFromAPI"] = "BlockAccessFromAPI";
-  UserModelStatusEnum["Archived"] = "Archived";
-  UserModelStatusEnum["InvitationExpired"] = "InvitationExpired";
+  UserModelStatusEnum['Active'] = 'Active';
+  UserModelStatusEnum['BlockNewScans'] = 'BlockNewScans';
+  UserModelStatusEnum['BlockAccess'] = 'BlockAccess';
+  UserModelStatusEnum['PendingActivation'] = 'PendingActivation';
+  UserModelStatusEnum['BlockAccessFromAPI'] = 'BlockAccessFromAPI';
+  UserModelStatusEnum['Archived'] = 'Archived';
+  UserModelStatusEnum['InvitationExpired'] = 'InvitationExpired';
 })(UserModelStatusEnum || (UserModelStatusEnum = {}));
 export var UserOrgRoleStatusEnum;
 (function (UserOrgRoleStatusEnum) {
-  UserOrgRoleStatusEnum["Active"] = "Active";
-  UserOrgRoleStatusEnum["BlockNewScans"] = "BlockNewScans";
-  UserOrgRoleStatusEnum["BlockAccess"] = "BlockAccess";
-  UserOrgRoleStatusEnum["PendingActivation"] = "PendingActivation";
-  UserOrgRoleStatusEnum["BlockAccessFromAPI"] = "BlockAccessFromAPI";
-  UserOrgRoleStatusEnum["Archived"] = "Archived";
-  UserOrgRoleStatusEnum["InvitationExpired"] = "InvitationExpired";
+  UserOrgRoleStatusEnum['Active'] = 'Active';
+  UserOrgRoleStatusEnum['BlockNewScans'] = 'BlockNewScans';
+  UserOrgRoleStatusEnum['BlockAccess'] = 'BlockAccess';
+  UserOrgRoleStatusEnum['PendingActivation'] = 'PendingActivation';
+  UserOrgRoleStatusEnum['BlockAccessFromAPI'] = 'BlockAccessFromAPI';
+  UserOrgRoleStatusEnum['Archived'] = 'Archived';
+  UserOrgRoleStatusEnum['InvitationExpired'] = 'InvitationExpired';
 })(UserOrgRoleStatusEnum || (UserOrgRoleStatusEnum = {}));
 export var WebhookAssociationScopeEnum;
 (function (WebhookAssociationScopeEnum) {
-  WebhookAssociationScopeEnum["AssetGroup"] = "AssetGroup";
-  WebhookAssociationScopeEnum["Application"] = "Application";
+  WebhookAssociationScopeEnum['AssetGroup'] = 'AssetGroup';
+  WebhookAssociationScopeEnum['Application'] = 'Application';
 })(WebhookAssociationScopeEnum || (WebhookAssociationScopeEnum = {}));
 export var WebhookModelRequestMethodEnum;
 (function (WebhookModelRequestMethodEnum) {
-  WebhookModelRequestMethodEnum["GET"] = "GET";
-  WebhookModelRequestMethodEnum["POST"] = "POST";
-  WebhookModelRequestMethodEnum["PUT"] = "PUT";
+  WebhookModelRequestMethodEnum['GET'] = 'GET';
+  WebhookModelRequestMethodEnum['POST'] = 'POST';
+  WebhookModelRequestMethodEnum['PUT'] = 'PUT';
 })(WebhookModelRequestMethodEnum || (WebhookModelRequestMethodEnum = {}));
 export var WebhookModelEventEnum;
 (function (WebhookModelEventEnum) {
-  WebhookModelEventEnum["ScanExecutionCompleted"] = "ScanExecutionCompleted";
-  WebhookModelEventEnum["ApplicationUpdated"] = "ApplicationUpdated";
-  WebhookModelEventEnum["NewPatchRequest"] = "NewPatchRequest";
+  WebhookModelEventEnum['ScanExecutionCompleted'] = 'ScanExecutionCompleted';
+  WebhookModelEventEnum['ApplicationUpdated'] = 'ApplicationUpdated';
+  WebhookModelEventEnum['NewPatchRequest'] = 'NewPatchRequest';
 })(WebhookModelEventEnum || (WebhookModelEventEnum = {}));
 /**
  * Determine which policies will be applied for filtering in non compliant issues
@@ -3054,52 +3794,52 @@ export var WebhookModelEventEnum;
  */
 export var AppsGetAppCorrelationGroupsParamsApplyPoliciesEnum;
 (function (AppsGetAppCorrelationGroupsParamsApplyPoliciesEnum) {
-  AppsGetAppCorrelationGroupsParamsApplyPoliciesEnum["None"] = "None";
-  AppsGetAppCorrelationGroupsParamsApplyPoliciesEnum["All"] = "All";
-  AppsGetAppCorrelationGroupsParamsApplyPoliciesEnum["Select"] = "Select";
+  AppsGetAppCorrelationGroupsParamsApplyPoliciesEnum['None'] = 'None';
+  AppsGetAppCorrelationGroupsParamsApplyPoliciesEnum['All'] = 'All';
+  AppsGetAppCorrelationGroupsParamsApplyPoliciesEnum['Select'] = 'Select';
 })(
   AppsGetAppCorrelationGroupsParamsApplyPoliciesEnum ||
-    (AppsGetAppCorrelationGroupsParamsApplyPoliciesEnum = {}),
+    (AppsGetAppCorrelationGroupsParamsApplyPoliciesEnum = {})
 );
 /** mail prefix */
 export var DomainsResendMailParamsMailPrefixEnum;
 (function (DomainsResendMailParamsMailPrefixEnum) {
-  DomainsResendMailParamsMailPrefixEnum["Admin"] = "Admin";
-  DomainsResendMailParamsMailPrefixEnum["Administrator"] = "Administrator";
-  DomainsResendMailParamsMailPrefixEnum["HostMaster"] = "HostMaster";
-  DomainsResendMailParamsMailPrefixEnum["Root"] = "Root";
-  DomainsResendMailParamsMailPrefixEnum["WebMaster"] = "WebMaster";
-  DomainsResendMailParamsMailPrefixEnum["PostMaster"] = "PostMaster";
+  DomainsResendMailParamsMailPrefixEnum['Admin'] = 'Admin';
+  DomainsResendMailParamsMailPrefixEnum['Administrator'] = 'Administrator';
+  DomainsResendMailParamsMailPrefixEnum['HostMaster'] = 'HostMaster';
+  DomainsResendMailParamsMailPrefixEnum['Root'] = 'Root';
+  DomainsResendMailParamsMailPrefixEnum['WebMaster'] = 'WebMaster';
+  DomainsResendMailParamsMailPrefixEnum['PostMaster'] = 'PostMaster';
 })(
   DomainsResendMailParamsMailPrefixEnum ||
-    (DomainsResendMailParamsMailPrefixEnum = {}),
+    (DomainsResendMailParamsMailPrefixEnum = {})
 );
 export var DomainsRegisterParamsRegistrationTypeEnum;
 (function (DomainsRegisterParamsRegistrationTypeEnum) {
-  DomainsRegisterParamsRegistrationTypeEnum["Email"] = "Email";
-  DomainsRegisterParamsRegistrationTypeEnum["Html"] = "Html";
+  DomainsRegisterParamsRegistrationTypeEnum['Email'] = 'Email';
+  DomainsRegisterParamsRegistrationTypeEnum['Html'] = 'Html';
 })(
   DomainsRegisterParamsRegistrationTypeEnum ||
-    (DomainsRegisterParamsRegistrationTypeEnum = {}),
+    (DomainsRegisterParamsRegistrationTypeEnum = {})
 );
 export var DomainsRegisterParamsEnum;
 (function (DomainsRegisterParamsEnum) {
-  DomainsRegisterParamsEnum["Email"] = "Email";
-  DomainsRegisterParamsEnum["Html"] = "Html";
+  DomainsRegisterParamsEnum['Email'] = 'Email';
+  DomainsRegisterParamsEnum['Html'] = 'Html';
 })(DomainsRegisterParamsEnum || (DomainsRegisterParamsEnum = {}));
 /** Uploaded File type (required for zip files only) */
 export var FileUploadPostParamsFileTypeEnum;
 (function (FileUploadPostParamsFileTypeEnum) {
-  FileUploadPostParamsFileTypeEnum["ZippedXmlDast"] = "ZippedXmlDast";
-  FileUploadPostParamsFileTypeEnum["SourceCodeArchive"] = "SourceCodeArchive";
-  FileUploadPostParamsFileTypeEnum["DastPostmanCollectionJson"] =
-    "DastPostmanCollectionJson";
-  FileUploadPostParamsFileTypeEnum["DastPostmanCollectionZip"] =
-    "DastPostmanCollectionZip";
-  FileUploadPostParamsFileTypeEnum["AsencEncryptionArchive"] =
-    "AsencEncryptionArchive";
-  FileUploadPostParamsFileTypeEnum["DastOpenAPIFile"] = "DastOpenAPIFile";
-  FileUploadPostParamsFileTypeEnum["SbomSpdx"] = "SbomSpdx";
+  FileUploadPostParamsFileTypeEnum['ZippedXmlDast'] = 'ZippedXmlDast';
+  FileUploadPostParamsFileTypeEnum['SourceCodeArchive'] = 'SourceCodeArchive';
+  FileUploadPostParamsFileTypeEnum['DastPostmanCollectionJson'] =
+    'DastPostmanCollectionJson';
+  FileUploadPostParamsFileTypeEnum['DastPostmanCollectionZip'] =
+    'DastPostmanCollectionZip';
+  FileUploadPostParamsFileTypeEnum['AsencEncryptionArchive'] =
+    'AsencEncryptionArchive';
+  FileUploadPostParamsFileTypeEnum['DastOpenAPIFile'] = 'DastOpenAPIFile';
+  FileUploadPostParamsFileTypeEnum['SbomSpdx'] = 'SbomSpdx';
 })(FileUploadPostParamsFileTypeEnum || (FileUploadPostParamsFileTypeEnum = {}));
 /**
  * Determine which policies will be applied for filtering in non compliant issues
@@ -3107,25 +3847,25 @@ export var FileUploadPostParamsFileTypeEnum;
  */
 export var FixGroupsGetParamsApplyPoliciesEnum;
 (function (FixGroupsGetParamsApplyPoliciesEnum) {
-  FixGroupsGetParamsApplyPoliciesEnum["None"] = "None";
-  FixGroupsGetParamsApplyPoliciesEnum["All"] = "All";
-  FixGroupsGetParamsApplyPoliciesEnum["Select"] = "Select";
+  FixGroupsGetParamsApplyPoliciesEnum['None'] = 'None';
+  FixGroupsGetParamsApplyPoliciesEnum['All'] = 'All';
+  FixGroupsGetParamsApplyPoliciesEnum['Select'] = 'Select';
 })(
   FixGroupsGetParamsApplyPoliciesEnum ||
-    (FixGroupsGetParamsApplyPoliciesEnum = {}),
+    (FixGroupsGetParamsApplyPoliciesEnum = {})
 );
 /** The Scope of the fix group */
 export var FixGroupsGetParamsScopeEnum;
 (function (FixGroupsGetParamsScopeEnum) {
-  FixGroupsGetParamsScopeEnum["Application"] = "Application";
-  FixGroupsGetParamsScopeEnum["Scan"] = "Scan";
-  FixGroupsGetParamsScopeEnum["ScanExecution"] = "ScanExecution";
+  FixGroupsGetParamsScopeEnum['Application'] = 'Application';
+  FixGroupsGetParamsScopeEnum['Scan'] = 'Scan';
+  FixGroupsGetParamsScopeEnum['ScanExecution'] = 'ScanExecution';
 })(FixGroupsGetParamsScopeEnum || (FixGroupsGetParamsScopeEnum = {}));
 export var FixGroupsGetParamsEnum;
 (function (FixGroupsGetParamsEnum) {
-  FixGroupsGetParamsEnum["Application"] = "Application";
-  FixGroupsGetParamsEnum["Scan"] = "Scan";
-  FixGroupsGetParamsEnum["ScanExecution"] = "ScanExecution";
+  FixGroupsGetParamsEnum['Application'] = 'Application';
+  FixGroupsGetParamsEnum['Scan'] = 'Scan';
+  FixGroupsGetParamsEnum['ScanExecution'] = 'ScanExecution';
 })(FixGroupsGetParamsEnum || (FixGroupsGetParamsEnum = {}));
 /**
  * Determine which policies will be applied for filtering in non compliant issues
@@ -3133,25 +3873,25 @@ export var FixGroupsGetParamsEnum;
  */
 export var FixGroupsUpdateParamsApplyPoliciesEnum;
 (function (FixGroupsUpdateParamsApplyPoliciesEnum) {
-  FixGroupsUpdateParamsApplyPoliciesEnum["None"] = "None";
-  FixGroupsUpdateParamsApplyPoliciesEnum["All"] = "All";
-  FixGroupsUpdateParamsApplyPoliciesEnum["Select"] = "Select";
+  FixGroupsUpdateParamsApplyPoliciesEnum['None'] = 'None';
+  FixGroupsUpdateParamsApplyPoliciesEnum['All'] = 'All';
+  FixGroupsUpdateParamsApplyPoliciesEnum['Select'] = 'Select';
 })(
   FixGroupsUpdateParamsApplyPoliciesEnum ||
-    (FixGroupsUpdateParamsApplyPoliciesEnum = {}),
+    (FixGroupsUpdateParamsApplyPoliciesEnum = {})
 );
 /** The Scope of the fix group */
 export var FixGroupsUpdateParamsScopeEnum;
 (function (FixGroupsUpdateParamsScopeEnum) {
-  FixGroupsUpdateParamsScopeEnum["Application"] = "Application";
-  FixGroupsUpdateParamsScopeEnum["Scan"] = "Scan";
-  FixGroupsUpdateParamsScopeEnum["ScanExecution"] = "ScanExecution";
+  FixGroupsUpdateParamsScopeEnum['Application'] = 'Application';
+  FixGroupsUpdateParamsScopeEnum['Scan'] = 'Scan';
+  FixGroupsUpdateParamsScopeEnum['ScanExecution'] = 'ScanExecution';
 })(FixGroupsUpdateParamsScopeEnum || (FixGroupsUpdateParamsScopeEnum = {}));
 export var FixGroupsUpdateParamsEnum;
 (function (FixGroupsUpdateParamsEnum) {
-  FixGroupsUpdateParamsEnum["Application"] = "Application";
-  FixGroupsUpdateParamsEnum["Scan"] = "Scan";
-  FixGroupsUpdateParamsEnum["ScanExecution"] = "ScanExecution";
+  FixGroupsUpdateParamsEnum['Application'] = 'Application';
+  FixGroupsUpdateParamsEnum['Scan'] = 'Scan';
+  FixGroupsUpdateParamsEnum['ScanExecution'] = 'ScanExecution';
 })(FixGroupsUpdateParamsEnum || (FixGroupsUpdateParamsEnum = {}));
 /**
  * Determine which policies will be applied for filtering in non compliant issues
@@ -3159,22 +3899,22 @@ export var FixGroupsUpdateParamsEnum;
  */
 export var IssuesGetParamsApplyPoliciesEnum;
 (function (IssuesGetParamsApplyPoliciesEnum) {
-  IssuesGetParamsApplyPoliciesEnum["None"] = "None";
-  IssuesGetParamsApplyPoliciesEnum["All"] = "All";
-  IssuesGetParamsApplyPoliciesEnum["Select"] = "Select";
+  IssuesGetParamsApplyPoliciesEnum['None'] = 'None';
+  IssuesGetParamsApplyPoliciesEnum['All'] = 'All';
+  IssuesGetParamsApplyPoliciesEnum['Select'] = 'Select';
 })(IssuesGetParamsApplyPoliciesEnum || (IssuesGetParamsApplyPoliciesEnum = {}));
 /** The Scope of the issues */
 export var IssuesGetParamsScopeEnum;
 (function (IssuesGetParamsScopeEnum) {
-  IssuesGetParamsScopeEnum["Application"] = "Application";
-  IssuesGetParamsScopeEnum["Scan"] = "Scan";
-  IssuesGetParamsScopeEnum["ScanExecution"] = "ScanExecution";
+  IssuesGetParamsScopeEnum['Application'] = 'Application';
+  IssuesGetParamsScopeEnum['Scan'] = 'Scan';
+  IssuesGetParamsScopeEnum['ScanExecution'] = 'ScanExecution';
 })(IssuesGetParamsScopeEnum || (IssuesGetParamsScopeEnum = {}));
 export var IssuesGetParamsEnum;
 (function (IssuesGetParamsEnum) {
-  IssuesGetParamsEnum["Application"] = "Application";
-  IssuesGetParamsEnum["Scan"] = "Scan";
-  IssuesGetParamsEnum["ScanExecution"] = "ScanExecution";
+  IssuesGetParamsEnum['Application'] = 'Application';
+  IssuesGetParamsEnum['Scan'] = 'Scan';
+  IssuesGetParamsEnum['ScanExecution'] = 'ScanExecution';
 })(IssuesGetParamsEnum || (IssuesGetParamsEnum = {}));
 /**
  * Determine which policies will be applied for filtering in non compliant issues
@@ -3182,207 +3922,207 @@ export var IssuesGetParamsEnum;
  */
 export var IssuesUpdateFilteredIssuesParamsApplyPoliciesEnum;
 (function (IssuesUpdateFilteredIssuesParamsApplyPoliciesEnum) {
-  IssuesUpdateFilteredIssuesParamsApplyPoliciesEnum["None"] = "None";
-  IssuesUpdateFilteredIssuesParamsApplyPoliciesEnum["All"] = "All";
-  IssuesUpdateFilteredIssuesParamsApplyPoliciesEnum["Select"] = "Select";
+  IssuesUpdateFilteredIssuesParamsApplyPoliciesEnum['None'] = 'None';
+  IssuesUpdateFilteredIssuesParamsApplyPoliciesEnum['All'] = 'All';
+  IssuesUpdateFilteredIssuesParamsApplyPoliciesEnum['Select'] = 'Select';
 })(
   IssuesUpdateFilteredIssuesParamsApplyPoliciesEnum ||
-    (IssuesUpdateFilteredIssuesParamsApplyPoliciesEnum = {}),
+    (IssuesUpdateFilteredIssuesParamsApplyPoliciesEnum = {})
 );
 /** The Scope of the issues */
 export var IssuesUpdateFilteredIssuesParamsScopeEnum;
 (function (IssuesUpdateFilteredIssuesParamsScopeEnum) {
-  IssuesUpdateFilteredIssuesParamsScopeEnum["Application"] = "Application";
-  IssuesUpdateFilteredIssuesParamsScopeEnum["Scan"] = "Scan";
-  IssuesUpdateFilteredIssuesParamsScopeEnum["ScanExecution"] = "ScanExecution";
+  IssuesUpdateFilteredIssuesParamsScopeEnum['Application'] = 'Application';
+  IssuesUpdateFilteredIssuesParamsScopeEnum['Scan'] = 'Scan';
+  IssuesUpdateFilteredIssuesParamsScopeEnum['ScanExecution'] = 'ScanExecution';
 })(
   IssuesUpdateFilteredIssuesParamsScopeEnum ||
-    (IssuesUpdateFilteredIssuesParamsScopeEnum = {}),
+    (IssuesUpdateFilteredIssuesParamsScopeEnum = {})
 );
 export var IssuesUpdateFilteredIssuesParamsEnum;
 (function (IssuesUpdateFilteredIssuesParamsEnum) {
-  IssuesUpdateFilteredIssuesParamsEnum["Application"] = "Application";
-  IssuesUpdateFilteredIssuesParamsEnum["Scan"] = "Scan";
-  IssuesUpdateFilteredIssuesParamsEnum["ScanExecution"] = "ScanExecution";
+  IssuesUpdateFilteredIssuesParamsEnum['Application'] = 'Application';
+  IssuesUpdateFilteredIssuesParamsEnum['Scan'] = 'Scan';
+  IssuesUpdateFilteredIssuesParamsEnum['ScanExecution'] = 'ScanExecution';
 })(
   IssuesUpdateFilteredIssuesParamsEnum ||
-    (IssuesUpdateFilteredIssuesParamsEnum = {}),
+    (IssuesUpdateFilteredIssuesParamsEnum = {})
 );
 /** script framework */
 export var IssuesReplayScriptParamsFrameworkEnum;
 (function (IssuesReplayScriptParamsFrameworkEnum) {
-  IssuesReplayScriptParamsFrameworkEnum["Python"] = "Python";
-  IssuesReplayScriptParamsFrameworkEnum["JsConsole"] = "JsConsole";
+  IssuesReplayScriptParamsFrameworkEnum['Python'] = 'Python';
+  IssuesReplayScriptParamsFrameworkEnum['JsConsole'] = 'JsConsole';
 })(
   IssuesReplayScriptParamsFrameworkEnum ||
-    (IssuesReplayScriptParamsFrameworkEnum = {}),
+    (IssuesReplayScriptParamsFrameworkEnum = {})
 );
 /** Presence platform */
 export var PresencesDownloadPresenceWithKeyParamsPlatformEnum;
 (function (PresencesDownloadPresenceWithKeyParamsPlatformEnum) {
-  PresencesDownloadPresenceWithKeyParamsPlatformEnum["WinX64"] = "win_x64";
-  PresencesDownloadPresenceWithKeyParamsPlatformEnum["LinuxX64"] = "linux_x64";
-  PresencesDownloadPresenceWithKeyParamsPlatformEnum["OsxX64"] = "osx_x64";
+  PresencesDownloadPresenceWithKeyParamsPlatformEnum['WinX64'] = 'win_x64';
+  PresencesDownloadPresenceWithKeyParamsPlatformEnum['LinuxX64'] = 'linux_x64';
+  PresencesDownloadPresenceWithKeyParamsPlatformEnum['OsxX64'] = 'osx_x64';
 })(
   PresencesDownloadPresenceWithKeyParamsPlatformEnum ||
-    (PresencesDownloadPresenceWithKeyParamsPlatformEnum = {}),
+    (PresencesDownloadPresenceWithKeyParamsPlatformEnum = {})
 );
 export var PresencesDownloadPresenceWithKeyParamsEnum;
 (function (PresencesDownloadPresenceWithKeyParamsEnum) {
-  PresencesDownloadPresenceWithKeyParamsEnum["WinX64"] = "win_x64";
-  PresencesDownloadPresenceWithKeyParamsEnum["LinuxX64"] = "linux_x64";
-  PresencesDownloadPresenceWithKeyParamsEnum["OsxX64"] = "osx_x64";
+  PresencesDownloadPresenceWithKeyParamsEnum['WinX64'] = 'win_x64';
+  PresencesDownloadPresenceWithKeyParamsEnum['LinuxX64'] = 'linux_x64';
+  PresencesDownloadPresenceWithKeyParamsEnum['OsxX64'] = 'osx_x64';
 })(
   PresencesDownloadPresenceWithKeyParamsEnum ||
-    (PresencesDownloadPresenceWithKeyParamsEnum = {}),
+    (PresencesDownloadPresenceWithKeyParamsEnum = {})
 );
 export var ReportsCreateIssuesReportParamsScopeEnum;
 (function (ReportsCreateIssuesReportParamsScopeEnum) {
-  ReportsCreateIssuesReportParamsScopeEnum["Application"] = "Application";
-  ReportsCreateIssuesReportParamsScopeEnum["Scan"] = "Scan";
-  ReportsCreateIssuesReportParamsScopeEnum["ScanExecution"] = "ScanExecution";
+  ReportsCreateIssuesReportParamsScopeEnum['Application'] = 'Application';
+  ReportsCreateIssuesReportParamsScopeEnum['Scan'] = 'Scan';
+  ReportsCreateIssuesReportParamsScopeEnum['ScanExecution'] = 'ScanExecution';
 })(
   ReportsCreateIssuesReportParamsScopeEnum ||
-    (ReportsCreateIssuesReportParamsScopeEnum = {}),
+    (ReportsCreateIssuesReportParamsScopeEnum = {})
 );
 export var ReportsCreateIssuesReportParamsEnum;
 (function (ReportsCreateIssuesReportParamsEnum) {
-  ReportsCreateIssuesReportParamsEnum["Application"] = "Application";
-  ReportsCreateIssuesReportParamsEnum["Scan"] = "Scan";
-  ReportsCreateIssuesReportParamsEnum["ScanExecution"] = "ScanExecution";
+  ReportsCreateIssuesReportParamsEnum['Application'] = 'Application';
+  ReportsCreateIssuesReportParamsEnum['Scan'] = 'Scan';
+  ReportsCreateIssuesReportParamsEnum['ScanExecution'] = 'ScanExecution';
 })(
   ReportsCreateIssuesReportParamsEnum ||
-    (ReportsCreateIssuesReportParamsEnum = {}),
+    (ReportsCreateIssuesReportParamsEnum = {})
 );
 export var ReportsCreateSecurityReportParamsScopeEnum;
 (function (ReportsCreateSecurityReportParamsScopeEnum) {
-  ReportsCreateSecurityReportParamsScopeEnum["Application"] = "Application";
-  ReportsCreateSecurityReportParamsScopeEnum["Scan"] = "Scan";
-  ReportsCreateSecurityReportParamsScopeEnum["ScanExecution"] = "ScanExecution";
+  ReportsCreateSecurityReportParamsScopeEnum['Application'] = 'Application';
+  ReportsCreateSecurityReportParamsScopeEnum['Scan'] = 'Scan';
+  ReportsCreateSecurityReportParamsScopeEnum['ScanExecution'] = 'ScanExecution';
 })(
   ReportsCreateSecurityReportParamsScopeEnum ||
-    (ReportsCreateSecurityReportParamsScopeEnum = {}),
+    (ReportsCreateSecurityReportParamsScopeEnum = {})
 );
 export var ReportsCreateSecurityReportParamsEnum;
 (function (ReportsCreateSecurityReportParamsEnum) {
-  ReportsCreateSecurityReportParamsEnum["Application"] = "Application";
-  ReportsCreateSecurityReportParamsEnum["Scan"] = "Scan";
-  ReportsCreateSecurityReportParamsEnum["ScanExecution"] = "ScanExecution";
+  ReportsCreateSecurityReportParamsEnum['Application'] = 'Application';
+  ReportsCreateSecurityReportParamsEnum['Scan'] = 'Scan';
+  ReportsCreateSecurityReportParamsEnum['ScanExecution'] = 'ScanExecution';
 })(
   ReportsCreateSecurityReportParamsEnum ||
-    (ReportsCreateSecurityReportParamsEnum = {}),
+    (ReportsCreateSecurityReportParamsEnum = {})
 );
 export var ReportsCreateRegulationReportParamsScopeEnum;
 (function (ReportsCreateRegulationReportParamsScopeEnum) {
-  ReportsCreateRegulationReportParamsScopeEnum["Application"] = "Application";
-  ReportsCreateRegulationReportParamsScopeEnum["Scan"] = "Scan";
-  ReportsCreateRegulationReportParamsScopeEnum["ScanExecution"] =
-    "ScanExecution";
+  ReportsCreateRegulationReportParamsScopeEnum['Application'] = 'Application';
+  ReportsCreateRegulationReportParamsScopeEnum['Scan'] = 'Scan';
+  ReportsCreateRegulationReportParamsScopeEnum['ScanExecution'] =
+    'ScanExecution';
 })(
   ReportsCreateRegulationReportParamsScopeEnum ||
-    (ReportsCreateRegulationReportParamsScopeEnum = {}),
+    (ReportsCreateRegulationReportParamsScopeEnum = {})
 );
 export var ReportsCreateRegulationReportParamsEnum;
 (function (ReportsCreateRegulationReportParamsEnum) {
-  ReportsCreateRegulationReportParamsEnum["Application"] = "Application";
-  ReportsCreateRegulationReportParamsEnum["Scan"] = "Scan";
-  ReportsCreateRegulationReportParamsEnum["ScanExecution"] = "ScanExecution";
+  ReportsCreateRegulationReportParamsEnum['Application'] = 'Application';
+  ReportsCreateRegulationReportParamsEnum['Scan'] = 'Scan';
+  ReportsCreateRegulationReportParamsEnum['ScanExecution'] = 'ScanExecution';
 })(
   ReportsCreateRegulationReportParamsEnum ||
-    (ReportsCreateRegulationReportParamsEnum = {}),
+    (ReportsCreateRegulationReportParamsEnum = {})
 );
 export var ReportsCreateLicenseReportParamsScopeEnum;
 (function (ReportsCreateLicenseReportParamsScopeEnum) {
-  ReportsCreateLicenseReportParamsScopeEnum["Application"] = "Application";
-  ReportsCreateLicenseReportParamsScopeEnum["Scan"] = "Scan";
-  ReportsCreateLicenseReportParamsScopeEnum["ScanExecution"] = "ScanExecution";
+  ReportsCreateLicenseReportParamsScopeEnum['Application'] = 'Application';
+  ReportsCreateLicenseReportParamsScopeEnum['Scan'] = 'Scan';
+  ReportsCreateLicenseReportParamsScopeEnum['ScanExecution'] = 'ScanExecution';
 })(
   ReportsCreateLicenseReportParamsScopeEnum ||
-    (ReportsCreateLicenseReportParamsScopeEnum = {}),
+    (ReportsCreateLicenseReportParamsScopeEnum = {})
 );
 export var ReportsCreateLicenseReportParamsEnum;
 (function (ReportsCreateLicenseReportParamsEnum) {
-  ReportsCreateLicenseReportParamsEnum["Application"] = "Application";
-  ReportsCreateLicenseReportParamsEnum["Scan"] = "Scan";
-  ReportsCreateLicenseReportParamsEnum["ScanExecution"] = "ScanExecution";
+  ReportsCreateLicenseReportParamsEnum['Application'] = 'Application';
+  ReportsCreateLicenseReportParamsEnum['Scan'] = 'Scan';
+  ReportsCreateLicenseReportParamsEnum['ScanExecution'] = 'ScanExecution';
 })(
   ReportsCreateLicenseReportParamsEnum ||
-    (ReportsCreateLicenseReportParamsEnum = {}),
+    (ReportsCreateLicenseReportParamsEnum = {})
 );
 export var ReportsGetArticleParamsModeEnum;
 (function (ReportsGetArticleParamsModeEnum) {
-  ReportsGetArticleParamsModeEnum["Light"] = "light";
-  ReportsGetArticleParamsModeEnum["Dark"] = "dark";
+  ReportsGetArticleParamsModeEnum['Light'] = 'light';
+  ReportsGetArticleParamsModeEnum['Dark'] = 'dark';
 })(ReportsGetArticleParamsModeEnum || (ReportsGetArticleParamsModeEnum = {}));
 /** Operation */
 export var ScansExecutionActionParamsOperationEnum;
 (function (ScansExecutionActionParamsOperationEnum) {
-  ScansExecutionActionParamsOperationEnum["Pause"] = "Pause";
-  ScansExecutionActionParamsOperationEnum["Resume"] = "Resume";
-  ScansExecutionActionParamsOperationEnum["Stop"] = "Stop";
+  ScansExecutionActionParamsOperationEnum['Pause'] = 'Pause';
+  ScansExecutionActionParamsOperationEnum['Resume'] = 'Resume';
+  ScansExecutionActionParamsOperationEnum['Stop'] = 'Stop';
 })(
   ScansExecutionActionParamsOperationEnum ||
-    (ScansExecutionActionParamsOperationEnum = {}),
+    (ScansExecutionActionParamsOperationEnum = {})
 );
 export var ScansExecutionActionParamsEnum;
 (function (ScansExecutionActionParamsEnum) {
-  ScansExecutionActionParamsEnum["Pause"] = "Pause";
-  ScansExecutionActionParamsEnum["Resume"] = "Resume";
-  ScansExecutionActionParamsEnum["Stop"] = "Stop";
+  ScansExecutionActionParamsEnum['Pause'] = 'Pause';
+  ScansExecutionActionParamsEnum['Resume'] = 'Resume';
+  ScansExecutionActionParamsEnum['Stop'] = 'Stop';
 })(ScansExecutionActionParamsEnum || (ScansExecutionActionParamsEnum = {}));
 export var ReposGetRepoSignatureParamsPlatformEnum;
 (function (ReposGetRepoSignatureParamsPlatformEnum) {
-  ReposGetRepoSignatureParamsPlatformEnum["GitHub"] = "GitHub";
+  ReposGetRepoSignatureParamsPlatformEnum['GitHub'] = 'GitHub';
 })(
   ReposGetRepoSignatureParamsPlatformEnum ||
-    (ReposGetRepoSignatureParamsPlatformEnum = {}),
+    (ReposGetRepoSignatureParamsPlatformEnum = {})
 );
 export var ReposGetRepoSignatureParamsEnum;
 (function (ReposGetRepoSignatureParamsEnum) {
-  ReposGetRepoSignatureParamsEnum["GitHub"] = "GitHub";
+  ReposGetRepoSignatureParamsEnum['GitHub'] = 'GitHub';
 })(ReposGetRepoSignatureParamsEnum || (ReposGetRepoSignatureParamsEnum = {}));
 /** Platform - osx_x64 is not yet supported !! */
 export var ToolsGetPresenceV2ParamsPlatformEnum;
 (function (ToolsGetPresenceV2ParamsPlatformEnum) {
-  ToolsGetPresenceV2ParamsPlatformEnum["WinX64"] = "win_x64";
-  ToolsGetPresenceV2ParamsPlatformEnum["LinuxX64"] = "linux_x64";
-  ToolsGetPresenceV2ParamsPlatformEnum["OsxX64"] = "osx_x64";
+  ToolsGetPresenceV2ParamsPlatformEnum['WinX64'] = 'win_x64';
+  ToolsGetPresenceV2ParamsPlatformEnum['LinuxX64'] = 'linux_x64';
+  ToolsGetPresenceV2ParamsPlatformEnum['OsxX64'] = 'osx_x64';
 })(
   ToolsGetPresenceV2ParamsPlatformEnum ||
-    (ToolsGetPresenceV2ParamsPlatformEnum = {}),
+    (ToolsGetPresenceV2ParamsPlatformEnum = {})
 );
 /** Platform */
 export var ToolsGetTrafficRecorderParamsPlatformEnum;
 (function (ToolsGetTrafficRecorderParamsPlatformEnum) {
-  ToolsGetTrafficRecorderParamsPlatformEnum["WinX64"] = "win_x64";
-  ToolsGetTrafficRecorderParamsPlatformEnum["LinuxX64"] = "linux_x64";
+  ToolsGetTrafficRecorderParamsPlatformEnum['WinX64'] = 'win_x64';
+  ToolsGetTrafficRecorderParamsPlatformEnum['LinuxX64'] = 'linux_x64';
 })(
   ToolsGetTrafficRecorderParamsPlatformEnum ||
-    (ToolsGetTrafficRecorderParamsPlatformEnum = {}),
+    (ToolsGetTrafficRecorderParamsPlatformEnum = {})
 );
 export var ToolsGetTrafficRecorderParamsEnum;
 (function (ToolsGetTrafficRecorderParamsEnum) {
-  ToolsGetTrafficRecorderParamsEnum["WinX64"] = "win_x64";
-  ToolsGetTrafficRecorderParamsEnum["LinuxX64"] = "linux_x64";
+  ToolsGetTrafficRecorderParamsEnum['WinX64'] = 'win_x64';
+  ToolsGetTrafficRecorderParamsEnum['LinuxX64'] = 'linux_x64';
 })(
-  ToolsGetTrafficRecorderParamsEnum || (ToolsGetTrafficRecorderParamsEnum = {}),
+  ToolsGetTrafficRecorderParamsEnum || (ToolsGetTrafficRecorderParamsEnum = {})
 );
 /** Platform */
 export var ToolsGetTrafficRecorderVersionParamsPlatformEnum;
 (function (ToolsGetTrafficRecorderVersionParamsPlatformEnum) {
-  ToolsGetTrafficRecorderVersionParamsPlatformEnum["WinX64"] = "win_x64";
-  ToolsGetTrafficRecorderVersionParamsPlatformEnum["LinuxX64"] = "linux_x64";
+  ToolsGetTrafficRecorderVersionParamsPlatformEnum['WinX64'] = 'win_x64';
+  ToolsGetTrafficRecorderVersionParamsPlatformEnum['LinuxX64'] = 'linux_x64';
 })(
   ToolsGetTrafficRecorderVersionParamsPlatformEnum ||
-    (ToolsGetTrafficRecorderVersionParamsPlatformEnum = {}),
+    (ToolsGetTrafficRecorderVersionParamsPlatformEnum = {})
 );
 export var ToolsGetTrafficRecorderVersionParamsEnum;
 (function (ToolsGetTrafficRecorderVersionParamsEnum) {
-  ToolsGetTrafficRecorderVersionParamsEnum["WinX64"] = "win_x64";
-  ToolsGetTrafficRecorderVersionParamsEnum["LinuxX64"] = "linux_x64";
+  ToolsGetTrafficRecorderVersionParamsEnum['WinX64'] = 'win_x64';
+  ToolsGetTrafficRecorderVersionParamsEnum['LinuxX64'] = 'linux_x64';
 })(
   ToolsGetTrafficRecorderVersionParamsEnum ||
-    (ToolsGetTrafficRecorderVersionParamsEnum = {}),
+    (ToolsGetTrafficRecorderVersionParamsEnum = {})
 );
 /**
  * Agent type (Java or DotNet)
@@ -3390,45 +4130,45 @@ export var ToolsGetTrafficRecorderVersionParamsEnum;
  */
 export var ToolsDownloadIastAgentParamsTypeEnum;
 (function (ToolsDownloadIastAgentParamsTypeEnum) {
-  ToolsDownloadIastAgentParamsTypeEnum["Java"] = "Java";
-  ToolsDownloadIastAgentParamsTypeEnum["DotNet"] = "DotNet";
-  ToolsDownloadIastAgentParamsTypeEnum["PhpWindows"] = "PhpWindows";
-  ToolsDownloadIastAgentParamsTypeEnum["PhpRedHat"] = "PhpRedHat";
-  ToolsDownloadIastAgentParamsTypeEnum["PhpUbuntu"] = "PhpUbuntu";
-  ToolsDownloadIastAgentParamsTypeEnum["Kubernetes"] = "Kubernetes";
+  ToolsDownloadIastAgentParamsTypeEnum['Java'] = 'Java';
+  ToolsDownloadIastAgentParamsTypeEnum['DotNet'] = 'DotNet';
+  ToolsDownloadIastAgentParamsTypeEnum['PhpWindows'] = 'PhpWindows';
+  ToolsDownloadIastAgentParamsTypeEnum['PhpRedHat'] = 'PhpRedHat';
+  ToolsDownloadIastAgentParamsTypeEnum['PhpUbuntu'] = 'PhpUbuntu';
+  ToolsDownloadIastAgentParamsTypeEnum['Kubernetes'] = 'Kubernetes';
 })(
   ToolsDownloadIastAgentParamsTypeEnum ||
-    (ToolsDownloadIastAgentParamsTypeEnum = {}),
+    (ToolsDownloadIastAgentParamsTypeEnum = {})
 );
 export var ToolsSaClientUtilByTypeParamsToolTypeEnum;
 (function (ToolsSaClientUtilByTypeParamsToolTypeEnum) {
-  ToolsSaClientUtilByTypeParamsToolTypeEnum["Win"] = "Win";
-  ToolsSaClientUtilByTypeParamsToolTypeEnum["Linux"] = "Linux";
-  ToolsSaClientUtilByTypeParamsToolTypeEnum["Mac"] = "Mac";
-  ToolsSaClientUtilByTypeParamsToolTypeEnum["WinGui"] = "WinGui";
-  ToolsSaClientUtilByTypeParamsToolTypeEnum["LinuxGui"] = "LinuxGui";
-  ToolsSaClientUtilByTypeParamsToolTypeEnum["MacGui"] = "MacGui";
+  ToolsSaClientUtilByTypeParamsToolTypeEnum['Win'] = 'Win';
+  ToolsSaClientUtilByTypeParamsToolTypeEnum['Linux'] = 'Linux';
+  ToolsSaClientUtilByTypeParamsToolTypeEnum['Mac'] = 'Mac';
+  ToolsSaClientUtilByTypeParamsToolTypeEnum['WinGui'] = 'WinGui';
+  ToolsSaClientUtilByTypeParamsToolTypeEnum['LinuxGui'] = 'LinuxGui';
+  ToolsSaClientUtilByTypeParamsToolTypeEnum['MacGui'] = 'MacGui';
 })(
   ToolsSaClientUtilByTypeParamsToolTypeEnum ||
-    (ToolsSaClientUtilByTypeParamsToolTypeEnum = {}),
+    (ToolsSaClientUtilByTypeParamsToolTypeEnum = {})
 );
 /** Scope of the association to delete */
 export var WebhooksDeleteAssociationParamsScopeEnum;
 (function (WebhooksDeleteAssociationParamsScopeEnum) {
-  WebhooksDeleteAssociationParamsScopeEnum["AssetGroup"] = "AssetGroup";
-  WebhooksDeleteAssociationParamsScopeEnum["Application"] = "Application";
+  WebhooksDeleteAssociationParamsScopeEnum['AssetGroup'] = 'AssetGroup';
+  WebhooksDeleteAssociationParamsScopeEnum['Application'] = 'Application';
 })(
   WebhooksDeleteAssociationParamsScopeEnum ||
-    (WebhooksDeleteAssociationParamsScopeEnum = {}),
+    (WebhooksDeleteAssociationParamsScopeEnum = {})
 );
-import axios from "axios";
+import axios from 'axios';
 export var ContentType;
 (function (ContentType) {
-  ContentType["Json"] = "application/json";
-  ContentType["JsonApi"] = "application/vnd.api+json";
-  ContentType["FormData"] = "multipart/form-data";
-  ContentType["UrlEncoded"] = "application/x-www-form-urlencoded";
-  ContentType["Text"] = "text/plain";
+  ContentType['Json'] = 'application/json';
+  ContentType['JsonApi'] = 'application/vnd.api+json';
+  ContentType['FormData'] = 'multipart/form-data';
+  ContentType['UrlEncoded'] = 'application/x-www-form-urlencoded';
+  ContentType['Text'] = 'text/plain';
 })(ContentType || (ContentType = {}));
 export class HttpClient {
   instance;
@@ -3439,7 +4179,7 @@ export class HttpClient {
   constructor({ securityWorker, secure, format, ...axiosConfig } = {}) {
     this.instance = axios.create({
       ...axiosConfig,
-      baseURL: axiosConfig.baseURL || "",
+      baseURL: axiosConfig.baseURL || '',
     });
     this.secure = secure;
     this.format = format;
@@ -3463,7 +4203,7 @@ export class HttpClient {
     };
   }
   stringifyFormItem(formItem) {
-    if (typeof formItem === "object" && formItem !== null) {
+    if (typeof formItem === 'object' && formItem !== null) {
       return JSON.stringify(formItem);
     } else {
       return `${formItem}`;
@@ -3480,7 +4220,7 @@ export class HttpClient {
         const isFileType = formItem instanceof Blob || formItem instanceof File;
         formData.append(
           key,
-          isFileType ? formItem : this.stringifyFormItem(formItem),
+          isFileType ? formItem : this.stringifyFormItem(formItem)
         );
       }
       return formData;
@@ -3488,7 +4228,7 @@ export class HttpClient {
   }
   request = async ({ secure, path, type, query, format, body, ...params }) => {
     const secureParams =
-      ((typeof secure === "boolean" ? secure : this.secure) &&
+      ((typeof secure === 'boolean' ? secure : this.secure) &&
         this.securityWorker &&
         (await this.securityWorker(this.securityData))) ||
       {};
@@ -3498,7 +4238,7 @@ export class HttpClient {
       type === ContentType.FormData &&
       body &&
       body !== null &&
-      typeof body === "object"
+      typeof body === 'object'
     ) {
       body = this.createFormData(body);
     }
@@ -3506,7 +4246,7 @@ export class HttpClient {
       type === ContentType.Text &&
       body &&
       body !== null &&
-      typeof body !== "string"
+      typeof body !== 'string'
     ) {
       body = JSON.stringify(body);
     }
@@ -3515,7 +4255,7 @@ export class HttpClient {
         ...requestParams,
         headers: {
           ...(requestParams.headers || {}),
-          ...(type ? { "Content-Type": type } : {}),
+          ...(type ? { 'Content-Type': type } : {}),
         },
         params: query,
         responseType: responseFormat,
@@ -3553,7 +4293,7 @@ export class Api {
     Account_Logout: (params = {}) =>
       this.http.request({
         path: `/api/v4/Account/Logout`,
-        method: "GET",
+        method: 'GET',
         secure: true,
         ...params,
       }),
@@ -3572,11 +4312,11 @@ export class Api {
     Account_ApiKeyLogin: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/Account/ApiKeyLogin`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -3593,9 +4333,9 @@ export class Api {
     Account_CreateApiKey: (params = {}) =>
       this.http.request({
         path: `/api/v4/Account/ApiKey`,
-        method: "POST",
+        method: 'POST',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -3613,9 +4353,9 @@ export class Api {
     Account_GetTenantInfo: (params = {}) =>
       this.http.request({
         path: `/api/v4/Account/TenantInfo`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -3634,11 +4374,11 @@ export class Api {
     Account_UpdateTenantInfo: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/Account/TenantInfo`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -3657,11 +4397,11 @@ export class Api {
     Account_InviteUsers: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/Account/InviteUsers`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -3681,10 +4421,10 @@ export class Api {
     Apps_Get: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/Apps`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -3703,11 +4443,11 @@ export class Api {
     Apps_Post: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/Apps`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -3726,7 +4466,7 @@ export class Api {
     Apps_Delete: (id, params = {}) =>
       this.http.request({
         path: `/api/v4/Apps/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
         secure: true,
         ...params,
       }),
@@ -3747,11 +4487,11 @@ export class Api {
     Apps_Update: (id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Apps/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -3771,7 +4511,7 @@ export class Api {
     Apps_Reset: (id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Apps/Reset/${id}`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
@@ -3791,10 +4531,10 @@ export class Api {
     Apps_GetAppCorrelationGroups: (id, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Apps/${id}/CorrelationGroups`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -3814,12 +4554,12 @@ export class Api {
     Apps_ImportFile: (data, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Apps/ImportFile`,
-        method: "POST",
+        method: 'POST',
         query: query,
         body: data,
         secure: true,
         type: ContentType.FormData,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -3839,10 +4579,10 @@ export class Api {
     Apps_GetAppPolicies: (appId, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Apps/${appId}/Policy`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -3861,11 +4601,11 @@ export class Api {
     Apps_AttachPolicy: (appId, policyId, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Apps/${appId}/Policy/${policyId}`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -3884,11 +4624,11 @@ export class Api {
     Apps_UpdatePolicy: (appId, policyId, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Apps/${appId}/Policy/${policyId}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -3907,7 +4647,7 @@ export class Api {
     Apps_DeletePolicyAssociation: (appId, policyId, params = {}) =>
       this.http.request({
         path: `/api/v4/Apps/${appId}/Policy/${policyId}`,
-        method: "DELETE",
+        method: 'DELETE',
         secure: true,
         ...params,
       }),
@@ -3928,10 +4668,10 @@ export class Api {
     AssetGroups_Get: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/AssetGroups`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -3951,11 +4691,11 @@ export class Api {
     AssetGroups_Post: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/AssetGroups`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -3975,7 +4715,7 @@ export class Api {
     AssetGroups_Delete: (id, query, params = {}) =>
       this.http.request({
         path: `/api/v4/AssetGroups/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
         query: query,
         secure: true,
         ...params,
@@ -3997,11 +4737,11 @@ export class Api {
     AssetGroups_Put: (id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/AssetGroups/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4021,11 +4761,11 @@ export class Api {
     AssetGroups_Move: (sourceId, destId, data, params = {}) =>
       this.http.request({
         path: `/api/v4/AssetGroups/MoveAssetGroupResources/${sourceId}/${destId}`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4045,10 +4785,10 @@ export class Api {
     Audits_Get: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/Audits`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4068,9 +4808,9 @@ export class Api {
     Audits_GetAdditionalData: (auditId, params = {}) =>
       this.http.request({
         path: `/api/v4/Audits/AdditionalData/${auditId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4086,10 +4826,10 @@ export class Api {
     BusinessUnits_Get: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/BusinessUnits`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4109,11 +4849,11 @@ export class Api {
     BusinessUnits_Create: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/BusinessUnits`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4131,7 +4871,7 @@ export class Api {
     BusinessUnits_Merge: (idToKeep, idToMerge, params = {}) =>
       this.http.request({
         path: `/api/v4/BusinessUnits/Merge/${idToKeep}/${idToMerge}`,
-        method: "POST",
+        method: 'POST',
         secure: true,
         ...params,
       }),
@@ -4150,7 +4890,7 @@ export class Api {
     BusinessUnits_Delete: (id, params = {}) =>
       this.http.request({
         path: `/api/v4/BusinessUnits/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
         secure: true,
         ...params,
       }),
@@ -4170,11 +4910,11 @@ export class Api {
     BusinessUnits_Update: (id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/BusinessUnits/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4192,14 +4932,14 @@ export class Api {
      * @response `409` `ErrorMessage` Conflict
      * @response `500` `ErrorMessage` Internal Server Error
      */
-    "/api/v4/CustomFields": (data, params = {}) =>
+    '/api/v4/CustomFields': (data, params = {}) =>
       this.http.request({
         path: `/api/v4/CustomFields`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4217,10 +4957,10 @@ export class Api {
      * @response `404` `ErrorMessage` Organization not found or no custom fields defined
      * @response `500` `ErrorMessage` Internal Server Error
      */
-    "/api/v4/CustomFields2": (params = {}) =>
+    '/api/v4/CustomFields2': (params = {}) =>
       this.http.request({
         path: `/api/v4/CustomFields`,
-        method: "GET",
+        method: 'GET',
         secure: true,
         ...params,
       }),
@@ -4238,10 +4978,10 @@ export class Api {
      * @response `409` `ErrorMessage` Conflict
      * @response `500` `ErrorMessage` Internal Server Error
      */
-    "/api/v4/CustomFields/{id}": (id, data, params = {}) =>
+    '/api/v4/CustomFields/{id}': (id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/CustomFields/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
@@ -4262,10 +5002,10 @@ export class Api {
      * @response `404` `ErrorMessage` Organization or custom field not found.
      * @response `500` `ErrorMessage` Internal Server Error.
      */
-    "/api/v4/CustomFields/{id}2": (id, params = {}) =>
+    '/api/v4/CustomFields/{id}2': (id, params = {}) =>
       this.http.request({
         path: `/api/v4/CustomFields/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
         secure: true,
         ...params,
       }),
@@ -4281,10 +5021,10 @@ export class Api {
      * @response `404` `ErrorMessage` Not Found
      * @response `500` `ErrorMessage` Internal Server Error
      */
-    "/api/v4/CustomFields/DeleteAllCustomFields": (params = {}) =>
+    '/api/v4/CustomFields/DeleteAllCustomFields': (params = {}) =>
       this.http.request({
         path: `/api/v4/CustomFields/DeleteAllCustomFields`,
-        method: "DELETE",
+        method: 'DELETE',
         secure: true,
         ...params,
       }),
@@ -4301,10 +5041,10 @@ export class Api {
     Domains_Get: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/Domains`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4323,11 +5063,11 @@ export class Api {
     Domains_Update: (id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Domains/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4348,11 +5088,11 @@ export class Api {
     Domains_Multiple_Delete: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/Domains/DeleteDomains`,
-        method: "DELETE",
+        method: 'DELETE',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4371,7 +5111,7 @@ export class Api {
     Domains_ResendMail: (id, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Domains/ResendMail/${id}`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
         ...params,
@@ -4392,7 +5132,7 @@ export class Api {
     Domains_DownloadFile: (id, params = {}) =>
       this.http.request({
         path: `/api/v4/Domains/DownloadFile/${id}`,
-        method: "POST",
+        method: 'POST',
         secure: true,
         ...params,
       }),
@@ -4412,11 +5152,11 @@ export class Api {
     Domains_Verify: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/Domains/Verify`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4432,7 +5172,7 @@ export class Api {
     Domains_Confirm: (verificationKey, params = {}) =>
       this.http.request({
         path: `/api/v4/Domains/Confirm/${verificationKey}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
         ...params,
       }),
@@ -4449,7 +5189,7 @@ export class Api {
     Domains_Register: (registrationType, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Domains/Register/${registrationType}`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
@@ -4470,12 +5210,12 @@ export class Api {
     Domains_Allow: (data, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Domains/Allow`,
-        method: "POST",
+        method: 'POST',
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4494,11 +5234,11 @@ export class Api {
     Domains_Block: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/Domains/Block`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4519,12 +5259,12 @@ export class Api {
     FileUpload_Post: (data, query, params = {}) =>
       this.http.request({
         path: `/api/v4/FileUpload`,
-        method: "POST",
+        method: 'POST',
         query: query,
         body: data,
         secure: true,
         type: ContentType.FormData,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4544,10 +5284,10 @@ export class Api {
     FixGroups_Get: (scope, scopeId, query, params = {}) =>
       this.http.request({
         path: `/api/v4/FixGroups/${scope}/${scopeId}`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4567,12 +5307,12 @@ export class Api {
     FixGroups_Update: (scope, scopeId, fixGroupId, data, query, params = {}) =>
       this.http.request({
         path: `/api/v4/FixGroups/${scope}/${scopeId}/${fixGroupId}`,
-        method: "PUT",
+        method: 'PUT',
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4592,10 +5332,10 @@ export class Api {
     FixGroups_GetComments: (fixGroupId, query, params = {}) =>
       this.http.request({
         path: `/api/v4/FixGroups/${fixGroupId}/Comments`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4615,10 +5355,10 @@ export class Api {
     Issues_Get: (scope, scopeId, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Issues/${scope}/${scopeId}`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4638,12 +5378,12 @@ export class Api {
     Issues_UpdateFilteredIssues: (scope, scopeId, data, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Issues/${scope}/${scopeId}`,
-        method: "PUT",
+        method: 'PUT',
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4662,10 +5402,10 @@ export class Api {
     Issues_GetIssue: (issueId, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Issues/${issueId}`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4685,10 +5425,10 @@ export class Api {
     Issues_GetIssueComments: (issueId, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Issues/${issueId}/Comments`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4708,10 +5448,10 @@ export class Api {
     Issues_IssueDetails: (issueId, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Issues/${issueId}/Details`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4731,10 +5471,10 @@ export class Api {
     Issues_GetIssueHistory: (issueId, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Issues/${issueId}/History`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4754,12 +5494,12 @@ export class Api {
     Issues_ImportIssues: (query, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Issues/ImportIssues`,
-        method: "POST",
+        method: 'POST',
         query: query,
         body: data,
         secure: true,
         type: ContentType.FormData,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4780,10 +5520,10 @@ export class Api {
     Issues_ReplayScript: (issueId, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Issues/${issueId}/ReplayScript`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4802,9 +5542,9 @@ export class Api {
     OrgSettings_GetReportCustomization: (params = {}) =>
       this.http.request({
         path: `/api/v4/OrgSettings/ReportCustomization`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4823,11 +5563,11 @@ export class Api {
     OrgSettings_UpdateReportCustomization: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/OrgSettings/ReportCustomization`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4847,10 +5587,10 @@ export class Api {
     Policies_Get: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/Policies`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4870,11 +5610,11 @@ export class Api {
     Policies_Post: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/Policies`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4891,11 +5631,11 @@ export class Api {
     Policies_Update: (id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Policies/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4912,7 +5652,7 @@ export class Api {
     Policies_Delete: (id, params = {}) =>
       this.http.request({
         path: `/api/v4/Policies/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
         secure: true,
         ...params,
       }),
@@ -4933,10 +5673,10 @@ export class Api {
     Presences_Get: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/Presences`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4956,11 +5696,11 @@ export class Api {
     Presences_Post: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/Presences`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -4979,7 +5719,7 @@ export class Api {
     Presences_Delete: (presenceId, params = {}) =>
       this.http.request({
         path: `/api/v4/Presences/${presenceId}`,
-        method: "DELETE",
+        method: 'DELETE',
         secure: true,
         ...params,
       }),
@@ -5000,7 +5740,7 @@ export class Api {
     Presences_Update: (presenceId, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Presences/${presenceId}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
@@ -5023,9 +5763,9 @@ export class Api {
     Presences_GenerateNewKey: (presenceId, params = {}) =>
       this.http.request({
         path: `/api/v4/Presences/${presenceId}/NewKey`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5045,9 +5785,9 @@ export class Api {
     Presences_DownloadPresenceWithKey: (presenceId, platform, params = {}) =>
       this.http.request({
         path: `/api/v4/Presences/${presenceId}/Download/${platform}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5064,10 +5804,10 @@ export class Api {
     Reports_Get: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/Reports`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5087,9 +5827,9 @@ export class Api {
     Reports_Download: (id, params = {}) =>
       this.http.request({
         path: `/api/v4/Reports/${id}/Download`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5109,11 +5849,11 @@ export class Api {
     Reports_CreateIssuesReport: (scope, id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Reports/Issues/${scope}/${id}`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5133,11 +5873,11 @@ export class Api {
     Reports_CreateSecurityReport: (scope, id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Reports/Security/${scope}/${id}`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5157,11 +5897,11 @@ export class Api {
     Reports_CreateRegulationReport: (scope, id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Reports/Regulation/${scope}/${id}`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5181,11 +5921,11 @@ export class Api {
     Reports_CreateLicenseReport: (scope, id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Reports/License/${scope}/${id}`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5205,11 +5945,11 @@ export class Api {
     Reports_CreateSbomReport: (scanExecutionId, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Reports/Sbom/${scanExecutionId}`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5229,7 +5969,7 @@ export class Api {
     Reports_Delete: (id, params = {}) =>
       this.http.request({
         path: `/api/v4/Reports/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
         secure: true,
         ...params,
       }),
@@ -5247,7 +5987,7 @@ export class Api {
     Reports_GetArticle: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/Reports/Article`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
         ...params,
@@ -5268,10 +6008,10 @@ export class Api {
     Roles_Get: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/Roles`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5291,11 +6031,11 @@ export class Api {
     Roles_Create: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/Roles`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5314,7 +6054,7 @@ export class Api {
     Roles_Delete: (id, params = {}) =>
       this.http.request({
         path: `/api/v4/Roles/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
         secure: true,
         ...params,
       }),
@@ -5334,11 +6074,11 @@ export class Api {
     Roles_Update: (id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Roles/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5358,10 +6098,10 @@ export class Api {
     Scans_Get: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5382,7 +6122,7 @@ export class Api {
     Scans_Update: (scanId, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/${scanId}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
@@ -5405,7 +6145,7 @@ export class Api {
     Scans_Delete: (scanId, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/${scanId}`,
-        method: "DELETE",
+        method: 'DELETE',
         query: query,
         secure: true,
         ...params,
@@ -5428,11 +6168,11 @@ export class Api {
     Scans_UpdateDastScan: (scanId, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/Dast/${scanId}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5448,9 +6188,9 @@ export class Api {
     Scans_GetDastScan: (scanId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/Dast/${scanId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5470,9 +6210,9 @@ export class Api {
     Scans_PromoteIssues: (scanId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/${scanId}/PromoteIssues`,
-        method: "POST",
+        method: 'POST',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5492,7 +6232,7 @@ export class Api {
     Scans_DeleteScanExecutions: (scanId, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/${scanId}/Executions`,
-        method: "DELETE",
+        method: 'DELETE',
         query: query,
         secure: true,
         ...params,
@@ -5515,11 +6255,11 @@ export class Api {
     Scans_Execute: (scanId, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/${scanId}/Executions`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5536,10 +6276,10 @@ export class Api {
     Scans_GetExecutions: (scanId, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/${scanId}/Executions`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5560,11 +6300,11 @@ export class Api {
     Scans_CreateSastScan: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/Sast`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5585,11 +6325,11 @@ export class Api {
     Scans_CreateScaScan: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/Sca`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5610,11 +6350,11 @@ export class Api {
     Scans_CreateIastScan: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/Iast`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5635,11 +6375,11 @@ export class Api {
     Scans_CreateDastScan: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/Dast`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5659,9 +6399,9 @@ export class Api {
     Scans_GetExecutionRawResults: (executionId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/ExecutionRawResults/${executionId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5681,9 +6421,9 @@ export class Api {
     Scans_GetExploreDataCounters: (executionId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/DastExploreDataCounters/${executionId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5703,10 +6443,10 @@ export class Api {
     Scans_GetScanLogs: (scanId, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/ScanLogs/${scanId}`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5727,9 +6467,9 @@ export class Api {
     Scans_GetLiveLog: (executionId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/LiveLog/${executionId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5750,10 +6490,10 @@ export class Api {
     Scans_GetLiveLogTail: (executionId, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/LiveLogTail/${executionId}`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5773,9 +6513,9 @@ export class Api {
     Scans_GetDastScanFile: (executionId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/DastScanFile/${executionId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5792,9 +6532,9 @@ export class Api {
     Scans_GetStaticScanExecution: (executionId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/StaticExecution/${executionId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5810,9 +6550,9 @@ export class Api {
     Scans_GetSastScanExecution: (executionId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/SastExecution/${executionId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5832,7 +6572,7 @@ export class Api {
     Scans_UpdateSastScanExecution: (executionId, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/SastExecution/${executionId}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
@@ -5852,9 +6592,9 @@ export class Api {
     Scans_GetDynamicScanExecution: (executionId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/DynamicExecution/${executionId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5870,9 +6610,9 @@ export class Api {
     Scans_GetDastExecution: (executionId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/DastExecution/${executionId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5888,9 +6628,9 @@ export class Api {
     Scans_GetScaScanExecution: (executionId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/ScaExecution/${executionId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5907,9 +6647,9 @@ export class Api {
     Scans_GetDynamicScan: (scanId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/Dynamic/${scanId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5926,9 +6666,9 @@ export class Api {
     Scans_GetStaticScan: (scanId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/Static/${scanId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5944,9 +6684,9 @@ export class Api {
     Scans_GetSastScan: (scanId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/Sast/${scanId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -5964,7 +6704,7 @@ export class Api {
     Scans_UpdateSastScan: (scanId, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/Sast/${scanId}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
@@ -5983,9 +6723,9 @@ export class Api {
     Scans_GetScaScan: (scanId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/Sca/${scanId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6003,7 +6743,7 @@ export class Api {
     Scans_UpdateScaScan: (scanId, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/Sca/${scanId}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
@@ -6024,7 +6764,7 @@ export class Api {
     Scans_UpdateIastScan: (scanId, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/Iast/${scanId}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
@@ -6046,7 +6786,7 @@ export class Api {
     Scans_UpdateIastScan_old: (scanId, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/UpdateIastScan/${scanId}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
@@ -6067,9 +6807,9 @@ export class Api {
     Scans_GenerateNewIastKey: (scanId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/NewIastKey/${scanId}`,
-        method: "POST",
+        method: 'POST',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6087,9 +6827,9 @@ export class Api {
     Scans_DownloadIastConfig: (scanId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/DownloadIastConfig/${scanId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6106,7 +6846,7 @@ export class Api {
     Scans_DeleteExecution: (executionId, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/Execution/${executionId}`,
-        method: "DELETE",
+        method: 'DELETE',
         query: query,
         secure: true,
         ...params,
@@ -6126,9 +6866,9 @@ export class Api {
     Scans_GetExecution: (executionId, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/Execution/${executionId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6144,7 +6884,7 @@ export class Api {
     Scans_ExecutionAction: (executionId, operation, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/Execution/${executionId}/${operation}`,
-        method: "PUT",
+        method: 'PUT',
         secure: true,
         ...params,
       }),
@@ -6166,11 +6906,11 @@ export class Api {
     Repos_GetRepoSignature: (platform, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Scans/RepoSignature/${platform}`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6190,10 +6930,10 @@ export class Api {
     ScanTemplates_Get: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/ScanTemplates`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6214,11 +6954,11 @@ export class Api {
     ScanTemplates_Create: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/ScanTemplates`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6237,9 +6977,9 @@ export class Api {
     ScanTemplates_GetScanTemplate: (scanTemplateId, params = {}) =>
       this.http.request({
         path: `/api/v4/ScanTemplates/${scanTemplateId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6258,11 +6998,11 @@ export class Api {
     ScanTemplates_Update: (scanTemplateId, data, params = {}) =>
       this.http.request({
         path: `/api/v4/ScanTemplates/${scanTemplateId}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6281,7 +7021,7 @@ export class Api {
     ScanTemplates_Delete: (scanTemplateId, params = {}) =>
       this.http.request({
         path: `/api/v4/ScanTemplates/${scanTemplateId}`,
-        method: "DELETE",
+        method: 'DELETE',
         secure: true,
         ...params,
       }),
@@ -6302,9 +7042,9 @@ export class Api {
     ScanTemplates_DownloadTemplateFile: (scanTemplateId, params = {}) =>
       this.http.request({
         path: `/api/v4/ScanTemplates/DownloadTemplateFile/${scanTemplateId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6324,9 +7064,9 @@ export class Api {
     ScanTemplates_GetDastConfiguration: (uploadedFileId, params = {}) =>
       this.http.request({
         path: `/api/v4/ScanTemplates/GetDastConfiguration/${uploadedFileId}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6346,10 +7086,10 @@ export class Api {
     TestPolicies_Get: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/TestPolicies`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6369,11 +7109,11 @@ export class Api {
     TestPolicies_Post: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/TestPolicies`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6390,11 +7130,11 @@ export class Api {
     TestPolicies_Update: (id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/TestPolicies/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6411,7 +7151,7 @@ export class Api {
     TestPolicies_Delete: (id, params = {}) =>
       this.http.request({
         path: `/api/v4/TestPolicies/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
         secure: true,
         ...params,
       }),
@@ -6429,9 +7169,9 @@ export class Api {
     TestPolicies_SetDefault: (id, params = {}) =>
       this.http.request({
         path: `/api/v4/TestPolicies/SetDefault/${id}`,
-        method: "POST",
+        method: 'POST',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6449,9 +7189,9 @@ export class Api {
     TestPolicies_Download: (id, params = {}) =>
       this.http.request({
         path: `/api/v4/TestPolicies/Download/${id}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6469,10 +7209,10 @@ export class Api {
     Tools_GetPresenceV2: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/Tools/PresenceV2`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6490,9 +7230,9 @@ export class Api {
     Tools_GetTrafficRecorder: (platform, params = {}) =>
       this.http.request({
         path: `/api/v4/Tools/TrafficRecorder/${platform}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6510,9 +7250,9 @@ export class Api {
     Tools_GetTrafficRecorderVersion: (platform, params = {}) =>
       this.http.request({
         path: `/api/v4/Tools/TrafficRecorderVersion/${platform}`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6530,10 +7270,10 @@ export class Api {
     Tools_DownloadIASTAgent: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/Tools/IastAgent`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6552,10 +7292,10 @@ export class Api {
     Tools_DownloadIASTAgentWithKey: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/Tools/IastAgentWithKey`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6574,10 +7314,10 @@ export class Api {
     Tools_SAClientUtilByType: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/Tools/SAClientUtilByType`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6596,10 +7336,10 @@ export class Api {
     Users_Get: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/User`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6617,11 +7357,11 @@ export class Api {
     Users_Update: (id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/User/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6640,7 +7380,7 @@ export class Api {
     Users_Delete: (id, params = {}) =>
       this.http.request({
         path: `/api/v4/User/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
         secure: true,
         ...params,
       }),
@@ -6657,10 +7397,10 @@ export class Api {
     Webhooks_Get: (query, params = {}) =>
       this.http.request({
         path: `/api/v4/Webhooks`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6679,11 +7419,11 @@ export class Api {
     Webhooks_Create: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/Webhooks`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6701,11 +7441,11 @@ export class Api {
     Webhooks_Update: (id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Webhooks/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6723,7 +7463,7 @@ export class Api {
     Webhooks_Delete: (id, params = {}) =>
       this.http.request({
         path: `/api/v4/Webhooks/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
         secure: true,
         ...params,
       }),
@@ -6741,10 +7481,10 @@ export class Api {
     Webhooks_GetAssociations: (id, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Webhooks/Associations/${id}`,
-        method: "GET",
+        method: 'GET',
         query: query,
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6763,11 +7503,11 @@ export class Api {
     Webhooks_CreateAssociation: (id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/Webhooks/Associations/${id}`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        format: 'json',
         ...params,
       }),
     /**
@@ -6786,7 +7526,7 @@ export class Api {
     Webhooks_DeleteAssociation: (id, query, params = {}) =>
       this.http.request({
         path: `/api/v4/Webhooks/Associations/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
         query: query,
         secure: true,
         ...params,

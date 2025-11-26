@@ -27,7 +27,9 @@ export class AppScanService {
       });
 
       if (!response || !response.Token) {
-        throw new Error('Authentication response did not contain a valid token');
+        throw new Error(
+          'Authentication response did not contain a valid token'
+        );
       }
 
       this.token = response.Token;
@@ -81,13 +83,16 @@ export class AppScanService {
     await this.ensureAuthenticated();
     try {
       const response = await this.api.v4.Issues_Get('Scan', scanId, {});
-      
+
       // Filter issues by status if excludeStatus is provided
       if (excludeStatus && response.Items) {
-        const statusesToExclude = excludeStatus.split(',').map(s => s.trim()).filter(s => s);
+        const statusesToExclude = excludeStatus
+          .split(',')
+          .map((s) => s.trim())
+          .filter((s) => s);
         if (statusesToExclude.length > 0) {
           response.Items = response.Items.filter(
-            issue => !statusesToExclude.includes(issue.Status)
+            (issue) => !statusesToExclude.includes(issue.Status)
           );
           // Update count if present
           if (response.Count !== undefined) {
@@ -95,7 +100,7 @@ export class AppScanService {
           }
         }
       }
-      
+
       return response;
     } catch (error) {
       throw new Error(`Failed to list issues: ${error.message}`);
