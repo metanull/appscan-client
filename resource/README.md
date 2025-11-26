@@ -1,0 +1,2 @@
+swagger.json is hte official swagger from appscan; it was imported from: https://eu.cloud.appscan.com/swagger/v4/swagger.json
+They also have a swagger UI: https://eu.cloud.appscan.com/swagger/index.html
