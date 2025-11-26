@@ -20,6 +20,21 @@ A Node.js command-line interface (CLI) tool for interacting with the HCL AppScan
 
 ## Installation
 
+### From GitHub Packages (Recommended)
+
+```bash
+# Configure npm to use GitHub Packages for @metanull scope
+npm config set @metanull:registry https://npm.pkg.github.com
+
+# Install globally
+npm install -g @metanull/appscan-client
+
+# Verify installation
+appscan --version
+```
+
+**Note**: The package is published to GitHub Packages as `@metanull/appscan-client`. No authentication is required for installation of this public package.
+
 ### From Source
 
 ```bash

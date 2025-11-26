@@ -1,6 +1,6 @@
-# Publishing Guide
+# Publishing Guide - GitHub Packages
 
-Your package is now ready to be published to npm! Here's what has been set up:
+Your package is now ready to be published to GitHub Packages as a public npm package! Here's what has been set up:
 
 ## Changes Made
 
@@ -10,9 +10,10 @@ Your package is now ready to be published to npm! Here's what has been set up:
 - Downloads from: `https://eu.cloud.appscan.com/swagger/v4/swagger.json`
 
 ### 2. ✅ Package Metadata
+- Package name: `@metanull/appscan-client` (scoped for GitHub)
 - Added `repository`, `bugs`, and `homepage` URLs
 - Added author: `metanull`
-- All pointing to: `github.com/metanull/appscan-client`
+- Configured `publishConfig` for GitHub Packages registry
 
 ### 3. ✅ Publishing Script
 - Added `prepublishOnly` script that automatically:
@@ -31,28 +32,36 @@ Created to exclude from the published package:
 - Resource documentation
 - Build artifacts
 
-## How to Publish
+## How to Publish to GitHub Packages
 
 ### First Time Setup
 
-1. **Create npm account** (if you don't have one):
+1. **Create a GitHub Personal Access Token (PAT)**:
+   - Go to: https://github.com/settings/tokens
+   - Click "Generate new token" → "Generate new token (classic)"
+   - Set a note like "npm publish to GitHub Packages"
+   - Select scopes:
+     - ✅ `write:packages` (to publish packages)
+     - ✅ `read:packages` (to download packages)
+     - ✅ `delete:packages` (optional, to delete packages)
+     - ✅ `repo` (if repo is private, optional for public)
+   - Click "Generate token" and **copy the token** (you won't see it again!)
+
+2. **Authenticate with GitHub Packages**:
    ```bash
-   # Visit https://www.npmjs.com/signup
+   # Login to GitHub Packages registry
+   npm login --scope=@metanull --auth-type=legacy --registry=https://npm.pkg.github.com
+   
+   # Username: your GitHub username (metanull)
+   # Password: paste your Personal Access Token (PAT)
+   # Email: your public email address
    ```
 
-2. **Login to npm**:
-   ```bash
-   npm login
+   **Alternative method** - Create/edit `~/.npmrc`:
    ```
-
-3. **Verify package name availability**:
-   ```bash
-   npm search appscan-client
+   //npm.pkg.github.com/:_authToken=YOUR_GITHUB_PAT_HERE
+   @metanull:registry=https://npm.pkg.github.com
    ```
-   If taken, update `name` in package.json to something unique like:
-   - `@metanull/appscan-client`
-   - `hcl-appscan-client`
-   - `appscan-cloud-cli`
 
 ### Publishing Steps
 
@@ -61,14 +70,14 @@ Created to exclude from the published package:
    # Create a tarball
    npm pack
    
-   # Test install globally
-   npm install -g ./appscan-client-1.0.0.tgz
+   # Test install globally (from the tarball)
+   npm install -g ./metanull-appscan-client-1.0.0.tgz
    
    # Test the CLI
    appscan --help
    
    # Uninstall test
-   npm uninstall -g appscan-client
+   npm uninstall -g @metanull/appscan-client
    ```
 
 2. **Verify everything works**:
@@ -83,55 +92,125 @@ Created to exclude from the published package:
    npm pack --dry-run
    ```
 
-3. **Publish to npm**:
+3. **Commit and push to GitHub** (important!):
    ```bash
-   # For first publish (public package)
+   git add .
+   git commit -m "Prepare for GitHub Packages publishing"
+   git push origin main
+   ```
+
+4. **Publish to GitHub Packages**:
+   ```bash
+   # Publish as a public package
    npm publish --access public
-   
-   # For subsequent versions
-   npm publish
    ```
 
 ### After Publishing
 
-Users can install globally:
-```bash
-npm install -g appscan-client
-```
+The package will be available at:
+- **Package page**: https://github.com/metanull/appscan-client/packages
+- **Registry**: `@metanull/appscan-client` on GitHub Packages
 
-And use immediately:
+## Installing the Package
+
+### For End Users
+
+Users need to configure npm to use GitHub Packages for your scope:
+
+1. **Create/edit `~/.npmrc`** (one-time setup):
+   ```
+   @metanull:registry=https://npm.pkg.github.com
+   ```
+
+2. **For public packages** (no authentication needed for installation):
+   ```bash
+   npm install -g @metanull/appscan-client
+   ```
+
+3. **Use the CLI**:
+   ```bash
+   appscan --help
+   appscan list-applications
+   ```
+
+### Quick Install Script for Users
+
+You can share this with users:
+
 ```bash
-appscan --help
-appscan list-applications
+# Configure registry for @metanull scope
+npm config set @metanull:registry https://npm.pkg.github.com
+
+# Install globally
+npm install -g @metanull/appscan-client
+
+# Verify installation
+appscan --version
 ```
 
 ## Version Management
 
 When making updates:
 
-1. Update version in `package.json`:
+1. **Update version**:
    ```bash
    npm version patch  # 1.0.0 -> 1.0.1
    npm version minor  # 1.0.0 -> 1.1.0
    npm version major  # 1.0.0 -> 2.0.0
    ```
 
-2. Publish:
+2. **Commit and push**:
+   ```bash
+   git push origin main --tags
+   ```
+
+3. **Publish new version**:
    ```bash
    npm publish
    ```
 
+## Troubleshooting
+
+### Authentication Issues
+- Verify your PAT has `write:packages` scope
+- Ensure you're logged in: `npm whoami --registry=https://npm.pkg.github.com`
+- Check your `~/.npmrc` has the correct token
+
+### Package Not Found After Publishing
+- Check the package is visible at: https://github.com/metanull?tab=packages
+- Ensure the package is set to **public** (not private)
+- Verify the repository link in package settings
+
+### Installation Issues for Users
+- Users must configure the `@metanull` scope to use GitHub Packages registry
+- For public packages, no authentication is needed for installation
+- Provide the `.npmrc` configuration in your README
+
 ## Important Notes
 
-- The `prepublishOnly` script ensures the API client is always generated fresh from the latest swagger spec
-- Tests must pass before publishing
-- No proprietary swagger.json file is included in the package
-- The package is ready for public use under ISC license
+- ✅ Package is scoped: `@metanull/appscan-client`
+- ✅ Published to: GitHub Packages (not npmjs.com)
+- ✅ The `prepublishOnly` script ensures the API client is generated fresh
+- ✅ Tests must pass before publishing
+- ✅ No proprietary swagger.json file is included
+- ✅ Package is public and free to install
+- ✅ Repository must exist on GitHub before publishing
 
 ## Package Info
 
-- **Name**: appscan-client
+- **Name**: @metanull/appscan-client
+- **Registry**: GitHub Packages
 - **Version**: 1.0.0
 - **Binary**: `appscan` command
 - **Node**: >=20.0.0
 - **License**: ISC
+- **Repository**: https://github.com/metanull/appscan-client
+
+## GitHub Package Settings
+
+After publishing, you can:
+- View package at: https://github.com/metanull?tab=packages
+- Make it public (if not already)
+- Link it to your repository
+- View download statistics
+- Manage versions and delete old versions
