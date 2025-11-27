@@ -55,7 +55,7 @@ export class MarkdownReportGenerator {
     return report;
   }
 
-  generateIssuesReport(issues, scanName) {
+  generateIssuesReport(issues, scanName, options = {}) {
     let report = '# AppScan Issues Report\n\n';
     report += `Generated: ${new Date().toISOString()}\n\n`;
     if (scanName) {
@@ -68,22 +68,68 @@ export class MarkdownReportGenerator {
       return report;
     }
 
-    // Group by severity
-    const grouped = this.groupBySeverity(issues);
+    const groupedMode = options.grouped ?? false;
+    if (groupedMode) {
+      const groupedIssues = this.groupIssuesByApplicationAndType(issues);
+      report += '### Grouped Issues\n\n';
 
-    Object.keys(grouped)
-      .sort((a, b) => this.getSeverityOrder(b) - this.getSeverityOrder(a))
+      groupedIssues.forEach((group) => {
+        // Add headline for each group with highest severity
+        report += `#### ${group.highestSeverity} (${group.highestSeverityValue}): ${group.issueType}\n\n`;
+
+        // Table with only the specified fields
+        report +=
+          '| Severity | SeverityValue | Language | Issue Type | Context | Source |\n';
+        report +=
+          '|----------|---------------|----------|------------|---------|--------|\n';
+
+        group.issues.forEach((issue) => {
+          const severity = this.escapeMarkdownTableCell(issue.Severity);
+          const severityValue = this.escapeMarkdownTableCell(
+            issue.SeverityValue?.toString()
+          );
+          const language = this.escapeMarkdownTableCell(issue.Language);
+          const issueType = this.escapeMarkdownTableCell(issue.IssueType);
+          const context = issue.Context
+            ? `\`${this.escapeMarkdownTableCell(issue.Context)}\``
+            : 'N/A';
+          // Check both SourceFileUrl and SourceFileUri for compatibility
+          const sourceUrl = issue.SourceFileUrl || issue.SourceFileUri;
+          const source = sourceUrl ? `[Source](${sourceUrl})` : 'N/A';
+
+          report += `| ${severity} | ${severityValue} | ${language} | ${issueType} | ${context} | ${source} |\n`;
+        });
+
+        report += '\n';
+      });
+
+      return report;
+    }
+
+    // Default mode: sort by SeverityValue descending
+    const sortedIssues = this.sortIssuesBySeverityValue(issues);
+    const grouped = this.groupBySeverity(sortedIssues);
+
+    this.severityLevels()
+      .filter((severity) => (grouped[severity] || []).length > 0)
       .forEach((severity) => {
-        const severityIssues = grouped[severity];
+        const severityIssues = grouped[severity] || [];
         report += `### ${severity} Severity (${severityIssues.length})\n\n`;
-        report += '| Issue Type | Location | Status |\n';
-        report += '|------------|----------|--------|\n';
+        report +=
+          '| Issue Type | Severity | Threat Class | Scanner | Fix Group | Source File | Location | Status |\n';
+        report +=
+          '|------------|----------|--------------|---------|-----------|-------------|----------|--------|\n';
 
         severityIssues.forEach((issue) => {
           const issueType = this.escapeMarkdownTableCell(issue.IssueType);
+          const severityText = this.escapeMarkdownTableCell(issue.Severity);
+          const threatClass = this.escapeMarkdownTableCell(issue.ThreatClassId);
+          const scanner = this.escapeMarkdownTableCell(issue.Scanner);
+          const fixGroup = this.escapeMarkdownTableCell(issue.FixGroupId);
+          const sourceFile = this.escapeMarkdownTableCell(issue.SourceFileUri);
           const location = this.escapeMarkdownTableCell(issue.Location);
           const status = this.escapeMarkdownTableCell(issue.Status);
-          report += `| ${issueType} | ${location} | ${status} |\n`;
+          report += `| ${issueType} | ${severityText} | ${threatClass} | ${scanner} | ${fixGroup} | ${sourceFile} | ${location} | ${status} |\n`;
         });
 
         report += '\n';
@@ -134,6 +180,10 @@ export class MarkdownReportGenerator {
     }, {});
   }
 
+  severityLevels() {
+    return ['Critical', 'High', 'Medium', 'Low', 'Informational', 'Unknown'];
+  }
+
   getSeverityOrder(severity) {
     const order = {
       Critical: 5,
@@ -144,6 +194,95 @@ export class MarkdownReportGenerator {
       Unknown: 0,
     };
     return order[severity] || 0;
+  }
+
+  sortIssuesBySeverityValue(issues) {
+    return [...issues].sort((a, b) => {
+      const aValue = a.SeverityValue ?? 0;
+      const bValue = b.SeverityValue ?? 0;
+      return bValue - aValue; // Descending order
+    });
+  }
+
+  groupIssuesByApplicationAndType(issues) {
+    // Create a map to group issues by applicationId and IssueTypeId
+    const groupMap = new Map();
+
+    issues.forEach((issue) => {
+      const key = `${issue.ApplicationId || 'unknown'}_${issue.IssueTypeId || 'unknown'}`;
+
+      if (!groupMap.has(key)) {
+        groupMap.set(key, {
+          applicationId: issue.ApplicationId,
+          issueTypeId: issue.IssueTypeId,
+          issueType: issue.IssueType,
+          issues: [],
+          maxSeverityValue: 0,
+          highestSeverity: '',
+          highestSeverityValue: 0,
+        });
+      }
+
+      const group = groupMap.get(key);
+      group.issues.push(issue);
+
+      // Track the highest severity value in the group
+      const severityValue = issue.SeverityValue ?? 0;
+      if (severityValue > group.maxSeverityValue) {
+        group.maxSeverityValue = severityValue;
+        group.highestSeverity = issue.Severity;
+        group.highestSeverityValue = severityValue;
+      }
+    });
+
+    // Convert map to array and sort groups by max severity value descending
+    const groups = Array.from(groupMap.values()).sort((a, b) => {
+      return b.maxSeverityValue - a.maxSeverityValue;
+    });
+
+    // Sort issues within each group by severity value descending
+    groups.forEach((group) => {
+      group.issues.sort((a, b) => {
+        const aValue = a.SeverityValue ?? 0;
+        const bValue = b.SeverityValue ?? 0;
+        return bValue - aValue;
+      });
+    });
+
+    return groups;
+  }
+
+  sortIssuesForGroupedReport(issues) {
+    return [...issues].sort((a, b) => {
+      const appCompare = this.compareValues(a.ApplicationId, b.ApplicationId);
+      if (appCompare !== 0) {
+        return appCompare;
+      }
+
+      const issueTypeIdCompare = this.compareValues(
+        a.IssueTypeId,
+        b.IssueTypeId
+      );
+      if (issueTypeIdCompare !== 0) {
+        return issueTypeIdCompare;
+      }
+
+      return (
+        this.getSeverityOrder(b.Severity) - this.getSeverityOrder(a.Severity)
+      );
+    });
+  }
+
+  compareValues(a, b) {
+    const aValue = a ?? '';
+    const bValue = b ?? '';
+    if (aValue < bValue) {
+      return -1;
+    }
+    if (aValue > bValue) {
+      return 1;
+    }
+    return 0;
   }
 }
 

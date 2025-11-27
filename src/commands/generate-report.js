@@ -64,10 +64,15 @@ export async function generateReport(type, id, options) {
         const issues = response.Items || [];
         const scanDetailsResponse = await service.getScanDetails(id);
         const scanName = scanDetailsResponse.Items?.[0]?.Name || 'Unknown Scan';
+        const reportConfig = { grouped: options.grouped ?? false };
         report =
           format === 'html'
-            ? htmlGenerator.generateIssuesReport(issues, scanName)
-            : markdownGenerator.generateIssuesReport(issues, scanName);
+            ? htmlGenerator.generateIssuesReport(issues, scanName, reportConfig)
+            : markdownGenerator.generateIssuesReport(
+                issues,
+                scanName,
+                reportConfig
+              );
         break;
       }
       case 'executions': {

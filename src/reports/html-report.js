@@ -20,10 +20,11 @@ export class HtmlReportGenerator {
     return this.wrapInHtml(marked.parse(markdown), 'AppScan Scans Report');
   }
 
-  generateIssuesReport(issues, scanName) {
+  generateIssuesReport(issues, scanName, options = {}) {
     const markdown = this.markdownGenerator.generateIssuesReport(
       issues,
-      scanName
+      scanName,
+      options
     );
     return this.wrapInHtml(marked.parse(markdown), 'AppScan Issues Report');
   }
