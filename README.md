@@ -145,6 +145,9 @@ appscan list-issues <scanId> --exclude-status "Noise,False Positive"
 
 # Output as JSON
 appscan list-issues <scanId> --json
+
+# Grouped view sorts by application, issue type, and severity and surfaces the new columns
+appscan list-issues <scanId> --grouped
 ```
 
 ### Generate Reports
@@ -165,6 +168,9 @@ appscan generate-report issues <scanId> --exclude-status ""
 # Generate issues report excluding specific statuses
 appscan generate-report issues <scanId> --exclude-status "Noise,False Positive"
 
+# Generate a grouped issues report (applies the same application → issue type → severity ordering)
+appscan generate-report issues <scanId> --grouped
+
 # Generate executions report for a scan
 appscan generate-report executions <scanId>
 
@@ -174,6 +180,101 @@ appscan generate-report applications --output report.md
 # Generate HTML report
 appscan generate-report issues <scanId> --format html --output report.html
 ```
+
+### Authenticate and Get Bearer Token
+
+```bash
+# Get bearer token
+appscan auth bearer
+```
+
+### Get Issue Details
+
+```bash
+# Get issue details as HTML
+appscan get-issue-details <issueId>
+
+# Get issue details as XML
+appscan get-issue-details <issueId> --format xml
+
+# Save to file with specific locale
+appscan get-issue-details <issueId> --locale de-DE --format html --output issue.html
+```
+
+### Get Remediation Article
+
+Retrieve the remediation documentation (how to fix) for a specific issue. The command automatically fetches the issue details first to get the required parameters (issueType, language, API, CVE), then retrieves the remediation article:
+
+```bash
+# Get remediation article as HTML and display on screen
+appscan get-article <issueId>
+
+# Save article to HTML file
+appscan get-article <issueId> --output remediation.html
+
+# Get article and convert to Markdown
+appscan get-article-markdown <issueId>
+
+# Save article as Markdown file
+appscan get-article-markdown <issueId> --output remediation.md
+
+# Customize display mode (light or dark theme)
+appscan get-article <issueId> --mode dark
+
+# Enable training links in the article
+appscan get-article <issueId> --enable-training-links
+```
+
+**Note**: The article commands automatically retrieve the issue details first to extract the necessary parameters (issueType, language, API, CVE) before fetching the remediation article.
+
+### Generate API Security Reports
+
+Generate comprehensive security reports directly from the AppScan API with full customization options:
+
+```bash
+# Generate and download HTML report for a scan
+appscan generate-api-report Scan <scanId>
+
+# Generate PDF report with custom title and notes
+appscan generate-api-report Scan <scanId> --format Pdf --title "Security Report" --notes "Q4 2025"
+
+# Generate report with only Open issues (using OData filter)
+appscan generate-api-report Scan <scanId> --open-only
+
+# Generate report for an Application or ScanExecution
+appscan generate-api-report Application <appId> --format Html
+appscan generate-api-report ScanExecution <executionId> --format SARIF
+
+# Generate and save with custom filename
+appscan generate-api-report Scan <scanId> --format Csv --output security-report.csv
+
+# Available formats: Html, Pdf, SARIF, Xml, Csv
+```
+
+### Generate Markdown Report from API
+
+Generate an HTML report from AppScan API and automatically convert it to Markdown for console viewing:
+
+```bash
+# Generate and display markdown report on screen
+appscan generate-markdown-api-report Scan <scanId>
+
+# Generate markdown report with only Open issues
+appscan generate-markdown-api-report Scan <scanId> --open-only
+
+# Generate and save markdown to file
+appscan generate-markdown-api-report Scan <scanId> --output report.md
+
+# Generate for Application or ScanExecution
+appscan generate-markdown-api-report Application <appId>
+appscan generate-markdown-api-report ScanExecution <executionId>
+```
+
+**Note**: The `generate-markdown-api-report` command:
+- Generates an HTML report via the AppScan API
+- Waits for the report to be ready (may take a few minutes)
+- Downloads and converts it to Markdown
+- Outputs to console or saves to file
 
 ### Command Aliases
 
@@ -185,6 +286,11 @@ appscan scans <appId>     # list-scans
 appscan executions <scanId>  # list-scan-executions
 appscan issues <scanId>   # list-issues
 appscan report <type> [id]  # generate-report
+appscan issue-details <issueId>  # get-issue-details
+appscan api-report <type> <id>   # generate-api-report
+appscan md-report <type> <id>    # generate-markdown-api-report
+appscan article <issueId>        # get-article
+appscan article-md <issueId>     # get-article-markdown
 ```
 
 ## Development
