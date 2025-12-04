@@ -81,15 +81,27 @@ export class MarkdownReportGenerator {
       const groupedIssues = this.groupIssuesByApplicationAndType(issues);
       const turndownService = this.createTurndownService();
 
-      for (const group of groupedIssues) {
+      // Build table of contents
+      report += '## Table of Contents\n\n';
+      groupedIssues.forEach((group, index) => {
+        const issueType = group.issueType || 'Unknown Issue';
+        const language = group.language || 'Unknown Language';
+        const anchor = this.createAnchor(`${issueType}-${language}-${index}`);
+        report += `- [${issueType} (${language})](#${anchor})\n`;
+      });
+      report += '\n';
+
+      for (let i = 0; i < groupedIssues.length; i++) {
+        const group = groupedIssues[i];
         const issueType = this.escapeMarkdownTableCell(group.issueType || 'Unknown Issue');
         const language = this.escapeMarkdownTableCell(group.language || 'Unknown Language');
         const highestSeverity = this.escapeMarkdownTableCell(group.highestSeverity || 'Unknown');
         const highestSeverityValue = this.escapeMarkdownTableCell(
           group.highestSeverityValue?.toString() || '0'
         );
+        const anchor = this.createAnchor(`${group.issueType || 'Unknown Issue'}-${group.language || 'Unknown Language'}-${i}`);
 
-        report += `#### ${issueType} (${language}) – ${highestSeverity} (${highestSeverityValue})\n\n`;
+        report += `#### <a id="${anchor}"></a>${issueType} (${language}) – ${highestSeverity} (${highestSeverityValue})\n\n`;
 
         report += '| Severity | SeverityValue | Context | Source |\n';
         report += '|----------|---------------|---------|--------|\n';
@@ -125,7 +137,8 @@ export class MarkdownReportGenerator {
           report += '\n';
         }
 
-        report += '\n';
+        report += '\n[↑ Back to top](#appscan-issues-report)\n\n';
+        report += '---\n\n';
       }
 
       return report;
@@ -254,6 +267,13 @@ export class MarkdownReportGenerator {
 
   encodeUrlForLink(url) {
     return url.replace(/ /g, '%20');
+  }
+
+  createAnchor(text) {
+    return text
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
   }
 
   extractSourceLabel(rawUrl) {

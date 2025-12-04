@@ -77,6 +77,7 @@ export async function generateAllReports(options) {
   const applications = applicationsResponse.Items || [];
 
   let reportCount = 0;
+  const reportIndex = [];
 
   for (const app of applications) {
     const scansResponse = await service.listScans(app.Id);
@@ -140,7 +141,33 @@ export async function generateAllReports(options) {
       fs.writeFileSync(outputPath, reportContent, 'utf-8');
       console.error(chalk.green(`Report saved: ${outputPath}`));
       reportCount += 1;
+
+      reportIndex.push({
+        fileName,
+        appName: scanMeta.appName,
+        technology: scanTechnology,
+        scanName,
+        timestamp: scan.CreatedAt || 'unknown-date',
+      });
     }
+  }
+
+  // Generate index.md
+  if (reportIndex.length > 0) {
+    let indexContent = '# AppScan Reports Index\n\n';
+    indexContent += `Generated: ${new Date().toISOString()}\n\n`;
+    indexContent += '## Reports\n\n';
+    indexContent += '| Application | Technology | Scan | Created | Link |\n';
+    indexContent += '|-------------|------------|------|---------|------|\n';
+    reportIndex.forEach((entry) => {
+      const timestamp = entry.timestamp !== 'unknown-date'
+        ? new Date(entry.timestamp).toLocaleString()
+        : 'unknown-date';
+      indexContent += `| ${entry.appName} | ${entry.technology} | ${entry.scanName} | ${timestamp} | [View](./${entry.fileName}) |\n`;
+    });
+    const indexPath = path.join(outDir, 'index.md');
+    fs.writeFileSync(indexPath, indexContent, 'utf-8');
+    console.error(chalk.green(`Index created: ${indexPath}`));
   }
 
   console.error(chalk.green(`Generated ${reportCount} report(s) in ${outDir}`));
