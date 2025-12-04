@@ -62,7 +62,6 @@ export class AppScanService {
   async listScans(appId) {
     await this.ensureAuthenticated();
     const query = {
-      $top: 100,
       $count: false,
     };
     if (appId) {

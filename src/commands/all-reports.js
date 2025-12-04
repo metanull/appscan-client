@@ -44,9 +44,12 @@ function sanitizeFileName(value) {
 }
 
 function formatTimestamp(value) {
-  const date = value ? new Date(value) : new Date();
+  if (!value) {
+    return 'unknown-date';
+  }
+  const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
-    return new Date().toISOString().replace(/:/g, '-');
+    return 'unknown-date';
   }
   return date.toISOString().replace(/:/g, '-');
 }

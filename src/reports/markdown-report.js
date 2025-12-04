@@ -255,11 +255,21 @@ export class MarkdownReportGenerator {
     });
     turndownService.addRule('removeStyles', {
       filter: ['style', 'script'],
-      replacement: () => ''
+      replacement: () => {
+        return '';
+      },
     });
     return turndownService;
   }
 
+  /**
+   * Fetches the remediation article for the first issue in a grouped section and
+   * converts it to Markdown so it can be appended to the report.
+   * @param {object} group Group metadata containing at least one issue.
+   * @param {object} service AppScanService instance used to request the article.
+   * @param {import('turndown')} turndownService Converter used to translate HTML to Markdown.
+   * @returns {Promise<string>} Markdown-formatted remediation snippet or an empty string.
+   */
   async generateGroupRemediation(group, service, turndownService) {
     if (!service || !group.issues?.length || !turndownService) {
       return '';
