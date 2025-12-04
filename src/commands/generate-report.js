@@ -28,8 +28,8 @@ export async function generateReport(type, id, options) {
         const applications = response.Items || [];
         report =
           format === 'html'
-            ? htmlGenerator.generateApplicationsReport(applications)
-            : markdownGenerator.generateApplicationsReport(applications);
+            ? await htmlGenerator.generateApplicationsReport(applications)
+            : await markdownGenerator.generateApplicationsReport(applications);
         break;
       }
       case 'scans': {
@@ -41,8 +41,8 @@ export async function generateReport(type, id, options) {
           appDetailsResponse.Items?.[0]?.Name || 'Unknown Application';
         report =
           format === 'html'
-            ? htmlGenerator.generateScansReport(scans, appName)
-            : markdownGenerator.generateScansReport(scans, appName);
+            ? await htmlGenerator.generateScansReport(scans, appName)
+            : await markdownGenerator.generateScansReport(scans, appName);
         break;
       }
       case 'issues': {
@@ -63,15 +63,35 @@ export async function generateReport(type, id, options) {
         const response = await service.listIssues(id, excludeStatus);
         const issues = response.Items || [];
         const scanDetailsResponse = await service.getScanDetails(id);
-        const scanName = scanDetailsResponse.Items?.[0]?.Name || 'Unknown Scan';
+        const scanDetails = scanDetailsResponse.Items?.[0] || {};
+        const scanName = scanDetails.Name || 'Unknown Scan';
+        const scanMeta = {
+          appId: scanDetails.ApplicationId ?? scanDetails.AppId,
+          id: scanDetails.Id ?? scanDetails.ScanId,
+          technology:
+            scanDetails.Technology ?? scanDetails.ScanType ?? scanDetails.ScanTechnology,
+          appName:
+            scanDetails.Application?.Name ??
+            scanDetails.ApplicationName ??
+            scanDetails.AppName,
+        };
         const reportConfig = { grouped: options.grouped ?? false };
+        const markdownService = reportConfig.grouped ? service : null;
         report =
           format === 'html'
-            ? htmlGenerator.generateIssuesReport(issues, scanName, reportConfig)
-            : markdownGenerator.generateIssuesReport(
+            ? await htmlGenerator.generateIssuesReport(
                 issues,
                 scanName,
-                reportConfig
+                reportConfig,
+                markdownService,
+                scanMeta
+              )
+            : await markdownGenerator.generateIssuesReport(
+                issues,
+                scanName,
+                reportConfig,
+                markdownService,
+                scanMeta
               );
         break;
       }
@@ -83,8 +103,11 @@ export async function generateReport(type, id, options) {
         const scanName = scanDetailsResponse.Items?.[0]?.Name || 'Unknown Scan';
         report =
           format === 'html'
-            ? htmlGenerator.generateScanExecutionsReport(executions, scanName)
-            : markdownGenerator.generateScanExecutionsReport(
+            ? await htmlGenerator.generateScanExecutionsReport(
+                executions,
+                scanName
+              )
+            : await markdownGenerator.generateScanExecutionsReport(
                 executions,
                 scanName
               );

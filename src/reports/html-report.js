@@ -6,31 +6,43 @@ export class HtmlReportGenerator {
     this.markdownGenerator = new MarkdownReportGenerator();
   }
 
-  generateApplicationsReport(applications) {
-    const markdown =
-      this.markdownGenerator.generateApplicationsReport(applications);
+  async generateApplicationsReport(applications) {
+    const markdown = await this.markdownGenerator.generateApplicationsReport(
+      applications
+    );
     return this.wrapInHtml(
       marked.parse(markdown),
       'AppScan Applications Report'
     );
   }
 
-  generateScansReport(scans, appName) {
-    const markdown = this.markdownGenerator.generateScansReport(scans, appName);
+  async generateScansReport(scans, appName) {
+    const markdown = await this.markdownGenerator.generateScansReport(
+      scans,
+      appName
+    );
     return this.wrapInHtml(marked.parse(markdown), 'AppScan Scans Report');
   }
 
-  generateIssuesReport(issues, scanName, options = {}) {
-    const markdown = this.markdownGenerator.generateIssuesReport(
+  async generateIssuesReport(
+    issues,
+    scanName,
+    options = {},
+    service = null,
+    scanMeta = {}
+  ) {
+    const markdown = await this.markdownGenerator.generateIssuesReport(
       issues,
       scanName,
-      options
+      options,
+      service,
+      scanMeta
     );
     return this.wrapInHtml(marked.parse(markdown), 'AppScan Issues Report');
   }
 
-  generateScanExecutionsReport(executions, scanName) {
-    const markdown = this.markdownGenerator.generateScanExecutionsReport(
+  async generateScanExecutionsReport(executions, scanName) {
+    const markdown = await this.markdownGenerator.generateScanExecutionsReport(
       executions,
       scanName
     );
