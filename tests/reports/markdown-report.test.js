@@ -78,7 +78,7 @@ describe('MarkdownReportGenerator', () => {
   });
 
   describe('generateIssuesReport', () => {
-    it('should generate report for issues grouped by severity', () => {
+    it('should generate report for issues grouped by severity', async () => {
       const issues = [
         {
           IssueType: 'XSS',
@@ -100,11 +100,11 @@ describe('MarkdownReportGenerator', () => {
         },
       ];
 
-      const report = generator.generateIssuesReport(issues, 'Test Scan');
+      const report = await generator.generateIssuesReport(issues, 'Test Scan');
 
       expect(report).toContain('# AppScan Issues Report');
       expect(report).toContain('Scan: Test Scan');
-      expect(report).toContain('## Issues (3)');
+      expect(report).toContain('Issues: 3');
       expect(report).toContain('### Critical Severity (1)');
       expect(report).toContain('### High Severity (1)');
       expect(report).toContain('### Low Severity (1)');
@@ -112,11 +112,48 @@ describe('MarkdownReportGenerator', () => {
       expect(report).toContain('XSS');
     });
 
-    it('should handle empty issues list', () => {
-      const report = generator.generateIssuesReport([]);
+    it('should handle empty issues list', async () => {
+      const report = await generator.generateIssuesReport([]);
 
-      expect(report).toContain('## Issues (0)');
+      expect(report).toContain('Issues: 0');
       expect(report).toContain('No issues found');
+    });
+
+    it('includes remediation content when grouped and service available', async () => {
+      const issues = [
+        {
+          IssueType: 'SQL Injection',
+          Severity: 'Critical',
+          Language: 'JavaScript',
+          Id: 'issue-1',
+        },
+      ];
+      const fakeService = {
+        calls: [],
+        async getArticle(issueId, options) {
+          this.calls.push({ issueId, options });
+          return '<p>Fix this issue</p>';
+        },
+      };
+
+      const report = await generator.generateIssuesReport(
+        issues,
+        'Scan',
+        { grouped: true },
+        fakeService
+      );
+
+      expect(report).toContain('**Remediation**');
+      expect(report).toContain('Fix this issue');
+      expect(fakeService.calls).toHaveLength(1);
+      expect(fakeService.calls[0]).toEqual({
+        issueId: 'issue-1',
+        options: {
+          language: 'JavaScript',
+          api: undefined,
+          mode: 'light',
+        },
+      });
     });
   });
 

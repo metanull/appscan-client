@@ -61,8 +61,14 @@ export class AppScanService {
 
   async listScans(appId) {
     await this.ensureAuthenticated();
+    const query = {
+      $count: false,
+    };
+    if (appId) {
+      query.$filter = `AppId eq ${appId}`;
+    }
     try {
-      const response = await this.api.v4.Scans_Get({ AppId: appId });
+      const response = await this.api.v4.Scans_Get(query);
       return response;
     } catch (error) {
       throw new Error(`Failed to list scans: ${error.message}`);

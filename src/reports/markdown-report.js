@@ -1,3 +1,5 @@
+import TurndownService from 'turndown';
+
 export class MarkdownReportGenerator {
   escapeMarkdownTableCell(text) {
     if (!text) return 'N/A';
@@ -55,13 +57,19 @@ export class MarkdownReportGenerator {
     return report;
   }
 
-  generateIssuesReport(issues, scanName, options = {}) {
+  async generateIssuesReport(
+    issues,
+    scanName,
+    options = {},
+    service = null,
+    scanMeta = {}
+  ) {
     let report = '# AppScan Issues Report\n\n';
-    report += `Generated: ${new Date().toISOString()}\n\n`;
     if (scanName) {
-      report += `Scan: ${scanName}\n\n`;
+      const metaText = this.formatScanMeta(scanMeta);
+      report += `Scan: ${scanName}${metaText ? ` (${metaText})` : ''}\n\n`;
     }
-    report += `## Issues (${issues.length})\n\n`;
+    report += `Issues: ${issues.length}\n\n`;
 
     if (issues.length === 0) {
       report += 'No issues found.\n';
@@ -71,42 +79,58 @@ export class MarkdownReportGenerator {
     const groupedMode = options.grouped ?? false;
     if (groupedMode) {
       const groupedIssues = this.groupIssuesByApplicationAndType(issues);
-      report += '### Grouped Issues\n\n';
+      const turndownService = this.createTurndownService();
 
-      groupedIssues.forEach((group) => {
-        // Add headline for each group with highest severity
-        report += `#### ${group.highestSeverity} (${group.highestSeverityValue}): ${group.issueType}\n\n`;
+      for (const group of groupedIssues) {
+        const issueType = this.escapeMarkdownTableCell(group.issueType || 'Unknown Issue');
+        const language = this.escapeMarkdownTableCell(group.language || 'Unknown Language');
+        const highestSeverity = this.escapeMarkdownTableCell(group.highestSeverity || 'Unknown');
+        const highestSeverityValue = this.escapeMarkdownTableCell(
+          group.highestSeverityValue?.toString() || '0'
+        );
 
-        // Table with only the specified fields
-        report +=
-          '| Severity | SeverityValue | Language | Issue Type | Context | Source |\n';
-        report +=
-          '|----------|---------------|----------|------------|---------|--------|\n';
+        report += `#### ${issueType} (${language}) – ${highestSeverity} (${highestSeverityValue})\n\n`;
+
+        report += '| Severity | SeverityValue | Context | Source |\n';
+        report += '|----------|---------------|---------|--------|\n';
 
         group.issues.forEach((issue) => {
           const severity = this.escapeMarkdownTableCell(issue.Severity);
           const severityValue = this.escapeMarkdownTableCell(
             issue.SeverityValue?.toString()
           );
-          const language = this.escapeMarkdownTableCell(issue.Language);
-          const issueType = this.escapeMarkdownTableCell(issue.IssueType);
           const context = issue.Context
             ? `\`${this.escapeMarkdownTableCell(issue.Context)}\``
             : 'N/A';
-          // Check both SourceFileUrl and SourceFileUri for compatibility
           const sourceUrl = issue.SourceFileUrl || issue.SourceFileUri;
-          const source = sourceUrl ? `[Source](${sourceUrl})` : 'N/A';
+          const safeSourceUrl = sourceUrl ? this.encodeUrlForLink(sourceUrl) : null;
+          const sourceLabel = safeSourceUrl
+            ? this.extractSourceLabel(sourceUrl)
+            : 'Source';
+          const source = safeSourceUrl
+            ? `[${sourceLabel}](${safeSourceUrl})`
+            : 'N/A';
 
-          report += `| ${severity} | ${severityValue} | ${language} | ${issueType} | ${context} | ${source} |\n`;
+          report += `| ${severity} | ${severityValue} | ${context} | ${source} |\n`;
         });
 
+        const remediation = await this.generateGroupRemediation(
+          group,
+          service,
+          turndownService
+        );
+        if (remediation) {
+          report += '\n';
+          report += this.formatAsBlockquote(remediation);
+          report += '\n';
+        }
+
         report += '\n';
-      });
+      }
 
       return report;
     }
 
-    // Default mode: sort by SeverityValue descending
     const sortedIssues = this.sortIssuesBySeverityValue(issues);
     const grouped = this.groupBySeverity(sortedIssues);
 
@@ -204,18 +228,136 @@ export class MarkdownReportGenerator {
     });
   }
 
+  formatScanMeta(scanMeta = {}) {
+    const parts = [];
+    if (scanMeta.appId) {
+      parts.push(`AppId: ${scanMeta.appId}`);
+    }
+    if (scanMeta.id) {
+      parts.push(`ScanId: ${scanMeta.id}`);
+    }
+    if (scanMeta.technology) {
+      parts.push(`Technology: ${scanMeta.technology}`);
+    }
+    if (scanMeta.appName) {
+      parts.push(`AppName: ${scanMeta.appName}`);
+    }
+    return parts.join(', ');
+  }
+
+  formatAsBlockquote(text) {
+    return text
+      .split('\n')
+      .map((line) => (line.trim() === '' ? '>' : `> ${line}`))
+      .join('\n');
+  }
+
+  encodeUrlForLink(url) {
+    return url.replace(/ /g, '%20');
+  }
+
+  extractSourceLabel(rawUrl) {
+    try {
+      const parsed = new URL(rawUrl);
+      const segments = parsed.pathname.split('/').filter(Boolean);
+      const project = segments[1] || segments[0] || '';
+      const gitIndex = segments.indexOf('_git');
+      const repository =
+        gitIndex >= 0
+          ? segments[gitIndex + 1] || ''
+          : segments[segments.length - 1] || '';
+      const pathParam = parsed.searchParams.get('path') || '';
+      const normalizedPath = pathParam.replace(/^\/+/, '');
+      let decodedPath = normalizedPath;
+      if (decodedPath) {
+        try {
+          decodedPath = decodeURIComponent(decodedPath);
+        } catch (error) {
+          decodedPath = normalizedPath;
+        }
+      }
+      const segmentsToShow = [project, repository, decodedPath].filter(
+        (part) => part
+      );
+      if (segmentsToShow.length > 0) {
+        return segmentsToShow.join('/');
+      }
+    } catch (error) {
+      // noop
+    }
+    return 'Source';
+  }
+
+  createTurndownService() {
+    const turndownService = new TurndownService({
+      headingStyle: 'atx',
+      hr: '---',
+      bulletListMarker: '-',
+      codeBlockStyle: 'fenced',
+    });
+    turndownService.addRule('removeStyles', {
+      filter: ['style', 'script'],
+      replacement: () => {
+        return '';
+      },
+    });
+    return turndownService;
+  }
+
+  /**
+   * Fetches the remediation article for the first issue in a grouped section and
+   * converts it to Markdown so it can be appended to the report.
+   * @param {object} group Group metadata containing at least one issue.
+   * @param {object} service AppScanService instance used to request the article.
+   * @param {import('turndown')} turndownService Converter used to translate HTML to Markdown.
+   * @returns {Promise<string>} Markdown-formatted remediation snippet or an empty string.
+   */
+  async generateGroupRemediation(group, service, turndownService) {
+    if (!service || !group.issues?.length || !turndownService) {
+      return '';
+    }
+
+    const firstIssue = group.issues[0];
+    const issueId = firstIssue?.Id;
+    if (!issueId) {
+      return '';
+    }
+
+    try {
+      const articleHtml = await service.getArticle(issueId, {
+        language: firstIssue.Language,
+        api: firstIssue.Api,
+        mode: 'light',
+      });
+
+      if (!articleHtml) {
+        return '';
+      }
+
+      const markdown = turndownService.turndown(articleHtml);
+      if (!markdown.trim()) {
+        return '';
+      }
+
+      return `**Remediation** (Issue ${issueId})\n\n${markdown}`;
+    } catch (error) {
+      return `*Unable to fetch remediation article: ${error.message}*\n`;
+    }
+  }
+
   groupIssuesByApplicationAndType(issues) {
     // Create a map to group issues by applicationId and IssueTypeId
     const groupMap = new Map();
 
     issues.forEach((issue) => {
-      const key = `${issue.ApplicationId || 'unknown'}_${issue.IssueTypeId || 'unknown'}`;
+      const key = `${issue.ApplicationId || 'unknown'}_${issue.IssueTypeId || 'unknown'}_${issue.Language || 'unknownLang'}`;
 
       if (!groupMap.has(key)) {
         groupMap.set(key, {
           applicationId: issue.ApplicationId,
           issueTypeId: issue.IssueTypeId,
           issueType: issue.IssueType,
+          language: issue.Language,
           issues: [],
           maxSeverityValue: 0,
           highestSeverity: '',

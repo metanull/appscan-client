@@ -12,7 +12,8 @@ export async function listScans(appId, options) {
     console.error(chalk.blue('Authenticating...'));
     await service.authenticate();
 
-    console.error(chalk.blue(`Fetching scans for application ${appId}...`));
+    const target = appId ? `application ${appId}` : 'all applications';
+    console.error(chalk.blue(`Fetching scans for ${target}...`));
     const response = await service.listScans(appId);
     const scans = response.Items || [];
 

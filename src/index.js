@@ -12,6 +12,7 @@ import { generateAndDownloadReport } from './commands/generate-and-download-repo
 import { generateMarkdownReport } from './commands/generate-markdown-report.js';
 import { getArticle } from './commands/get-article.js';
 import { getArticleMarkdown } from './commands/get-article-markdown.js';
+import { generateAllReports } from './commands/all-reports.js';
 
 const program = new Command();
 
@@ -31,8 +32,8 @@ program
 program
   .command('list-scans')
   .alias('scans')
-  .description('List scans for a specific application')
-  .argument('<appId>', 'Application ID')
+  .description('List scans, optionally filtered by application ID')
+  .argument('[appId]', 'Application ID (optional)')
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
   .action(listScans);
@@ -121,6 +122,25 @@ program
     'Apply grouped sorting when generating issue reports'
   )
   .action(generateReport);
+
+program
+  .command('all-reports')
+  .description('Generate issues reports for every scan')
+  .option('--html', 'Produce HTML reports instead of Markdown')
+  .option('--outdir <path>', 'Directory to write reports (default: ./reports)')
+  .option(
+    '--technology <techs>',
+    'Comma-separated list of technologies to include (StaticAnalyzer, ScaAnalyzer, DynamicAnalyzer)'
+  )
+  .option(
+    '--exclude-status <status>',
+    'Statuses to filter out when listing issues (default: Noise)',
+    'Noise'
+  )
+  .option('--grouped', 'Use grouped issues layout with remediation snippets (default)')
+  .option('--no-grouped', 'Disable grouped layout (not recommended)')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .action(generateAllReports);
 
 program
   .command('generate-api-report')

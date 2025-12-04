@@ -14,7 +14,9 @@ export async function listScanExecutions(scanId, options) {
 
     console.error(chalk.blue(`Fetching executions for scan ${scanId}...`));
     const response = await service.listScanExecutions(scanId);
-    const executions = response.Items || [];
+    const executions = Array.isArray(response)
+      ? response
+      : response.Items || [];
 
     if (options.json) {
       console.log(JSON.stringify(executions, null, 2));

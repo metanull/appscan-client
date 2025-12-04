@@ -8,13 +8,13 @@ describe('HtmlReportGenerator', () => {
   });
 
   describe('generateApplicationsReport', () => {
-    it('should generate HTML report for applications', () => {
+    it('should generate HTML report for applications', async () => {
       const applications = [
         { Name: 'App 1', Id: '123', Description: 'Test app 1' },
         { Name: 'App 2', Id: '456', Description: 'Test app 2' },
       ];
 
-      const report = generator.generateApplicationsReport(applications);
+      const report = await generator.generateApplicationsReport(applications);
 
       expect(report).toContain('<!DOCTYPE html>');
       expect(report).toContain('<html lang="en">');
@@ -26,7 +26,7 @@ describe('HtmlReportGenerator', () => {
   });
 
   describe('generateScansReport', () => {
-    it('should generate HTML report for scans', () => {
+    it('should generate HTML report for scans', async () => {
       const scans = [
         {
           Name: 'Scan 1',
@@ -36,7 +36,7 @@ describe('HtmlReportGenerator', () => {
         },
       ];
 
-      const report = generator.generateScansReport(scans, 'Test App');
+      const report = await generator.generateScansReport(scans, 'Test App');
 
       expect(report).toContain('<!DOCTYPE html>');
       expect(report).toContain('AppScan Scans Report');
@@ -46,7 +46,7 @@ describe('HtmlReportGenerator', () => {
   });
 
   describe('generateIssuesReport', () => {
-    it('should generate HTML report for issues', () => {
+    it('should generate HTML report for issues', async () => {
       const issues = [
         {
           IssueType: 'XSS',
@@ -56,7 +56,7 @@ describe('HtmlReportGenerator', () => {
         },
       ];
 
-      const report = generator.generateIssuesReport(issues, 'Test Scan');
+      const report = await generator.generateIssuesReport(issues, 'Test Scan');
 
       expect(report).toContain('<!DOCTYPE html>');
       expect(report).toContain('AppScan Issues Report');

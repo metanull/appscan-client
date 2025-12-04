@@ -1715,8 +1715,8 @@ export interface NewIastScan {
   /**
    * @format int32
    * @min 0
-   * @max 30
-   * @default 30
+   * @max 43200
+   * @default 43200
    */
   ConnLostStopTimer?: number | null;
   AgentType?: NewIastScanAgentTypeEnum;

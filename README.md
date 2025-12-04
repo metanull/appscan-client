@@ -105,13 +105,13 @@ appscan list-applications --json 2>$null | ConvertFrom-Json | Where-Object { $_.
 ### List Scans
 
 ```bash
-# List scans for a specific application
-appscan list-scans <appId>
+# List scans for all applications (default)
+appscan list-scans
 
-# Example
+# Filter scans by application ID
 appscan list-scans 123e4567-e89b-12d3-a456-426614174000
 
-# Output as JSON
+# Output as JSON (filtered by app if provided)
 appscan list-scans <appId> --json
 ```
 
@@ -170,6 +170,24 @@ appscan generate-report issues <scanId> --exclude-status "Noise,False Positive"
 
 # Generate a grouped issues report (applies the same application → issue type → severity ordering)
 appscan generate-report issues <scanId> --grouped
+```
+
+> Grouped reports now collapse repeated language/issue-type columns and automatically append the remediation article (via `get-article-markdown`) for the first issue in each group.
+
+### Generate reports for every scan
+
+```bash
+# Generate markdown reports for all scans across all applications
+appscan all-reports
+
+# Limit to specific analyzers and emit HTML
+appscan all-reports --html --technology StaticAnalyzer,ScaAnalyzer,DynamicAnalyzer
+
+# Write outputs to a custom (empty) directory
+appscan all-reports --outdir ./reports/daily
+```
+
+> The `all-reports` command streams a grouped issues report (with remediation snippets) for every scan, optionally filtering by technology, and writes one file per scan. Grouped mode is enabled by default; pass `--no-grouped` if you want the ungrouped layout. The command fails if the destination directory exists and contains files.
 
 # Generate executions report for a scan
 appscan generate-report executions <scanId>
@@ -179,7 +197,6 @@ appscan generate-report applications --output report.md
 
 # Generate HTML report
 appscan generate-report issues <scanId> --format html --output report.html
-```
 
 ### Authenticate and Get Bearer Token
 
@@ -225,7 +242,7 @@ appscan get-article <issueId> --mode dark
 appscan get-article <issueId> --enable-training-links
 ```
 
-**Note**: The article commands automatically retrieve the issue details first to extract the necessary parameters (issueType, language, API, CVE) before fetching the remediation article.
+> **Note**: The article commands automatically retrieve the issue details first to extract the necessary parameters (issueType, language, API, CVE) before fetching the remediation article.
 
 ### Generate API Security Reports
 
@@ -270,19 +287,21 @@ appscan generate-markdown-api-report Application <appId>
 appscan generate-markdown-api-report ScanExecution <executionId>
 ```
 
-**Note**: The `generate-markdown-api-report` command:
-- Generates an HTML report via the AppScan API
-- Waits for the report to be ready (may take a few minutes)
-- Downloads and converts it to Markdown
-- Outputs to console or saves to file
+> **Note**: The `generate-markdown-api-report` command:
+> - Generates an HTML report via the AppScan API
+> - Waits for the report to be ready (may take a few minutes)
+> - Downloads and converts it to Markdown
+> - Outputs to console or saves to file
 
 ### Command Aliases
 
 Short aliases are available for all commands:
 
 ```bash
+appscan all-reports       # Generate all reports
+
 appscan apps              # list-applications
-appscan scans <appId>     # list-scans
+appscan scans [appId]     # list-scans
 appscan executions <scanId>  # list-scan-executions
 appscan issues <scanId>   # list-issues
 appscan report <type> [id]  # generate-report
