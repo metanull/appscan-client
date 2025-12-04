@@ -272,7 +272,7 @@ export class MarkdownReportGenerator {
       if (decodedPath) {
         try {
           decodedPath = decodeURIComponent(decodedPath);
-        } catch (error) {
+        } catch {
           decodedPath = normalizedPath;
         }
       }
@@ -282,7 +282,7 @@ export class MarkdownReportGenerator {
       if (segmentsToShow.length > 0) {
         return segmentsToShow.join('/');
       }
-    } catch (error) {
+    } catch {
       // noop
     }
     return 'Source';
