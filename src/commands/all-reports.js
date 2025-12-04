@@ -57,7 +57,7 @@ export async function generateAllReports(options) {
     : new Config();
   const service = new AppScanService(config);
   const format = options.html ? 'html' : 'markdown';
-  const reportConfig = { grouped: options.grouped ?? false };
+  const reportConfig = { grouped: options.grouped !== false };
   const excludeStatus = options.excludeStatus ?? 'Noise';
   const technologyFilter = normalizeTechnologyFilter(options.technology);
   const markdownGenerator = new MarkdownReportGenerator();
@@ -99,18 +99,15 @@ export async function generateAllReports(options) {
       );
       const issues = issuesResponse.Items || [];
 
-      const scanDetailsResponse = await service.getScanDetails(scan.Id);
-      const scanDetails = scanDetailsResponse.Items?.[0] || {};
-      const scanName = scanDetails.Name || scan.Name || 'Unknown Scan';
+      const scanName = scan.Name || 'Unknown Scan';
       const scanMeta = {
-        appId:
-          scanDetails.ApplicationId ?? scanDetails.AppId ?? app.Id ?? 'unknown-app',
-        id: scanDetails.Id ?? scanDetails.ScanId ?? scan.Id ?? 'unknown-scan',
+        appId: scan.ApplicationId ?? scan.AppId ?? app.Id ?? 'unknown-app',
+        id: scan.Id ?? scan.ScanId ?? 'unknown-scan',
         technology: scanTechnology,
         appName:
-          scanDetails.Application?.Name ||
-          scanDetails.ApplicationName ||
-          scanDetails.AppName ||
+          scan.Application?.Name ||
+          scan.ApplicationName ||
+          scan.AppName ||
           app.Name ||
           'unknown-app',
       };
@@ -133,7 +130,7 @@ export async function generateAllReports(options) {
             );
 
       const prefix = `${scanMeta.appName || 'app'}-${scanTechnology}-${scanName}`;
-      const timestamp = formatTimestamp(scan.CreatedAt || scanDetails.CreatedAt);
+      const timestamp = formatTimestamp(scan.CreatedAt);
       const fileName = `${sanitizeFileName(prefix)}-${timestamp}.${format === 'html' ? 'html' : 'md'}`;
       const outputPath = path.join(outDir, fileName);
 

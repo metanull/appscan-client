@@ -187,7 +187,7 @@ appscan all-reports --html --technology StaticAnalyzer,ScaAnalyzer,DynamicAnalyz
 appscan all-reports --outdir ./reports/daily
 ```
 
-> The `all-reports` command streams a grouped issues report (with remediation snippets) for every scan, optionally filtering by technology, and writes one file per scan. The command fails if the destination directory exists and contains files.
+> The `all-reports` command streams a grouped issues report (with remediation snippets) for every scan, optionally filtering by technology, and writes one file per scan. Grouped mode is enabled by default; pass `--no-grouped` if you want the ungrouped layout. The command fails if the destination directory exists and contains files.
 
 # Generate executions report for a scan
 appscan generate-report executions <scanId>

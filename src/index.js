@@ -137,7 +137,8 @@ program
     'Statuses to filter out when listing issues (default: Noise)',
     'Noise'
   )
-  .option('--grouped', 'Use grouped issues layout with remediation snippets')
+  .option('--grouped', 'Use grouped issues layout with remediation snippets (default)')
+  .option('--no-grouped', 'Disable grouped layout (not recommended)')
   .option('-c, --config <path>', 'Path to configuration file')
   .action(generateAllReports);
 
