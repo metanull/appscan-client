@@ -103,7 +103,13 @@ export class MarkdownReportGenerator {
             ? `\`${this.escapeMarkdownTableCell(issue.Context)}\``
             : 'N/A';
           const sourceUrl = issue.SourceFileUrl || issue.SourceFileUri;
-          const source = sourceUrl ? `[Source](${sourceUrl})` : 'N/A';
+          const safeSourceUrl = sourceUrl ? this.encodeUrlForLink(sourceUrl) : null;
+          const sourceLabel = safeSourceUrl
+            ? this.extractSourceLabel(sourceUrl)
+            : 'Source';
+          const source = safeSourceUrl
+            ? `[${sourceLabel}](${safeSourceUrl})`
+            : 'N/A';
 
           report += `| ${severity} | ${severityValue} | ${context} | ${source} |\n`;
         });
@@ -244,6 +250,42 @@ export class MarkdownReportGenerator {
       .split('\n')
       .map((line) => (line.trim() === '' ? '>' : `> ${line}`))
       .join('\n');
+  }
+
+  encodeUrlForLink(url) {
+    return url.replace(/ /g, '%20');
+  }
+
+  extractSourceLabel(rawUrl) {
+    try {
+      const parsed = new URL(rawUrl);
+      const segments = parsed.pathname.split('/').filter(Boolean);
+      const project = segments[1] || segments[0] || '';
+      const gitIndex = segments.indexOf('_git');
+      const repository =
+        gitIndex >= 0
+          ? segments[gitIndex + 1] || ''
+          : segments[segments.length - 1] || '';
+      const pathParam = parsed.searchParams.get('path') || '';
+      const normalizedPath = pathParam.replace(/^\/+/, '');
+      let decodedPath = normalizedPath;
+      if (decodedPath) {
+        try {
+          decodedPath = decodeURIComponent(decodedPath);
+        } catch (error) {
+          decodedPath = normalizedPath;
+        }
+      }
+      const segmentsToShow = [project, repository, decodedPath].filter(
+        (part) => part
+      );
+      if (segmentsToShow.length > 0) {
+        return segmentsToShow.join('/');
+      }
+    } catch (error) {
+      // noop
+    }
+    return 'Source';
   }
 
   createTurndownService() {
