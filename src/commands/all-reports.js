@@ -101,7 +101,16 @@ export async function generateAllReports(options) {
         scan.Id,
         excludeStatus
       );
-      const issues = issuesResponse.Items || [];
+      let issues = issuesResponse.Items || [];
+
+      // Filter by minimum severity if specified
+      const minSeverity = parseInt(options.minSeverity || '3', 10);
+      if (!Number.isNaN(minSeverity)) {
+        issues = issues.filter((issue) => {
+          const severityValue = issue.SeverityValue ?? 0;
+          return severityValue >= minSeverity;
+        });
+      }
 
       const scanName = scan.Name || 'Unknown Scan';
       const scanMeta = {

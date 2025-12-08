@@ -103,10 +103,11 @@ export class MarkdownReportGenerator {
 
         report += `#### <a id="${anchor}"></a>${issueType} (${language}) – ${highestSeverity} (${highestSeverityValue})\n\n`;
 
-        report += '| Severity | SeverityValue | Context | Source |\n';
-        report += '|----------|---------------|---------|--------|\n';
+        report += '| Issue ID | Severity | SeverityValue | Context | Source |\n';
+        report += '|----------|----------|---------------|---------|--------|\n';
 
         group.issues.forEach((issue) => {
+          const issueId = this.escapeMarkdownTableCell(issue.Id || 'N/A');
           const severity = this.escapeMarkdownTableCell(issue.Severity);
           const severityValue = this.escapeMarkdownTableCell(
             issue.SeverityValue?.toString()
@@ -123,7 +124,7 @@ export class MarkdownReportGenerator {
             ? `[${sourceLabel}](${safeSourceUrl})`
             : 'N/A';
 
-          report += `| ${severity} | ${severityValue} | ${context} | ${source} |\n`;
+          report += `| ${issueId} | ${severity} | ${severityValue} | ${context} | ${source} |\n`;
         });
 
         const remediation = await this.generateGroupRemediation(
@@ -153,11 +154,12 @@ export class MarkdownReportGenerator {
         const severityIssues = grouped[severity] || [];
         report += `### ${severity} Severity (${severityIssues.length})\n\n`;
         report +=
-          '| Issue Type | Severity | Threat Class | Scanner | Fix Group | Source File | Location | Status |\n';
+          '| Issue ID | Issue Type | Severity | Threat Class | Scanner | Fix Group | Source File | Location | Status |\n';
         report +=
-          '|------------|----------|--------------|---------|-----------|-------------|----------|--------|\n';
+          '|----------|------------|----------|--------------|---------|-----------|-------------|----------|--------|\n';
 
         severityIssues.forEach((issue) => {
+          const issueId = this.escapeMarkdownTableCell(issue.Id || 'N/A');
           const issueType = this.escapeMarkdownTableCell(issue.IssueType);
           const severityText = this.escapeMarkdownTableCell(issue.Severity);
           const threatClass = this.escapeMarkdownTableCell(issue.ThreatClassId);
@@ -166,7 +168,7 @@ export class MarkdownReportGenerator {
           const sourceFile = this.escapeMarkdownTableCell(issue.SourceFileUri);
           const location = this.escapeMarkdownTableCell(issue.Location);
           const status = this.escapeMarkdownTableCell(issue.Status);
-          report += `| ${issueType} | ${severityText} | ${threatClass} | ${scanner} | ${fixGroup} | ${sourceFile} | ${location} | ${status} |\n`;
+          report += `| ${issueId} | ${issueType} | ${severityText} | ${threatClass} | ${scanner} | ${fixGroup} | ${sourceFile} | ${location} | ${status} |\n`;
         });
 
         report += '\n';
