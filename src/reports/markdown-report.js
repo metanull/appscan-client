@@ -66,7 +66,8 @@ export class MarkdownReportGenerator {
   ) {
     let report = '# AppScan Issues Report\n\n';
     if (scanName) {
-      const metaText = this.formatScanMeta(scanMeta);
+      const baseUrl = service?.config?.getBaseUrl() || 'https://eu.cloud.appscan.com';
+      const metaText = this.formatScanMeta(scanMeta, baseUrl);
       report += `Scan: ${scanName}${metaText ? ` (${metaText})` : ''}\n\n`;
     }
     report += `Issues: ${issues.length}\n\n`;
@@ -107,7 +108,10 @@ export class MarkdownReportGenerator {
         report += '|----------|----------|---------------|---------|--------|\n';
 
         group.issues.forEach((issue) => {
-          const issueId = this.escapeMarkdownTableCell(issue.Id || 'N/A');
+          const issueIdRaw = issue.Id || 'N/A';
+          const issueId = issueIdRaw !== 'N/A'
+            ? `[${this.escapeMarkdownTableCell(issueIdRaw)}](https://eu.cloud.appscan.com/api/v4/Issues/${issueIdRaw}?locale=en)`
+            : 'N/A';
           const severity = this.escapeMarkdownTableCell(issue.Severity);
           const severityValue = this.escapeMarkdownTableCell(
             issue.SeverityValue?.toString()
@@ -159,7 +163,10 @@ export class MarkdownReportGenerator {
           '|----------|------------|----------|--------------|---------|-----------|-------------|----------|--------|\n';
 
         severityIssues.forEach((issue) => {
-          const issueId = this.escapeMarkdownTableCell(issue.Id || 'N/A');
+          const issueIdRaw = issue.Id || 'N/A';
+          const issueId = issueIdRaw !== 'N/A'
+            ? `[${this.escapeMarkdownTableCell(issueIdRaw)}](https://eu.cloud.appscan.com/api/v4/Issues/${issueIdRaw}?locale=en)`
+            : 'N/A';
           const issueType = this.escapeMarkdownTableCell(issue.IssueType);
           const severityText = this.escapeMarkdownTableCell(issue.Severity);
           const threatClass = this.escapeMarkdownTableCell(issue.ThreatClassId);
@@ -243,13 +250,17 @@ export class MarkdownReportGenerator {
     });
   }
 
-  formatScanMeta(scanMeta = {}) {
+  formatScanMeta(scanMeta = {}, baseUrl = 'https://eu.cloud.appscan.com') {
     const parts = [];
     if (scanMeta.appId) {
-      parts.push(`AppId: ${scanMeta.appId}`);
+      const appUrl = `${baseUrl}/main/myapps/${scanMeta.appId}`;
+      parts.push(`AppId: [${scanMeta.appId}](${appUrl})`);
     }
     if (scanMeta.id) {
-      parts.push(`ScanId: ${scanMeta.id}`);
+      const scanUrl = scanMeta.appId
+        ? `${baseUrl}/main/myapps/${scanMeta.appId}/scans/${scanMeta.id}/scanOverview`
+        : `${baseUrl}/main/scans/${scanMeta.id}`;
+      parts.push(`ScanId: [${scanMeta.id}](${scanUrl})`);
     }
     if (scanMeta.technology) {
       parts.push(`Technology: ${scanMeta.technology}`);
