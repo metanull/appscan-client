@@ -1,0 +1,53 @@
+name: Version Change Check
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+jobs:
+  version-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@metanull'
+      
+      - name: Check if version was updated
+        id: version-check
+        run: |
+          # Get the published version from GitHub Packages
+          PUBLISHED_VERSION=$(npm view @metanull/appscan-client version 2>/dev/null || echo "0.0.0")
+          
+          # Get the version from the PR's package.json
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          
+          echo "Published version: $PUBLISHED_VERSION"
+          echo "PR version: $PACKAGE_VERSION"
+          
+          # Compare versions
+          if [ "$PUBLISHED_VERSION" = "$PACKAGE_VERSION" ]; then
+            echo "❌ ERROR: Package version has not been updated!"
+            echo "The version in package.json ($PACKAGE_VERSION) is the same as the published version."
+            echo "Please update the version in package.json before merging this PR."
+            echo ""
+            echo "You can update the version using one of these commands:"
+            echo "  npm version patch  # for bug fixes (x.x.X)"
+            echo "  npm version minor  # for new features (x.X.0)"
+            echo "  npm version major  # for breaking changes (X.0.0)"
+            exit 1
+          else
+            echo "✅ Version has been updated from $PUBLISHED_VERSION to $PACKAGE_VERSION"
+            echo "This PR can be merged."
+          fi
