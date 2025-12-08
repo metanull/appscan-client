@@ -189,6 +189,29 @@ appscan all-reports --outdir ./reports/daily
 
 > The `all-reports` command streams a grouped issues report (with remediation snippets) for every scan, optionally filtering by technology, and writes one file per scan. Grouped mode is enabled by default; pass `--no-grouped` if you want the ungrouped layout. The command fails if the destination directory exists and contains files.
 
+### Generate Yearly Summary
+
+```bash
+# Generate summary for current year
+appscan yearly-summary
+
+# Generate summary for specific year
+appscan yearly-summary 2025
+
+# Output as JSON
+appscan yearly-summary 2024 --json
+
+# Using alias
+appscan summary 2025
+```
+
+> The `yearly-summary` command provides a high-level overview of all scans and vulnerabilities for a calendar year. It filters scans by creation date, excludes "Noise" issues, and presents:
+> - Total applications, scans, and issues
+> - Breakdown by scan type (SAST/DAST/SCA)
+> - Issues grouped by application and scan type
+> - Issues by severity level
+> - List of recent scans with issue counts
+
 # Generate executions report for a scan
 appscan generate-report executions <scanId>
 
@@ -299,6 +322,7 @@ Short aliases are available for all commands:
 
 ```bash
 appscan all-reports       # Generate all reports
+appscan summary [year]    # yearly-summary
 
 appscan apps              # list-applications
 appscan scans [appId]     # list-scans

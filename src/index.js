@@ -13,6 +13,7 @@ import { generateMarkdownReport } from './commands/generate-markdown-report.js';
 import { getArticle } from './commands/get-article.js';
 import { getArticleMarkdown } from './commands/get-article-markdown.js';
 import { generateAllReports } from './commands/all-reports.js';
+import { generateYearlySummary } from './commands/yearly-summary.js';
 
 const program = new Command();
 
@@ -217,6 +218,15 @@ program
   .option('--mode <mode>', 'Display mode: light or dark', 'light')
   .option('--enable-training-links', 'Enable training links')
   .action(getArticleMarkdown);
+
+program
+  .command('yearly-summary')
+  .alias('summary')
+  .description('Generate yearly summary of scans and vulnerabilities')
+  .argument('[year]', 'Target year (defaults to current year)')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .action(generateYearlySummary);
 
 program.parse(process.argv);
 
