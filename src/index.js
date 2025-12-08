@@ -122,6 +122,11 @@ program
     '-g, --grouped',
     'Apply grouped sorting when generating issue reports'
   )
+  .option(
+    '-s, --min-severity <value>',
+    'Minimum severity value (integer) to include in report (default: 3)',
+    '3'
+  )
   .action(generateReport);
 
 program
@@ -140,6 +145,11 @@ program
   )
   .option('--grouped', 'Use grouped issues layout with remediation snippets (default)')
   .option('--no-grouped', 'Disable grouped layout (not recommended)')
+  .option(
+    '-s, --min-severity <value>',
+    'Minimum severity value (integer) to include in reports (default: 3)',
+    '3'
+  )
   .option('-c, --config <path>', 'Path to configuration file')
   .action(generateAllReports);
 

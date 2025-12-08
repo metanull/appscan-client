@@ -61,7 +61,17 @@ export async function generateReport(type, id, options) {
         }
 
         const response = await service.listIssues(id, excludeStatus);
-        const issues = response.Items || [];
+        let issues = response.Items || [];
+        
+        // Filter by minimum severity if specified
+        const minSeverity = parseInt(options.minSeverity || '3', 10);
+        if (!Number.isNaN(minSeverity)) {
+          issues = issues.filter(issue => {
+            const severityValue = issue.SeverityValue ?? 0;
+            return severityValue >= minSeverity;
+          });
+        }
+        
         const scanDetailsResponse = await service.getScanDetails(id);
         const scanDetails = scanDetailsResponse.Items?.[0] || {};
         const scanName = scanDetails.Name || 'Unknown Scan';

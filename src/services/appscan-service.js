@@ -189,6 +189,17 @@ export class AppScanService {
       }
 
       const response = await this.api.v4.Reports_GetArticle(queryParams);
+      
+      // Fix relative URLs in the article HTML by converting them to absolute URLs
+      if (response && typeof response === 'string') {
+        const baseUrl = this.config.getBaseUrl();
+        const articleApiPath = '/api/v4/Reports/Article/';
+        return response.replace(
+          /href="(\?issuetype=[^"]*)"/g,
+          `href="${baseUrl}${articleApiPath}$1"`
+        );
+      }
+      
       return response;
     } catch (error) {
       // Provide more detailed error information

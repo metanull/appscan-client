@@ -170,9 +170,13 @@ appscan generate-report issues <scanId> --exclude-status "Noise,False Positive"
 
 # Generate a grouped issues report (applies the same application → issue type → severity ordering)
 appscan generate-report issues <scanId> --grouped
+
+# Filter by minimum severity (default: 3 = Medium and above)
+appscan generate-report issues <scanId> --min-severity 4  # High and Critical only
+appscan generate-report issues <scanId> --min-severity 0  # All severities
 ```
 
-> Grouped reports now collapse repeated language/issue-type columns and automatically append the remediation article (via `get-article-markdown`) for the first issue in each group.
+> Grouped reports now collapse repeated language/issue-type columns and automatically append the remediation article (via `get-article-markdown`) for the first issue in each group. Issue IDs are included in tables for REST API interaction.
 
 ### Generate reports for every scan
 
@@ -185,9 +189,12 @@ appscan all-reports --html --technology StaticAnalyzer,ScaAnalyzer,DynamicAnalyz
 
 # Write outputs to a custom (empty) directory
 appscan all-reports --outdir ./reports/daily
+
+# Filter by minimum severity (default: 3 = Medium and above)
+appscan all-reports --min-severity 4  # High and Critical only
 ```
 
-> The `all-reports` command streams a grouped issues report (with remediation snippets) for every scan, optionally filtering by technology, and writes one file per scan. Grouped mode is enabled by default; pass `--no-grouped` if you want the ungrouped layout. The command fails if the destination directory exists and contains files.
+> The `all-reports` command streams a grouped issues report (with remediation snippets) for every scan, optionally filtering by technology and minimum severity, and writes one file per scan. Grouped mode is enabled by default; pass `--no-grouped` if you want the ungrouped layout. The command fails if the destination directory exists and contains files.
 
 ### Generate Yearly Summary
 
