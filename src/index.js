@@ -20,6 +20,9 @@ import { generateYearlySummary } from './commands/yearly-summary.js';
 import { updateIssueStatus } from './commands/update-issue-status.js';
 import { getIssueComments } from './commands/get-issue-comments.js';
 import { createJiraIssue } from './commands/create-jira-issue.js';
+import { setup } from './commands/setup.js';
+import { connectionCheck } from './commands/connection-check.js';
+import { triage } from './commands/triage.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -31,6 +34,45 @@ program
   .name('appscan')
   .description('CLI tool for interacting with HCL AppScan Cloud API')
   .version(packageJson.version);
+
+program
+  .command('setup')
+  .description('Interactive setup wizard to configure .env file')
+  .option('-f, --force', 'Force overwrite existing .env file')
+  .addHelpText('after', `
+Examples:
+  $ appscan setup
+  $ appscan setup --force`)
+  .action(setup);
+
+program
+  .command('connection-check')
+  .alias('check')
+  .description('Verify API credentials and test connection to AppScan')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .addHelpText('after', `
+Examples:
+  $ appscan connection-check
+  $ appscan check --config ./config.env`)
+  .action(connectionCheck);
+
+program
+  .command('triage')
+  .description('Interactive triage tool for vulnerability management')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .addHelpText('after', `
+Interactive workflow:
+  1. Select a scan from the list (with issue counts)
+  2. Browse grouped vulnerabilities by type
+  3. Multi-select issues for bulk updates
+  4. Update status and add comments
+  5. Create JIRA issues for true positives
+  6. Continue until all scans are triaged
+
+Examples:
+  $ appscan triage
+  $ appscan triage --config ./config.env`)
+  .action(triage);
 
 program
   .command('list-applications')

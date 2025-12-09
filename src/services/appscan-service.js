@@ -361,6 +361,119 @@ export class AppScanService {
       await this.authenticate();
     }
   }
+
+  /**
+   * Bulk update multiple issues with the same status and comment
+   * @param {Array<string>} issueIds - Array of issue IDs to update
+   * @param {string} status - New status for all issues
+   * @param {string} comment - Comment to add to all issues (optional)
+   * @param {string} externalId - External ID (optional)
+   * @returns {Promise<Object>} Update results
+   */
+  async bulkUpdateIssues(issueIds, status, comment = null, externalId = null) {
+    await this.ensureAuthenticated();
+    
+    if (!issueIds || issueIds.length === 0) {
+      throw new Error('No issue IDs provided for bulk update');
+    }
+
+    // Validate status
+    const validStatuses = [
+      'Open',
+      'InProgress',
+      'Reopened',
+      'Noise',
+      'Passed',
+      'Fixed',
+      'New',
+    ];
+    if (!validStatuses.includes(status)) {
+      throw new Error(
+        `Invalid status: ${status}. Valid statuses are: ${validStatuses.join(', ')}`
+      );
+    }
+
+    try {
+      // Build the update payload
+      const updateData = {
+        Status: status,
+      };
+
+      if (comment) {
+        updateData.Comment = comment;
+      }
+
+      if (externalId) {
+        updateData.ExternalId = externalId;
+      }
+
+      // Get the first issue to determine the application ID
+      const firstIssue = await this.api.v4.Issues_GetIssue(issueIds[0], {});
+      
+      if (!firstIssue || !firstIssue.ApplicationId) {
+        throw new Error(`Cannot determine ApplicationId from issue: ${issueIds[0]}`);
+      }
+
+      const applicationId = firstIssue.ApplicationId;
+
+      // Build OData filter for multiple IDs
+      // Format: Id eq guid1 or Id eq guid2 or Id eq guid3
+      const odataFilter = issueIds.map(id => `Id eq ${id}`).join(' or ');
+
+      // Update all issues using filtered update
+      const result = await this.api.v4.Issues_UpdateFilteredIssues(
+        'Application',
+        applicationId,
+        updateData,
+        {
+          odataFilter: odataFilter,
+        }
+      );
+
+      return {
+        success: true,
+        totalRequested: issueIds.length,
+        totalUpdated: result?.UpdatedIssues || result?.TotalIssues || issueIds.length,
+        result,
+      };
+    } catch (error) {
+      throw new Error(`Failed to bulk update issues: ${error.message}`);
+    }
+  }
+
+  /**
+   * Get issue counts grouped by severity for a scan
+   * @param {string} scanId - Scan ID
+   * @param {string} excludeStatus - Comma-separated statuses to exclude
+   * @returns {Promise<Object>} Issue statistics
+   */
+  async getIssueCounts(scanId, excludeStatus = 'Noise') {
+    await this.ensureAuthenticated();
+    try {
+      const response = await this.listIssues(scanId, excludeStatus);
+      const issues = response.Items || [];
+
+      const stats = {
+        total: issues.length,
+        Critical: 0,
+        High: 0,
+        Medium: 0,
+        Low: 0,
+        Informational: 0,
+      };
+
+      issues.forEach(issue => {
+        const severity = issue.Severity || 'Unknown';
+        if (stats[severity] !== undefined) {
+          stats[severity]++;
+        }
+      });
+
+      return stats;
+    } catch (error) {
+      throw new Error(`Failed to get issue counts: ${error.message}`);
+    }
+  }
 }
 
 export default AppScanService;
