@@ -55,20 +55,43 @@ export async function triage(options) {
         break;
       }
 
-      // Get issue counts for each scan (limited to first 20 for performance)
+      // Initialize JIRA service if configured
+      let jiraService = null;
+      if (config.isJiraValid()) {
+        try {
+          jiraService = new JiraService(config);
+        } catch (error) {
+          console.error(chalk.gray(`  Warning: Could not initialize JIRA service: ${error.message}`));
+        }
+      }
+
+      // Get issue counts and JIRA status for each scan (limited to first 20 for performance)
       const scansWithStats = await Promise.all(
         scans.slice(0, 20).map(async (scan) => {
           try {
             const stats = await service.getIssueCounts(scan.Id, 'Noise,Fixed,Passed');
+            
+            // Check for existing JIRA issue
+            let jiraIssue = null;
+            if (jiraService) {
+              try {
+                jiraIssue = await jiraService.findIssueForScan(scan.Name, config.getJiraProjectKey());
+              } catch {
+                // Silent failure for JIRA lookup
+              }
+            }
+            
             return {
               scan,
               stats,
+              jiraIssue,
             };
           } catch (error) {
             console.error(chalk.gray(`  Warning: Could not load stats for ${scan.Name}: ${error.message}`));
             return {
               scan,
               stats: null,
+              jiraIssue: null,
             };
           }
         })
@@ -83,8 +106,8 @@ export async function triage(options) {
       }
 
       // Format scan choices
-      const scanChoices = scansWithIssues.map(({ scan, stats }) => 
-        formatScanDisplay(scan, stats)
+      const scanChoices = scansWithIssues.map(({ scan, stats, jiraIssue }) => 
+        formatScanDisplay(scan, stats, jiraIssue)
       );
 
       scanChoices.push({
@@ -221,6 +244,7 @@ export async function triage(options) {
                   console.log(chalk.cyan('\n🎫 Creating JIRA issue...\n'));
 
                   const jiraService = new JiraService(config);
+                  const baseUrl = config.getBaseUrl();
 
                   // Get scan details for JIRA issue
                   const scan = scansWithIssues.find(s => s.scan.Id === selectedScanId)?.scan;
@@ -230,7 +254,7 @@ export async function triage(options) {
                   const stats = calculateIssueStats(mediumOrHigher);
                   const summary = `[Security] ${scanName} - ${mediumOrHigher.length} vulnerabilities (C:${stats.Critical} H:${stats.High} M:${stats.Medium})`;
 
-                  // Build description with grouped issues
+                  // Build description with detailed vulnerability information
                   let description = `# Security Vulnerabilities - ${scanName}\n\n`;
                   description += `## Summary\n`;
                   description += `- Total vulnerabilities: ${mediumOrHigher.length}\n`;
@@ -238,37 +262,77 @@ export async function triage(options) {
                   description += `- High: ${stats.High}\n`;
                   description += `- Medium: ${stats.Medium}\n\n`;
 
-                  description += `## Vulnerability Groups\n\n`;
+                  description += `## Vulnerabilities by Type\n\n`;
 
                   const jiraGroups = groupIssuesByType(mediumOrHigher);
-                  jiraGroups.forEach(group => {
+                  
+                  for (const group of jiraGroups) {
                     description += `### ${group.type} (${group.severity})\n`;
                     description += `Count: ${group.issues.length}\n\n`;
-                    group.issues.slice(0, 3).forEach(issue => {
-                      description += `- ${issue.Location || issue.Api || 'N/A'}\n`;
-                    });
-                    if (group.issues.length > 3) {
-                      description += `- ... and ${group.issues.length - 3} more\n`;
+                    
+                    // Add detailed info for each issue
+                    for (const issue of group.issues) {
+                      const { convertToAbsoluteUrl } = await import('../utils/url-converter.js');
+                      
+                      description += `#### Issue: ${issue.IssueType || 'Unknown'}\n`;
+                      description += `- Severity: ${issue.Severity || 'Unknown'} (${issue.SeverityValue || 'N/A'})\n`;
+                      description += `- Status: ${issue.Status || 'Unknown'}\n`;
+                      
+                      if (issue.SourceFileUri || issue.Location) {
+                        const sourceUrl = issue.SourceFileUri || issue.Location;
+                        const absoluteUrl = convertToAbsoluteUrl(sourceUrl, baseUrl);
+                        description += `- Location: [${sourceUrl}](${absoluteUrl})\n`;
+                      }
+                      
+                      if (issue.Api) {
+                        const absoluteUrl = convertToAbsoluteUrl(issue.Api, baseUrl);
+                        description += `- API/URL: [${issue.Api}](${absoluteUrl})\n`;
+                      }
+                      
+                      if (issue.LineNumber) {
+                        description += `- Line: ${issue.LineNumber}\n`;
+                      }
+                      
+                      if (issue.CweId) {
+                        description += `- CWE: [CWE-${issue.CweId}](https://cwe.mitre.org/data/definitions/${issue.CweId}.html)\n`;
+                      }
+                      
+                      // Add link to AppScan article
+                      const issueDetailsUrl = `${baseUrl}/api/v4/Issues/${issue.Id}?locale=en`;
+                      description += `- [View in AppScan](${issueDetailsUrl})\n`;
+                      
+                      if (issue.IssueTypeId) {
+                        const articleUrl = `${baseUrl}/api/v4/Reports/Article/?issuetype=${issue.IssueTypeId}`;
+                        description += `- [Remediation Guide](${articleUrl})\n`;
+                      }
+                      
+                      description += `\n`;
                     }
-                    description += `\n`;
-                  });
-
-                  // Add Confluence link if configured
-                  if (process.env.CONFLUENCE_OWASP_ASVS_URL) {
-                    description += `\n## References\n`;
-                    description += `- [OWASP ASVS Level 1](${process.env.CONFLUENCE_OWASP_ASVS_URL})\n`;
                   }
 
+                  const projectKey = config.getJiraProjectKey();
                   const jiraIssue = await jiraService.createIssue(
+                    projectKey,
                     summary,
                     description,
-                    'Bug',
-                    'Medium'
+                    'Story',
+                    {
+                      labels: ['vulnerability', 'security']
+                    }
                   );
 
                   displaySuccess(`JIRA issue created: ${jiraIssue.key}`);
                   console.log(chalk.cyan('View issue at:'), chalk.blue.underline(jiraIssue.url || `${config.getJiraHost()}/browse/${jiraIssue.key}`));
-                  console.log('');
+                  
+                  // Link JIRA issue to AppScan issues via ExternalId
+                  console.log(chalk.gray('\nLinking JIRA issue to AppScan vulnerabilities...'));
+                  const issueIdsToLink = mediumOrHigher.map(i => i.Id);
+                  try {
+                    await service.bulkUpdateIssues(issueIdsToLink, null, null, jiraIssue.key);
+                    console.log(chalk.green(`✓ Linked ${issueIdsToLink.length} issues to ${jiraIssue.key}\n`));
+                  } catch (error) {
+                    console.log(chalk.yellow(`⚠ Could not link issues to JIRA: ${error.message}\n`));
+                  }
 
                 } catch (error) {
                   displayError(`Failed to create JIRA issue: ${error.message}`);
@@ -324,6 +388,129 @@ export async function triage(options) {
         // Check if all issues in scan are processed
         if (issues.length === 0) {
           displaySuccess('All issues in this scan have been processed!');
+          
+          // Offer to create JIRA issue for the scan before moving on
+          if (config.isJiraValid()) {
+            const createJira = await confirm({
+              message: 'Do you want to create a JIRA issue for this scan now?',
+              default: true,
+            });
+
+            if (createJira) {
+              try {
+                // Reload ALL issues for the scan (including those we just triaged)
+                const allIssuesResponse = await service.listIssues(selectedScanId, '');
+                const allIssues = allIssuesResponse.Items || [];
+
+                // Filter for non-closed issues (exclude Noise, Passed, Fixed)
+                const openIssues = allIssues.filter(
+                  issue => !['Noise', 'Passed', 'Fixed'].includes(issue.Status)
+                );
+
+                // Filter for Medium or higher severity
+                const mediumOrHigher = openIssues.filter(
+                  issue => ['Critical', 'High', 'Medium'].includes(issue.Severity)
+                );
+
+                if (mediumOrHigher.length === 0) {
+                  displayInfo('No open issues with Medium or higher severity to include in JIRA.');
+                } else {
+                  console.log(chalk.cyan('\n🎫 Creating JIRA issue...\n'));
+
+                  const jiraService = new JiraService(config);
+                  const baseUrl = config.getBaseUrl();
+                  const scan = scansWithIssues.find(s => s.scan.Id === selectedScanId)?.scan;
+                  const scanName = scan?.Name || selectedScanId;
+
+                  // Build issue summary
+                  const stats = calculateIssueStats(mediumOrHigher);
+                  const summary = `[Security] ${scanName} - ${mediumOrHigher.length} vulnerabilities (C:${stats.Critical} H:${stats.High} M:${stats.Medium})`;
+
+                  // Build description with detailed vulnerability information
+                  let description = `# Security Vulnerabilities - ${scanName}\n\n`;
+                  description += `## Summary\n`;
+                  description += `- Total vulnerabilities: ${mediumOrHigher.length}\n`;
+                  description += `- Critical: ${stats.Critical}\n`;
+                  description += `- High: ${stats.High}\n`;
+                  description += `- Medium: ${stats.Medium}\n\n`;
+
+                  description += `## Vulnerabilities by Type\n\n`;
+
+                  const jiraGroups = groupIssuesByType(mediumOrHigher);
+                  
+                  for (const group of jiraGroups) {
+                    description += `### ${group.type} (${group.severity})\n`;
+                    description += `Count: ${group.issues.length}\n\n`;
+                    
+                    // Add detailed info for each issue
+                    for (const issue of group.issues) {
+                      const { convertToAbsoluteUrl } = await import('../utils/url-converter.js');
+                      
+                      description += `#### Issue: ${issue.IssueType || 'Unknown'}\n`;
+                      description += `- Severity: ${issue.Severity || 'Unknown'} (${issue.SeverityValue || 'N/A'})\n`;
+                      description += `- Status: ${issue.Status || 'Unknown'}\n`;
+                      
+                      if (issue.SourceFileUri || issue.Location) {
+                        const sourceUrl = issue.SourceFileUri || issue.Location;
+                        const absoluteUrl = convertToAbsoluteUrl(sourceUrl, baseUrl);
+                        description += `- Location: [${sourceUrl}](${absoluteUrl})\n`;
+                      }
+                      
+                      if (issue.Api) {
+                        const absoluteUrl = convertToAbsoluteUrl(issue.Api, baseUrl);
+                        description += `- API/URL: [${issue.Api}](${absoluteUrl})\n`;
+                      }
+                      
+                      if (issue.LineNumber) {
+                        description += `- Line: ${issue.LineNumber}\n`;
+                      }
+                      
+                      if (issue.CweId) {
+                        description += `- CWE: [CWE-${issue.CweId}](https://cwe.mitre.org/data/definitions/${issue.CweId}.html)\n`;
+                      }
+                      
+                      // Add link to AppScan article
+                      const issueDetailsUrl = `${baseUrl}/api/v4/Issues/${issue.Id}?locale=en`;
+                      description += `- [View in AppScan](${issueDetailsUrl})\n`;
+                      
+                      if (issue.IssueTypeId) {
+                        const articleUrl = `${baseUrl}/api/v4/Reports/Article/?issuetype=${issue.IssueTypeId}`;
+                        description += `- [Remediation Guide](${articleUrl})\n`;
+                      }
+                      
+                      description += `\n`;
+                    }
+                  }
+
+                  const projectKey = config.getJiraProjectKey();
+                  const jiraIssue = await jiraService.createIssue(
+                    projectKey,
+                    summary,
+                    description,
+                    'Story',
+                    {
+                      labels: ['vulnerability', 'security']
+                    }
+                  );
+
+                  displaySuccess(`JIRA issue created: ${jiraIssue.key}`);
+                  console.log(chalk.cyan('View issue at:'), chalk.blue.underline(jiraIssue.url || `${config.getJiraHost()}/browse/${jiraIssue.key}`));
+                  
+                  // Link JIRA issue to AppScan issues via ExternalId
+                  console.log(chalk.gray('\nLinking JIRA issue to AppScan vulnerabilities...'));
+                  const issueIdsToLink = mediumOrHigher.map(i => i.Id);
+                  try {
+                    await service.bulkUpdateIssues(issueIdsToLink, null, null, jiraIssue.key);
+                    console.log(chalk.green(`✓ Linked ${issueIdsToLink.length} issues to ${jiraIssue.key}\n`));
+                  } catch (error) {
+                    console.log(chalk.yellow(`⚠ Could not link issues to JIRA: ${error.message}\n`));
+                  }
+                }
+              } catch (error) {
+                displayError(`Failed to create JIRA issue: ${error.message}`);
+              }
+            }
+          }
           
           const triageAnother = await confirm({
             message: 'Do you want to triage another scan?',

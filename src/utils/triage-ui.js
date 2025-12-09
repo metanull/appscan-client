@@ -36,9 +36,9 @@ export const ISSUE_STATUSES = [
 ];
 
 /**
- * Format scan display with issue counts
+ * Format scan display with issue counts and JIRA link
  */
-export function formatScanDisplay(scan, issueStats) {
+export function formatScanDisplay(scan, issueStats, jiraIssue = null) {
   const scanName = scan.Name || scan.Id;
   const lastRun = scan.LatestExecution?.UpdatedAt 
     ? new Date(scan.LatestExecution.UpdatedAt).toLocaleDateString()
@@ -61,8 +61,15 @@ export function formatScanDisplay(scan, issueStats) {
     statsDisplay += parts.join(' ') + ']';
   }
 
+  // Add JIRA issue indicator if exists
+  let jiraDisplay = '';
+  if (jiraIssue) {
+    const statusColor = jiraIssue.status === 'Done' ? 'green' : jiraIssue.status === 'In Progress' ? 'yellow' : 'gray';
+    jiraDisplay = ` ${chalk[statusColor]('🎫')} ${chalk.blue.underline(jiraIssue.key)}`;
+  }
+
   return {
-    name: `${chalk.cyan(scanName)} ${chalk.gray(`(${lastRun})`)}${statsDisplay}`,
+    name: `${chalk.cyan(scanName)} ${chalk.gray(`(${lastRun})`)}${statsDisplay}${jiraDisplay}`,
     value: scan.Id,
     short: scanName,
   };
