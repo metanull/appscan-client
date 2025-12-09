@@ -5,10 +5,17 @@ A Node.js command-line interface (CLI) tool for interacting with the HCL AppScan
 ## Features
 
 - 🔐 API Key authentication
+- 🛠️ **Interactive setup wizard** - Easy configuration with guided prompts
+- ✅ **Connection check** - Verify your API credentials before starting
+- 🎯 **Interactive triage tool** - Efficient vulnerability management workflow
+  - Multi-select issues for bulk operations
+  - Grouped display of similar vulnerabilities
+  - Status updates with comments
+  - JIRA integration for true positives
+  - Confluence OWASP ASVS linking
 - 📋 List applications, scans, scan executions, and security issues
 - 📊 Generate reports in Markdown and HTML formats
 - ⚙️ Flexible configuration via environment variables or config files
-- 🎯 Simple and intuitive command-line interface
 - 🎨 Colored terminal output for better readability
 - 🔧 Pipe-friendly: messages to stderr, data to stdout
 
@@ -52,25 +59,77 @@ npm run generate-api
 npm link
 ```
 
+## Quick Start
+
+### 1. Setup (First Time)
+
+Run the interactive setup wizard to configure your credentials:
+
+```bash
+appscan setup
+```
+
+This will prompt you for:
+- AppScan API Key and Secret
+- AppScan Base URL (defaults to https://cloud.appscan.com)
+- Optional JIRA configuration (host, email, API token, project key)
+- Optional Confluence OWASP ASVS documentation URL
+
+### 2. Verify Connection
+
+Test your configuration:
+
+```bash
+appscan connection-check
+```
+
+### 3. Start Triaging Vulnerabilities
+
+Launch the interactive triage tool:
+
+```bash
+appscan triage
+```
+
+The triage workflow:
+1. **Select a scan** - View all scans with issue counts by severity
+2. **Browse groups** - Vulnerabilities grouped by type for efficiency
+3. **Multi-select issues** - Use spacebar to select multiple issues
+4. **Bulk update** - Change status and add comments in one operation
+5. **Create JIRA issues** - Automatically create tickets for true positives
+6. **Repeat** - Continue until all scans are processed
+
 ## Configuration
 
-### Environment Variables
+### Interactive Setup (Recommended)
+
+```bash
+appscan setup
+```
+
+### Manual Configuration
+
+#### Environment Variables
 
 Create a `.env` file in the project root:
 
-```bash
-cp .env.example .env
-```
-
-Edit the `.env` file with your credentials:
-
 ```env
+# AppScan API Configuration
 APPSCAN_API_KEY=your_api_key_here
 APPSCAN_API_SECRET=your_api_secret_here
 APPSCAN_BASE_URL=https://cloud.appscan.com
+
+# JIRA Configuration (optional)
+JIRA_HOST=https://yourcompany.atlassian.net
+JIRA_EMAIL=your-email@company.com
+JIRA_API_TOKEN=your-api-token
+JIRA_PROJECT_KEY=SEC
+
+# Confluence Configuration (optional)
+CONFLUENCE_OWASP_ASVS_URL=https://confluence.company.com/display/SEC/OWASP-ASVS
 ```
 
-### Configuration File
+#### Configuration File
 
 Alternatively, create a JSON configuration file:
 
@@ -85,6 +144,67 @@ Alternatively, create a JSON configuration file:
 Use the `-c` or `--config` flag to specify the config file path.
 
 ## Usage
+
+### Setup and Configuration Commands
+
+#### Setup
+
+Interactive wizard to configure your `.env` file:
+
+```bash
+# First-time setup
+appscan setup
+
+# Force overwrite existing configuration
+appscan setup --force
+```
+
+#### Connection Check
+
+Verify your API credentials and connection:
+
+```bash
+# Test connection with default .env
+appscan connection-check
+
+# Test with custom config file
+appscan connection-check --config /path/to/config.json
+```
+
+### Interactive Triage Tool
+
+The triage tool provides an efficient workflow for processing vulnerabilities:
+
+```bash
+# Start interactive triage
+appscan triage
+
+# Use custom config
+appscan triage --config /path/to/config.json
+```
+
+**Triage Features:**
+- 📊 View scans with issue counts (Critical, High, Medium, Low)
+- 🔍 Browse vulnerabilities grouped by type
+- ☑️  Multi-select issues with spacebar
+- 🔄 Bulk update status (Open, InProgress, Noise, Passed, Fixed)
+- 💬 Add comments to issues
+- 🎫 Create JIRA issues for true positives
+- 🔗 Auto-link to Confluence OWASP ASVS documentation
+- 🌐 **Smart URL conversion** - Automatically converts relative URLs to absolute:
+  - Azure DevOps source file paths → Clickable Git URLs
+  - AppScan API paths → Direct issue detail links
+  - DAST URLs → Full application URLs
+- ♻️  Continuous workflow until all scans are processed
+
+**Workflow Example:**
+1. Select scan "MyApp SAST" with 45 open issues
+2. View grouped vulnerabilities (e.g., "SQL Injection" with 12 instances)
+3. Select all 12 SQL Injection issues
+4. Mark as "Noise" with comment "False positive - parameterized queries used"
+5. Move to next group
+6. When done, create JIRA issue for remaining Medium+ severity issues
+7. Return to scan list and process next scan
 
 ### List Applications
 
