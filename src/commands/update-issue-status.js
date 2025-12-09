@@ -46,21 +46,26 @@ export async function updateIssueStatus(issueId, status, options) {
     }
 
     // Use OData filter to target specific issue
+    // GUID values in OData filters need to be without quotes (the API handles GUID comparison)
     const odataFilter = `Id eq ${issueId}`;
 
     // Update the issue by using the Issues_UpdateFilteredIssues endpoint
-    // We need to get the scan ID for this issue first
+    // We need to get the application ID for this issue first
     const issue = await service.api.v4.Issues_GetIssue(issueId, {});
     
     if (!issue) {
       throw new Error(`Issue not found: ${issueId}`);
     }
 
-    const scanId = issue.ScanId;
+    if (!issue.ApplicationId) {
+      throw new Error(`Issue does not have an ApplicationId: ${issueId}`);
+    }
+
+    const applicationId = issue.ApplicationId;
     
     const result = await service.api.v4.Issues_UpdateFilteredIssues(
-      'Scan',
-      scanId,
+      'Application',
+      applicationId,
       updateData,
       {
         odataFilter: odataFilter,

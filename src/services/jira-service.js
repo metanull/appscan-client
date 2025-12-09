@@ -1,4 +1,12 @@
-import { Version3Client } from 'jira.js';
+let Version3Client;
+
+// Try to import jira.js - it's an optional dependency
+try {
+  const jiraModule = await import('jira.js');
+  Version3Client = jiraModule.Version3Client;
+} catch {
+  // jira.js is optional - only needed for Jira integration features
+}
 
 export class JiraService {
   constructor(config) {
@@ -7,6 +15,14 @@ export class JiraService {
   }
 
   initialize() {
+    if (!Version3Client) {
+      throw new Error(
+        'jira.js package is not installed. To use Jira integration features, install it with:\n' +
+        '  npm install -g jira.js@^5.2.2\n' +
+        'Or if using as a library, add it to your dependencies.'
+      );
+    }
+
     if (!this.config.jiraHost || !this.config.jiraEmail || !this.config.jiraApiToken) {
       throw new Error(
         'Jira credentials not configured. Please set JIRA_HOST, JIRA_EMAIL, and JIRA_API_TOKEN environment variables.'
@@ -61,7 +77,7 @@ export class JiraService {
 
       // Add optional fields
       if (options.priority) {
-        issueData.fields.priority = { name: options.priority };
+        issueData.fields.priority = options.priority;
       }
 
       if (options.labels && options.labels.length > 0) {

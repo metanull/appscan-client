@@ -14,6 +14,17 @@ const severityOrder = {
 
 export async function createJiraIssue(source, sourceId, options) {
   try {
+    // Check if jira.js is available
+    try {
+      await import('jira.js');
+    } catch {
+      throw new Error(
+        'jira.js package is not installed. To use Jira integration features, install it with:\n' +
+        '  npm install -g jira.js@^5.2.2\n' +
+        'Or if using as a library, add it to your dependencies.'
+      );
+    }
+
     const config = options.config
       ? Config.loadFromFile(options.config)
       : new Config();
@@ -138,17 +149,8 @@ export async function createJiraIssue(source, sourceId, options) {
       const issueType = options.issueType || 'Bug';
       const labels = options.labels ? options.labels.split(',').map(l => l.trim()) : ['appscan', 'security'];
       
-      // Map severity to Jira priority
-      let priority = 'Medium';
-      if (issue.Severity === 'Critical') {
-        priority = 'Highest';
-      } else if (issue.Severity === 'High') {
-        priority = 'High';
-      } else if (issue.Severity === 'Low') {
-        priority = 'Low';
-      } else if (issue.Severity === 'Informational') {
-        priority = 'Lowest';
-      }
+      // Note: Priority field is not set as different Jira instances have different priority schemes
+      // Users can set priority manually in Jira if needed
 
       console.error(
         chalk.blue(`Creating Jira issue for AppScan issue ${issue.Id}...`)
@@ -160,7 +162,6 @@ export async function createJiraIssue(source, sourceId, options) {
         description,
         issueType,
         {
-          priority: priority,
           labels: labels,
         }
       );
