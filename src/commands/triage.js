@@ -79,17 +79,13 @@ async function createJiraIssueForVulnerabilities(mediumOrHigher, selectedScanId,
       description += `\n`;
     }
     
-    description += `\n`;
-  }
-  
-  // Add link to remediation guide from first issue
-  if (jiraGroups.length > 0 && jiraGroups[0].issues.length > 0) {
-    const firstIssue = jiraGroups[0].issues[0];
-    if (firstIssue.IssueTypeId) {
-      const articleUrl = `${baseUrl}/api/v4/Reports/Article/?issuetype=${firstIssue.IssueTypeId}`;
-      description += `## Remediation Guide\n\n`;
-      description += `[View remediation guidance in AppScan](${articleUrl})\n`;
+    // Add remediation link for this specific issue type
+    if (group.issues.length > 0 && group.issues[0].IssueTypeId) {
+      const articleUrl = `${baseUrl}/api/v4/Reports/Article/?issuetype=${group.issues[0].IssueTypeId}`;
+      description += `\n**Remediation:** [View guidance for ${group.type}](${articleUrl})\n`;
     }
+    
+    description += `\n`;
   }
   
   // Add AppScan comments in quote blocks (excluding duplicates)
