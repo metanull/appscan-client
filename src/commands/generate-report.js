@@ -6,6 +6,23 @@ import { HtmlReportGenerator } from '../reports/html-report.js';
 import fs from 'fs';
 import path from 'path';
 
+// Simple single-line status helper to reduce verbosity
+function writeStatus(msg) {
+  try {
+    // write to stderr and keep on same line
+    process.stderr.write(`\r${msg}`);
+  } catch (e) {
+    // fallback
+    console.error(msg);
+  }
+}
+
+function clearStatusLine() {
+  try {
+    process.stderr.write('\r\x1b[K');
+  } catch (e) {}
+}
+
 export async function generateReport(type, id, options) {
   try {
     const config = options.config
@@ -13,8 +30,9 @@ export async function generateReport(type, id, options) {
       : new Config();
     const service = new AppScanService(config);
 
-    console.error(chalk.blue('Authenticating...'));
+    writeStatus('Authenticating...');
     await service.authenticate();
+    writeStatus('Authenticated');
 
     let report = '';
     const format = options.format || 'markdown';
@@ -33,7 +51,7 @@ export async function generateReport(type, id, options) {
         break;
       }
       case 'scans': {
-        console.error(chalk.blue(`Fetching scans for application ${id}...`));
+        writeStatus(`Fetching scans for application ${id}...`);
         const response = await service.listScans(id);
         const scans = response.Items || [];
         const appDetailsResponse = await service.getApplicationDetails(id);
@@ -49,20 +67,15 @@ export async function generateReport(type, id, options) {
         // Handle exclude-status option
         const excludeStatus =
           options.excludeStatus !== undefined ? options.excludeStatus : 'Noise';
-
         if (excludeStatus) {
-          console.error(
-            chalk.blue(
-              `Fetching issues for scan ${id} (excluding status: ${excludeStatus})...`
-            )
-          );
+          writeStatus(`Fetching issues for scan ${id} (excluding status: ${excludeStatus})...`);
         } else {
-          console.error(chalk.blue(`Fetching issues for scan ${id}...`));
+          writeStatus(`Fetching issues for scan ${id}...`);
         }
 
         const response = await service.listIssues(id, excludeStatus);
         let issues = response.Items || [];
-        
+
         // Filter by minimum severity if specified
         const minSeverity = parseInt(options.minSeverity || '3', 10);
         if (!Number.isNaN(minSeverity)) {
@@ -71,7 +84,18 @@ export async function generateReport(type, id, options) {
             return severityValue >= minSeverity;
           });
         }
-        
+
+        // If no issues remain after applying filters, do not generate a report file.
+        if ((issues || []).length === 0) {
+          clearStatusLine();
+          console.warn(
+            `Warning: no issues found for scan ${id} with current filters` +
+              (excludeStatus ? ` (excluded status: ${excludeStatus})` : '') +
+              (options.minSeverity ? ` (minSeverity: ${options.minSeverity})` : '')
+          );
+          return;
+        }
+
         const scanDetailsResponse = await service.getScanDetails(id);
         const scanDetails = scanDetailsResponse.Items?.[0] || {};
         const scanName = scanDetails.Name || 'Unknown Scan';
@@ -85,7 +109,7 @@ export async function generateReport(type, id, options) {
             scanDetails.ApplicationName ??
             scanDetails.AppName,
         };
-        const reportConfig = { grouped: options.grouped ?? false };
+        const reportConfig = { grouped: options.grouped ?? false, columns: options.columns };
         const markdownService = reportConfig.grouped ? service : null;
         report =
           format === 'html'
@@ -106,7 +130,7 @@ export async function generateReport(type, id, options) {
         break;
       }
       case 'executions': {
-        console.error(chalk.blue(`Fetching executions for scan ${id}...`));
+        writeStatus(`Fetching executions for scan ${id}...`);
         const response = await service.listScanExecutions(id);
         const executions = response.Items || [];
         const scanDetailsResponse = await service.getScanDetails(id);
@@ -129,6 +153,8 @@ export async function generateReport(type, id, options) {
         );
     }
 
+    // Clear transient status line before printing final results
+    clearStatusLine();
     if (options.output) {
       const outputPath = path.resolve(options.output);
       fs.writeFileSync(outputPath, report, 'utf-8');

@@ -8,6 +8,21 @@ import { HtmlReportGenerator } from '../reports/html-report.js';
 
 const DEFAULT_OUTPUT_DIR = './reports';
 
+// Simple single-line status helper to reduce verbosity
+function writeStatus(msg) {
+  try {
+    process.stderr.write(`\r${msg}`);
+  } catch (e) {
+    console.error(msg);
+  }
+}
+
+function clearStatusLine() {
+  try {
+    process.stderr.write('\r\x1b[K');
+  } catch (e) {}
+}
+
 function normalizeTechnologyFilter(value) {
   if (!value) {
     return [];
@@ -60,19 +75,19 @@ export async function generateAllReports(options) {
     : new Config();
   const service = new AppScanService(config);
   const format = options.html ? 'html' : 'markdown';
-  const reportConfig = { grouped: options.grouped !== false };
+  const reportConfig = { grouped: options.grouped !== false, columns: options.columns };
   const excludeStatus = options.excludeStatus ?? 'Noise';
   const technologyFilter = normalizeTechnologyFilter(options.technology);
   const markdownGenerator = new MarkdownReportGenerator();
   const htmlGenerator = new HtmlReportGenerator();
   const outDir = path.resolve(options.outdir || DEFAULT_OUTPUT_DIR);
-
-  console.error(chalk.blue('Authenticating...'));
+  writeStatus('Authenticating...');
   await service.authenticate();
+  writeStatus('Authenticated');
 
   ensureEmptyDirectory(outDir);
 
-  console.error(chalk.blue('Fetching applications...'));
+  writeStatus('Fetching applications...');
   const applicationsResponse = await service.listApplications();
   const applications = applicationsResponse.Items || [];
 
@@ -93,25 +108,6 @@ export async function generateAllReports(options) {
         continue;
       }
 
-      console.error(
-        chalk.blue(`Generating report for scan ${scan.Name || scan.Id} (${scanTechnology})...`)
-      );
-
-      const issuesResponse = await service.listIssues(
-        scan.Id,
-        excludeStatus
-      );
-      let issues = issuesResponse.Items || [];
-
-      // Filter by minimum severity if specified
-      const minSeverity = parseInt(options.minSeverity || '3', 10);
-      if (!Number.isNaN(minSeverity)) {
-        issues = issues.filter((issue) => {
-          const severityValue = issue.SeverityValue ?? 0;
-          return severityValue >= minSeverity;
-        });
-      }
-
       const scanName = scan.Name || 'Unknown Scan';
       const scanMeta = {
         appId: scan.ApplicationId ?? scan.AppId ?? app.Id ?? 'unknown-app',
@@ -124,6 +120,30 @@ export async function generateAllReports(options) {
           app.Name ||
           'unknown-app',
       };
+
+      writeStatus(`Generating report for scan ${scanName} (${scanTechnology})...`);
+
+      const issuesResponse = await service.listIssues(scan.Id, excludeStatus);
+      let issues = issuesResponse.Items || [];
+
+      // Filter by minimum severity if specified
+      const minSeverity = parseInt(options.minSeverity || '3', 10);
+      if (!Number.isNaN(minSeverity)) {
+        issues = issues.filter((issue) => {
+          const severityValue = issue.SeverityValue ?? 0;
+          return severityValue >= minSeverity;
+        });
+      }
+
+      if ((issues || []).length === 0) {
+        clearStatusLine();
+        console.warn(
+          `Warning: no issues found for scan ${scanName} (app: ${scanMeta.appName}) with current filters` +
+            (excludeStatus ? ` (excluded status: ${excludeStatus})` : '') +
+            (options.minSeverity ? ` (minSeverity: ${options.minSeverity})` : '')
+        );
+        continue;
+      }
 
       const reportContent =
         format === 'html'
@@ -147,6 +167,7 @@ export async function generateAllReports(options) {
       const fileName = `${sanitizeFileName(prefix)}-${timestamp}.${format === 'html' ? 'html' : 'md'}`;
       const outputPath = path.join(outDir, fileName);
 
+      clearStatusLine();
       fs.writeFileSync(outputPath, reportContent, 'utf-8');
       console.error(chalk.green(`Report saved: ${outputPath}`));
       reportCount += 1;
@@ -179,6 +200,7 @@ export async function generateAllReports(options) {
     console.error(chalk.green(`Index created: ${indexPath}`));
   }
 
+  clearStatusLine();
   console.error(chalk.green(`Generated ${reportCount} report(s) in ${outDir}`));
 }
 
