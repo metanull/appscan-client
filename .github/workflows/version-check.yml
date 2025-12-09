@@ -6,24 +6,39 @@ on:
       - main
     types: [opened, synchronize, reopened]
 
+  workflow_dispatch:
+    # Allow manual triggering
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   version-check:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: read
-    
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v6
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
-          registry-url: 'https://npm.pkg.github.com'
+          node-version: "lts/Krypton"
+          registry-url: https://npm.pkg.github.com/
           scope: '@metanull'
-      
+
+      - name: Install Dependencies
+        run: |
+          npm install --no-audit --no-fund
+
+      - name: Check Vulnerabilities
+        run: |
+          npm audit --audit-level moderate
+
       - name: Check if version was updated
         id: version-check
         env:
@@ -51,5 +66,4 @@ jobs:
             exit 1
           else
             echo "✅ Version has been updated from $PUBLISHED_VERSION to $PACKAGE_VERSION"
-            echo "This PR can be merged."
           fi
