@@ -11,7 +11,7 @@ function writeStatus(msg) {
   try {
     // write to stderr and keep on same line
     process.stderr.write(`\r${msg}`);
-  } catch (e) {
+  } catch {
     // fallback
     console.error(msg);
   }
@@ -20,7 +20,9 @@ function writeStatus(msg) {
 function clearStatusLine() {
   try {
     process.stderr.write('\r\x1b[K');
-  } catch (e) {}
+  } catch {
+    // Ignore errors
+  }
 }
 
 export async function generateReport(type, id, options) {

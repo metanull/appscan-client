@@ -323,6 +323,102 @@ appscan generate-markdown-api-report ScanExecution <executionId>
 > - Downloads and converts it to Markdown
 > - Outputs to console or saves to file
 
+### Update Issue Status
+
+Update the status of a specific issue and optionally add a comment:
+
+```bash
+# Update issue status
+appscan update-issue-status <issueId> InProgress
+
+# Update status with a comment
+appscan update-issue-status <issueId> Fixed --comment "Fixed in version 1.2.3"
+
+# Update status and set external ID (e.g., Jira issue key)
+appscan update-issue-status <issueId> InProgress --external-id "JIRA-123"
+
+# Output as JSON
+appscan update-issue-status <issueId> Noise --json
+
+# Using alias
+appscan update-status <issueId> Reopened
+```
+
+**Available Status Values:**
+- `Open` - Issue is open
+- `InProgress` - Work in progress
+- `Reopened` - Issue was reopened
+- `Noise` - False positive
+- `Passed` - Accepted risk
+- `Fixed` - Issue resolved
+- `New` - New issue
+
+### Get Issue Comments
+
+Retrieve all comments for a specific issue:
+
+```bash
+# Get comments for an issue
+appscan get-issue-comments <issueId>
+
+# Output as JSON
+appscan get-issue-comments <issueId> --json
+
+# Using alias
+appscan comments <issueId>
+```
+
+### Create Jira Issues
+
+Create Jira issues from AppScan scans or individual issues. Requires Jira configuration in `.env` file:
+
+```bash
+# Create Jira issues for all vulnerabilities in a scan
+appscan create-jira-issue scan <scanId>
+
+# Create Jira issues with minimum severity filter (0-5)
+appscan create-jira-issue scan <scanId> --min-severity 3
+
+# Create Jira issue from a single AppScan issue
+appscan create-jira-issue issue <issueId>
+
+# Specify Jira project and issue type
+appscan create-jira-issue scan <scanId> --project PROJ --issue-type Task
+
+# Add custom labels
+appscan create-jira-issue scan <scanId> --labels "security,critical,urgent"
+
+# Exclude specific statuses
+appscan create-jira-issue scan <scanId> --exclude-status "Noise,Passed"
+
+# Output as JSON
+appscan create-jira-issue scan <scanId> --json
+
+# Using alias
+appscan jira scan <scanId> --min-severity 4
+```
+
+**Severity Levels:**
+- 5 = Critical
+- 4 = High
+- 3 = Medium (default minimum)
+- 2 = Low
+- 1 = Informational
+- 0 = All issues
+
+**Jira Configuration:**
+
+Add the following to your `.env` file:
+
+```env
+JIRA_HOST=https://your-domain.atlassian.net
+JIRA_EMAIL=your_email@example.com
+JIRA_API_TOKEN=your_jira_api_token_here
+JIRA_PROJECT_KEY=PROJ
+```
+
+> **Note**: To generate a Jira API token, go to: https://id.atlassian.com/manage-profile/security/api-tokens
+
 ### Command Aliases
 
 Short aliases are available for all commands:
@@ -341,6 +437,9 @@ appscan api-report <type> <id>   # generate-api-report
 appscan md-report <type> <id>    # generate-markdown-api-report
 appscan article <issueId>        # get-article
 appscan article-md <issueId>     # get-article-markdown
+appscan update-status <issueId> <status>  # update-issue-status
+appscan comments <issueId>       # get-issue-comments
+appscan jira <source> <sourceId> # create-jira-issue
 ```
 
 ## Development
