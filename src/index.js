@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import { listApplications } from './commands/list-applications.js';
 import { listScans } from './commands/list-scans.js';
 import { listScanExecutions } from './commands/list-scan-executions.js';
@@ -15,12 +18,16 @@ import { getArticleMarkdown } from './commands/get-article-markdown.js';
 import { generateAllReports } from './commands/all-reports.js';
 import { generateYearlySummary } from './commands/yearly-summary.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packageJson = JSON.parse(readFileSync(join(__dirname, '../package.json'), 'utf8'));
+
 const program = new Command();
 
 program
   .name('appscan')
   .description('CLI tool for interacting with HCL AppScan Cloud API')
-  .version('1.0.0');
+  .version(packageJson.version);
 
 program
   .command('list-applications')
@@ -28,6 +35,11 @@ program
   .description('List all applications')
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
+  .addHelpText('after', `
+Examples:
+  $ appscan list-applications
+  $ appscan apps --json
+  $ appscan list-applications --config ./config.env`)
   .action(listApplications);
 
 program
@@ -37,6 +49,11 @@ program
   .argument('[appId]', 'Application ID (optional)')
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
+  .addHelpText('after', `
+Examples:
+  $ appscan list-scans
+  $ appscan scans <appId>
+  $ appscan list-scans --json`)
   .action(listScans);
 
 program
@@ -46,6 +63,10 @@ program
   .argument('<scanId>', 'Scan ID')
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
+  .addHelpText('after', `
+Examples:
+  $ appscan list-scan-executions <scanId>
+  $ appscan executions <scanId> --json`)
   .action(listScanExecutions);
 
 program
@@ -64,6 +85,12 @@ program
     '-g, --grouped',
     'Sort issues by application, issue type, and severity before printing'
   )
+  .addHelpText('after', `
+Examples:
+  $ appscan list-issues <scanId>
+  $ appscan issues <scanId> --json
+  $ appscan issues <scanId> --exclude-status "Noise,Ignore"
+  $ appscan issues <scanId> --grouped`)
   .action(listIssues);
 
 program
@@ -71,6 +98,10 @@ program
   .argument('<type>', 'Authentication type (bearer)')
   .description('Authenticate and display bearer token')
   .option('-c, --config <path>', 'Path to configuration file')
+  .addHelpText('after', `
+Examples:
+  $ appscan auth bearer
+  $ appscan auth bearer --config ./config.env`)
   .action((type, options) => {
     if (type === 'bearer') {
       authBearer(options);
@@ -102,6 +133,12 @@ program
     '-o, --output <path>',
     'Output file path (if not specified, outputs to console)'
   )
+  .addHelpText('after', `
+Examples:
+  $ appscan get-issue-details <issueId>
+  $ appscan issue-details <issueId> --format xml
+  $ appscan issue-details <issueId> --output ./issue.html
+  $ appscan issue-details <issueId> --locale fr-FR`)
   .action(getIssueDetails);
 
 program
@@ -127,6 +164,12 @@ program
     'Minimum severity value (integer) to include in report (default: 3)',
     '3'
   )
+  .addHelpText('after', `
+Examples:
+  $ appscan generate-report applications
+  $ appscan report scans <appId> --format html
+  $ appscan report issues <scanId> --output ./report.md
+  $ appscan report issues <scanId> --grouped --min-severity 2`)
   .action(generateReport);
 
 program
@@ -151,6 +194,12 @@ program
     '3'
   )
   .option('-c, --config <path>', 'Path to configuration file')
+  .addHelpText('after', `
+Examples:
+  $ appscan all-reports
+  $ appscan all-reports --html --outdir ./security-reports
+  $ appscan all-reports --technology StaticAnalyzer,DynamicAnalyzer
+  $ appscan all-reports --min-severity 2 --no-grouped`)
   .action(generateAllReports);
 
 program
@@ -178,6 +227,12 @@ program
   .option('--odata-filter <filter>', 'OData filter for issues')
   .option('--open-only', 'Include only issues with Status = Open')
   .option('-j, --json', 'Output result as JSON')
+  .addHelpText('after', `
+Examples:
+  $ appscan generate-api-report Scan <scanId>
+  $ appscan api-report Application <appId> --format Pdf
+  $ appscan api-report Scan <scanId> --format Csv --output ./report.csv
+  $ appscan api-report ScanExecution <execId> --open-only --title "Security Report"`)
   .action(generateAndDownloadReport);
 
 program
@@ -196,6 +251,11 @@ program
   .option('-l, --locale <locale>', 'Report locale (default: en-US)', 'en-US')
   .option('--odata-filter <filter>', 'OData filter for issues')
   .option('--open-only', 'Include only issues with Status = Open')
+  .addHelpText('after', `
+Examples:
+  $ appscan generate-markdown-api-report Scan <scanId>
+  $ appscan md-report Application <appId> --output ./report.md
+  $ appscan md-report Scan <scanId> --open-only --title "Vulnerabilities"`)
   .action(generateMarkdownReport);
 
 program
@@ -212,6 +272,12 @@ program
   .option('--mode <mode>', 'Display mode: light or dark', 'light')
   .option('--enable-training-links', 'Enable training links')
   .option('--debug', 'Show debug information')
+  .addHelpText('after', `
+Examples:
+  $ appscan get-article <issueId>
+  $ appscan article <issueId> --output ./article.html
+  $ appscan article <issueId> --language JavaScript --nl es
+  $ appscan article <issueId> --enable-training-links --mode dark`)
   .action(getArticle);
 
 program
@@ -227,6 +293,11 @@ program
   .option('--nl <nl>', 'Natural language', 'en')
   .option('--mode <mode>', 'Display mode: light or dark', 'light')
   .option('--enable-training-links', 'Enable training links')
+  .addHelpText('after', `
+Examples:
+  $ appscan get-article-markdown <issueId>
+  $ appscan article-md <issueId> --output ./article.md
+  $ appscan article-md <issueId> --language Python --nl fr`)
   .action(getArticleMarkdown);
 
 program
@@ -236,6 +307,11 @@ program
   .argument('[year]', 'Target year (defaults to current year)')
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
+  .addHelpText('after', `
+Examples:
+  $ appscan yearly-summary
+  $ appscan summary 2024
+  $ appscan yearly-summary 2023 --json`)
   .action(generateYearlySummary);
 
 program.parse(process.argv);
