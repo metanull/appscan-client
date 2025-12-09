@@ -1,3 +1,5 @@
+import chalk from 'chalk';
+
 let Version3Client;
 
 // Try to import jira.js - it's an optional dependency
@@ -79,6 +81,30 @@ export class JiraService {
           type: 'heading',
           attrs: { level: 3 },
           content: [{ type: 'text', text: line.substring(4) }]
+        });
+      }
+      // Heading 4
+      else if (line.startsWith('#### ')) {
+        content.push({
+          type: 'heading',
+          attrs: { level: 4 },
+          content: [{ type: 'text', text: line.substring(5) }]
+        });
+      }
+      // Heading 5
+      else if (line.startsWith('##### ')) {
+        content.push({
+          type: 'heading',
+          attrs: { level: 5 },
+          content: [{ type: 'text', text: line.substring(6) }]
+        });
+      }
+      // Heading 6
+      else if (line.startsWith('###### ')) {
+        content.push({
+          type: 'heading',
+          attrs: { level: 6 },
+          content: [{ type: 'text', text: line.substring(7) }]
         });
       }
       // Bullet list item
@@ -167,8 +193,9 @@ export class JiraService {
       this.initialize();
     }
 
+    let issueData;
     try {
-      const issueData = {
+      issueData = {
         fields: {
           project: {
             key: projectKey,
@@ -196,6 +223,12 @@ export class JiraService {
         issueData.fields.assignee = { accountId: options.assignee };
       }
 
+      // Log the description length for debugging
+      const descriptionJson = JSON.stringify(issueData.fields.description);
+      const descriptionLength = descriptionJson.length;
+      console.log(chalk.gray(`\nJIRA Description length: ${descriptionLength} characters`));
+      console.log(chalk.gray(`ADF nodes: ${issueData.fields.description.content?.length || 0} nodes\n`));
+      
       const response = await this.client.issues.createIssue(issueData);
       return response;
     } catch (error) {
@@ -207,6 +240,14 @@ export class JiraService {
         if (error.response.data) {
           errorMessage += `\n  Details: ${JSON.stringify(error.response.data, null, 2)}`;
         }
+      }
+      
+      // Add description size info for CONTENT_LIMIT_EXCEEDED errors
+      if (issueData && error.response?.data?.errorMessages?.includes('CONTENT_LIMIT_EXCEEDED')) {
+        const descriptionJson = JSON.stringify(issueData.fields.description);
+        errorMessage += `\n  Description size: ${descriptionJson.length} characters`;
+        errorMessage += `\n  Description nodes: ${issueData.fields.description.content?.length || 0} nodes`;
+        errorMessage += `\n  Note: JIRA has a content limit (typically 32KB for description field)`;
       }
       
       throw new Error(errorMessage);

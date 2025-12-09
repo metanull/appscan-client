@@ -36,9 +36,9 @@ export const ISSUE_STATUSES = [
 ];
 
 /**
- * Format scan display with issue counts and JIRA link
+ * Format scan display with issue counts
  */
-export function formatScanDisplay(scan, issueStats, jiraIssue = null) {
+export function formatScanDisplay(scan, issueStats) {
   const scanName = scan.Name || scan.Id;
   const lastRun = scan.LatestExecution?.UpdatedAt 
     ? new Date(scan.LatestExecution.UpdatedAt).toLocaleDateString()
@@ -61,15 +61,8 @@ export function formatScanDisplay(scan, issueStats, jiraIssue = null) {
     statsDisplay += parts.join(' ') + ']';
   }
 
-  // Add JIRA issue indicator if exists
-  let jiraDisplay = '';
-  if (jiraIssue) {
-    const statusColor = jiraIssue.status === 'Done' ? 'green' : jiraIssue.status === 'In Progress' ? 'yellow' : 'gray';
-    jiraDisplay = ` ${chalk[statusColor]('🎫')} ${chalk.blue.underline(jiraIssue.key)}`;
-  }
-
   return {
-    name: `${chalk.cyan(scanName)} ${chalk.gray(`(${lastRun})`)}${statsDisplay}${jiraDisplay}`,
+    name: `${chalk.cyan(scanName)} ${chalk.gray(`(${lastRun})`)}${statsDisplay}`,
     value: scan.Id,
     short: scanName,
   };
@@ -131,6 +124,18 @@ export function formatIssueDisplay(issue, includeDetails = false, appScanBaseUrl
         ? chalk.blue.underline(formatted.url)
         : chalk.cyan(formatted.text);
       display += `\n    ${chalk.gray('API/URL:')} ${displayText}`;
+    }
+    
+    // Show code context if available
+    if (issue.Context) {
+      const contextPreview = issue.Context.substring(0, 80).replace(/\n/g, ' ');
+      display += `\n    ${chalk.gray('Context:')} ${chalk.white(contextPreview)}${issue.Context.length > 80 ? '...' : ''}`;
+    }
+    
+    // Add AppScan article link for remediation guidance
+    if (issue.IssueTypeId) {
+      const articleUrl = `${appScanBaseUrl}/api/v4/Reports/Article/?issuetype=${issue.IssueTypeId}`;
+      display += `\n    ${chalk.gray('Article:')} ${chalk.blue.underline(articleUrl)}`;
     }
   }
   
