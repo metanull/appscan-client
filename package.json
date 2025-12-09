@@ -47,6 +47,7 @@
     "commander": "^14.0.2",
     "dotenv": "^17.2.3",
     "marked": "^17.0.1",
+    "sanitize-html": "^2.17.0",
     "turndown": "^7.2.0"
   },
   "optionalDependencies": {

@@ -112,7 +112,7 @@ export function getUrlLabel(url) {
       const parsed = new URL(url);
       
       // Azure DevOps
-      if (parsed.hostname.includes('dev.azure.com')) {
+      if (parsed.hostname === 'dev.azure.com' || parsed.hostname.endsWith('.dev.azure.com')) {
         const pathParam = parsed.searchParams.get('path');
         if (pathParam) {
           // Return just the file path
@@ -123,7 +123,7 @@ export function getUrlLabel(url) {
       }
       
       // AppScan Cloud
-      if (parsed.hostname.includes('cloud.appscan.com')) {
+      if (parsed.hostname === 'cloud.appscan.com' || parsed.hostname.endsWith('.cloud.appscan.com')) {
         // For issue URLs, return just "Issue Details"
         if (parsed.pathname.includes('/Issues/')) {
           return 'Issue Details';

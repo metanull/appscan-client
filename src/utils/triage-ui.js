@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import { select, checkbox, input, confirm } from '@inquirer/prompts';
+import sanitizeHtml from 'sanitize-html';
 import { convertToAbsoluteUrl, formatUrlForDisplay } from './url-converter.js';
 
 /**
@@ -190,13 +191,11 @@ export function displayIssueDetails(issue, articleHtml = null, appScanBaseUrl = 
   
   // Show snippet from article if available
   if (articleHtml && typeof articleHtml === 'string') {
-    // Extract text from HTML (very basic)
-    const text = articleHtml
-      .replace(/<style[^>]*>.*?<\/style>/gs, '')
-      .replace(/<script[^>]*>.*?<\/script>/gs, '')
-      .replace(/<[^>]+>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
+    // Extract text from HTML using sanitize-html for security
+    const text = sanitizeHtml(articleHtml, {
+      allowedTags: [],
+      allowedAttributes: {}
+    }).replace(/\s+/g, ' ').trim();
     
     if (text.length > 0) {
       const preview = text.substring(0, 300);

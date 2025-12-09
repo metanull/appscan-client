@@ -14,10 +14,13 @@ export async function connectionCheck(options) {
     // Check if configuration exists
     console.log(chalk.cyan('📋 Configuration Status:'));
     
-    const apiKeyStatus = config.getApiKey() 
+    const hasApiKey = !!config.getApiKey();
+    const hasApiSecret = !!config.getApiSecret();
+    
+    const apiKeyStatus = hasApiKey
       ? chalk.green('✓ Set') 
       : chalk.red('✗ Not set');
-    const apiSecretStatus = config.getApiSecret() 
+    const apiSecretStatus = hasApiSecret
       ? chalk.green('✓ Set') 
       : chalk.red('✗ Not set');
     const baseUrlStatus = config.getBaseUrl() 
