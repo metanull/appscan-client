@@ -91,6 +91,7 @@ Examples:
   $ appscan issues <scanId> --json
   $ appscan issues <scanId> --exclude-status "Noise,Ignore"
   $ appscan issues <scanId> --grouped`)
+  .option('--columns <type>', 'Force columns: sast, dast, sca, all (overrides auto-detection)')
   .action(listIssues);
 
 program

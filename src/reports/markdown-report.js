@@ -104,31 +104,62 @@ export class MarkdownReportGenerator {
 
         report += `#### <a id="${anchor}"></a>${issueType} (${language}) – ${highestSeverity} (${highestSeverityValue})\n\n`;
 
-        report += '| Issue ID | Severity | SeverityValue | Context | Source |\n';
-        report += '|----------|----------|---------------|---------|--------|\n';
+        // For grouped view we also offer technology-aware, compact summary columns.
+        const firstIssue = group.issues[0] || {};
+        const forcedColumns = options.columns || null;
+        const detectedTech =
+          forcedColumns ||
+          scanMeta?.technology ||
+          firstIssue.DiscoveryMethod ||
+          firstIssue.Scanner ||
+          firstIssue.ElementType ||
+          '';
+
+        const baseCols = ['Issue ID', 'Severity', 'SeverityValue', 'CVE', 'CVSS'];
+
+        let groupTechCols = [];
+        const tt = ('' + detectedTech).toLowerCase();
+        if ((forcedColumns && forcedColumns.toLowerCase() === 'sca') || tt.includes('sca') || tt.includes('thirdpartylib')) {
+          groupTechCols = ['Library', 'Version', 'PackageId', 'EPSS', 'Source File'];
+        } else if ((forcedColumns && forcedColumns.toLowerCase() === 'dast') || tt.includes('dynamic') || tt.includes('dast') || firstIssue.ElementType === 'Page') {
+          groupTechCols = ['URL', 'Domain', 'Element', 'Path'];
+        } else {
+          groupTechCols = ['Threat Class', 'Scanner', 'Fix Group', 'Source File'];
+        }
+
+        const columns = baseCols.concat(groupTechCols).concat(['Status']);
+        report += `| ${columns.join(' | ')} |\n`;
+        report += `|${columns.map(() => '---').join('|')}|\n`;
 
         group.issues.forEach((issue) => {
           const issueIdRaw = issue.Id || 'N/A';
           const issueId = issueIdRaw !== 'N/A'
             ? `[${this.escapeMarkdownTableCell(issueIdRaw)}](https://eu.cloud.appscan.com/api/v4/Issues/${issueIdRaw}?locale=en)`
             : 'N/A';
-          const severity = this.escapeMarkdownTableCell(issue.Severity);
-          const severityValue = this.escapeMarkdownTableCell(
-            issue.SeverityValue?.toString()
-          );
-          const context = issue.Context
-            ? `\`${this.escapeMarkdownTableCell(issue.Context)}\``
-            : 'N/A';
-          const sourceUrl = issue.SourceFileUrl || issue.SourceFileUri;
-          const safeSourceUrl = sourceUrl ? this.encodeUrlForLink(sourceUrl) : null;
-          const sourceLabel = safeSourceUrl
-            ? this.extractSourceLabel(sourceUrl)
-            : 'Source';
-          const source = safeSourceUrl
-            ? `[${sourceLabel}](${safeSourceUrl})`
-            : 'N/A';
 
-          report += `| ${issueId} | ${severity} | ${severityValue} | ${context} | ${source} |\n`;
+          const rowVals = {
+            'Issue ID': issueId,
+            'Severity': this.escapeMarkdownTableCell(issue.Severity),
+            'SeverityValue': this.escapeMarkdownTableCell(issue.SeverityValue?.toString()),
+            'CVE': this.escapeMarkdownTableCell(issue.CveId || issue.Cve),
+            'CVSS': this.escapeMarkdownTableCell(issue.Cvss),
+            'Library': this.escapeMarkdownTableCell(issue.LibraryName),
+            'Version': this.escapeMarkdownTableCell(issue.LibraryVersion),
+            'PackageId': this.escapeMarkdownTableCell(issue.PackageId),
+            'EPSS': this.escapeMarkdownTableCell(issue.EpssScore?.toString()),
+            'Source File': this.escapeMarkdownTableCell(issue.SourceFile || issue.SourceFileUri || issue.Location),
+            'URL': this.escapeMarkdownTableCell(issue.Location),
+            'Domain': this.escapeMarkdownTableCell(issue.Domain),
+            'Element': this.escapeMarkdownTableCell(issue.Element),
+            'Path': this.escapeMarkdownTableCell(issue.Path),
+            'Threat Class': this.escapeMarkdownTableCell(issue.ThreatClassId),
+            'Scanner': this.escapeMarkdownTableCell(issue.Scanner),
+            'Fix Group': this.escapeMarkdownTableCell(issue.FixGroupId),
+            'Status': this.escapeMarkdownTableCell(issue.Status),
+          };
+
+          const row = columns.map((col) => rowVals[col] ?? 'N/A');
+          report += `| ${row.join(' | ')} |\n`;
         });
 
         const remediation = await this.generateGroupRemediation(
@@ -157,25 +188,105 @@ export class MarkdownReportGenerator {
       .forEach((severity) => {
         const severityIssues = grouped[severity] || [];
         report += `### ${severity} Severity (${severityIssues.length})\n\n`;
-        report +=
-          '| Issue ID | Issue Type | Severity | Threat Class | Scanner | Fix Group | Source File | Location | Status |\n';
-        report +=
-          '|----------|------------|----------|--------------|---------|-----------|-------------|----------|--------|\n';
+        // Build technology-aware columns to better support SAST, DAST and SCA
+        const exampleIssue = severityIssues[0] || {};
+        const technology =
+          scanMeta?.technology || exampleIssue.DiscoveryMethod || exampleIssue.Scanner || '';
+
+        // base columns common to most scanners
+        const baseCols = [
+          'Issue ID',
+          'Issue Type',
+          'Severity',
+          'SeverityValue',
+          'CWE',
+          'CVE',
+          'CVSS',
+        ];
+
+        let techCols = [];
+        const t = ('' + technology).toLowerCase();
+        if (t.includes('sca') || t.includes('sca analyzer') || t.includes('thirdpartylib')) {
+          // SCA-focused columns
+          techCols = [
+            'Library',
+            'Library Version',
+            'PackageId',
+            'AppPkgStatus',
+            'Source File',
+            'EPSS',
+          ];
+        } else if (t.includes('dynamic') || t.includes('dast') || exampleIssue.ElementType === 'Page') {
+          // DAST-focused columns
+          techCols = [
+            'URL',
+            'Domain',
+            'Element',
+            'ElementType',
+            'Path',
+            'Port',
+            'Scheme',
+          ];
+        } else {
+          // Default to SAST-friendly columns
+          techCols = [
+            'Threat Class',
+            'Scanner',
+            'Fix Group',
+            'Source File',
+            'Location',
+            'Context',
+          ];
+        }
+
+        // common trailing column
+        const trailing = ['Status'];
+
+        const columns = baseCols.concat(techCols).concat(trailing);
+
+        // write header
+        report += `| ${columns.join(' | ')} |\n`;
+        report += `|${columns.map(() => '---').join('|')}|\n`;
 
         severityIssues.forEach((issue) => {
           const issueIdRaw = issue.Id || 'N/A';
           const issueId = issueIdRaw !== 'N/A'
             ? `[${this.escapeMarkdownTableCell(issueIdRaw)}](https://eu.cloud.appscan.com/api/v4/Issues/${issueIdRaw}?locale=en)`
             : 'N/A';
-          const issueType = this.escapeMarkdownTableCell(issue.IssueType);
-          const severityText = this.escapeMarkdownTableCell(issue.Severity);
-          const threatClass = this.escapeMarkdownTableCell(issue.ThreatClassId);
-          const scanner = this.escapeMarkdownTableCell(issue.Scanner);
-          const fixGroup = this.escapeMarkdownTableCell(issue.FixGroupId);
-          const sourceFile = this.escapeMarkdownTableCell(issue.SourceFileUri);
-          const location = this.escapeMarkdownTableCell(issue.Location);
-          const status = this.escapeMarkdownTableCell(issue.Status);
-          report += `| ${issueId} | ${issueType} | ${severityText} | ${threatClass} | ${scanner} | ${fixGroup} | ${sourceFile} | ${location} | ${status} |\n`;
+
+          const rowVals = {
+            'Issue ID': issueId,
+            'Issue Type': this.escapeMarkdownTableCell(issue.IssueType),
+            'Severity': this.escapeMarkdownTableCell(issue.Severity),
+            'SeverityValue': this.escapeMarkdownTableCell(
+              issue.SeverityValue?.toString()
+            ),
+            'CWE': this.escapeMarkdownTableCell(issue.Cwe?.toString()),
+            'CVE': this.escapeMarkdownTableCell(issue.CveId || issue.Cve),
+            'CVSS': this.escapeMarkdownTableCell(issue.Cvss),
+            'Library': this.escapeMarkdownTableCell(issue.LibraryName),
+            'Library Version': this.escapeMarkdownTableCell(issue.LibraryVersion),
+            'PackageId': this.escapeMarkdownTableCell(issue.PackageId),
+            'AppPkgStatus': this.escapeMarkdownTableCell(issue.AppPkgStatus),
+            'Source File': this.escapeMarkdownTableCell(issue.SourceFile || issue.SourceFileUri || issue.Location),
+            'EPSS': this.escapeMarkdownTableCell(issue.EpssScore?.toString()),
+            'URL': this.escapeMarkdownTableCell(issue.Location),
+            'Domain': this.escapeMarkdownTableCell(issue.Domain),
+            'Element': this.escapeMarkdownTableCell(issue.Element),
+            'ElementType': this.escapeMarkdownTableCell(issue.ElementType),
+            'Path': this.escapeMarkdownTableCell(issue.Path),
+            'Port': this.escapeMarkdownTableCell(issue.Port?.toString()),
+            'Scheme': this.escapeMarkdownTableCell(issue.Scheme),
+            'Threat Class': this.escapeMarkdownTableCell(issue.ThreatClassId),
+            'Scanner': this.escapeMarkdownTableCell(issue.Scanner),
+            'Fix Group': this.escapeMarkdownTableCell(issue.FixGroupId),
+            'Location': this.escapeMarkdownTableCell(issue.Location),
+            'Context': issue.Context ? `\`${this.escapeMarkdownTableCell(issue.Context)}\`` : 'N/A',
+            'Status': this.escapeMarkdownTableCell(issue.Status),
+          };
+
+          const row = columns.map((col) => rowVals[col] ?? 'N/A');
+          report += `| ${row.join(' | ')} |\n`;
         });
 
         report += '\n';
