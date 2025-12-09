@@ -12,7 +12,7 @@ const DEFAULT_OUTPUT_DIR = './reports';
 function writeStatus(msg) {
   try {
     process.stderr.write(`\r${msg}`);
-  } catch (e) {
+  } catch {
     console.error(msg);
   }
 }
@@ -20,7 +20,9 @@ function writeStatus(msg) {
 function clearStatusLine() {
   try {
     process.stderr.write('\r\x1b[K');
-  } catch (e) {}
+  } catch {
+    // Ignore errors
+  }
 }
 
 function normalizeTechnologyFilter(value) {

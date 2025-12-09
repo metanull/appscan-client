@@ -1,6 +1,6 @@
 {
   "name": "@metanull/appscan-client",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Utility to work with HCL AppScan Cloud API",
   "main": "src/index.js",
   "type": "module",
@@ -45,6 +45,7 @@
     "chalk": "^5.6.2",
     "commander": "^14.0.2",
     "dotenv": "^17.2.3",
+    "jira.js": "^5.2.2",
     "marked": "^17.0.1",
     "turndown": "^7.2.0"
   },

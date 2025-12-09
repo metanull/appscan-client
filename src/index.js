@@ -17,6 +17,9 @@ import { getArticle } from './commands/get-article.js';
 import { getArticleMarkdown } from './commands/get-article-markdown.js';
 import { generateAllReports } from './commands/all-reports.js';
 import { generateYearlySummary } from './commands/yearly-summary.js';
+import { updateIssueStatus } from './commands/update-issue-status.js';
+import { getIssueComments } from './commands/get-issue-comments.js';
+import { createJiraIssue } from './commands/create-jira-issue.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -314,6 +317,57 @@ Examples:
   $ appscan summary 2024
   $ appscan yearly-summary 2023 --json`)
   .action(generateYearlySummary);
+
+program
+  .command('update-issue-status')
+  .alias('update-status')
+  .description('Update the status of an issue')
+  .argument('<issueId>', 'Issue ID')
+  .argument('<status>', 'New status (Open, InProgress, Reopened, Noise, Passed, Fixed, New)')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('--comment <comment>', 'Add a comment when updating status')
+  .option('--external-id <externalId>', 'Set external ID (e.g., Jira issue key)')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText('after', `
+Examples:
+  $ appscan update-issue-status <issueId> InProgress
+  $ appscan update-status <issueId> Fixed --comment "Fixed in version 1.2.3"
+  $ appscan update-status <issueId> Noise --external-id "JIRA-123"`)
+  .action(updateIssueStatus);
+
+program
+  .command('get-issue-comments')
+  .alias('comments')
+  .description('Get comments for a specific issue')
+  .argument('<issueId>', 'Issue ID')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText('after', `
+Examples:
+  $ appscan get-issue-comments <issueId>
+  $ appscan comments <issueId> --json`)
+  .action(getIssueComments);
+
+program
+  .command('create-jira-issue')
+  .alias('jira')
+  .description('Create Jira issue(s) from AppScan scan or issue')
+  .argument('<source>', 'Source type: scan or issue')
+  .argument('<sourceId>', 'Source ID (Scan ID or Issue ID)')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-p, --project <projectKey>', 'Jira project key (overrides JIRA_PROJECT_KEY env var)')
+  .option('-s, --min-severity <value>', 'Minimum severity value (0-5, default: 0)', '0')
+  .option('-e, --exclude-status <status>', 'Exclude issues by status (comma-separated, default: Noise)', 'Noise')
+  .option('-t, --issue-type <type>', 'Jira issue type (default: Bug)', 'Bug')
+  .option('-l, --labels <labels>', 'Comma-separated labels (default: appscan,security)')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText('after', `
+Examples:
+  $ appscan create-jira-issue scan <scanId>
+  $ appscan jira scan <scanId> --min-severity 3 --project PROJ
+  $ appscan jira issue <issueId> --project PROJ --issue-type Task
+  $ appscan jira scan <scanId> --min-severity 4 --labels "security,critical"`)
+  .action(createJiraIssue);
 
 program.parse(process.argv);
 
