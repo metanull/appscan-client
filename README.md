@@ -171,9 +171,45 @@ appscan connection-check
 appscan connection-check --config /path/to/config.json
 ```
 
-### Interactive Triage Tool
+### Triage & Reporting Tool (New!)
 
-The triage tool provides an efficient workflow for processing vulnerabilities:
+The unified `triage-report` command provides comprehensive vulnerability management with querying, reporting, and Jira integration:
+
+```bash
+# Interactive triage workflow
+appscan triage-report interactive
+
+# Query vulnerabilities with filters
+appscan triage-report query --type vulnerabilities --app <appId> \
+  --filter "status:Open;severity:High|Critical"
+
+# Generate status report
+appscan triage-report status --app <appId> --include-jira
+
+# Bulk update vulnerabilities
+appscan triage-report bulk-update-filter --app <appId> \
+  --filter "status:Open;severity:High" \
+  --status InProgress
+
+# Create Jira issues with grouping
+appscan triage-report create-jira --issues id1,id2,id3 \
+  --project SEC --group-by type
+```
+
+**Key Features:**
+- 🔍 **Flexible querying** - Filter by status, severity, type, date with rich syntax
+- 📊 **Status reporting** - Counts by severity and status with Jira integration
+- ✏️ **Bulk updates** - Update single or multiple vulnerabilities efficiently
+- 🎫 **Jira integration** - Create grouped issues with remediation details
+- 🔗 **Traceability** - Auto-link Jira issues to AppScan vulnerabilities
+- 🎯 **Interactive mode** - Guided workflow for manual triage sessions
+- 📋 **JSON output** - All commands support JSON for automation
+
+**See full documentation:** [doc/triage-report.md](doc/triage-report.md)
+
+### Interactive Triage Tool (Legacy)
+
+The original triage tool provides an efficient workflow for processing vulnerabilities:
 
 ```bash
 # Start interactive triage
@@ -196,6 +232,8 @@ appscan triage --config /path/to/config.json
   - AppScan API paths → Direct issue detail links
   - DAST URLs → Full application URLs
 - ♻️  Continuous workflow until all scans are processed
+
+**Note:** Consider using `appscan triage-report interactive` for the newer unified workflow.
 
 **Workflow Example:**
 1. Select scan "MyApp SAST" with 45 open issues
