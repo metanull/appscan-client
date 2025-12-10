@@ -23,6 +23,7 @@ import { createJiraIssue } from './commands/create-jira-issue.js';
 import { setup } from './commands/setup.js';
 import { connectionCheck } from './commands/connection-check.js';
 import { triage } from './commands/triage.js';
+import triageReportCommand from './commands/triage-report.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -73,6 +74,8 @@ Examples:
   $ appscan triage
   $ appscan triage --config ./config.env`)
   .action(triage);
+
+program.addCommand(triageReportCommand);
 
 program
   .command('list-applications')
