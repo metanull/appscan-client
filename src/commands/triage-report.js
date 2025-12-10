@@ -34,7 +34,7 @@ export function createTriageReportCommand() {
     .option('--filter <expr>', 'Filter expression (e.g., "status:Open;severity:High")')
     .option('--limit <n>', 'Maximum number of results', '100')
     .option('--offset <n>', 'Number of results to skip', '0')
-    .option('--json', 'Output as JSON', true)
+    .option('--json', 'Output as JSON (default: true)', true)
     .option('--table', 'Output as table')
     .option('--markdown', 'Convert articles to Markdown (for articles type)')
     .option('-c, --config <path>', 'Path to configuration file')
@@ -188,7 +188,8 @@ async function queryAction(options) {
  * Query applications
  */
 async function queryApplications(service, formatter, options) {
-  const apps = await service.listApplications();
+  const response = await service.listApplications();
+  const apps = response.Items || response || [];
   
   let filtered = apps;
   
@@ -217,7 +218,8 @@ async function queryApplications(service, formatter, options) {
  * Query scans
  */
 async function queryScans(service, formatter, options) {
-  const scans = await service.listScans(options.app);
+  const response = await service.listScans(options.app);
+  const scans = response.Items || response || [];
   
   let filtered = scans;
   
@@ -259,7 +261,8 @@ async function queryScanExecutions(service, formatter, options) {
     throw new Error('--scan option is required for scan-executions query');
   }
 
-  const executions = await service.listScanExecutions(options.scan);
+  const response = await service.listScanExecutions(options.scan);
+  const executions = response.Items || response || [];
   
   return {
     scanId: options.scan,
@@ -896,7 +899,8 @@ async function interactiveAction(options) {
     // Step 1: Select application
     let appId = options.app;
     if (!appId) {
-      const apps = await service.listApplications();
+      const response = await service.listApplications();
+      const apps = response.Items || response || [];
       const appChoices = apps.map(app => ({
         name: `${app.Name} (${app.TotalIssues || 0} issues)`,
         value: app.Id,
@@ -910,7 +914,8 @@ async function interactiveAction(options) {
     }
 
     // Step 2: Select scan
-    const scans = await service.listScans(appId);
+    const scansResponse = await service.listScans(appId);
+    const scans = scansResponse.Items || scansResponse || [];
     let filteredScans = scans;
 
     if (options.scanType) {
