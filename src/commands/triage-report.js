@@ -896,196 +896,589 @@ async function interactiveAction(options) {
 
     console.log(chalk.cyan('\n=== Interactive Triage Workflow ===\n'));
 
-    // Step 1: Select application
-    let appId = options.app;
-    if (!appId) {
-      const response = await service.listApplications();
-      const apps = response.Items || response || [];
-      const appChoices = apps.map(app => ({
-        name: `${app.Name} (${app.TotalIssues || 0} issues)`,
-        value: app.Id,
-        description: app.Description || ''
-      }));
+    // Main workflow loop
+    let continueWorkflow = true;
+    while (continueWorkflow) {
+      // Step 1: Select application
+      let appId = options.app;
+      if (!appId) {
+        const response = await service.listApplications();
+        const apps = response.Items || response || [];
+        const appChoices = apps.map(app => ({
+          name: `${app.Name} (${app.TotalIssues || 0} issues)`,
+          value: app.Id,
+          description: app.Description || ''
+        }));
 
-      appId = await select({
-        message: 'Select an application:',
-        choices: appChoices
-      });
-    }
-
-    // Step 2: Select scan
-    const scansResponse = await service.listScans(appId);
-    const scans = scansResponse.Items || scansResponse || [];
-    let filteredScans = scans;
-
-    if (options.scanType) {
-      const normalizedType = options.scanType.toUpperCase();
-      filteredScans = scans.filter(scan => {
-        return Formatter.normalizeScanType(scan.Technology) === normalizedType;
-      });
-    }
-
-    const scanChoices = filteredScans.map(scan => {
-      const stats = {
-        total: scan.LatestExecution?.NIssuesFound || 0,
-        High: scan.LatestExecution?.NHighIssues || 0,
-        Medium: scan.LatestExecution?.NMediumIssues || 0
-      };
-      return formatScanDisplay(scan, stats);
-    });
-
-    const scanId = await select({
-      message: 'Select a scan:',
-      choices: scanChoices
-    });
-
-    // Step 3: Fetch and display issues
-    const issuesResponse = await service.api.v4.Issues_Get('Scan', scanId, {});
-    const issues = issuesResponse.Items || [];
-
-    if (issues.length === 0) {
-      console.log(chalk.yellow('\nNo issues found for this scan.'));
-      return;
-    }
-
-    console.log(chalk.green(`\nFound ${issues.length} issues`));
-
-    // Step 4: Group and display
-    const grouped = groupIssuesByType(issues);
-    displayGroupedSummary(grouped);
-
-    // Step 5: Select action
-    const action = await select({
-      message: '\nWhat would you like to do?',
-      choices: [
-        { name: 'Select issues to update status', value: 'update' },
-        { name: 'Select issues to create Jira', value: 'jira' },
-        { name: 'Exit', value: 'exit' }
-      ]
-    });
-
-    if (action === 'exit') {
-      return;
-    }
-
-    // Step 6: Select issues
-    const issueChoices = issues.map(issue => ({
-      name: `[${issue.Severity}] ${issue.IssueType} - ${issue.Location || issue.Api || 'N/A'}`,
-      value: issue.Id,
-      checked: false
-    }));
-
-    const selectedIssueIds = await checkbox({
-      message: 'Select issues:',
-      choices: issueChoices
-    });
-
-    if (selectedIssueIds.length === 0) {
-      console.log(chalk.yellow('\nNo issues selected.'));
-      return;
-    }
-
-    // Step 7: Perform action
-    if (action === 'update') {
-      const statusChoice = await select({
-        message: 'Select new status:',
-        choices: ISSUE_STATUSES
-      });
-
-      const comment = await input({
-        message: 'Add comment (optional):',
-        default: ''
-      });
-
-      // Bulk update
-      const selectedIssues = issues.filter(i => selectedIssueIds.includes(i.Id));
-      const issuesByApp = {};
-      
-      for (const issue of selectedIssues) {
-        const appIdForIssue = issue.ApplicationId;
-        if (!issuesByApp[appIdForIssue]) {
-          issuesByApp[appIdForIssue] = [];
-        }
-        issuesByApp[appIdForIssue].push(issue.Id);
-      }
-
-      const updateData = { Status: statusChoice };
-      if (comment) updateData.Comment = comment;
-
-      for (const [appIdForUpdate, appIssueIds] of Object.entries(issuesByApp)) {
-        const odataFilter = appIssueIds.map(id => `Id eq ${id}`).join(' or ');
-        await service.api.v4.Issues_UpdateFilteredIssues(
-          'Application',
-          appIdForUpdate,
-          updateData,
-          { $filter: odataFilter }
-        );
-      }
-
-      console.log(chalk.green(`\n✓ Updated ${selectedIssueIds.length} issues to ${statusChoice}`));
-    } else if (action === 'jira') {
-      if (!config.isJiraValid()) {
-        console.error(chalk.red('\nJira is not configured. Please set JIRA_HOST, JIRA_EMAIL, and JIRA_API_TOKEN.'));
-        return;
-      }
-
-      const projectKey = config.getJiraProjectKey() || await input({
-        message: 'Enter Jira project key:',
-        validate: (value) => value.length > 0 || 'Project key is required'
-      });
-
-      const groupBy = await select({
-        message: 'Group issues by:',
-        choices: [
-          { name: 'Type (recommended)', value: 'type' },
-          { name: 'Severity', value: 'severity' },
-          { name: 'None (one issue per vulnerability)', value: 'none' }
-        ]
-      });
-
-      // Create Jira issues
-      const jiraService = new JiraService(config);
-      jiraService.initialize();
-
-      const selectedIssues = issues.filter(i => selectedIssueIds.includes(i.Id));
-      const groups = groupIssuesForJira(selectedIssues, groupBy);
-
-      for (const group of groups) {
-        const builder = new JiraDescriptionBuilder(group.issues, config.getBaseUrl());
-        const description = builder
-          .addSummary(null, null)
-          .addIssuesByType()
-          .addIssueIds()
-          .build();
-
-        const summary = `[Security] ${group.name} - ${group.issues.length} occurrence(s)`;
-
-        const jiraIssue = await jiraService.client.issues.createIssue({
-          fields: {
-            project: { key: projectKey },
-            summary: summary,
-            description: jiraService.convertToADF(description),
-            issuetype: { name: 'Bug' },
-            labels: ['appscan', 'security']
-          }
+        appId = await select({
+          message: 'Select an application:',
+          choices: appChoices
         });
+      }
 
-        const jiraKey = jiraIssue.key;
-        console.log(chalk.green(`\n✓ Created Jira issue: ${jiraKey}`));
+      // Step 2: Select scan
+      const scansResponse = await service.listScans(appId);
+      const scans = scansResponse.Items || scansResponse || [];
+      let filteredScans = scans;
 
-        // Update AppScan issues with Jira link
-        for (const issue of group.issues) {
-          const appIdForJira = issue.ApplicationId;
-          await service.api.v4.Issues_UpdateFilteredIssues(
-            'Application',
-            appIdForJira,
-            { ExternalId: jiraKey },
-            { $filter: `Id eq ${issue.Id}` }
+      if (options.scanType) {
+        const normalizedType = options.scanType.toUpperCase();
+        filteredScans = scans.filter(scan => {
+          return Formatter.normalizeScanType(scan.Technology) === normalizedType;
+        });
+        
+        if (filteredScans.length === 0) {
+          console.log(chalk.yellow(`\nNo ${options.scanType} scans found for this application.`));
+          console.log(chalk.gray('Available scan types in this application:'));
+          const availableTypes = [...new Set(scans.map(s => Formatter.normalizeScanType(s.Technology)))];
+          availableTypes.forEach(type => {
+            const count = scans.filter(s => Formatter.normalizeScanType(s.Technology) === type).length;
+            console.log(chalk.gray(`  - ${type}: ${count} scan(s)`));
+          });
+          console.log(chalk.cyan('\n↩️  Returning to application selection...\n'));
+          continue; // Go back to application selection
+        }
+      }
+
+      const scanChoices = filteredScans.map(scan => {
+        const stats = {
+          total: scan.LatestExecution?.NIssuesFound || 0,
+          High: scan.LatestExecution?.NHighIssues || 0,
+          Medium: scan.LatestExecution?.NMediumIssues || 0
+        };
+        return formatScanDisplay(scan, stats);
+      });
+
+      let scanId;
+      if (filteredScans.length === 1) {
+        // Auto-select if only one scan available
+        scanId = filteredScans[0].Id;
+        console.log(chalk.green(`\n✓ Auto-selected scan: ${filteredScans[0].Name}`));
+      } else {
+        scanId = await select({
+          message: 'Select a scan:',
+          choices: scanChoices
+        });
+      }
+
+      // Step 3: Issue browsing loop
+      let continueBrowsing = true;
+      let filterStatus = null;
+      let filterSeverity = null;
+      let filterJira = null; // 'with' | 'without' | null
+      let filterIssueType = null; // Filter by specific vulnerability type
+      let searchText = null;
+
+      while (continueBrowsing) {
+        // Fetch and display issues
+        const issuesResponse = await service.api.v4.Issues_Get('Scan', scanId, {});
+        let issues = issuesResponse.Items || [];
+
+        if (issues.length === 0) {
+          console.log(chalk.yellow('\nNo issues found for this scan.'));
+          continueBrowsing = false;
+          break;
+        }
+
+        // Apply filters
+        if (filterStatus) {
+          issues = issues.filter(i => i.Status === filterStatus);
+        }
+        if (filterSeverity) {
+          issues = issues.filter(i => i.Severity === filterSeverity);
+        }
+        if (filterIssueType) {
+          issues = issues.filter(i => i.IssueType === filterIssueType);
+        }
+        if (filterJira === 'with') {
+          issues = issues.filter(i => i.ExternalId && i.ExternalId.trim() !== '');
+        } else if (filterJira === 'without') {
+          issues = issues.filter(i => !i.ExternalId || i.ExternalId.trim() === '');
+        }
+        if (searchText) {
+          const searchLower = searchText.toLowerCase();
+          issues = issues.filter(i => 
+            (i.IssueType && i.IssueType.toLowerCase().includes(searchLower)) ||
+            (i.Location && i.Location.toLowerCase().includes(searchLower)) ||
+            (i.Api && i.Api.toLowerCase().includes(searchLower))
           );
         }
-      }
 
-      console.log(chalk.green(`\n✓ Created ${groups.length} Jira issue(s) and linked to AppScan`));
+        console.log(chalk.green(`\nShowing ${issues.length} issues`));
+        if (filterStatus || filterSeverity || filterIssueType || filterJira || searchText) {
+          const filters = [];
+          if (filterStatus) filters.push(`Status: ${filterStatus}`);
+          if (filterSeverity) filters.push(`Severity: ${filterSeverity}`);
+          if (filterIssueType) filters.push(`Type: ${filterIssueType}`);
+          if (filterJira) filters.push(`Jira: ${filterJira === 'with' ? 'Has Jira link' : 'No Jira link'}`);
+          if (searchText) filters.push(`Search: "${searchText}"`);
+          console.log(chalk.cyan(`Filters active: ${filters.join(', ')}`));
+        }
+
+        // Display status summary
+        const statusCounts = {};
+        const severityCounts = {};
+        for (const issue of issues) {
+          statusCounts[issue.Status] = (statusCounts[issue.Status] || 0) + 1;
+          severityCounts[issue.Severity] = (severityCounts[issue.Severity] || 0) + 1;
+        }
+        console.log(chalk.cyan('\n📊 Status Summary:'));
+        for (const [status, count] of Object.entries(statusCounts).sort((a, b) => b[1] - a[1])) {
+          const icon = status === 'Open' ? '🔴' : status === 'InProgress' ? '🟡' : status === 'Noise' ? '⚫' : '✅';
+          console.log(`  ${icon} ${status}: ${count}`);
+        }
+
+        // Group and display
+        const grouped = groupIssuesByType(issues);
+        displayGroupedSummary(grouped);
+
+        // Display active filters before action menu
+        if (filterStatus || filterSeverity || filterIssueType || filterJira || searchText) {
+          console.log(chalk.yellow('\n⚠️  Active Filters:'));
+          if (filterStatus) console.log(chalk.yellow(`  • Status: ${filterStatus}`));
+          if (filterSeverity) console.log(chalk.yellow(`  • Severity: ${filterSeverity}`));
+          if (filterIssueType) console.log(chalk.yellow(`  • Type: ${filterIssueType}`));
+          if (filterJira) console.log(chalk.yellow(`  • Jira: ${filterJira === 'with' ? 'Has Jira link' : 'No Jira link'}`));
+          if (searchText) console.log(chalk.yellow(`  • Search: "${searchText}"`));
+          console.log(chalk.gray('  (Some vulnerabilities may be hidden by these filters)'));
+        }
+
+        // Step 4: Select action
+        const action = await select({
+          message: '\nWhat would you like to do? (Use ↑↓ arrows to select, Enter to confirm)',
+          choices: [
+            { name: '📝 Select issues to update status', value: 'update' },
+            { name: '🎫 Select issues to create Jira', value: 'jira' },
+            { name: '🔍 View issue details (quick)', value: 'details' },
+            { name: '📖 View issue details with article', value: 'details-with-article' },
+            { name: '🔎 Filter by status', value: 'filter-status' },
+            { name: '📊 Filter by severity', value: 'filter-severity' },
+            { name: '🏷️  Filter by vulnerability type', value: 'filter-type' },
+            { name: '🎫 Filter by Jira link', value: 'filter-jira' },
+            { name: '🔍 Search by text', value: 'search' },
+            { name: '🔄 Clear filters', value: 'clear-filters' },
+            { name: '🔄 Refresh', value: 'refresh' },
+            { name: '⬅️  Back to scan selection', value: 'back' },
+            { name: '❌ Exit', value: 'exit' }
+          ]
+        });
+
+        if (action === 'exit') {
+          continueBrowsing = false;
+          continueWorkflow = false;
+          break;
+        } else if (action === 'back') {
+          continueBrowsing = false;
+          break;
+        } else if (action === 'refresh') {
+          continue;
+        } else if (action === 'clear-filters') {
+          filterStatus = null;
+          filterSeverity = null;
+          filterIssueType = null;
+          filterJira = null;
+          searchText = null;
+          console.log(chalk.green('\n✓ Filters cleared'));
+          continue;
+        } else if (action === 'filter-status') {
+          const statusChoices = [
+            { name: 'All statuses', value: null },
+            ...ISSUE_STATUSES
+          ];
+          filterStatus = await select({
+            message: 'Filter by status:',
+            choices: statusChoices
+          });
+          continue;
+        } else if (action === 'filter-severity') {
+          const severityChoices = [
+            { name: 'All severities', value: null },
+            { name: 'Critical', value: 'Critical' },
+            { name: 'High', value: 'High' },
+            { name: 'Medium', value: 'Medium' },
+            { name: 'Low', value: 'Low' },
+            { name: 'Informational', value: 'Informational' }
+          ];
+          filterSeverity = await select({
+            message: 'Filter by severity:',
+            choices: severityChoices
+          });
+          continue;
+        } else if (action === 'filter-type') {
+          // Get unique issue types from current issues
+          const issueTypes = [...new Set(issues.map(i => i.IssueType))].sort();
+          const typeChoices = [
+            { name: 'Show all types', value: null },
+            ...issueTypes.map(type => ({
+              name: `${type} (${issues.filter(i => i.IssueType === type).length} issues)`,
+              value: type
+            }))
+          ];
+          filterIssueType = await select({
+            message: 'Filter by vulnerability type:',
+            choices: typeChoices,
+            pageSize: 20
+          });
+          continue;
+        } else if (action === 'filter-jira') {
+          const jiraChoices = [
+            { name: 'Show all', value: null },
+            { name: 'Only issues WITH Jira link', value: 'with' },
+            { name: 'Only issues WITHOUT Jira link', value: 'without' }
+          ];
+          filterJira = await select({
+            message: 'Filter by Jira link:',
+            choices: jiraChoices
+          });
+          continue;
+        } else if (action === 'search') {
+          searchText = await input({
+            message: 'Enter search text (leave empty to clear):',
+            default: searchText || ''
+          });
+          if (!searchText) searchText = null;
+          continue;
+        } else if (action === 'details' || action === 'details-with-article') {
+          const showArticle = action === 'details-with-article';
+          
+          // View issue details
+          const issueChoices = issues.slice(0, 50).map(issue => ({
+            name: `[${issue.Severity}] [${issue.Status}] ${issue.IssueType} - ${issue.Location || issue.Api || 'N/A'}${issue.ExternalId ? ` (Jira: ${issue.ExternalId})` : ''}`,
+            value: issue.Id
+          }));
+
+          if (issueChoices.length === 0) {
+            console.log(chalk.yellow('\nNo issues to display.'));
+            continue;
+          }
+
+          const selectedIssueId = await select({
+            message: `Select issue to view details${showArticle ? ' with article' : ''}:`,
+            choices: issueChoices,
+            pageSize: 15
+          });
+
+          const selectedIssue = issues.find(i => i.Id === selectedIssueId);
+          if (selectedIssue) {
+            console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+            console.log(chalk.bold.white(`\n📋 Issue Details\n`));
+            console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+            console.log(chalk.bold('Type:'), selectedIssue.IssueType);
+            console.log(chalk.bold('Severity:'), chalk[Formatter.getSeverityColor(selectedIssue.Severity)](selectedIssue.Severity));
+            console.log(chalk.bold('Status:'), selectedIssue.Status);
+            console.log(chalk.bold('Location:'), selectedIssue.Location || selectedIssue.Api || 'N/A');
+            if (selectedIssue.SourceFile) console.log(chalk.bold('File:'), selectedIssue.SourceFile);
+            if (selectedIssue.Line) console.log(chalk.bold('Line:'), selectedIssue.Line);
+            if (selectedIssue.Context) console.log(chalk.bold('Context:'), selectedIssue.Context);
+            if (selectedIssue.Language) console.log(chalk.bold('Language:'), selectedIssue.Language);
+            if (selectedIssue.Cwe) console.log(chalk.bold('CWE:'), selectedIssue.Cwe);
+            if (selectedIssue.ExternalId) {
+              console.log(chalk.bold('Jira Key:'), selectedIssue.ExternalId);
+              const jiraHost = config.getJiraHost();
+              if (jiraHost) {
+                const jiraUrl = `${jiraHost}/browse/${selectedIssue.ExternalId}`;
+                console.log(chalk.bold('Jira URL:'), chalk.blue.underline(jiraUrl));
+              }
+            }
+            if (selectedIssue.SourceFileUri) console.log(chalk.bold('Source:'), selectedIssue.SourceFileUri);
+            console.log(chalk.bold('Created:'), new Date(selectedIssue.DateCreated).toLocaleDateString());
+            console.log(chalk.bold('Updated:'), new Date(selectedIssue.LastUpdated).toLocaleDateString());
+            
+            // Fetch and display article only if requested
+            if (showArticle && selectedIssue.IssueTypeId) {
+              console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+              console.log(chalk.bold.white('📖 Remediation Guidance\n'));
+              console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+              try {
+                const articleHtml = await service.getArticle(selectedIssue.Id);
+                if (articleHtml) {
+                  // Step 1: Sanitize HTML - remove scripts, styles, and images
+                  const sanitizeHtml = (await import('sanitize-html')).default;
+                  const cleanHtml = sanitizeHtml(articleHtml, {
+                    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['h1', 'h2']),
+                    allowedAttributes: {
+                      'a': ['href']
+                    },
+                    disallowedTagsMode: 'discard',
+                    // Remove img, script, style tags completely
+                    exclusiveFilter: (frame) => {
+                      return frame.tag === 'img' || frame.tag === 'script' || frame.tag === 'style';
+                    }
+                  });
+                  
+                  // Step 2: Convert clean HTML to Markdown
+                  const TurndownService = (await import('turndown')).default;
+                  const turndown = new TurndownService({
+                    headingStyle: 'atx',
+                    codeBlockStyle: 'fenced'
+                  });
+                  
+                  // Custom rule to preserve URLs in a console-friendly format
+                  turndown.addRule('links', {
+                    filter: 'a',
+                    replacement: function(content, node) {
+                      const href = node.getAttribute('href');
+                      if (!href) return content;
+                      
+                      // For console, show both text and URL
+                      if (content && content !== href) {
+                        return `${content} (${href})`;
+                      }
+                      return href;
+                    }
+                  });
+                  
+                  const articleMarkdown = turndown.turndown(cleanHtml);
+                  
+                  // Step 3: Render Markdown with formatting in console
+                  const cliMarkdown = (await import('cli-markdown')).default;
+                  const formattedArticle = cliMarkdown(articleMarkdown);
+                  console.log(formattedArticle);
+                } else {
+                  console.log(chalk.yellow('No article content available'));
+                }
+              } catch (e) {
+                console.log(chalk.yellow(`Article not available: ${e.message}`));
+              }
+            }
+            console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'));
+          }
+          continue;
+        }
+
+        // Step 5: Select issues
+        const issueChoices = issues.map(issue => ({
+          name: `[${issue.Severity}] [${issue.Status}] ${issue.IssueType} - ${issue.Location || issue.Api || 'N/A'}${issue.ExternalId ? ` (Jira: ${issue.ExternalId})` : ''}`,
+          value: issue.Id,
+          checked: false
+        }));
+
+        console.log(chalk.gray('\nTip: Use Space to select, Enter to confirm, or press Enter without selecting anything to go back.\n'));
+
+        const selectedIssueIds = await checkbox({
+          message: 'Select issues (or press Enter to cancel):',
+          choices: issueChoices,
+          pageSize: 15
+        });
+
+        if (selectedIssueIds.length === 0) {
+          console.log(chalk.cyan('\n↩️  Returning to action menu...'));
+          continue;
+        }
+
+        console.log(chalk.green(`\n✓ Selected ${selectedIssueIds.length} issue(s)`));
+
+        // Step 6: Choose what to do with selected issues
+        const selectedAction = await select({
+          message: 'What would you like to do with the selected issues?',
+          choices: [
+            { name: '📝 Update status', value: 'update' },
+            { name: '🎫 Create Jira issue(s)', value: 'jira' },
+            { name: '📄 View details of all selected', value: 'view-details' },
+            { name: '⬅️  Back (clear selection)', value: 'back' }
+          ]
+        });
+
+        if (selectedAction === 'back') {
+          continue;
+        }
+
+        // Step 7: Perform action on selected issues
+        if (selectedAction === 'update') {
+          const statusChoice = await select({
+            message: 'Select new status:',
+            choices: ISSUE_STATUSES
+          });
+
+          const comment = await input({
+            message: 'Add comment (optional):',
+            default: ''
+          });
+
+          // Bulk update
+          const selectedIssues = issues.filter(i => selectedIssueIds.includes(i.Id));
+          const issuesByApp = {};
+          
+          for (const issue of selectedIssues) {
+            const appIdForIssue = issue.ApplicationId;
+            if (!issuesByApp[appIdForIssue]) {
+              issuesByApp[appIdForIssue] = [];
+            }
+            issuesByApp[appIdForIssue].push(issue.Id);
+          }
+
+          const updateData = { Status: statusChoice };
+          if (comment) updateData.Comment = comment;
+
+          for (const [appIdForUpdate, appIssueIds] of Object.entries(issuesByApp)) {
+            const odataFilter = appIssueIds.map(id => `Id eq ${id}`).join(' or ');
+            await service.api.v4.Issues_UpdateFilteredIssues(
+              'Application',
+              appIdForUpdate,
+              updateData,
+              { $filter: odataFilter }
+            );
+          }
+
+          console.log(chalk.green(`\n✓ Updated ${selectedIssueIds.length} issues to ${statusChoice}`));
+          continue; // Continue browsing issues
+        } else if (selectedAction === 'view-details') {
+          // Display details for all selected issues
+          const selectedIssues = issues.filter(i => selectedIssueIds.includes(i.Id));
+          
+          for (let idx = 0; idx < selectedIssues.length; idx++) {
+            const selectedIssue = selectedIssues[idx];
+            console.log(chalk.cyan(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`));
+            console.log(chalk.bold.white(`\n📋 Issue ${idx + 1} of ${selectedIssues.length}\n`));
+            console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+            console.log(chalk.bold('Type:'), selectedIssue.IssueType);
+            console.log(chalk.bold('Severity:'), chalk[Formatter.getSeverityColor(selectedIssue.Severity)](selectedIssue.Severity));
+            console.log(chalk.bold('Status:'), selectedIssue.Status);
+            console.log(chalk.bold('Location:'), selectedIssue.Location || selectedIssue.Api || 'N/A');
+            if (selectedIssue.SourceFile) console.log(chalk.bold('File:'), selectedIssue.SourceFile);
+            if (selectedIssue.Line) console.log(chalk.bold('Line:'), selectedIssue.Line);
+            if (selectedIssue.Context) console.log(chalk.bold('Context:'), selectedIssue.Context);
+            if (selectedIssue.Language) console.log(chalk.bold('Language:'), selectedIssue.Language);
+            if (selectedIssue.Cwe) console.log(chalk.bold('CWE:'), selectedIssue.Cwe);
+            if (selectedIssue.ExternalId) {
+              console.log(chalk.bold('Jira Key:'), selectedIssue.ExternalId);
+              const jiraHost = config.getJiraHost();
+              if (jiraHost) {
+                const jiraUrl = `${jiraHost}/browse/${selectedIssue.ExternalId}`;
+                console.log(chalk.bold('Jira URL:'), chalk.blue.underline(jiraUrl));
+              }
+            }
+            if (selectedIssue.SourceFileUri) console.log(chalk.bold('Source:'), selectedIssue.SourceFileUri);
+            console.log(chalk.bold('Created:'), new Date(selectedIssue.DateCreated).toLocaleDateString());
+            console.log(chalk.bold('Updated:'), new Date(selectedIssue.LastUpdated).toLocaleDateString());
+            
+            // Fetch and display article (only for first issue to avoid too much output)
+            if (idx === 0 && selectedIssue.IssueTypeId) {
+              console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+              console.log(chalk.bold.white('📖 Remediation Guidance (for this issue type)\n'));
+              console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+              try {
+                const articleHtml = await service.getArticle(selectedIssue.Id);
+                if (articleHtml) {
+                  // Step 1: Sanitize HTML - remove scripts, styles, and images
+                  const sanitizeHtml = (await import('sanitize-html')).default;
+                  const cleanHtml = sanitizeHtml(articleHtml, {
+                    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['h1', 'h2']),
+                    allowedAttributes: {
+                      'a': ['href']
+                    },
+                    disallowedTagsMode: 'discard',
+                    // Remove img, script, style tags completely
+                    exclusiveFilter: (frame) => {
+                      return frame.tag === 'img' || frame.tag === 'script' || frame.tag === 'style';
+                    }
+                  });
+                  
+                  // Step 2: Convert clean HTML to Markdown
+                  const TurndownService = (await import('turndown')).default;
+                  const turndown = new TurndownService({
+                    headingStyle: 'atx',
+                    codeBlockStyle: 'fenced'
+                  });
+                  
+                  // Custom rule to preserve URLs in a console-friendly format
+                  turndown.addRule('links', {
+                    filter: 'a',
+                    replacement: function(content, node) {
+                      const href = node.getAttribute('href');
+                      if (!href) return content;
+                      
+                      // For console, show both text and URL
+                      if (content && content !== href) {
+                        return `${content} (${href})`;
+                      }
+                      return href;
+                    }
+                  });
+                  
+                  const articleMarkdown = turndown.turndown(cleanHtml);
+                  
+                  // Step 3: Render Markdown with formatting in console
+                  const cliMarkdown = (await import('cli-markdown')).default;
+                  const formattedArticle = cliMarkdown(articleMarkdown);
+                  console.log(formattedArticle);
+                } else {
+                  console.log(chalk.yellow('No article content available'));
+                }
+              } catch (e) {
+                console.log(chalk.yellow(`Article not available: ${e.message}`));
+              }
+            }
+          }
+          console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'));
+          console.log(chalk.green(`\n✓ Displayed details for ${selectedIssues.length} issue(s)`));
+          continue;
+        } else if (selectedAction === 'jira') {
+          if (!config.isJiraValid()) {
+            console.error(chalk.red('\nJira is not configured. Please set JIRA_HOST, JIRA_EMAIL, and JIRA_API_TOKEN.'));
+            continue;
+          }
+
+          const projectKey = config.getJiraProjectKey() || await input({
+            message: 'Enter Jira project key:',
+            validate: (value) => value.length > 0 || 'Project key is required'
+          });
+
+          const groupBy = await select({
+            message: 'Group issues by:',
+            choices: [
+              { name: 'Type (recommended)', value: 'type' },
+              { name: 'Severity', value: 'severity' },
+              { name: 'None (one issue per vulnerability)', value: 'none' }
+            ]
+          });
+
+          // Create Jira issues
+          const jiraService = new JiraService(config);
+          jiraService.initialize();
+
+          const selectedIssues = issues.filter(i => selectedIssueIds.includes(i.Id));
+          const groups = groupIssuesForJira(selectedIssues, groupBy);
+
+          for (const group of groups) {
+            const builder = new JiraDescriptionBuilder(group.issues, config.getBaseUrl());
+            const description = builder
+              .addSummary(null, null)
+              .addIssuesByType()
+              .addIssueIds()
+              .build();
+
+            const summary = `[Security] ${group.name} - ${group.issues.length} occurrence(s)`;
+
+            const jiraIssue = await jiraService.client.issues.createIssue({
+              fields: {
+                project: { key: projectKey },
+                summary: summary,
+                description: jiraService.convertToADF(description),
+                issuetype: { name: 'Bug' },
+                labels: ['appscan', 'security']
+              }
+            });
+
+            const jiraKey = jiraIssue.key;
+            console.log(chalk.green(`\n✓ Created Jira issue: ${jiraKey}`));
+
+            // Update AppScan issues with Jira link
+            for (const issue of group.issues) {
+              const appIdForJira = issue.ApplicationId;
+              await service.api.v4.Issues_UpdateFilteredIssues(
+                'Application',
+                appIdForJira,
+                { ExternalId: jiraKey },
+                { $filter: `Id eq ${issue.Id}` }
+              );
+            }
+          }
+
+          console.log(chalk.green(`\n✓ Created ${groups.length} Jira issue(s) and linked to AppScan`));
+          continue; // Continue browsing issues
+        }
+      }
     }
 
   } catch (error) {
