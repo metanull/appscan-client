@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AppScan Triage Configuration",
+  "description": "Configuration file for appscan-client triage-report command",
+  
+  "appScan": {
+    "apiKey": "your_appscan_api_key_here",
+    "apiSecret": "your_appscan_api_secret_here",
+    "baseUrl": "https://cloud.appscan.com"
+  },
+  
+  "jira": {
+    "host": "https://yourcompany.atlassian.net",
+    "email": "your-email@company.com",
+    "apiToken": "your_jira_api_token_here",
+    "projectKey": "SEC",
+    "defaultIssueType": "Bug",
+    "defaultLabels": ["appscan", "security"]
+  },
+  
+  "defaults": {
+    "groupBy": "type",
+    "excludeStatus": "Noise",
+    "minSeverity": 3
+  },
+  
+  "filters": {
+    "highPriority": "status:Open;severity:High|Critical",
+    "falsePositives": "status:Noise",
+    "inProgress": "status:InProgress"
+  }
+}
