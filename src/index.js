@@ -77,6 +77,58 @@ Examples:
 
 program.addCommand(triageReportCommand);
 
+// Ink TUI command
+program
+  .command('triage-ui')
+  .description('Launch modern terminal UI for vulnerability triage (Ink-based)')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .addHelpText('after', `
+Modern 3-pane terminal UI features:
+  - VS Code-style layout with applications/scans/issues panels
+  - Keyboard-driven navigation (vim-style keybindings)
+  - Multi-select and bulk operations
+  - Real-time filtering and search
+  - Inline issue details and remediation articles
+  - Jira integration
+
+Note: This is a new experimental UI. For the stable version, use 'triage-report interactive'.
+
+Examples:
+  $ appscan triage-ui
+  $ appscan triage-ui --config ./config.env`)
+  .action(async (options) => {
+    try {
+      // Check if ink-triage is built
+      const { existsSync } = await import('fs');
+      const { join, dirname } = await import('path');
+      const { fileURLToPath } = await import('url');
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = dirname(__filename);
+      const inkTriagePath = join(__dirname, '../ink-triage/dist/index.js');
+      
+      if (!existsSync(inkTriagePath)) {
+        console.error('Error: Ink TUI not built.');
+        console.error('Please run: cd ink-triage && npm run build');
+        process.exit(1);
+      }
+
+      // Import and run the Ink TUI
+      const { spawn } = await import('child_process');
+      const args = options.config ? ['--config', options.config] : [];
+      const child = spawn('node', [inkTriagePath, ...args], {
+        stdio: 'inherit',
+        cwd: process.cwd()
+      });
+
+      child.on('exit', (code) => {
+        process.exit(code || 0);
+      });
+    } catch (error) {
+      console.error(`Failed to launch Ink TUI: ${error.message}`);
+      process.exit(1);
+    }
+  });
+
 program
   .command('list-applications')
   .alias('apps')

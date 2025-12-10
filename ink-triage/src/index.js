@@ -34,4 +34,4 @@ const cli = meow(
   }
 );
 
-render(<InkApp configPath={cli.flags.config} />);
+render(React.createElement(InkApp, { configPath: cli.flags.config }));

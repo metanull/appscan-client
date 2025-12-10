@@ -8,8 +8,9 @@
     "appscan-triage-ui": "./src/index.js"
   },
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node --watch src/index.js",
+    "build": "node build.js",
+    "start": "npm run build && node dist/index.js",
+    "dev": "npm run build && node dist/index.js",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
     "lint": "eslint src tests"
   },
@@ -39,6 +40,7 @@
   },
   "devDependencies": {
     "cross-env": "^10.1.0",
+    "esbuild": "^0.27.1",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "jest": "^30.2.0"

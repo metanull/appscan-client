@@ -2,6 +2,75 @@
 
 A modern, terminal-based user interface (TUI) for triaging AppScan vulnerabilities, built with [Ink](https://github.com/vadimdemedes/ink).
 
+## Status
+
+**Current Status**: Architectural Foundation Complete
+
+This implementation provides a complete architectural foundation for the Ink-based TUI with all major components, state management, and service integrations implemented. 
+
+**What's Implemented**:
+- ✅ Complete component structure (14 components)
+- ✅ State management with Zustand
+- ✅ Service wrappers for AppScan and Jira APIs
+- ✅ All interactive modals (Filter, Search, Update Status, Create Jira)
+- ✅ Keyboard navigation framework
+- ✅ Article processing pipeline (HTML → Markdown → Terminal)
+- ✅ Multi-select and bulk operations
+- ✅ Virtual scrolling for performance
+
+**Next Steps for Production Use**:
+1. Add JSX transpilation (Babel or esbuild configuration)
+2. Test all interactive flows end-to-end
+3. Add error handling and edge cases
+4. Performance testing with large datasets
+5. Integration testing with actual AppScan API
+
+## Installation
+
+```bash
+cd ink-triage
+npm install
+```
+
+## Building (Required for JSX)
+
+The application uses JSX which requires transpilation. To build:
+
+```bash
+npm run build
+```
+
+This will create a bundled version in `dist/index.js`.
+
+## Usage
+
+### After Building
+
+```bash
+npm start
+```
+
+### With Custom Configuration
+
+```bash
+npm start -- --config /path/to/.appscantriage.json
+```
+
+### Development Mode
+
+```bash
+npm run dev
+```
+
+## Alternative: Using the Original Interactive Mode
+
+While the Ink TUI is being finalized, you can use the fully functional original interactive mode:
+
+```bash
+cd ..
+npm start triage-report interactive
+```
+
 ## Features
 
 This Ink-based TUI provides all the features of the original `triage-report interactive` command, plus additional enhancements:
