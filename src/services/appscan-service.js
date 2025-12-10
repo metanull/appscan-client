@@ -370,34 +370,38 @@ export class AppScanService {
    * @param {string} externalId - External ID (optional)
    * @returns {Promise<Object>} Update results
    */
-  async bulkUpdateIssues(issueIds, status, comment = null, externalId = null) {
+  async bulkUpdateIssues(issueIds, status = null, comment = null, externalId = null) {
     await this.ensureAuthenticated();
     
     if (!issueIds || issueIds.length === 0) {
       throw new Error('No issue IDs provided for bulk update');
     }
 
-    // Validate status
-    const validStatuses = [
-      'Open',
-      'InProgress',
-      'Reopened',
-      'Noise',
-      'Passed',
-      'Fixed',
-      'New',
-    ];
-    if (!validStatuses.includes(status)) {
-      throw new Error(
-        `Invalid status: ${status}. Valid statuses are: ${validStatuses.join(', ')}`
-      );
+    // Validate status if provided
+    if (status) {
+      const validStatuses = [
+        'Open',
+        'InProgress',
+        'Reopened',
+        'Noise',
+        'Passed',
+        'Fixed',
+        'New',
+      ];
+      if (!validStatuses.includes(status)) {
+        throw new Error(
+          `Invalid status: ${status}. Valid statuses are: ${validStatuses.join(', ')}`
+        );
+      }
     }
 
     try {
       // Build the update payload
-      const updateData = {
-        Status: status,
-      };
+      const updateData = {};
+
+      if (status) {
+        updateData.Status = status;
+      }
 
       if (comment) {
         updateData.Comment = comment;
@@ -405,6 +409,11 @@ export class AppScanService {
 
       if (externalId) {
         updateData.ExternalId = externalId;
+      }
+
+      // Must have at least one field to update
+      if (Object.keys(updateData).length === 0) {
+        throw new Error('No fields to update. Must provide status, comment, or externalId');
       }
 
       // Get the first issue to determine the application ID

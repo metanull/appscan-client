@@ -125,6 +125,18 @@ export function formatIssueDisplay(issue, includeDetails = false, appScanBaseUrl
         : chalk.cyan(formatted.text);
       display += `\n    ${chalk.gray('API/URL:')} ${displayText}`;
     }
+    
+    // Show code context if available
+    if (issue.Context) {
+      const contextPreview = issue.Context.substring(0, 80).replace(/\n/g, ' ');
+      display += `\n    ${chalk.gray('Context:')} ${chalk.white(contextPreview)}${issue.Context.length > 80 ? '...' : ''}`;
+    }
+    
+    // Add AppScan article link for remediation guidance
+    if (issue.IssueTypeId) {
+      const articleUrl = `${appScanBaseUrl}/api/v4/Reports/Article/?issuetype=${issue.IssueTypeId}`;
+      display += `\n    ${chalk.gray('Article:')} ${chalk.blue.underline(articleUrl)}`;
+    }
   }
   
   return {
