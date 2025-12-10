@@ -17,7 +17,7 @@ export class Formatter {
       'DynamicAnalyzer': 'DAST',
       'ScaAnalyzer': 'SCA',
       'IASTAnalyzer': 'IAST',
-      'InfrastructureAnalyzer': 'IAC'
+      'InfrastructureAnalyzer': 'IAC',
     };
     return map[technology] || technology;
   }

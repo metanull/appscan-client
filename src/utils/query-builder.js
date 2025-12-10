@@ -79,7 +79,8 @@ export class QueryBuilder {
    */
   filterByAppId(appId) {
     if (!appId) return this;
-    this.filters.push(`AppId eq ${appId}`);
+    // AppId is typically a GUID string, so quote it for safety
+    this.filters.push(`AppId eq '${this.escapeString(appId)}'`);
     return this;
   }
 

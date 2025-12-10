@@ -818,8 +818,9 @@ async function findJiraAction(options) {
           status: jiraIssue.fields.status.name,
           url: `${config.getJiraHost()}/browse/${jiraIssue.key}`
         });
-      } catch {
-        // Jira issue not found or invalid key
+      } catch (error) {
+        // Jira issue not found or invalid key - this is not a fatal error
+        console.warn(`Could not fetch Jira issue ${externalId}:`, error.message);
       }
     }
 

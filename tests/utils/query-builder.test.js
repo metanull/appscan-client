@@ -75,7 +75,7 @@ describe('QueryBuilder', () => {
     const qb = new QueryBuilder();
     qb.filterByAppId('app-123');
     const filter = qb.toODataFilter();
-    expect(filter).toBe('AppId eq app-123');
+    expect(filter).toBe("AppId eq 'app-123'");
   });
 
   test('addCustomFilter adds raw expression', () => {

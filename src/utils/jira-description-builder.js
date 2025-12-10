@@ -219,7 +219,9 @@ export class JiraDescriptionBuilder {
       const markdown = turndown.turndown(html);
       // Truncate to reasonable size (5000 chars)
       return markdown.length > 5000 ? markdown.substring(0, 5000) + '\n\n_[Truncated]_' : markdown;
-    } catch {
+    } catch (error) {
+      // Log error for debugging but don't fail the entire operation
+      console.warn('Failed to convert HTML to Markdown:', error.message);
       return null;
     }
   }
