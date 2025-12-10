@@ -1,0 +1,47 @@
+{
+  "name": "appscan-ink-triage",
+  "version": "1.0.0",
+  "description": "Ink-based TUI for AppScan vulnerability triage",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "appscan-triage-ui": "./src/index.js"
+  },
+  "scripts": {
+    "build": "node build.js",
+    "start": "npm run build && node dist/index.js",
+    "dev": "npm run build && node dist/index.js",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+    "lint": "eslint src tests"
+  },
+  "keywords": [
+    "appscan",
+    "security",
+    "triage",
+    "tui",
+    "ink"
+  ],
+  "author": "metanull",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "cli-markdown": "^3.5.1",
+    "ink": "^5.0.1",
+    "ink-box": "^2.0.0",
+    "ink-select-input": "^6.0.0",
+    "ink-spinner": "^5.0.0",
+    "ink-text-input": "^6.0.0",
+    "meow": "^13.2.0",
+    "react": "^18.3.1",
+    "sanitize-html": "^2.17.0",
+    "turndown": "^7.2.0",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "esbuild": "^0.27.1",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "jest": "^30.2.0"
+  }
+}
