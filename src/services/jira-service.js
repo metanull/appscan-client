@@ -11,6 +11,12 @@ try {
 }
 
 export class JiraService {
+  // Helper to escape backslash and double quotes for JQL summary text
+  static escapeJqlString(str) {
+    // Escape backslashes first, then double quotes
+    return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  }
+
   constructor(config) {
     this.config = config;
     this.client = null;
@@ -301,7 +307,7 @@ export class JiraService {
 
     try {
       // Build JQL query
-      let jql = `summary ~ "${summaryText.replace(/"/g, '\\"')}"`;
+      let jql = `summary ~ "${JiraService.escapeJqlString(summaryText)}"`;
       if (projectKey) {
         jql += ` AND project = ${projectKey}`;
       }
