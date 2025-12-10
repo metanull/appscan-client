@@ -12,7 +12,10 @@ import { VulnList } from './VulnList.js';
 import { DetailsPanel } from './DetailsPanel.js';
 import { CommandBar } from './CommandBar.js';
 import { HelpPanel } from './HelpPanel.js';
-import { JiraPanel } from './JiraPanel.js';
+import { FilterModal } from './FilterModal.js';
+import { UpdateStatusModal } from './UpdateStatusModal.js';
+import { SearchModal } from './SearchModal.js';
+import { CreateJiraModal } from './CreateJiraModal.js';
 import { AppScanService } from '../services/appscan.js';
 import { JiraService } from '../services/jira.js';
 import { processArticle } from '../utils/article-processor.js';
@@ -22,6 +25,10 @@ export const InkApp = ({ configPath }) => {
   const { exit } = useApp();
   const [appScanService] = useState(() => new AppScanService(configPath));
   const [jiraService] = useState(() => new JiraService(appScanService.getConfig()));
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showSearchModal, setShowSearchModal] = useState(false);
+  const [showCreateJiraModal, setShowCreateJiraModal] = useState(false);
   
   const view = useStore((state) => state.view);
   const setView = useStore((state) => state.setView);
@@ -29,6 +36,7 @@ export const InkApp = ({ configPath }) => {
   const setApplications = useStore((state) => state.setApplications);
   const scans = useStore((state) => state.scans);
   const setScans = useStore((state) => state.setScans);
+  const issues = useStore((state) => state.issues);
   const setIssues = useStore((state) => state.setIssues);
   const setSelectedApp = useStore((state) => state.setSelectedApp);
   const setSelectedScan = useStore((state) => state.setSelectedScan);
@@ -46,12 +54,16 @@ export const InkApp = ({ configPath }) => {
   const setError = useStore((state) => state.setError);
   const showHelp = useStore((state) => state.showHelp);
   const toggleHelp = useStore((state) => state.toggleHelp);
-  const showJiraPanel = useStore((state) => state.showJiraPanel);
-  const toggleJiraPanel = useStore((state) => state.toggleJiraPanel);
   const setIssueDetails = useStore((state) => state.setIssueDetails);
   const setArticleContent = useStore((state) => state.setArticleContent);
   const selectedIssueIds = useStore((state) => state.selectedIssueIds);
   const clearFilters = useStore((state) => state.clearFilters);
+  const setFilterStatus = useStore((state) => state.setFilterStatus);
+  const setFilterSeverity = useStore((state) => state.setFilterSeverity);
+  const setFilterIssueType = useStore((state) => state.setFilterIssueType);
+  const setFilterJira = useStore((state) => state.setFilterJira);
+  const setSearchText = useStore((state) => state.setSearchText);
+  const searchText = useStore((state) => state.searchText);
 
   // Load applications on mount
   useEffect(() => {
@@ -77,11 +89,9 @@ export const InkApp = ({ configPath }) => {
       return;
     }
 
-    // Jira panel
-    if (showJiraPanel) {
-      if (key.escape) {
-        toggleJiraPanel();
-      }
+    // Modal handling
+    if (showFilterModal || showUpdateModal || showSearchModal || showCreateJiraModal) {
+      // Modals handle their own inputs
       return;
     }
 
@@ -107,16 +117,19 @@ export const InkApp = ({ configPath }) => {
       return;
     }
 
-    if (key.backspace || key.delete) {
+    if (key.backspace) {
+      goBack();
+      return;
+    }
+
+    if (key.delete) {
       if (view === 'issue-list') {
-        // On delete in issue list, clear filters if they exist
         const hasFilters = useStore.getState().hasActiveFilters();
-        if (hasFilters && key.delete) {
+        if (hasFilters) {
           clearFilters();
           return;
         }
       }
-      goBack();
       return;
     }
 
@@ -141,13 +154,21 @@ export const InkApp = ({ configPath }) => {
       } else if (key.ctrl && input === 'a') {
         selectAllIssues();
       } else if (input === 'u') {
-        handleUpdateStatus();
+        handleOpenUpdateModal();
       } else if (input === 'c') {
         if (selectedIssueIds.length > 0) {
-          toggleJiraPanel();
+          handleOpenCreateJiraModal();
         }
+      } else if (input === 'f') {
+        setShowFilterModal(true);
+      } else if (input === '/') {
+        setShowSearchModal(true);
       } else if (input === 'r') {
         handleRefresh();
+      }
+    } else if (view === 'issue-details') {
+      if (key.backspace) {
+        goBack();
       }
     }
   });
@@ -224,9 +245,85 @@ export const InkApp = ({ configPath }) => {
     }
   };
 
-  const handleUpdateStatus = async () => {
-    // This would open a modal/prompt for status update
-    // For now, we'll skip the implementation detail
+  const handleOpenUpdateModal = () => {
+    if (selectedIssueIds.length > 0 || filteredIssues.length > 0) {
+      setShowUpdateModal(true);
+    }
+  };
+
+  const handleUpdateStatus = async (status, comment) => {
+    const issueIdsToUpdate = selectedIssueIds.length > 0 
+      ? selectedIssueIds 
+      : filteredIssues.length > 0 
+        ? [filteredIssues[listCursor].Id]
+        : [];
+
+    if (issueIdsToUpdate.length === 0) return;
+
+    try {
+      setLoading(true);
+      const updateData = { Status: status };
+      if (comment) updateData.Comment = comment;
+
+      // Group by application ID
+      const issuesByApp = {};
+      for (const issueId of issueIdsToUpdate) {
+        const issue = issues.find(i => i.Id === issueId);
+        if (issue) {
+          const appId = issue.ApplicationId;
+          if (!issuesByApp[appId]) {
+            issuesByApp[appId] = [];
+          }
+          issuesByApp[appId].push(issueId);
+        }
+      }
+
+      // Update each group
+      for (const [appId, ids] of Object.entries(issuesByApp)) {
+        await appScanService.bulkUpdateIssues(ids, appId, updateData);
+      }
+
+      // Refresh issues
+      await handleRefresh();
+      setLoading(false);
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
+
+  const handleOpenCreateJiraModal = () => {
+    if (!jiraService.isConfigured()) {
+      setError('Jira is not configured. Please set JIRA_HOST, JIRA_EMAIL, and JIRA_API_TOKEN.');
+      return;
+    }
+    setShowCreateJiraModal(true);
+  };
+
+  const handleCreateJira = async (projectKey, groupBy, selectedIssues) => {
+    // Group issues
+    const groups = groupIssuesForJira(selectedIssues, groupBy);
+
+    for (const group of groups) {
+      const summary = `[Security] ${group.name} - ${group.issues.length} occurrence(s)`;
+      const jiraIssue = await jiraService.createJiraIssue(
+        projectKey,
+        summary,
+        group.issues,
+        appScanService.getBaseUrl()
+      );
+
+      const jiraKey = jiraIssue.key;
+
+      // Update AppScan issues with Jira link
+      for (const issue of group.issues) {
+        const appId = issue.ApplicationId;
+        await appScanService.updateIssue(issue.Id, appId, { ExternalId: jiraKey });
+      }
+    }
+
+    // Refresh issues
+    await handleRefresh();
   };
 
   const handleRefresh = async () => {
@@ -243,6 +340,23 @@ export const InkApp = ({ configPath }) => {
     }
   };
 
+  const handleFilterSelect = (filterType, value) => {
+    switch (filterType) {
+      case 'status':
+        setFilterStatus(value);
+        break;
+      case 'severity':
+        setFilterSeverity(value);
+        break;
+      case 'type':
+        setFilterIssueType(value);
+        break;
+      case 'jira':
+        setFilterJira(value);
+        break;
+    }
+  };
+
   return (
     <Box flexDirection="column" height="100%">
       <Toolbar />
@@ -256,9 +370,68 @@ export const InkApp = ({ configPath }) => {
       <CommandBar />
 
       {showHelp && <HelpPanel />}
-      {showJiraPanel && <JiraPanel jiraService={jiraService} />}
+      {showFilterModal && (
+        <FilterModal
+          issues={issues}
+          onSelect={handleFilterSelect}
+          onClose={() => setShowFilterModal(false)}
+        />
+      )}
+      {showUpdateModal && (
+        <UpdateStatusModal
+          issueCount={selectedIssueIds.length > 0 ? selectedIssueIds.length : 1}
+          onUpdate={handleUpdateStatus}
+          onClose={() => setShowUpdateModal(false)}
+        />
+      )}
+      {showSearchModal && (
+        <SearchModal
+          currentSearch={searchText}
+          onSearch={setSearchText}
+          onClose={() => setShowSearchModal(false)}
+        />
+      )}
+      {showCreateJiraModal && (
+        <CreateJiraModal
+          issues={issues.filter(i => selectedIssueIds.includes(i.Id))}
+          defaultProjectKey={appScanService.getConfig().getJiraProjectKey()}
+          onCreate={handleCreateJira}
+          onClose={() => setShowCreateJiraModal(false)}
+        />
+      )}
     </Box>
   );
 };
+
+// Helper function to group issues for Jira creation
+function groupIssuesForJira(issues, strategy) {
+  if (strategy === 'none') {
+    return issues.map(issue => ({
+      name: issue.IssueType,
+      issues: [issue]
+    }));
+  } else if (strategy === 'severity') {
+    const grouped = {};
+    for (const issue of issues) {
+      const key = issue.Severity || 'Unknown';
+      if (!grouped[key]) {
+        grouped[key] = { name: key, issues: [] };
+      }
+      grouped[key].issues.push(issue);
+    }
+    return Object.values(grouped);
+  } else {
+    // Default: group by type
+    const grouped = {};
+    for (const issue of issues) {
+      const key = issue.IssueType || 'Unknown';
+      if (!grouped[key]) {
+        grouped[key] = { name: key, issues: [] };
+      }
+      grouped[key].issues.push(issue);
+    }
+    return Object.values(grouped);
+  }
+}
 
 export default InkApp;
