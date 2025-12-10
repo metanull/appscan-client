@@ -121,8 +121,18 @@ export const useStore = create((set, get) => ({
     listCursor: Math.max(0, state.listCursor - 1) 
   })),
   moveCursorDown: () => {
-    const { listCursor, issues, view } = get();
-    const maxCursor = view === 'issue-list' ? issues.length - 1 : 0;
+    const { listCursor, view, applications, scans } = get();
+    const filteredIssues = get().getFilteredIssues();
+    
+    let maxCursor = 0;
+    if (view === 'issue-list') {
+      maxCursor = filteredIssues.length - 1;
+    } else if (view === 'app-selection') {
+      maxCursor = applications.length - 1;
+    } else if (view === 'scan-selection') {
+      maxCursor = scans.length - 1;
+    }
+    
     set({ listCursor: Math.min(maxCursor, listCursor + 1) });
   },
   

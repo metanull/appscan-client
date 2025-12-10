@@ -23,7 +23,6 @@ await esbuild.build({
     'ink-box',
     'chalk',
     'sanitize-html',
-    'marked',
     'turndown',
     'cli-markdown',
     'zustand',

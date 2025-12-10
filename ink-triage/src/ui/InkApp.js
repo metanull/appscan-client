@@ -303,23 +303,41 @@ export const InkApp = ({ configPath }) => {
   const handleCreateJira = async (projectKey, groupBy, selectedIssues) => {
     // Group issues
     const groups = groupIssuesForJira(selectedIssues, groupBy);
+    const errors = [];
+    const successes = [];
 
     for (const group of groups) {
-      const summary = `[Security] ${group.name} - ${group.issues.length} occurrence(s)`;
-      const jiraIssue = await jiraService.createJiraIssue(
-        projectKey,
-        summary,
-        group.issues,
-        appScanService.getBaseUrl()
-      );
+      try {
+        const summary = `[Security] ${group.name} - ${group.issues.length} occurrence(s)`;
+        const jiraIssue = await jiraService.createJiraIssue(
+          projectKey,
+          summary,
+          group.issues,
+          appScanService.getBaseUrl()
+        );
 
-      const jiraKey = jiraIssue.key;
+        const jiraKey = jiraIssue.key;
+        successes.push(jiraKey);
 
-      // Update AppScan issues with Jira link
-      for (const issue of group.issues) {
-        const appId = issue.ApplicationId;
-        await appScanService.updateIssue(issue.Id, appId, { ExternalId: jiraKey });
+        // Update AppScan issues with Jira link
+        for (const issue of group.issues) {
+          try {
+            const appId = issue.ApplicationId;
+            await appScanService.updateIssue(issue.Id, appId, { ExternalId: jiraKey });
+          } catch (updateError) {
+            errors.push(`Failed to link issue ${issue.Id} to ${jiraKey}: ${updateError.message}`);
+          }
+        }
+      } catch (createError) {
+        errors.push(`Failed to create Jira for ${group.name}: ${createError.message}`);
       }
+    }
+
+    // Report results
+    if (errors.length > 0) {
+      setError(`Created ${successes.length} Jira issue(s), but encountered ${errors.length} error(s): ${errors.join('; ')}`);
+    } else if (successes.length > 0) {
+      // Success message will be shown by modal
     }
 
     // Refresh issues
