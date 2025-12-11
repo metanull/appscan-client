@@ -6,7 +6,7 @@
 import React from 'react';
 import { Box, Text } from 'ink';
 
-export const HelpPanel = ({ onClose }) => {
+export const HelpPanel = ({ onClose: _onClose }) => {
   return (
     <Box
       flexDirection="column"

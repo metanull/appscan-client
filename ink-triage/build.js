@@ -20,7 +20,6 @@ await esbuild.build({
     'ink-text-input',
     'ink-select-input',
     'ink-spinner',
-    'ink-box',
     'chalk',
     'sanitize-html',
     'turndown',
