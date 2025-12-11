@@ -27,6 +27,10 @@ export const useStore = create((set, get) => ({
   filterIssueType: null,
   filterJira: null, // 'with' | 'without' | null
   searchText: null,
+  sortBy: 'severity', // 'severity' | 'name' | 'status'
+  scanSearchText: null,
+  scanFilterType: null, // 'SAST' | 'DAST' | etc.
+  hideEmptyScans: true,
   
   // UI state
   loading: false,
@@ -100,6 +104,10 @@ export const useStore = create((set, get) => ({
   setFilterIssueType: (type) => set({ filterIssueType: type }),
   setFilterJira: (jira) => set({ filterJira: jira }),
   setSearchText: (text) => set({ searchText: text }),
+  setSortBy: (sortBy) => set({ sortBy }),
+  setScanSearchText: (text) => set({ scanSearchText: text }),
+  setScanFilterType: (type) => set({ scanFilterType: type }),
+  toggleHideEmptyScans: () => set((state) => ({ hideEmptyScans: !state.hideEmptyScans })),
   
   clearFilters: () => set({
     filterStatus: null,
@@ -121,8 +129,9 @@ export const useStore = create((set, get) => ({
     listCursor: Math.max(0, state.listCursor - 1) 
   })),
   moveCursorDown: () => {
-    const { listCursor, view, applications, scans } = get();
+    const { listCursor, view, applications } = get();
     const filteredIssues = get().getFilteredIssues();
+    const filteredScans = get().getFilteredScans();
     
     let maxCursor = 0;
     if (view === 'issue-list') {
@@ -130,7 +139,7 @@ export const useStore = create((set, get) => ({
     } else if (view === 'app-selection') {
       maxCursor = applications.length - 1;
     } else if (view === 'scan-selection') {
-      maxCursor = scans.length - 1;
+      maxCursor = filteredScans.length - 1;
     }
     
     set({ listCursor: Math.min(maxCursor, listCursor + 1) });
@@ -144,7 +153,8 @@ export const useStore = create((set, get) => ({
       filterSeverity, 
       filterIssueType, 
       filterJira,
-      searchText 
+      searchText,
+      sortBy
     } = get();
     
     let filtered = [...issues];
@@ -176,12 +186,66 @@ export const useStore = create((set, get) => ({
       );
     }
     
+    // Apply sorting
+    const severityOrder = { 'Critical': 0, 'High': 1, 'Medium': 2, 'Low': 3, 'Informational': 4 };
+    
+    if (sortBy === 'severity') {
+      filtered.sort((a, b) => {
+        const orderA = severityOrder[a.Severity] ?? 999;
+        const orderB = severityOrder[b.Severity] ?? 999;
+        return orderA - orderB;
+      });
+    } else if (sortBy === 'name') {
+      filtered.sort((a, b) => {
+        const nameA = (a.IssueType || '').toLowerCase();
+        const nameB = (b.IssueType || '').toLowerCase();
+        return nameA.localeCompare(nameB);
+      });
+    } else if (sortBy === 'status') {
+      filtered.sort((a, b) => {
+        const statusA = (a.Status || '').toLowerCase();
+        const statusB = (b.Status || '').toLowerCase();
+        return statusA.localeCompare(statusB);
+      });
+    }
+    
     return filtered;
   },
   
   hasActiveFilters: () => {
     const { filterStatus, filterSeverity, filterIssueType, filterJira, searchText } = get();
     return !!(filterStatus || filterSeverity || filterIssueType || filterJira || searchText);
+  },
+  
+  getFilteredScans: () => {
+    const { scans, scanSearchText, scanFilterType, hideEmptyScans } = get();
+    let filtered = [...scans];
+    
+    // Filter by issue count
+    if (hideEmptyScans) {
+      filtered = filtered.filter(scan => {
+        const issueCount = scan.LatestExecution?.NIssuesFound || 0;
+        return issueCount > 0;
+      });
+    }
+    
+    // Filter by scan type
+    if (scanFilterType) {
+      filtered = filtered.filter(scan => {
+        const tech = scan.Technology || '';
+        return tech.toUpperCase().includes(scanFilterType.toUpperCase());
+      });
+    }
+    
+    // Filter by search text
+    if (scanSearchText) {
+      const searchLower = scanSearchText.toLowerCase();
+      filtered = filtered.filter(scan => 
+        (scan.Name && scan.Name.toLowerCase().includes(searchLower))
+      );
+    }
+    
+    return filtered;
   }
 }));
 

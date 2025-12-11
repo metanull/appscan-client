@@ -23,7 +23,7 @@ export const UpdateStatusModal = ({ issueCount, onUpdate, onClose }) => {
   const [comment, setComment] = useState('');
 
   useInput((input, key) => {
-    if (key.escape) {
+    if (key.escape || input === 'b') {
       onClose();
     }
   });

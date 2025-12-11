@@ -10,6 +10,7 @@
   "scripts": {
     "build": "node build.js",
     "start": "npm run build && node dist/index.js",
+    "setup": "npm run build && node dist/index.js --setup",
     "dev": "npm run build && node dist/index.js",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --passWithNoTests",
     "lint": "eslint src"
@@ -26,6 +27,7 @@
   "dependencies": {
     "chalk": "^5.6.2",
     "cli-markdown": "^3.5.1",
+    "dotenv": "^16.4.7",
     "ink": "^6.5.1",
     "ink-select-input": "^6.0.0",
     "ink-spinner": "^5.0.0",

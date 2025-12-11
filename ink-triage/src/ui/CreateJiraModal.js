@@ -21,7 +21,7 @@ export const CreateJiraModal = ({ issues, defaultProjectKey, onCreate, onClose }
   const [error, setError] = useState(null);
 
   useInput((input, key) => {
-    if (key.escape && step !== 'creating') {
+    if ((key.escape || input === 'b') && step !== 'creating') {
       onClose();
     }
   });
