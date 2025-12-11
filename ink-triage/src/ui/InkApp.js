@@ -4,21 +4,26 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Box, useInput, useApp } from 'ink';
+import { Box, Text, useInput, useApp } from 'ink';
+import Spinner from 'ink-spinner';
 import useStore from '../state/AppContext.js';
 import { Toolbar } from './Toolbar.js';
 import { LeftNav } from './LeftNav.js';
 import { VulnList } from './VulnList.js';
 import { DetailsPanel } from './DetailsPanel.js';
+import { IssueDetailsView } from './IssueDetailsView.js';
 import { CommandBar } from './CommandBar.js';
 import { HelpPanel } from './HelpPanel.js';
 import { FilterModal } from './FilterModal.js';
 import { UpdateStatusModal } from './UpdateStatusModal.js';
 import { SearchModal } from './SearchModal.js';
 import { CreateJiraModal } from './CreateJiraModal.js';
+import { LinksPanel } from './LinksPanel.js';
 import { AppScanService } from '../services/appscan.js';
 import { JiraService } from '../services/jira.js';
 import { processArticle } from '../utils/article-processor.js';
+import { groupIssuesBy } from '../utils/issue-utils.js';
+import { SetupWizard } from './SetupWizard.js';
 
 export const InkApp = ({ configPath }) => {
   const { exit } = useApp();
@@ -28,24 +33,27 @@ export const InkApp = ({ configPath }) => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showCreateJiraModal, setShowCreateJiraModal] = useState(false);
+  const [showSetup, setShowSetup] = useState(false);
+  const [showLinksPanel, setShowLinksPanel] = useState(false);
   
   const view = useStore((state) => state.view);
   const setView = useStore((state) => state.setView);
   const applications = useStore((state) => state.applications);
   const setApplications = useStore((state) => state.setApplications);
-  const scans = useStore((state) => state.scans);
   const setScans = useStore((state) => state.setScans);
   const issues = useStore((state) => state.issues);
   const setIssues = useStore((state) => state.setIssues);
   const setSelectedApp = useStore((state) => state.setSelectedApp);
   const setSelectedScan = useStore((state) => state.setSelectedScan);
   const selectedScan = useStore((state) => state.selectedScan);
+  const setSelectedIssue = useStore((state) => state.setSelectedIssue);
   const goBack = useStore((state) => state.goBack);
   const listCursor = useStore((state) => state.listCursor);
   const setListCursor = useStore((state) => state.setListCursor);
   const moveCursorUp = useStore((state) => state.moveCursorUp);
   const moveCursorDown = useStore((state) => state.moveCursorDown);
-  const filteredIssues = useStore((state) => state.getFilteredIssues());
+  const getFilteredIssues = useStore((state) => state.getFilteredIssues);
+  const filteredIssues = getFilteredIssues();
   const toggleIssueSelection = useStore((state) => state.toggleIssueSelection);
   const selectAllIssues = useStore((state) => state.selectAllIssues);
   const setLoading = useStore((state) => state.setLoading);
@@ -62,6 +70,24 @@ export const InkApp = ({ configPath }) => {
   const setFilterJira = useStore((state) => state.setFilterJira);
   const setSearchText = useStore((state) => state.setSearchText);
   const searchText = useStore((state) => state.searchText);
+  const error = useStore((state) => state.error);
+  const loading = useStore((state) => state.loading);
+  const sortBy = useStore((state) => state.sortBy);
+  const setSortBy = useStore((state) => state.setSortBy);
+  const setScanSearchText = useStore((state) => state.setScanSearchText);
+  const setScanFilterType = useStore((state) => state.setScanFilterType);
+  const toggleHideEmptyScans = useStore((state) => state.toggleHideEmptyScans);
+  const getFilteredScans = useStore((state) => state.getFilteredScans);
+
+  // Auto-clear errors after 5 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, setError]);
 
   // Load applications on mount
   useEffect(() => {
@@ -77,7 +103,7 @@ export const InkApp = ({ configPath }) => {
       }
     };
     loadApps();
-  }, []);
+  }, [appScanService, setLoading, setApplications, setError]);
 
   // Keyboard handling
   useInput((input, key) => {
@@ -88,7 +114,7 @@ export const InkApp = ({ configPath }) => {
     }
 
     // Modal handling
-    if (showFilterModal || showUpdateModal || showSearchModal || showCreateJiraModal) {
+    if (showFilterModal || showUpdateModal || showSearchModal || showCreateJiraModal || showSetup || showLinksPanel) {
       // Modals handle their own inputs
       return;
     }
@@ -99,8 +125,20 @@ export const InkApp = ({ configPath }) => {
       return;
     }
 
+    if (input === 'S') {
+      // Capital S to open setup wizard
+      setShowSetup(true);
+      return;
+    }
+
     if (input === '?') {
       toggleHelp();
+      return;
+    }
+
+    if (input === 'l') {
+      // Open links panel
+      setShowLinksPanel(true);
       return;
     }
 
@@ -115,7 +153,8 @@ export const InkApp = ({ configPath }) => {
       return;
     }
 
-    if (key.backspace) {
+    // Backspace navigation - try multiple ways to detect it
+    if (key.backspace || input === 'b' || input === '\u007F' || input === '\b') {
       goBack();
       return;
     }
@@ -125,6 +164,10 @@ export const InkApp = ({ configPath }) => {
         const hasFilters = useStore.getState().hasActiveFilters();
         if (hasFilters) {
           clearFilters();
+          // Force refresh by updating multiple state values
+          const currentCursor = useStore.getState().listCursor;
+          setListCursor(currentCursor === 0 ? 1 : 0);
+          setTimeout(() => setListCursor(0), 10);
           return;
         }
       }
@@ -139,6 +182,20 @@ export const InkApp = ({ configPath }) => {
     } else if (view === 'scan-selection') {
       if (key.return) {
         handleSelectScan();
+      } else if (input === '/') {
+        setShowSearchModal(true);
+      } else if (input === 't') {
+        // Cycle through scan type filters
+        const types = [null, 'SAST', 'DAST', 'SCA', 'IAST'];
+        const current = useStore.getState().scanFilterType;
+        const currentIndex = types.indexOf(current);
+        const nextIndex = (currentIndex + 1) % types.length;
+        setScanFilterType(types[nextIndex]);
+        setListCursor(0);
+      } else if (input === 'h') {
+        // Toggle hide empty scans
+        toggleHideEmptyScans();
+        setListCursor(0);
       }
     } else if (view === 'issue-list') {
       if (key.return) {
@@ -163,11 +220,29 @@ export const InkApp = ({ configPath }) => {
         setShowSearchModal(true);
       } else if (input === 'r') {
         handleRefresh();
+      } else if (input === 's') {
+        // Cycle through sort options
+        const sortOptions = ['severity', 'name', 'status'];
+        const currentIndex = sortOptions.indexOf(sortBy);
+        const nextIndex = (currentIndex + 1) % sortOptions.length;
+        setSortBy(sortOptions[nextIndex]);
+        setListCursor(0); // Reset cursor when sorting changes
+      } else if (input >= '1' && input <= '9') {
+        // Quick filter by group number
+        const groupIndex = parseInt(input) - 1;
+        const groups = groupIssuesBy(issues, 'IssueType');
+        if (groupIndex < groups.length) {
+          const groupName = groups[groupIndex].name;
+          setFilterIssueType(groupName);
+          // Force immediate state update by touching multiple state values
+          setListCursor(0);
+          // Trigger re-render by updating view state
+          const currentView = useStore.getState().view;
+          setView(currentView);
+        }
       }
     } else if (view === 'issue-details') {
-      if (key.backspace) {
-        goBack();
-      }
+      // Backspace handled above
     }
   });
 
@@ -198,7 +273,8 @@ export const InkApp = ({ configPath }) => {
   };
 
   const handleSelectScan = async (scan = null) => {
-    const selectedScanItem = scan || scans[listCursor];
+    const filteredScans = getFilteredScans();
+    const selectedScanItem = scan || (filteredScans.length > 0 ? filteredScans[listCursor] : null);
     if (!selectedScanItem) return;
 
     setSelectedScan(selectedScanItem);
@@ -220,6 +296,7 @@ export const InkApp = ({ configPath }) => {
     if (filteredIssues.length === 0) return;
 
     const issue = filteredIssues[listCursor];
+    setSelectedIssue(issue);
     
     try {
       setLoading(true);
@@ -244,19 +321,20 @@ export const InkApp = ({ configPath }) => {
   };
 
   const handleOpenUpdateModal = () => {
-    if (selectedIssueIds.length > 0 || filteredIssues.length > 0) {
+    if (selectedIssueIds.length > 0) {
       setShowUpdateModal(true);
+    } else {
+      setError('Please select one or more issues first (use Space to select)');
     }
   };
 
   const handleUpdateStatus = async (status, comment) => {
-    const issueIdsToUpdate = selectedIssueIds.length > 0 
-      ? selectedIssueIds 
-      : filteredIssues.length > 0 
-        ? [filteredIssues[listCursor].Id]
-        : [];
+    if (selectedIssueIds.length === 0) {
+      setError('No issues selected');
+      return;
+    }
 
-    if (issueIdsToUpdate.length === 0) return;
+    const issueIdsToUpdate = selectedIssueIds;
 
     try {
       setLoading(true);
@@ -378,12 +456,31 @@ export const InkApp = ({ configPath }) => {
       <Toolbar />
       
       <Box flexGrow={1}>
-        <LeftNav />
-        {view === 'issue-list' && <VulnList />}
-        {view === 'issue-list' && <DetailsPanel />}
+        {view === 'issue-details' ? (
+          <IssueDetailsView />
+        ) : (
+          <>
+            <LeftNav />
+            {view === 'issue-list' && <VulnList />}
+            {view === 'issue-list' && <DetailsPanel />}
+          </>
+        )}
       </Box>
 
       <CommandBar />
+
+      {loading && (
+        <Box borderStyle="single" borderColor="yellow" paddingX={1}>
+          <Spinner type="dots" />
+          <Text color="yellow"> Loading...</Text>
+        </Box>
+      )}
+
+      {error && (
+        <Box borderStyle="single" borderColor="red" paddingX={1}>
+          <Text color="red">❌ Error: {error}</Text>
+        </Box>
+      )}
 
       {showHelp && <HelpPanel />}
       {showFilterModal && (
@@ -400,10 +497,20 @@ export const InkApp = ({ configPath }) => {
           onClose={() => setShowUpdateModal(false)}
         />
       )}
-      {showSearchModal && (
+      {showSearchModal && view === 'issue-list' && (
         <SearchModal
           currentSearch={searchText}
           onSearch={setSearchText}
+          onClose={() => setShowSearchModal(false)}
+        />
+      )}
+      {showSearchModal && view === 'scan-selection' && (
+        <SearchModal
+          currentSearch={useStore.getState().scanSearchText}
+          onSearch={(text) => {
+            setScanSearchText(text);
+            setListCursor(0);
+          }}
           onClose={() => setShowSearchModal(false)}
         />
       )}
@@ -414,6 +521,18 @@ export const InkApp = ({ configPath }) => {
           onCreate={handleCreateJira}
           onClose={() => setShowCreateJiraModal(false)}
         />
+      )}
+      {showSetup && (
+        <SetupWizard
+          onComplete={() => {
+            setShowSetup(false);
+            setError('Configuration saved. Please restart the application to apply changes.');
+          }}
+          onCancel={() => setShowSetup(false)}
+        />
+      )}
+      {showLinksPanel && (
+        <LinksPanel onClose={() => setShowLinksPanel(false)} />
       )}
     </Box>
   );

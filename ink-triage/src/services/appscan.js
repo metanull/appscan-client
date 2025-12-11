@@ -42,7 +42,7 @@ export class AppScanService {
 
   async getIssueDetails(issueId) {
     await this.authenticate();
-    return await this.service.api.v4.Issues_GetDetails(issueId);
+    return await this.service.getIssueDetails(issueId);
   }
 
   async getArticle(issueId) {

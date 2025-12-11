@@ -2,52 +2,66 @@
 
 A modern, terminal-based user interface (TUI) for triaging AppScan vulnerabilities, built with [Ink](https://github.com/vadimdemedes/ink).
 
-## Status
+## Features
 
-**Current Status**: Architectural Foundation Complete
+- 🎨 Modern, interactive terminal UI with React Ink
+- 🔍 Browse applications, scans, and vulnerabilities
+- 📊 Filter by status, severity, issue type, and JIRA status
+- 🔎 Full-text search across issues
+- ✅ Bulk operations (select multiple issues)
+- 🎫 Create JIRA issues with grouping options
+- 📖 View detailed vulnerability information with remediation articles
+- ⌨️ Vim-style keyboard shortcuts
+- 🛠️ Interactive setup wizard for easy configuration
 
-This implementation provides a complete architectural foundation for the Ink-based TUI with all major components, state management, and service integrations implemented. 
+## Quick Start
 
-**What's Implemented**:
-- ✅ Complete component structure (14 components)
-- ✅ State management with Zustand
-- ✅ Service wrappers for AppScan and Jira APIs
-- ✅ All interactive modals (Filter, Search, Update Status, Create Jira)
-- ✅ Keyboard navigation framework
-- ✅ Article processing pipeline (HTML → Markdown → Terminal)
-- ✅ Multi-select and bulk operations
-- ✅ Virtual scrolling for performance
+### First-time Setup
 
-**Next Steps for Production Use**:
-1. Add JSX transpilation (Babel or esbuild configuration)
-2. Test all interactive flows end-to-end
-3. Add error handling and edge cases
-4. Performance testing with large datasets
-5. Integration testing with actual AppScan API
-
-## Installation
+Run the setup wizard to configure your credentials:
 
 ```bash
-cd ink-triage
-npm install
+npm run setup
 ```
 
-## Building (Required for JSX)
+The wizard will guide you through:
+- AppScan API credentials (required)
+- JIRA integration (optional)
+- Confluence OWASP ASVS links (optional)
 
-The application uses JSX which requires transpilation. To build:
+Configuration is saved to `.env` file in the project root.
 
-```bash
-npm run build
-```
-
-This will create a bundled version in `dist/index.js`.
-
-## Usage
-
-### After Building
+### Start the Application
 
 ```bash
 npm start
+```
+
+The setup wizard will automatically launch if no configuration is found.
+
+## Configuration
+
+### Automated Setup (Recommended)
+
+```bash
+npm run setup
+```
+
+### Manual Configuration
+
+Create a `.env` file in the project root:
+
+```env
+# AppScan API Configuration
+APPSCAN_API_KEY=your_api_key_here
+APPSCAN_API_SECRET=your_api_secret_here
+APPSCAN_BASE_URL=https://cloud.appscan.com
+
+# JIRA Configuration (optional)
+JIRA_HOST=https://yourcompany.atlassian.net
+JIRA_EMAIL=your-email@company.com
+JIRA_API_TOKEN=your_jira_api_token
+JIRA_PROJECT_KEY=SEC
 ```
 
 ### With Custom Configuration

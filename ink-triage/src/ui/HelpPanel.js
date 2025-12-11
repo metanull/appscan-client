@@ -24,8 +24,15 @@ export const HelpPanel = ({ onClose: _onClose }) => {
         <Text>  ↑/k      - Move up</Text>
         <Text>  ↓/j      - Move down</Text>
         <Text>  Enter    - Select / View details</Text>
-        <Text>  Backspace- Go back</Text>
+        <Text>  Backspace/b - Go back</Text>
         <Text>  q        - Quit</Text>
+      </Box>
+
+      <Box flexDirection="column" marginTop={1}>
+        <Text bold>Scan Selection:</Text>
+        <Text>  /        - Search by name</Text>
+        <Text>  t        - Filter by type (SAST/DAST/SCA/IAST)</Text>
+        <Text>  h        - Toggle hide empty scans</Text>
       </Box>
 
       <Box flexDirection="column" marginTop={1}>
@@ -34,20 +41,22 @@ export const HelpPanel = ({ onClose: _onClose }) => {
         <Text>  Ctrl+A   - Select all</Text>
         <Text>  u        - Update status (single/bulk)</Text>
         <Text>  c        - Create Jira issue</Text>
-        <Text>  v        - View details (quick)</Text>
-        <Text>  V        - View details with article</Text>
       </Box>
 
       <Box flexDirection="column" marginTop={1}>
-        <Text bold>Filtering:</Text>
+        <Text bold>Issue Filtering:</Text>
         <Text>  f        - Filter menu</Text>
         <Text>  /        - Search</Text>
+        <Text>  1-9      - Quick filter by group number</Text>
+        <Text>  s        - Sort (cycle: severity/name/status)</Text>
         <Text>  DEL      - Clear all filters</Text>
       </Box>
 
       <Box flexDirection="column" marginTop={1}>
         <Text bold>Other:</Text>
         <Text>  r        - Refresh</Text>
+        <Text>  l        - Show all links (URLs)</Text>
+        <Text>  S        - Setup wizard (reconfigure)</Text>
         <Text>  ?        - Toggle this help</Text>
       </Box>
 

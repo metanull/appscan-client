@@ -9,24 +9,26 @@ import useStore from '../state/AppContext.js';
 
 export const CommandBar = () => {
   const view = useStore((state) => state.view);
-  const hasActiveFilters = useStore((state) => state.hasActiveFilters());
+  const hasActiveFiltersFunc = useStore((state) => state.hasActiveFilters);
+  const hasActiveFilters = hasActiveFiltersFunc();
   const filterStatus = useStore((state) => state.filterStatus);
   const filterSeverity = useStore((state) => state.filterSeverity);
   const filterIssueType = useStore((state) => state.filterIssueType);
   const filterJira = useStore((state) => state.filterJira);
   const searchText = useStore((state) => state.searchText);
   const selectedIssueIds = useStore((state) => state.selectedIssueIds);
+  const sortBy = useStore((state) => state.sortBy);
 
   const getHints = () => {
     switch (view) {
       case 'app-selection':
         return '↑↓ Navigate | Enter Select | q Quit | ? Help';
       case 'scan-selection':
-        return '↑↓ Navigate | Enter Select | Backspace Back | q Quit | ? Help';
+        return '↑↓ Navigate | Enter Select | / Search | t Type | h Hide Empty | l Links | b/Back | q Quit | ? Help';
       case 'issue-list':
-        return '↑↓ Navigate | Space Select | Enter View | u Update | c Create Jira | f Filter | / Search | Backspace Back | q Quit | ? Help';
+        return '↑↓ Navigate | Space Select | Enter View | l Links | s Sort | u Update | c Create Jira | f Filter | 1-9 Group | / Search | b/Back | q Quit | ? Help';
       case 'issue-details':
-        return 'Backspace Back | q Quit';
+        return 'l Links | b/Backspace Back | q Quit';
       default:
         return '';
     }
@@ -44,6 +46,13 @@ export const CommandBar = () => {
 
   return (
     <Box flexDirection="column" borderStyle="single" borderColor="gray" paddingX={1}>
+      {view === 'issue-list' && sortBy && (
+        <Box>
+          <Text color="cyan">📊 Sort: </Text>
+          <Text color="yellow">{sortBy === 'severity' ? 'By Severity' : sortBy === 'name' ? 'By Name' : 'By Status'}</Text>
+          <Text dimColor> (s to change)</Text>
+        </Box>
+      )}
       {hasActiveFilters && (
         <Box>
           <Text color="yellow">🔍 Filters: </Text>

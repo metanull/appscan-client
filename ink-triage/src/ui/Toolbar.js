@@ -12,7 +12,8 @@ export const Toolbar = () => {
   const selectedApp = useStore((state) => state.selectedApp);
   const selectedScan = useStore((state) => state.selectedScan);
   const issues = useStore((state) => state.issues);
-  const filteredIssues = useStore((state) => state.getFilteredIssues());
+  const getFilteredIssues = useStore((state) => state.getFilteredIssues);
+  const filteredIssues = getFilteredIssues();
 
   const getTitle = () => {
     switch (view) {

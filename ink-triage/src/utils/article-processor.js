@@ -15,7 +15,7 @@ export function sanitizeArticle(htmlContent) {
   if (!htmlContent) return '';
 
   const cleanHtml = sanitizeHtml(htmlContent, {
-    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['h1', 'h2']),
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']),
     allowedAttributes: {
       'a': ['href']
     },
@@ -64,9 +64,12 @@ export function renderMarkdown(markdown) {
   if (!markdown) return '';
   
   try {
-    return cliMarkdown(markdown);
+    // cli-markdown can fail on certain markdown, use with caution
+    const rendered = cliMarkdown(markdown);
+    // If it returns the same as input, it might have failed
+    return rendered;
   } catch {
-    // If rendering fails, return plain text
+    // If rendering fails, return markdown with manual formatting
     return markdown;
   }
 }
