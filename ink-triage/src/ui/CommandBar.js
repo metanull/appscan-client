@@ -5,7 +5,6 @@
 
 import React from 'react';
 import { Box, Text } from 'ink';
-import chalk from 'chalk';
 import useStore from '../state/AppContext.js';
 
 export const CommandBar = () => {

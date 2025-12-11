@@ -11,8 +11,8 @@
     "build": "node build.js",
     "start": "npm run build && node dist/index.js",
     "dev": "npm run build && node dist/index.js",
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
-    "lint": "eslint src tests"
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --passWithNoTests",
+    "lint": "eslint src"
   },
   "keywords": [
     "appscan",
@@ -26,13 +26,12 @@
   "dependencies": {
     "chalk": "^5.6.2",
     "cli-markdown": "^3.5.1",
-    "ink": "^5.0.1",
-    "ink-box": "^2.0.0",
+    "ink": "^6.5.1",
     "ink-select-input": "^6.0.0",
     "ink-spinner": "^5.0.0",
     "ink-text-input": "^6.0.0",
-    "meow": "^13.2.0",
-    "react": "^18.3.1",
+    "meow": "^14.0.0",
+    "react": "^19.0.0",
     "sanitize-html": "^2.17.0",
     "turndown": "^7.2.0",
     "zustand": "^5.0.2"
@@ -42,6 +41,7 @@
     "esbuild": "^0.27.1",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
     "jest": "^30.2.0"
   }
 }

@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Box, Text, useInput, useApp } from 'ink';
+import { Box, useInput, useApp } from 'ink';
 import useStore from '../state/AppContext.js';
 import { Toolbar } from './Toolbar.js';
 import { LeftNav } from './LeftNav.js';
@@ -19,7 +19,6 @@ import { CreateJiraModal } from './CreateJiraModal.js';
 import { AppScanService } from '../services/appscan.js';
 import { JiraService } from '../services/jira.js';
 import { processArticle } from '../utils/article-processor.js';
-import { Formatter } from '../../../src/utils/formatter.js';
 
 export const InkApp = ({ configPath }) => {
   const { exit } = useApp();
@@ -40,7 +39,6 @@ export const InkApp = ({ configPath }) => {
   const setIssues = useStore((state) => state.setIssues);
   const setSelectedApp = useStore((state) => state.setSelectedApp);
   const setSelectedScan = useStore((state) => state.setSelectedScan);
-  const selectedApp = useStore((state) => state.selectedApp);
   const selectedScan = useStore((state) => state.selectedScan);
   const goBack = useStore((state) => state.goBack);
   const listCursor = useStore((state) => state.listCursor);

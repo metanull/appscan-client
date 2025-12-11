@@ -10,7 +10,6 @@ import VulnRow from './VulnRow.js';
 import { calculateStats, groupIssuesBy } from '../utils/issue-utils.js';
 
 export const VulnList = () => {
-  const issues = useStore((state) => state.issues);
   const filteredIssues = useStore((state) => state.getFilteredIssues());
   const selectedIssueIds = useStore((state) => state.selectedIssueIds);
   const listCursor = useStore((state) => state.listCursor);

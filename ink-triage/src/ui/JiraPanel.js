@@ -3,16 +3,16 @@
  * Modal for creating and previewing Jira issues
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Box, Text } from 'ink';
 import useStore from '../state/AppContext.js';
 
-export const JiraPanel = ({ jiraService, onClose, onCreate }) => {
+export const JiraPanel = ({ jiraService: _jiraService, onClose: _onClose, onCreate: _onCreate }) => {
   const selectedIssueIds = useStore((state) => state.selectedIssueIds);
   const issues = useStore((state) => state.issues);
-  const [step, setStep] = useState('input'); // 'input' | 'confirm' | 'creating' | 'success'
-  const [projectKey, setProjectKey] = useState('');
-  const [groupBy, setGroupBy] = useState('type'); // 'type' | 'severity' | 'none'
+  const [step, _setStep] = useState('input'); // 'input' | 'confirm' | 'creating' | 'success'
+  const [projectKey, _setProjectKey] = useState('');
+  const [groupBy, _setGroupBy] = useState('type'); // 'type' | 'severity' | 'none'
 
   const selectedIssues = issues.filter(i => selectedIssueIds.includes(i.Id));
 

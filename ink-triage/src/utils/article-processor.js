@@ -65,7 +65,7 @@ export function renderMarkdown(markdown) {
   
   try {
     return cliMarkdown(markdown);
-  } catch (error) {
+  } catch {
     // If rendering fails, return plain text
     return markdown;
   }
