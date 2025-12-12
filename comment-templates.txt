@@ -5,3 +5,5 @@ Authentication.Credentials.Unprotected|**Confirmed** Such information shall read
 SQL Injection|**Confirmed** [ASVS 1.2.4] Concatenating untrusted input into SQL or NoSQL queries allows injection attacks
 PathTraversal|**Confirmed** [ASVS 5.3.2] Using user-supplied filenames or paths directly when creating or accessing files can enable path traversal attacks
 Cleartext Transmission of Sensitive Information|**Confirmed** [ASVS 5.3.2] Requests and sensitive data (credentials, tokens, session cookies) can be intercepted, modified, or replayed if TLS is not enforced for external-facing services
+Configuration|Cross-Origin checks bypassed
+ErrorHandling.RevealDetails.Message|In compliance with CyberSecurity Policy, only CRITICAL+HIGH risk are currently in scope
