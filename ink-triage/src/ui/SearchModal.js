@@ -11,7 +11,8 @@ export const SearchModal = ({ currentSearch, onSearch, onClose }) => {
   const [searchText, setSearchText] = useState(currentSearch || '');
 
   useInput((input, key) => {
-    if (key.escape || input === 'b') {
+    // Only intercept ESC when typing - remove 'b' key interception
+    if (key.escape) {
       onClose();
     }
   });
@@ -47,7 +48,7 @@ export const SearchModal = ({ currentSearch, onSearch, onClose }) => {
       </Box>
 
       <Box marginTop={1}>
-        <Text dimColor>Press Enter to search, 'b' or ESC to cancel</Text>
+        <Text dimColor>Press Enter to search, ESC to cancel</Text>
         {currentSearch && (
           <Text dimColor>Leave empty to clear search</Text>
         )}

@@ -63,6 +63,7 @@ export async function updateIssueStatus(issueId, status, options) {
 
     const applicationId = issue.ApplicationId;
     
+    // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
     const result = await service.api.v4.Issues_UpdateFilteredIssues(
       'Application',
       applicationId,

@@ -1,0 +1,31 @@
+# Comment Templates for AppScan Triage
+# Format: [IssueType]|Comment text
+# Lines starting with # are ignored
+# You can edit this file to add predefined templates
+
+# Cross-Site Scripting (XSS)
+Cross-Site Scripting (XSS)|Input is properly sanitized and encoded before output
+Cross-Site Scripting (XSS)|Output encoding is handled by the framework's template engine
+Cross-Site Scripting (XSS)|This endpoint is not accessible to untrusted users
+Cross-Site Scripting (XSS)|Content Security Policy prevents script execution
+
+# SQL Injection
+SQL Injection|Using parameterized queries - not vulnerable
+SQL Injection|ORM handles query parameterization safely
+SQL Injection|Input validation prevents malicious SQL
+
+# Path Traversal
+Path Traversal|Path is validated against whitelist
+Path Traversal|Application uses chroot/sandboxing
+Path Traversal|User input is not used in file path construction
+
+# Weak Cryptography
+Weak Cryptographic Hash|Updated to use SHA-256 or stronger
+Weak Cryptographic Hash|Hash is only used for non-security purposes
+Insecure Randomness|Replaced with SecureRandom/crypto.randomBytes
+
+# General
+Privacy Violation|Data handling complies with privacy policy
+Privacy Violation|PII is properly encrypted/anonymized
+Code Quality|Refactored for better maintainability
+Code Quality|This is framework-generated code

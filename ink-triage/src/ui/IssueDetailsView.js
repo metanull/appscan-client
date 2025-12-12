@@ -3,17 +3,54 @@
  * Full-screen view showing detailed issue information with article
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Text } from 'ink';
 import useStore from '../state/AppContext.js';
 import { getSeverityBadge } from '../utils/issue-utils.js';
-import { convertToAbsoluteUrl } from '../../../src/utils/url-converter.js';
+import { AppScanService } from '../services/appscan.js';
 
 export const IssueDetailsView = () => {
   const selectedIssue = useStore((state) => state.selectedIssue);
   const articleContent = useStore((state) => state.articleContent);
+  const [comments, setComments] = useState([]);
+  const [loadingComments, setLoadingComments] = useState(false);
 
   const issue = selectedIssue;
+
+  // Fetch comments when issue changes
+  useEffect(() => {
+    let isMounted = true;
+    
+    async function fetchComments() {
+      if (!issue || !issue.Id) {
+        setComments([]);
+        return;
+      }
+
+      setLoadingComments(true);
+      try {
+        const service = new AppScanService();
+        const issueComments = await service.getIssueComments(issue.Id);
+        if (isMounted) {
+          setComments(issueComments || []);
+        }
+      } catch {
+        if (isMounted) {
+          setComments([]);
+        }
+      } finally {
+        if (isMounted) {
+          setLoadingComments(false);
+        }
+      }
+    }
+
+    fetchComments();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [issue?.Id]);
   
   if (!issue) {
     return (
@@ -34,8 +71,6 @@ export const IssueDetailsView = () => {
       default: return 'white';
     }
   };
-
-  const absoluteUrl = issue.Location ? convertToAbsoluteUrl(issue.Location) : null;
 
   return (
     <Box flexDirection="column" padding={1} flexGrow={1} borderStyle="single" borderColor="magenta">
@@ -58,17 +93,18 @@ export const IssueDetailsView = () => {
       <Box flexDirection="column" marginTop={1} borderStyle="single" paddingX={1}>
         <Text bold color="cyan">📍 Location Details</Text>
         
+        {/* Show absolute SourceFileUri first if available */}
+        {issue.SourceFileUri && (
+          <Box marginTop={1}>
+            <Text dimColor>🔗 Source: </Text>
+            <Text color="blue">{issue.SourceFileUri}</Text>
+          </Box>
+        )}
+
         {issue.Location && (
           <Box marginTop={1}>
             <Text dimColor>File: </Text>
             <Text>{issue.Location}</Text>
-          </Box>
-        )}
-
-        {absoluteUrl && absoluteUrl !== issue.Location && (
-          <Box>
-            <Text dimColor>🔗 URL: </Text>
-            <Text color="blue">{absoluteUrl}</Text>
           </Box>
         )}
 
@@ -132,6 +168,45 @@ export const IssueDetailsView = () => {
           <Box>
             <Text dimColor>Updated: </Text>
             <Text>{new Date(issue.LastUpdated).toLocaleDateString()}</Text>
+          </Box>
+        )}
+      </Box>
+
+      {/* User Comments Section */}
+      <Box flexDirection="column" marginTop={1} borderStyle="single" paddingX={1}>
+        <Text bold color="cyan">💬 User Comments</Text>
+        
+        {loadingComments && (
+          <Text dimColor marginTop={1}>Loading comments...</Text>
+        )}
+
+        {!loadingComments && comments.length === 0 && (
+          <Text dimColor marginTop={1}>No comments for this issue.</Text>
+        )}
+
+        {!loadingComments && comments.length > 0 && (
+          <Box flexDirection="column" marginTop={1}>
+            {comments.map((comment, index) => (
+              <Box key={comment.Id || index} flexDirection="column" marginBottom={1} borderStyle="single" borderColor="gray" paddingX={1}>
+                <Box>
+                  <Text dimColor>Date: </Text>
+                  <Text>{new Date(comment.CreatedAt).toLocaleString()}</Text>
+                </Box>
+                <Box>
+                  <Text dimColor>Author: </Text>
+                  <Text bold>{comment.Author || 'Unknown'}</Text>
+                </Box>
+                {comment.ModifiedAt && comment.ModifiedAt !== comment.CreatedAt && (
+                  <Box>
+                    <Text dimColor>Modified: </Text>
+                    <Text>{new Date(comment.ModifiedAt).toLocaleString()}</Text>
+                  </Box>
+                )}
+                <Box marginTop={1}>
+                  <Text>{comment.Comment}</Text>
+                </Box>
+              </Box>
+            ))}
           </Box>
         )}
       </Box>

@@ -92,8 +92,8 @@ export const useStore = create((set, get) => ({
   },
   
   selectAllIssues: () => {
-    const { issues } = get();
-    set({ selectedIssueIds: issues.map(i => i.Id) });
+    const filteredIssues = get().getFilteredIssues();
+    set({ selectedIssueIds: filteredIssues.map(i => i.Id) });
   },
   
   clearSelection: () => set({ selectedIssueIds: [] }),
@@ -128,22 +128,61 @@ export const useStore = create((set, get) => ({
   moveCursorUp: () => set((state) => ({ 
     listCursor: Math.max(0, state.listCursor - 1) 
   })),
-  moveCursorDown: () => {
-    const { listCursor, view, applications } = get();
-    const filteredIssues = get().getFilteredIssues();
-    const filteredScans = get().getFilteredScans();
+  moveCursorDown: () => set((state) => {
+    const { listCursor, view, applications, issues } = state;
+    
+    // Calculate filtered issues inline to avoid calling get() in state update
+    let filtered = issues;
+    if (state.filterStatus) {
+      filtered = filtered.filter(i => i.Status === state.filterStatus);
+    }
+    if (state.filterSeverity) {
+      filtered = filtered.filter(i => i.Severity === state.filterSeverity);
+    }
+    if (state.filterIssueType) {
+      filtered = filtered.filter(i => i.IssueType === state.filterIssueType);
+    }
+    if (state.filterJira === 'with') {
+      filtered = filtered.filter(i => i.ExternalId && i.ExternalId.trim() !== '');
+    } else if (state.filterJira === 'without') {
+      filtered = filtered.filter(i => !i.ExternalId || i.ExternalId.trim() === '');
+    }
+    if (state.searchText) {
+      const searchLower = state.searchText.toLowerCase();
+      filtered = filtered.filter(i =>
+        (i.IssueType && i.IssueType.toLowerCase().includes(searchLower)) ||
+        (i.Location && i.Location.toLowerCase().includes(searchLower)) ||
+        (i.Api && i.Api.toLowerCase().includes(searchLower))
+      );
+    }
+    
+    // Calculate filtered scans inline
+    let filteredScans = state.scans;
+    if (state.scanSearchText) {
+      const search = state.scanSearchText.toLowerCase();
+      filteredScans = filteredScans.filter(s =>
+        (s.Name && s.Name.toLowerCase().includes(search)) ||
+        (s.ScanType && s.ScanType.toLowerCase().includes(search))
+      );
+    }
+    if (state.scanFilterType) {
+      filteredScans = filteredScans.filter(s => s.ScanType === state.scanFilterType);
+    }
+    if (state.hideEmptyScans) {
+      filteredScans = filteredScans.filter(s => s.NIssuesFound > 0);
+    }
     
     let maxCursor = 0;
     if (view === 'issue-list') {
-      maxCursor = filteredIssues.length - 1;
+      maxCursor = filtered.length - 1;
     } else if (view === 'app-selection') {
       maxCursor = applications.length - 1;
     } else if (view === 'scan-selection') {
       maxCursor = filteredScans.length - 1;
     }
     
-    set({ listCursor: Math.min(maxCursor, listCursor + 1) });
-  },
+    return { listCursor: Math.min(maxCursor, listCursor + 1) };
+  }),
   
   // Computed/helper functions
   getFilteredIssues: () => {

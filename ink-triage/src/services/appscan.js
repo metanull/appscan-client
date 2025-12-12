@@ -50,24 +50,52 @@ export class AppScanService {
     return await this.service.getArticle(issueId);
   }
 
+  async getIssueComments(issueId) {
+    await this.authenticate();
+    const response = await this.service.api.v4.Issues_GetIssueComments(issueId, {});
+    return response.Items || [];
+  }
+
   async updateIssue(issueId, appId, updateData) {
     await this.authenticate();
+    // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
     return await this.service.api.v4.Issues_UpdateFilteredIssues(
       'Application',
       appId,
       updateData,
-      { $filter: `Id eq ${issueId}` }
+      { odataFilter: `Id eq ${issueId}` }
     );
   }
 
   async bulkUpdateIssues(issueIds, appId, updateData) {
     await this.authenticate();
     const odataFilter = issueIds.map(id => `Id eq ${id}`).join(' or ');
+    // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
     return await this.service.api.v4.Issues_UpdateFilteredIssues(
       'Application',
       appId,
       updateData,
-      { $filter: odataFilter }
+      { odataFilter: odataFilter }
+    );
+  }
+
+  async updateAllIssuesInScan(scanId, updateData) {
+    await this.authenticate();
+    return await this.service.api.v4.Issues_UpdateFilteredIssues(
+      'Scan',
+      scanId,
+      updateData,
+      {} // No filter = update all issues in scan
+    );
+  }
+
+  async updateAllIssuesInApplication(appId, updateData) {
+    await this.authenticate();
+    return await this.service.api.v4.Issues_UpdateFilteredIssues(
+      'Application',
+      appId,
+      updateData,
+      {} // No filter = update all issues in application
     );
   }
 
