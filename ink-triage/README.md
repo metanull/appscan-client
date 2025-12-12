@@ -158,6 +158,38 @@ appscan-triage-ui
 - `v` - View issue details (quick)
 - `V` - View issue details with article
 
+## Comment Templates
+
+When updating vulnerability status, the app provides reusable comment templates based on vulnerability type. This saves time by avoiding repetitive typing.
+
+### How It Works
+
+1. When updating status, if templates exist for the vulnerability type, you'll see a selection list
+2. Choose a predefined template or select "Custom message..." to type your own
+3. Custom messages are automatically saved as new templates for future use
+4. Templates are stored in `comment-templates.txt` and can be edited directly
+
+### Template File Format
+
+The `comment-templates.txt` file uses a simple format:
+
+```
+# Comments start with #
+[VulnerabilityType]|Comment text
+
+# Examples:
+Cross-Site Scripting (XSS)|Input is properly sanitized and encoded before output
+SQL Injection|Using parameterized queries - not vulnerable
+```
+
+### Editing Templates
+
+You can edit `comment-templates.txt` directly in any text editor:
+- Add new templates for any vulnerability type
+- Remove templates you don't need
+- Share templates with your team via source control
+- Predefined templates are distributed with the package
+
 ### Filtering
 - `f` - Open filter menu
 - `/` - Search by text

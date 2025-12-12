@@ -321,20 +321,21 @@ export const InkApp = ({ configPath }) => {
   };
 
   const handleOpenUpdateModal = () => {
-    if (selectedIssueIds.length > 0) {
-      setShowUpdateModal(true);
-    } else {
-      setError('Please select one or more issues first (use Space to select)');
+    if (!selectedIssueIds || selectedIssueIds.length === 0) {
+      setError('No issues selected. Use Space to select vulnerabilities before updating.');
+      return;
     }
+    setShowUpdateModal(true);
   };
 
   const handleUpdateStatus = async (status, comment) => {
-    if (selectedIssueIds.length === 0) {
-      setError('No issues selected');
+    // Guard: Refuse to update if no issues selected
+    if (!selectedIssueIds || selectedIssueIds.length === 0) {
+      setError('No issues selected. Use Space to select vulnerabilities.');
       return;
     }
 
-    const issueIdsToUpdate = selectedIssueIds;
+    const issueIdsToUpdate = [...selectedIssueIds]; // Explicit copy to prevent mutations
 
     try {
       setLoading(true);
@@ -482,57 +483,67 @@ export const InkApp = ({ configPath }) => {
         </Box>
       )}
 
-      {showHelp && <HelpPanel />}
-      {showFilterModal && (
-        <FilterModal
-          issues={issues}
-          onSelect={handleFilterSelect}
-          onClose={() => setShowFilterModal(false)}
-        />
-      )}
-      {showUpdateModal && (
-        <UpdateStatusModal
-          issueCount={selectedIssueIds.length > 0 ? selectedIssueIds.length : 1}
-          onUpdate={handleUpdateStatus}
-          onClose={() => setShowUpdateModal(false)}
-        />
-      )}
-      {showSearchModal && view === 'issue-list' && (
-        <SearchModal
-          currentSearch={searchText}
-          onSearch={setSearchText}
-          onClose={() => setShowSearchModal(false)}
-        />
-      )}
-      {showSearchModal && view === 'scan-selection' && (
-        <SearchModal
-          currentSearch={useStore.getState().scanSearchText}
-          onSearch={(text) => {
-            setScanSearchText(text);
-            setListCursor(0);
-          }}
-          onClose={() => setShowSearchModal(false)}
-        />
-      )}
-      {showCreateJiraModal && (
-        <CreateJiraModal
-          issues={issues.filter(i => selectedIssueIds.includes(i.Id))}
-          defaultProjectKey={appScanService.getConfig().getJiraProjectKey()}
-          onCreate={handleCreateJira}
-          onClose={() => setShowCreateJiraModal(false)}
-        />
-      )}
-      {showSetup && (
-        <SetupWizard
-          onComplete={() => {
-            setShowSetup(false);
-            setError('Configuration saved. Please restart the application to apply changes.');
-          }}
-          onCancel={() => setShowSetup(false)}
-        />
-      )}
-      {showLinksPanel && (
-        <LinksPanel onClose={() => setShowLinksPanel(false)} />
+      {/* Overlay layer for modals - absolute positioning */}
+      {(showHelp || showFilterModal || showUpdateModal || showSearchModal || showCreateJiraModal || showSetup || showLinksPanel) && (
+        <Box position="absolute" width="100%" height="100%" flexDirection="column" justifyContent="center" alignItems="center">
+          {/* Background overlay - blocks content behind modal */}
+          <Box position="absolute" width="100%" height="100%" backgroundColor="black" />
+          
+          {/* Modal content on top */}
+          {showHelp && <HelpPanel />}
+          {showFilterModal && (
+            <FilterModal
+              issues={issues}
+              onSelect={handleFilterSelect}
+              onClose={() => setShowFilterModal(false)}
+            />
+          )}
+          {showUpdateModal && (
+            <UpdateStatusModal
+              issueCount={selectedIssueIds.length}
+              issues={issues.filter(i => selectedIssueIds.includes(i.Id))}
+              onUpdate={handleUpdateStatus}
+              onClose={() => setShowUpdateModal(false)}
+            />
+          )}
+          {showSearchModal && view === 'issue-list' && (
+            <SearchModal
+              currentSearch={searchText}
+              onSearch={setSearchText}
+              onClose={() => setShowSearchModal(false)}
+            />
+          )}
+          {showSearchModal && view === 'scan-selection' && (
+            <SearchModal
+              currentSearch={useStore.getState().scanSearchText}
+              onSearch={(text) => {
+                setScanSearchText(text);
+                setListCursor(0);
+              }}
+              onClose={() => setShowSearchModal(false)}
+            />
+          )}
+          {showCreateJiraModal && (
+            <CreateJiraModal
+              issues={issues.filter(i => selectedIssueIds.includes(i.Id))}
+              defaultProjectKey={appScanService.getConfig().getJiraProjectKey()}
+              onCreate={handleCreateJira}
+              onClose={() => setShowCreateJiraModal(false)}
+            />
+          )}
+          {showSetup && (
+            <SetupWizard
+              onComplete={() => {
+                setShowSetup(false);
+                setError('Configuration saved. Please restart the application to apply changes.');
+              }}
+              onCancel={() => setShowSetup(false)}
+            />
+          )}
+          {showLinksPanel && (
+            <LinksPanel onClose={() => setShowLinksPanel(false)} />
+          )}
+        </Box>
       )}
     </Box>
   );

@@ -1,0 +1,6 @@
+# Comment Templates for AppScan Triage
+# Format: [IssueType]|Comment text
+
+Authentication.Credentials.Unprotected|**Confirmed** Such information shall read from configuration/environment and not stored in the Source Control.
+SQL Injection|**Confirmed** [ASVS 1.2.4] Concatenating untrusted input into SQL or NoSQL queries allows injection attacks
+PathTraversal|**Confirmed** [ASVS 5.3.2] Using user-supplied filenames or paths directly when creating or accessing files can enable path traversal attacks

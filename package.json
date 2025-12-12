@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "type": "module",
   "bin": {
-    "appscan": "./src/index.js"
+    "appscan": "./src/index.js",
+    "triage": "./ink-triage/src/index.js"
   },
   "engines": {
     "node": ">=20.0.0"

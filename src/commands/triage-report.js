@@ -524,11 +524,12 @@ async function updateAction(options) {
     if (options.externalId) updateData.ExternalId = options.externalId;
 
     // Update via filtered update API
+    // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
     await service.api.v4.Issues_UpdateFilteredIssues(
       'Application',
       appId,
       updateData,
-      { $filter: `Id eq ${options.issue}` }
+      { odataFilter: `Id eq ${options.issue}` }
     );
 
     const result = {
@@ -598,11 +599,12 @@ async function bulkUpdateAction(options) {
     for (const [appId, appIssueIds] of Object.entries(issuesByApp)) {
       const odataFilter = appIssueIds.map(id => `Id eq ${id}`).join(' or ');
       
+      // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
       await service.api.v4.Issues_UpdateFilteredIssues(
         'Application',
         appId,
         updateData,
-        { $filter: odataFilter }
+        { odataFilter: odataFilter }
       );
 
       results.push({
@@ -657,11 +659,12 @@ async function bulkUpdateFilterAction(options) {
     if (options.externalId) updateData.ExternalId = options.externalId;
 
     // Update via filtered update API
+    // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
     const result = await service.api.v4.Issues_UpdateFilteredIssues(
       'Application',
       options.app,
       updateData,
-      { $filter: odataFilter }
+      { odataFilter: options.filter }
     );
 
     const response = {
@@ -756,11 +759,12 @@ async function createJiraAction(options) {
       // Update AppScan issues with Jira link
       for (const issue of group.issues) {
         const appId = issue.ApplicationId;
+        // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
         await service.api.v4.Issues_UpdateFilteredIssues(
           'Application',
           appId,
           { ExternalId: jiraKey },
-          { $filter: `Id eq ${issue.Id}` }
+          { odataFilter: `Id eq ${issue.Id}` }
         );
       }
 
@@ -863,11 +867,12 @@ async function linkJiraAction(options) {
     const appId = issue.ApplicationId;
 
     // Update with Jira key
+    // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
     await service.api.v4.Issues_UpdateFilteredIssues(
       'Application',
       appId,
       { ExternalId: options.jiraKey },
-      { $filter: `Id eq ${options.issue}` }
+      { odataFilter: `Id eq ${options.issue}` }
     );
 
     const result = {
@@ -1312,11 +1317,12 @@ async function interactiveAction(options) {
 
           for (const [appIdForUpdate, appIssueIds] of Object.entries(issuesByApp)) {
             const odataFilter = appIssueIds.map(id => `Id eq ${id}`).join(' or ');
+            // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
             await service.api.v4.Issues_UpdateFilteredIssues(
               'Application',
               appIdForUpdate,
               updateData,
-              { $filter: odataFilter }
+              { odataFilter: odataFilter }
             );
           }
 
@@ -1466,11 +1472,12 @@ async function interactiveAction(options) {
             // Update AppScan issues with Jira link
             for (const issue of group.issues) {
               const appIdForJira = issue.ApplicationId;
+              // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
               await service.api.v4.Issues_UpdateFilteredIssues(
                 'Application',
                 appIdForJira,
                 { ExternalId: jiraKey },
-                { $filter: `Id eq ${issue.Id}` }
+                { odataFilter: `Id eq ${issue.Id}` }
               );
             }
           }

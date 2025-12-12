@@ -6,7 +6,6 @@
 import React from 'react';
 import { Box, Text, useInput } from 'ink';
 import useStore from '../state/AppContext.js';
-import { convertToAbsoluteUrl } from '../../../src/utils/url-converter.js';
 
 export const LinksPanel = ({ onClose }) => {
   const selectedApp = useStore((state) => state.selectedApp);
@@ -29,6 +28,17 @@ export const LinksPanel = ({ onClose }) => {
 
   const links = [];
 
+  // Issue URLs (prioritize SourceFileUri - absolute Azure DevOps URL)
+  if (currentIssue) {
+    // SourceFileUri - FIRST (absolute URL from AppScan)
+    if (currentIssue.SourceFileUri) {
+      links.push({
+        label: 'Source File (Azure DevOps)',
+        url: currentIssue.SourceFileUri
+      });
+    }
+  }
+
   // App URL
   if (selectedApp) {
     links.push({
@@ -45,7 +55,7 @@ export const LinksPanel = ({ onClose }) => {
     });
   }
 
-  // Issue URLs
+  // Issue article and JIRA
   if (currentIssue) {
     // Article URL
     if (currentIssue.IssueTypeId) {
@@ -53,17 +63,6 @@ export const LinksPanel = ({ onClose }) => {
         label: 'Issue Documentation (Article)',
         url: `${baseUrl}/main/issuedetail/${currentIssue.IssueTypeId}`
       });
-    }
-
-    // Azure DevOps URL
-    if (currentIssue.Location) {
-      const azureUrl = convertToAbsoluteUrl(currentIssue.Location);
-      if (azureUrl && azureUrl !== currentIssue.Location) {
-        links.push({
-          label: 'Azure DevOps Source File',
-          url: azureUrl
-        });
-      }
     }
 
     // JIRA URL

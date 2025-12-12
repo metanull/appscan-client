@@ -27,7 +27,7 @@ export const VulnList = () => {
   const groups = useMemo(() => groupIssuesBy(filteredIssues, 'IssueType'), [filteredIssues]);
 
   // Virtual scrolling - show only visible items
-  const visibleCount = 15;
+  const visibleCount = 25;
   const startIndex = Math.max(0, listCursor - Math.floor(visibleCount / 2));
   const endIndex = Math.min(filteredIssues.length, startIndex + visibleCount);
   const visibleIssues = filteredIssues.slice(startIndex, endIndex);

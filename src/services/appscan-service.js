@@ -430,6 +430,7 @@ export class AppScanService {
       const odataFilter = issueIds.map(id => `Id eq ${id}`).join(' or ');
 
       // Update all issues using filtered update
+      // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
       const result = await this.api.v4.Issues_UpdateFilteredIssues(
         'Application',
         applicationId,
@@ -447,6 +448,88 @@ export class AppScanService {
       };
     } catch (error) {
       throw new Error(`Failed to bulk update issues: ${error.message}`);
+    }
+  }
+
+  /**
+   * Update ALL issues in a scan (no filter applied)
+   * @param {string} scanId - Scan ID
+   * @param {string} status - New status (Open, InProgress, Noise, Passed, Fixed)
+   * @param {string} comment - Optional comment
+   * @param {string} externalId - Optional external ID (e.g., Jira key)
+   * @returns {Promise<Object>} Update result
+   */
+  async updateAllIssuesInScan(scanId, status, comment = null, externalId = null) {
+    await this.ensureAuthenticated();
+    try {
+      // Build update payload
+      const updateData = { Status: status };
+      
+      if (comment) {
+        updateData.Comment = comment;
+      }
+      
+      if (externalId) {
+        updateData.ExternalId = externalId;
+      }
+
+      // Update all issues in the scan (no filter = all issues)
+      const result = await this.api.v4.Issues_UpdateFilteredIssues(
+        'Scan',
+        scanId,
+        updateData,
+        {} // No filter = update all issues in scan
+      );
+
+      return {
+        success: true,
+        scanId: scanId,
+        totalUpdated: result?.UpdatedIssues || result?.TotalIssues || 0,
+        result,
+      };
+    } catch (error) {
+      throw new Error(`Failed to update all issues in scan: ${error.message}`);
+    }
+  }
+
+  /**
+   * Update ALL issues in an application (no filter applied)
+   * @param {string} applicationId - Application ID
+   * @param {string} status - New status (Open, InProgress, Noise, Passed, Fixed)
+   * @param {string} comment - Optional comment
+   * @param {string} externalId - Optional external ID (e.g., Jira key)
+   * @returns {Promise<Object>} Update result
+   */
+  async updateAllIssuesInApplication(applicationId, status, comment = null, externalId = null) {
+    await this.ensureAuthenticated();
+    try {
+      // Build update payload
+      const updateData = { Status: status };
+      
+      if (comment) {
+        updateData.Comment = comment;
+      }
+      
+      if (externalId) {
+        updateData.ExternalId = externalId;
+      }
+
+      // Update all issues in the application (no filter = all issues)
+      const result = await this.api.v4.Issues_UpdateFilteredIssues(
+        'Application',
+        applicationId,
+        updateData,
+        {} // No filter = update all issues in application
+      );
+
+      return {
+        success: true,
+        applicationId: applicationId,
+        totalUpdated: result?.UpdatedIssues || result?.TotalIssues || 0,
+        result,
+      };
+    } catch (error) {
+      throw new Error(`Failed to update all issues in application: ${error.message}`);
     }
   }
 

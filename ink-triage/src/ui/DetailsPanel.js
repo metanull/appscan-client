@@ -3,11 +3,12 @@
  * Right panel showing detailed issue information and remediation article
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Text } from 'ink';
 import useStore from '../state/AppContext.js';
 import { getSeverityBadge } from '../utils/issue-utils.js';
 import { convertToAbsoluteUrl } from '../../../src/utils/url-converter.js';
+import { AppScanService } from '../services/appscan.js';
 
 export const DetailsPanel = () => {
   const view = useStore((state) => state.view);
@@ -17,15 +18,52 @@ export const DetailsPanel = () => {
   const getFilteredIssues = useStore((state) => state.getFilteredIssues);
   const filteredIssues = getFilteredIssues();
   const listCursor = useStore((state) => state.listCursor);
+  const [comments, setComments] = useState([]);
+  const [loadingComments, setLoadingComments] = useState(false);
 
-  if (view !== 'issue-list' && view !== 'issue-details') {
-    return null;
-  }
-
-  // In issue-list view, show preview of current cursor item
+  // Determine which issue to show
   let issue = selectedIssue || issueDetails;
   if (view === 'issue-list' && filteredIssues.length > 0) {
     issue = filteredIssues[listCursor];
+  }
+
+  // Fetch comments when issue changes
+  useEffect(() => {
+    let isMounted = true;
+    
+    async function fetchComments() {
+      if (!issue || !issue.Id) {
+        setComments([]);
+        return;
+      }
+
+      setLoadingComments(true);
+      try {
+        const service = new AppScanService();
+        const issueComments = await service.getIssueComments(issue.Id);
+        if (isMounted) {
+          setComments(issueComments || []);
+        }
+      } catch {
+        if (isMounted) {
+          setComments([]);
+        }
+      } finally {
+        if (isMounted) {
+          setLoadingComments(false);
+        }
+      }
+    }
+
+    fetchComments();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [issue?.Id]);
+
+  if (view !== 'issue-list' && view !== 'issue-details') {
+    return null;
   }
 
   if (!issue) {
@@ -59,8 +97,8 @@ export const DetailsPanel = () => {
     <Box flexDirection="column" borderStyle="single" borderColor="magenta" paddingX={1} width="30%">
       <Text bold color="magenta">📖 Details</Text>
 
-      {/* Issue Info */}
-      <Box flexDirection="column" marginTop={1}>
+      {/* Top Half: Issue Info */}
+      <Box flexDirection="column" marginTop={1} height="50%" overflow="hidden">
         <Text bold color={getSeverityColor()}>
           {getSeverityBadge(severity)} {issue.IssueType || 'Unknown'}
         </Text>
@@ -81,6 +119,13 @@ export const DetailsPanel = () => {
           <Text dimColor>Status: </Text>
           <Text>{issue.Status || 'Unknown'}</Text>
         </Box>
+
+        {issue.SourceFileUri && (
+          <Box marginTop={1}>
+            <Text dimColor>🔗 Source:</Text>
+            <Text color="blue"> {truncate(issue.SourceFileUri, 80)}</Text>
+          </Box>
+        )}
 
         {issue.Location && (
           <>
@@ -127,7 +172,7 @@ export const DetailsPanel = () => {
         {issue.Context && (
           <Box flexDirection="column" marginTop={1}>
             <Text dimColor>Code:</Text>
-            <Box marginLeft={1} borderStyle="single" borderColor="gray" paddingX={1}>
+            <Box marginLeft={1} borderStyle="single" borderColor="gray" paddingX={1} paddingY={1}>
               <Text>{truncate(issue.Context, 150)}</Text>
             </Box>
           </Box>
@@ -165,6 +210,24 @@ export const DetailsPanel = () => {
           <Box>
             <Text dimColor>Updated: </Text>
             <Text>{new Date(issue.LastUpdated).toLocaleDateString()}</Text>
+          </Box>
+        )}
+      </Box>
+
+      {/* Bottom Half: User Comments */}
+      <Box flexDirection="column" marginTop={1} borderStyle="single" borderColor="cyan" paddingX={1} height={6}>
+        <Text bold color="cyan">💬 User Comments</Text>
+        {loadingComments && (
+          <Text dimColor>Loading...</Text>
+        )}
+        {!loadingComments && comments.length === 0 && (
+          <Text dimColor>No comments</Text>
+        )}
+        {!loadingComments && comments.length > 0 && (
+          <Box flexDirection="column">
+            {comments.map((comment, index) => (
+              <Text key={comment.Id || index}>{comment.Comment}</Text>
+            ))}
           </Box>
         )}
       </Box>

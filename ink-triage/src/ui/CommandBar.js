@@ -6,6 +6,21 @@
 import React from 'react';
 import { Box, Text } from 'ink';
 import useStore from '../state/AppContext.js';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Read version from package.json
+let packageInfo = { version: '1.0.0' };
+try {
+  const packagePath = join(__dirname, '../../package.json');
+  packageInfo = JSON.parse(readFileSync(packagePath, 'utf8'));
+} catch {
+  // Fallback if package.json not found
+}
 
 export const CommandBar = () => {
   const view = useStore((state) => state.view);
@@ -65,8 +80,9 @@ export const CommandBar = () => {
           <Text color="green">✓ Selected: {selectedIssueIds.length} issue(s)</Text>
         </Box>
       )}
-      <Box>
+      <Box justifyContent="space-between">
         <Text dimColor>{getHints()}</Text>
+        <Text dimColor>Author: Pascal Havelange | v{packageInfo.version} | MIT License</Text>
       </Box>
     </Box>
   );
