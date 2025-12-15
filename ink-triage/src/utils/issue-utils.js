@@ -25,7 +25,7 @@ export const SEVERITY_COLORS = {
 export function groupIssuesBy(issues, property = 'IssueType') {
   const grouped = {};
 
-  issues.forEach(issue => {
+  issues.forEach((issue) => {
     const key = issue[property] || 'Unknown';
     if (!grouped[key]) {
       grouped[key] = {
@@ -60,7 +60,7 @@ export function calculateStats(issues) {
     withoutJira: 0,
   };
 
-  issues.forEach(issue => {
+  issues.forEach((issue) => {
     // Count by severity
     const severity = issue.Severity || 'Unknown';
     if (stats[severity] !== undefined) {

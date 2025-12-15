@@ -1,11 +1,13 @@
 /**
  * AppScan Service Wrapper
  * This wraps the parent package's AppScanService to provide a clean interface
- * for the Ink UI.
+ * for the Ink UI and adds audit logging for all write operations.
  */
 
 // Import from parent package
 import { AppScanService as ParentAppScanService } from '../../../src/services/appscan-service.js';
+import { auditService } from '../utils/audit.js';
+import logger from '../utils/logger.js';
 import { Config } from '../../../src/utils/config.js';
 
 export class AppScanService {
@@ -58,25 +60,136 @@ export class AppScanService {
 
   async updateIssue(issueId, appId, updateData) {
     await this.authenticate();
-    // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
-    return await this.service.api.v4.Issues_UpdateFilteredIssues(
-      'Application',
-      appId,
-      updateData,
-      { odataFilter: `Id eq ${issueId}` }
-    );
+
+    try {
+      logger.info('Updating AppScan issue', { issueId, appId, updateData });
+
+      // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
+      const result = await this.service.api.v4.Issues_UpdateFilteredIssues(
+        'Application',
+        appId,
+        updateData,
+        { odataFilter: `Id eq ${issueId}` }
+      );
+
+      // Audit the update
+      auditService.logAppScanUpdate([issueId], appId, updateData, {
+        success: true,
+        result,
+      });
+
+      logger.info('Issue updated successfully', { issueId });
+      return result;
+    } catch (error) {
+      logger.error('Failed to update issue', error, { issueId, appId });
+
+      auditService.logAppScanUpdate([issueId], appId, updateData, {
+        success: false,
+        error: error.message,
+      });
+
+      throw error;
+    }
   }
 
   async bulkUpdateIssues(issueIds, appId, updateData) {
     await this.authenticate();
-    const odataFilter = issueIds.map(id => `Id eq ${id}`).join(' or ');
-    // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
-    return await this.service.api.v4.Issues_UpdateFilteredIssues(
-      'Application',
+
+    try {
+      logger.info('Bulk updating AppScan issues', {
+        issueCount: issueIds.length,
+        appId,
+        updateData,
+      });
+
+      const odataFilter = issueIds.map((id) => `Id eq ${id}`).join(' or ');
+      // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
+      const result = await this.service.api.v4.Issues_UpdateFilteredIssues(
+        'Application',
+        appId,
+        updateData,
+        { odataFilter: odataFilter }
+      );
+
+      // Audit the bulk update
+      auditService.logAppScanUpdate(issueIds, appId, updateData, {
+        success: true,
+        result,
+      });
+
+      logger.info('Issues updated successfully', { issueCount: issueIds.length });
+      return result;
+    } catch (error) {
+      logger.error('Failed to bulk update issues', error, {
+        issueCount: issueIds.length,
+        appId,
+      });
+
+      auditService.logAppScanUpdate(issueIds, appId, updateData, {
+        success: false,
+        error: error.message,
+      });
+
+      throw error;
+    }
+  }
+
+  /**
+   * Bulk update issues in chunks to avoid HTTP 414 errors
+   * @param {Array} issueIds - Array of issue IDs to update
+   * @param {string} appId - Application ID
+   * @param {object} updateData - Update data
+   * @param {number} chunkSize - Number of issues per batch (default: 20)
+   * @param {Function} onProgress - Progress callback (current, total)
+   * @returns {object} Summary of results
+   */
+  async bulkUpdateIssuesChunked(issueIds, appId, updateData, chunkSize = 20, onProgress = null) {
+    await this.authenticate();
+
+    logger.info('Starting chunked bulk update', {
+      totalIssues: issueIds.length,
+      chunkSize,
       appId,
-      updateData,
-      { odataFilter: odataFilter }
-    );
+    });
+
+    const chunks = [];
+    for (let i = 0; i < issueIds.length; i += chunkSize) {
+      chunks.push(issueIds.slice(i, i + chunkSize));
+    }
+
+    const results = {
+      total: issueIds.length,
+      processed: 0,
+      successful: 0,
+      failed: 0,
+      errors: [],
+    };
+
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i];
+
+      try {
+        await this.bulkUpdateIssues(chunk, appId, updateData);
+        results.successful += chunk.length;
+      } catch (error) {
+        results.failed += chunk.length;
+        results.errors.push({
+          chunk: i + 1,
+          issueIds: chunk,
+          error: error.message,
+        });
+        logger.error(`Failed to update chunk ${i + 1}/${chunks.length}`, error);
+      }
+
+      results.processed += chunk.length;
+
+      if (onProgress) {
+        onProgress(results.processed, results.total);
+      }
+    }
+
+    logger.info('Chunked bulk update completed', results);
+    return results;
   }
 
   async updateAllIssuesInScan(scanId, updateData) {

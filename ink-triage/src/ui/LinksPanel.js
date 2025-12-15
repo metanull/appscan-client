@@ -13,13 +13,14 @@ export const LinksPanel = ({ onClose }) => {
   const selectedIssue = useStore((state) => state.selectedIssue);
   const filteredIssues = useStore((state) => state.getFilteredIssues)();
   const listCursor = useStore((state) => state.listCursor);
-  
+
   // Get current issue (selected or highlighted)
-  const currentIssue = selectedIssue || (filteredIssues.length > 0 ? filteredIssues[listCursor] : null);
-  
+  const currentIssue =
+    selectedIssue || (filteredIssues.length > 0 ? filteredIssues[listCursor] : null);
+
   const baseUrl = 'https://cloud.appscan.com';
   const jiraHost = process.env.JIRA_HOST || null;
-  
+
   useInput((input, key) => {
     if (key.escape || input === 'l' || input === 'b') {
       onClose();
@@ -34,7 +35,7 @@ export const LinksPanel = ({ onClose }) => {
     if (currentIssue.SourceFileUri) {
       links.push({
         label: 'Source File (Azure DevOps)',
-        url: currentIssue.SourceFileUri
+        url: currentIssue.SourceFileUri,
       });
     }
   }
@@ -43,7 +44,7 @@ export const LinksPanel = ({ onClose }) => {
   if (selectedApp) {
     links.push({
       label: 'AppScan Application',
-      url: `${baseUrl}/main/myapps/${selectedApp.Id}`
+      url: `${baseUrl}/main/myapps/${selectedApp.Id}`,
     });
   }
 
@@ -51,7 +52,7 @@ export const LinksPanel = ({ onClose }) => {
   if (selectedApp && selectedScan) {
     links.push({
       label: 'AppScan Scan',
-      url: `${baseUrl}/main/myapps/${selectedApp.Id}/scans/${selectedScan.Id}`
+      url: `${baseUrl}/main/myapps/${selectedApp.Id}/scans/${selectedScan.Id}`,
     });
   }
 
@@ -61,7 +62,7 @@ export const LinksPanel = ({ onClose }) => {
     if (currentIssue.IssueTypeId) {
       links.push({
         label: 'Issue Documentation (Article)',
-        url: `${baseUrl}/main/issuedetail/${currentIssue.IssueTypeId}`
+        url: `${baseUrl}/main/issuedetail/${currentIssue.IssueTypeId}`,
       });
     }
 
@@ -70,12 +71,12 @@ export const LinksPanel = ({ onClose }) => {
       if (jiraHost) {
         links.push({
           label: 'JIRA Issue',
-          url: `${jiraHost}/browse/${currentIssue.ExternalId}`
+          url: `${jiraHost}/browse/${currentIssue.ExternalId}`,
         });
       } else {
         links.push({
           label: 'JIRA Issue',
-          url: `${currentIssue.ExternalId} (configure JIRA_HOST for full URL)`
+          url: `${currentIssue.ExternalId} (configure JIRA_HOST for full URL)`,
         });
       }
     }
@@ -91,7 +92,9 @@ export const LinksPanel = ({ onClose }) => {
       width="80%"
       marginX="auto"
     >
-      <Text bold color="cyan">🔗 Links Panel</Text>
+      <Text bold color="cyan">
+        🔗 Links Panel
+      </Text>
 
       {links.length === 0 ? (
         <Box marginTop={1}>
@@ -101,7 +104,9 @@ export const LinksPanel = ({ onClose }) => {
         <Box flexDirection="column" marginTop={1}>
           {links.map((link, index) => (
             <Box key={index} flexDirection="column" marginTop={1}>
-              <Text bold color="yellow">{link.label}:</Text>
+              <Text bold color="yellow">
+                {link.label}:
+              </Text>
               <Box marginLeft={2} borderStyle="single" borderColor="blue" paddingX={1}>
                 <Text color="blue">{link.url}</Text>
               </Box>

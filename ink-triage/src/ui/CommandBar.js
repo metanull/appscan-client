@@ -64,7 +64,9 @@ export const CommandBar = () => {
       {view === 'issue-list' && sortBy && (
         <Box>
           <Text color="cyan">📊 Sort: </Text>
-          <Text color="yellow">{sortBy === 'severity' ? 'By Severity' : sortBy === 'name' ? 'By Name' : 'By Status'}</Text>
+          <Text color="yellow">
+            {sortBy === 'severity' ? 'By Severity' : sortBy === 'name' ? 'By Name' : 'By Status'}
+          </Text>
           <Text dimColor> (s to change)</Text>
         </Box>
       )}

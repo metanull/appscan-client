@@ -49,7 +49,7 @@ export const FilterModal = ({ issues, onSelect, onClose }) => {
       onClose();
       return;
     }
-    
+
     if (item.value === 'type') {
       setFilterType('type');
       setStep('issueType');
@@ -65,13 +65,13 @@ export const FilterModal = ({ issues, onSelect, onClose }) => {
   };
 
   const getIssueTypeOptions = () => {
-    const types = [...new Set(issues.map(i => i.IssueType))].sort();
+    const types = [...new Set(issues.map((i) => i.IssueType))].sort();
     return [
       { label: 'Show All Types', value: null },
-      ...types.map(type => ({
-        label: `${type} (${issues.filter(i => i.IssueType === type).length} issues)`,
-        value: type
-      }))
+      ...types.map((type) => ({
+        label: `${type} (${issues.filter((i) => i.IssueType === type).length} issues)`,
+        value: type,
+      })),
     ];
   };
 
@@ -85,7 +85,9 @@ export const FilterModal = ({ issues, onSelect, onClose }) => {
       width="50%"
       marginX="auto"
     >
-      <Text bold color="yellow">🔍 Filters</Text>
+      <Text bold color="yellow">
+        🔍 Filters
+      </Text>
 
       {step === 'type' && (
         <Box flexDirection="column" marginTop={1}>

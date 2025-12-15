@@ -16,24 +16,37 @@ export const VulnRow = ({ issue, isSelected: _isSelected, isCursor, isMultiSelec
 
   const getSeverityColor = () => {
     switch (severity) {
-      case 'Critical': return 'redBright';
-      case 'High': return 'red';
-      case 'Medium': return 'yellow';
-      case 'Low': return 'blue';
-      case 'Informational': return 'gray';
-      default: return 'white';
+      case 'Critical':
+        return 'redBright';
+      case 'High':
+        return 'red';
+      case 'Medium':
+        return 'yellow';
+      case 'Low':
+        return 'blue';
+      case 'Informational':
+        return 'gray';
+      default:
+        return 'white';
     }
   };
 
   const getStatusColor = () => {
     switch (status) {
-      case 'Open': return 'red';
-      case 'InProgress': return 'yellow';
-      case 'Reopened': return 'yellow';
-      case 'Noise': return 'gray';
-      case 'Passed': return 'green';
-      case 'Fixed': return 'green';
-      default: return 'white';
+      case 'Open':
+        return 'red';
+      case 'InProgress':
+        return 'yellow';
+      case 'Reopened':
+        return 'yellow';
+      case 'Noise':
+        return 'gray';
+      case 'Passed':
+        return 'green';
+      case 'Fixed':
+        return 'green';
+      default:
+        return 'white';
     }
   };
 
@@ -53,17 +66,13 @@ export const VulnRow = ({ issue, isSelected: _isSelected, isCursor, isMultiSelec
         {getSeverityBadge(severity)}
       </Text>
       <Text> </Text>
-      <Text color={getStatusColor()}>
-        {getStatusBadge(status)}
-      </Text>
+      <Text color={getStatusColor()}>{getStatusBadge(status)}</Text>
       <Text> </Text>
       <Text color={isCursor ? 'cyan' : 'white'} bold={isCursor}>
         {truncate(type, 30)}
       </Text>
       <Text dimColor> - </Text>
-      <Text dimColor>
-        {truncate(location, 40)}
-      </Text>
+      <Text dimColor>{truncate(location, 40)}</Text>
       {jiraKey && (
         <>
           <Text> </Text>

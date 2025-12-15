@@ -1,5 +1,5 @@
 /**
- * JiraPanel Component  
+ * JiraPanel Component
  * Modal for creating and previewing Jira issues
  */
 
@@ -7,23 +7,27 @@ import React, { useState } from 'react';
 import { Box, Text } from 'ink';
 import useStore from '../state/AppContext.js';
 
-export const JiraPanel = ({ jiraService: _jiraService, onClose: _onClose, onCreate: _onCreate }) => {
+export const JiraPanel = ({
+  jiraService: _jiraService,
+  onClose: _onClose,
+  onCreate: _onCreate,
+}) => {
   const selectedIssueIds = useStore((state) => state.selectedIssueIds);
   const issues = useStore((state) => state.issues);
   const [step, _setStep] = useState('input'); // 'input' | 'confirm' | 'creating' | 'success'
   const [projectKey, _setProjectKey] = useState('');
   const [groupBy, _setGroupBy] = useState('type'); // 'type' | 'severity' | 'none'
 
-  const selectedIssues = issues.filter(i => selectedIssueIds.includes(i.Id));
+  const selectedIssues = issues.filter((i) => selectedIssueIds.includes(i.Id));
 
   const getGroupCount = () => {
     if (groupBy === 'none') return selectedIssues.length;
     if (groupBy === 'severity') {
-      const severities = new Set(selectedIssues.map(i => i.Severity));
+      const severities = new Set(selectedIssues.map((i) => i.Severity));
       return severities.size;
     }
     // Default: group by type
-    const types = new Set(selectedIssues.map(i => i.IssueType));
+    const types = new Set(selectedIssues.map((i) => i.IssueType));
     return types.size;
   };
 
@@ -37,7 +41,9 @@ export const JiraPanel = ({ jiraService: _jiraService, onClose: _onClose, onCrea
       width="70%"
       marginX="auto"
     >
-      <Text bold color="green">🎫 Create Jira Issue(s)</Text>
+      <Text bold color="green">
+        🎫 Create Jira Issue(s)
+      </Text>
 
       <Box flexDirection="column" marginTop={1}>
         <Text>Selected Issues: {selectedIssues.length}</Text>
@@ -47,8 +53,14 @@ export const JiraPanel = ({ jiraService: _jiraService, onClose: _onClose, onCrea
       {step === 'input' && (
         <Box flexDirection="column" marginTop={1}>
           <Text>Configuration:</Text>
-          <Text>  Project Key: <Text color="cyan">{projectKey || '(not set)'}</Text></Text>
-          <Text>  Group By: <Text color="cyan">{groupBy}</Text></Text>
+          <Text>
+            {' '}
+            Project Key: <Text color="cyan">{projectKey || '(not set)'}</Text>
+          </Text>
+          <Text>
+            {' '}
+            Group By: <Text color="cyan">{groupBy}</Text>
+          </Text>
           <Box marginTop={1}>
             <Text dimColor>Use interactive mode in terminal to configure</Text>
           </Box>

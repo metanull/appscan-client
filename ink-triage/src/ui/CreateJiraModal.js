@@ -43,7 +43,7 @@ export const CreateJiraModal = ({ issues, defaultProjectKey, onCreate, onClose }
   const handleGroupBySelect = async (item) => {
     setGroupBy(item.value);
     setStep('creating');
-    
+
     try {
       await onCreate(projectKey, item.value, issues);
       setStep('success');
@@ -59,9 +59,9 @@ export const CreateJiraModal = ({ issues, defaultProjectKey, onCreate, onClose }
   const getGroupCount = () => {
     if (groupBy === 'none') return issues.length;
     if (groupBy === 'severity') {
-      return new Set(issues.map(i => i.Severity)).size;
+      return new Set(issues.map((i) => i.Severity)).size;
     }
-    return new Set(issues.map(i => i.IssueType)).size;
+    return new Set(issues.map((i) => i.IssueType)).size;
   };
 
   return (
@@ -74,7 +74,9 @@ export const CreateJiraModal = ({ issues, defaultProjectKey, onCreate, onClose }
       width="70%"
       marginX="auto"
     >
-      <Text bold color="green">🎫 Create Jira Issue(s)</Text>
+      <Text bold color="green">
+        🎫 Create Jira Issue(s)
+      </Text>
 
       <Box flexDirection="column" marginTop={1}>
         <Text>Selected Issues: {issues.length}</Text>
