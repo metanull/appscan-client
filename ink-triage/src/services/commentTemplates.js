@@ -19,11 +19,15 @@ const TEMPLATES_FILE = path.join(__dirname, '../../comment-templates.txt');
  */
 export function loadTemplates() {
   const templates = new Map();
-  
+
   try {
     if (!fs.existsSync(TEMPLATES_FILE)) {
       // Create empty file if it doesn't exist
-      fs.writeFileSync(TEMPLATES_FILE, '# Comment Templates for AppScan Triage\n# Format: [IssueType]|Comment text\n\n', 'utf8');
+      fs.writeFileSync(
+        TEMPLATES_FILE,
+        '# Comment Templates for AppScan Triage\n# Format: [IssueType]|Comment text\n\n',
+        'utf8'
+      );
       return templates;
     }
 
@@ -32,7 +36,7 @@ export function loadTemplates() {
 
     for (const line of lines) {
       const trimmed = line.trim();
-      
+
       // Skip empty lines and comments
       if (!trimmed || trimmed.startsWith('#')) {
         continue;
@@ -77,7 +81,7 @@ export function saveTemplate(issueType, comment) {
     // Load existing templates to check for duplicates
     const existing = loadTemplates();
     const existingComments = existing.get(issueType) || [];
-    
+
     // Don't save if already exists
     if (existingComments.includes(comment)) {
       return;
@@ -113,16 +117,16 @@ export function getCommonTemplates(issueTypes) {
   }
 
   const templates = loadTemplates();
-  
+
   if (issueTypes.length === 1) {
     return templates.get(issueTypes[0]) || [];
   }
 
   // Find templates that exist for all issue types
   const firstTypeTemplates = templates.get(issueTypes[0]) || [];
-  
-  return firstTypeTemplates.filter(template => 
-    issueTypes.every(type => {
+
+  return firstTypeTemplates.filter((template) =>
+    issueTypes.every((type) => {
       const typeTemplates = templates.get(type) || [];
       return typeTemplates.includes(template);
     })

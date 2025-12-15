@@ -29,9 +29,9 @@ export const UpdateStatusModal = ({ issueCount, issues = [], onUpdate, onClose }
   useEffect(() => {
     if (issues && issues.length > 0) {
       // Get unique issue types from selected issues
-      const types = [...new Set(issues.map(i => i.IssueType))];
+      const types = [...new Set(issues.map((i) => i.IssueType))];
       setIssueTypes(types);
-      
+
       // Load templates for the first issue type
       if (types.length > 0) {
         const loadedTemplates = getTemplatesForType(types[0]);
@@ -53,7 +53,7 @@ export const UpdateStatusModal = ({ issueCount, issues = [], onUpdate, onClose }
 
   const handleStatusSelect = (item) => {
     setSelectedStatus(item.value);
-    
+
     // If we have templates, show template selection; otherwise go straight to comment
     if (templates.length > 0) {
       setStep('template');
@@ -78,13 +78,13 @@ export const UpdateStatusModal = ({ issueCount, issues = [], onUpdate, onClose }
     if (!issueCount || issueCount === 0) {
       return; // Prevent submission if no issues selected
     }
-    
+
     // Save custom comment as template if it's not empty and not already a template
     if (comment && comment.trim() !== '' && !templates.includes(comment) && issueTypes.length > 0) {
       // Save to first issue type
       saveTemplate(issueTypes[0], comment.trim());
     }
-    
+
     onUpdate(selectedStatus, comment || undefined);
     onClose();
   };
@@ -92,10 +92,10 @@ export const UpdateStatusModal = ({ issueCount, issues = [], onUpdate, onClose }
   // Prepare template options
   const templateOptions = [
     { label: '✏️  Custom message...', value: 'custom' },
-    ...templates.map(t => ({ 
-      label: t.length > 60 ? t.substring(0, 57) + '...' : t, 
-      value: t 
-    }))
+    ...templates.map((t) => ({
+      label: t.length > 60 ? t.substring(0, 57) + '...' : t,
+      value: t,
+    })),
   ];
 
   return (
@@ -108,7 +108,9 @@ export const UpdateStatusModal = ({ issueCount, issues = [], onUpdate, onClose }
       width="60%"
       marginX="auto"
     >
-      <Text bold color="green">📝 Update Status</Text>
+      <Text bold color="green">
+        📝 Update Status
+      </Text>
       <Text marginTop={1}>Updating {issueCount} issue(s)</Text>
 
       {step === 'status' && (
@@ -121,9 +123,7 @@ export const UpdateStatusModal = ({ issueCount, issues = [], onUpdate, onClose }
       {step === 'template' && (
         <Box flexDirection="column" marginTop={1}>
           <Text>Select comment template:</Text>
-          {issueTypes.length > 0 && (
-            <Text dimColor>For: {issueTypes[0]}</Text>
-          )}
+          {issueTypes.length > 0 && <Text dimColor>For: {issueTypes[0]}</Text>}
           <SelectInput items={templateOptions} onSelect={handleTemplateSelect} />
         </Box>
       )}

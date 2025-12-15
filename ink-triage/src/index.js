@@ -12,6 +12,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { InkApp } from './ui/InkApp.js';
 import { SetupWizard } from './ui/SetupWizard.js';
+import { KeyboardProvider } from './utils/KeyboardManager.js';
+import { ErrorBoundary } from './ui/components/ErrorBoundary.js';
+import logger from './utils/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -60,17 +63,36 @@ const hasEnv = fs.existsSync(envPath);
 
 // Force setup wizard if --setup flag or no .env file exists
 if (cli.flags.setup || !hasEnv) {
-  const { waitUntilExit } = render(React.createElement(SetupWizard, {
-    onComplete: () => {
-      // Reload and start the main app
-      process.exit(0); // Exit and let user restart
-    },
-    onCancel: () => {
-      process.exit(0);
-    },
-  }));
-  
+  logger.info('Starting setup wizard');
+  const { waitUntilExit } = render(
+    React.createElement(
+      ErrorBoundary,
+      null,
+      React.createElement(SetupWizard, {
+        onComplete: () => {
+          logger.info('Setup completed');
+          process.exit(0); // Exit and let user restart
+        },
+        onCancel: () => {
+          logger.info('Setup cancelled');
+          process.exit(0);
+        },
+      })
+    )
+  );
+
   await waitUntilExit();
 } else {
-  render(React.createElement(InkApp, { configPath: cli.flags.config }));
+  logger.info('Starting Ink TUI application');
+  render(
+    React.createElement(
+      ErrorBoundary,
+      null,
+      React.createElement(
+        KeyboardProvider,
+        null,
+        React.createElement(InkApp, { configPath: cli.flags.config })
+      )
+    )
+  );
 }

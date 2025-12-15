@@ -30,7 +30,7 @@ export const DetailsPanel = () => {
   // Fetch comments when issue changes
   useEffect(() => {
     let isMounted = true;
-    
+
     async function fetchComments() {
       if (!issue || !issue.Id) {
         setComments([]);
@@ -56,7 +56,7 @@ export const DetailsPanel = () => {
     }
 
     fetchComments();
-    
+
     return () => {
       isMounted = false;
     };
@@ -68,9 +68,19 @@ export const DetailsPanel = () => {
 
   if (!issue) {
     return (
-      <Box flexDirection="column" borderStyle="single" borderColor="magenta" paddingX={1} width="30%">
-        <Text bold color="magenta">📖 Details</Text>
-        <Text dimColor marginTop={1}>Select an issue to view details</Text>
+      <Box
+        flexDirection="column"
+        borderStyle="single"
+        borderColor="magenta"
+        paddingX={1}
+        width="30%"
+      >
+        <Text bold color="magenta">
+          📖 Details
+        </Text>
+        <Text dimColor marginTop={1}>
+          Select an issue to view details
+        </Text>
       </Box>
     );
   }
@@ -78,12 +88,18 @@ export const DetailsPanel = () => {
   const severity = issue.Severity || 'Unknown';
   const getSeverityColor = () => {
     switch (severity) {
-      case 'Critical': return 'redBright';
-      case 'High': return 'red';
-      case 'Medium': return 'yellow';
-      case 'Low': return 'blue';
-      case 'Informational': return 'gray';
-      default: return 'white';
+      case 'Critical':
+        return 'redBright';
+      case 'High':
+        return 'red';
+      case 'Medium':
+        return 'yellow';
+      case 'Low':
+        return 'blue';
+      case 'Informational':
+        return 'gray';
+      default:
+        return 'white';
     }
   };
 
@@ -95,7 +111,9 @@ export const DetailsPanel = () => {
 
   return (
     <Box flexDirection="column" borderStyle="single" borderColor="magenta" paddingX={1} width="30%">
-      <Text bold color="magenta">📖 Details</Text>
+      <Text bold color="magenta">
+        📖 Details
+      </Text>
 
       {/* Top Half: Issue Info */}
       <Box flexDirection="column" marginTop={1} height="50%" overflow="hidden">
@@ -112,7 +130,9 @@ export const DetailsPanel = () => {
 
         <Box marginTop={1}>
           <Text dimColor>Severity: </Text>
-          <Text color={getSeverityColor()} bold>{severity}</Text>
+          <Text color={getSeverityColor()} bold>
+            {severity}
+          </Text>
         </Box>
 
         <Box>
@@ -215,14 +235,19 @@ export const DetailsPanel = () => {
       </Box>
 
       {/* Bottom Half: User Comments */}
-      <Box flexDirection="column" marginTop={1} borderStyle="single" borderColor="cyan" paddingX={1} height={6}>
-        <Text bold color="cyan">💬 User Comments</Text>
-        {loadingComments && (
-          <Text dimColor>Loading...</Text>
-        )}
-        {!loadingComments && comments.length === 0 && (
-          <Text dimColor>No comments</Text>
-        )}
+      <Box
+        flexDirection="column"
+        marginTop={1}
+        borderStyle="single"
+        borderColor="cyan"
+        paddingX={1}
+        height={6}
+      >
+        <Text bold color="cyan">
+          💬 User Comments
+        </Text>
+        {loadingComments && <Text dimColor>Loading...</Text>}
+        {!loadingComments && comments.length === 0 && <Text dimColor>No comments</Text>}
         {!loadingComments && comments.length > 0 && (
           <Box flexDirection="column">
             {comments.map((comment, index) => (
@@ -235,11 +260,15 @@ export const DetailsPanel = () => {
       {/* Article Content (only in details view) */}
       {view === 'issue-details' && articleContent && (
         <Box flexDirection="column" marginTop={1}>
-          <Text bold color="cyan">📚 Remediation Article</Text>
+          <Text bold color="cyan">
+            📚 Remediation Article
+          </Text>
           <Box marginTop={1}>
             <Text>{truncate(articleContent, 500)}</Text>
           </Box>
-          <Text dimColor marginTop={1}>(Scroll down for full article)</Text>
+          <Text dimColor marginTop={1}>
+            (Scroll down for full article)
+          </Text>
         </Box>
       )}
 

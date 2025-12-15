@@ -32,7 +32,9 @@ export const SearchModal = ({ currentSearch, onSearch, onClose }) => {
       width="50%"
       marginX="auto"
     >
-      <Text bold color="cyan">🔍 Search</Text>
+      <Text bold color="cyan">
+        🔍 Search
+      </Text>
 
       <Box flexDirection="column" marginTop={1}>
         <Text>Enter search text (searches type, location, API):</Text>
@@ -49,9 +51,7 @@ export const SearchModal = ({ currentSearch, onSearch, onClose }) => {
 
       <Box marginTop={1}>
         <Text dimColor>Press Enter to search, ESC to cancel</Text>
-        {currentSearch && (
-          <Text dimColor>Leave empty to clear search</Text>
-        )}
+        {currentSearch && <Text dimColor>Leave empty to clear search</Text>}
       </Box>
     </Box>
   );

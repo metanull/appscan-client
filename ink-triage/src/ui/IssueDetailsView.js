@@ -20,7 +20,7 @@ export const IssueDetailsView = () => {
   // Fetch comments when issue changes
   useEffect(() => {
     let isMounted = true;
-    
+
     async function fetchComments() {
       if (!issue || !issue.Id) {
         setComments([]);
@@ -46,12 +46,12 @@ export const IssueDetailsView = () => {
     }
 
     fetchComments();
-    
+
     return () => {
       isMounted = false;
     };
   }, [issue?.Id]);
-  
+
   if (!issue) {
     return (
       <Box flexDirection="column" padding={1} flexGrow={1}>
@@ -63,12 +63,18 @@ export const IssueDetailsView = () => {
   const severity = issue.Severity || 'Unknown';
   const getSeverityColor = () => {
     switch (severity) {
-      case 'Critical': return 'redBright';
-      case 'High': return 'red';
-      case 'Medium': return 'yellow';
-      case 'Low': return 'blue';
-      case 'Informational': return 'gray';
-      default: return 'white';
+      case 'Critical':
+        return 'redBright';
+      case 'High':
+        return 'red';
+      case 'Medium':
+        return 'yellow';
+      case 'Low':
+        return 'blue';
+      case 'Informational':
+        return 'gray';
+      default:
+        return 'white';
     }
   };
 
@@ -83,7 +89,9 @@ export const IssueDetailsView = () => {
           <Text dimColor>ID: </Text>
           <Text color="gray">{issue.Id}</Text>
           <Text dimColor> | Severity: </Text>
-          <Text color={getSeverityColor()} bold>{severity}</Text>
+          <Text color={getSeverityColor()} bold>
+            {severity}
+          </Text>
           <Text dimColor> | Status: </Text>
           <Text>{issue.Status || 'Unknown'}</Text>
         </Box>
@@ -91,8 +99,10 @@ export const IssueDetailsView = () => {
 
       {/* Details Section */}
       <Box flexDirection="column" marginTop={1} borderStyle="single" paddingX={1}>
-        <Text bold color="cyan">📍 Location Details</Text>
-        
+        <Text bold color="cyan">
+          📍 Location Details
+        </Text>
+
         {/* Show absolute SourceFileUri first if available */}
         {issue.SourceFileUri && (
           <Box marginTop={1}>
@@ -134,8 +144,10 @@ export const IssueDetailsView = () => {
 
       {/* Metadata */}
       <Box flexDirection="column" marginTop={1} borderStyle="single" paddingX={1}>
-        <Text bold color="cyan">📋 Metadata</Text>
-        
+        <Text bold color="cyan">
+          📋 Metadata
+        </Text>
+
         {issue.Cwe && (
           <Box marginTop={1}>
             <Text dimColor>CWE: </Text>
@@ -174,20 +186,33 @@ export const IssueDetailsView = () => {
 
       {/* User Comments Section */}
       <Box flexDirection="column" marginTop={1} borderStyle="single" paddingX={1}>
-        <Text bold color="cyan">💬 User Comments</Text>
-        
+        <Text bold color="cyan">
+          💬 User Comments
+        </Text>
+
         {loadingComments && (
-          <Text dimColor marginTop={1}>Loading comments...</Text>
+          <Text dimColor marginTop={1}>
+            Loading comments...
+          </Text>
         )}
 
         {!loadingComments && comments.length === 0 && (
-          <Text dimColor marginTop={1}>No comments for this issue.</Text>
+          <Text dimColor marginTop={1}>
+            No comments for this issue.
+          </Text>
         )}
 
         {!loadingComments && comments.length > 0 && (
           <Box flexDirection="column" marginTop={1}>
             {comments.map((comment, index) => (
-              <Box key={comment.Id || index} flexDirection="column" marginBottom={1} borderStyle="single" borderColor="gray" paddingX={1}>
+              <Box
+                key={comment.Id || index}
+                flexDirection="column"
+                marginBottom={1}
+                borderStyle="single"
+                borderColor="gray"
+                paddingX={1}
+              >
                 <Box>
                   <Text dimColor>Date: </Text>
                   <Text>{new Date(comment.CreatedAt).toLocaleString()}</Text>
@@ -214,7 +239,9 @@ export const IssueDetailsView = () => {
       {/* Remediation Article */}
       {articleContent && (
         <Box flexDirection="column" marginTop={1} borderStyle="single" paddingX={1} flexGrow={1}>
-          <Text bold color="cyan">📚 Remediation Article</Text>
+          <Text bold color="cyan">
+            📚 Remediation Article
+          </Text>
           <Box marginTop={1} flexDirection="column">
             <Text>{articleContent}</Text>
           </Box>

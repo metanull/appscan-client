@@ -1,12 +1,14 @@
 /**
  * Jira Service Wrapper
  * This wraps the parent package's JiraService to provide a clean interface
- * for the Ink UI.
+ * for the Ink UI and adds audit logging for all write operations.
  */
 
 // Import from parent package
 import { JiraService as ParentJiraService } from '../../../src/services/jira-service.js';
 import { JiraDescriptionBuilder } from '../../../src/utils/jira-description-builder.js';
+import { auditService } from '../utils/audit.js';
+import logger from '../utils/logger.js';
 
 export class JiraService {
   constructor(config) {
@@ -25,24 +27,49 @@ export class JiraService {
   async createJiraIssue(projectKey, summary, issues, baseUrl) {
     this.initialize();
 
-    const builder = new JiraDescriptionBuilder(issues, baseUrl);
-    const description = builder
-      .addSummary(null, null)
-      .addIssuesByType()
-      .addIssueIds()
-      .build();
+    try {
+      logger.info('Creating Jira issue', {
+        projectKey,
+        summary,
+        issueCount: issues.length,
+      });
 
-    const jiraIssue = await this.service.client.issues.createIssue({
-      fields: {
-        project: { key: projectKey },
-        summary: summary,
-        description: this.service.convertToADF(description),
-        issuetype: { name: 'Bug' },
-        labels: ['appscan', 'security']
-      }
-    });
+      const builder = new JiraDescriptionBuilder(issues, baseUrl);
+      const description = builder.addSummary(null, null).addIssuesByType().addIssueIds().build();
 
-    return jiraIssue;
+      const jiraIssue = await this.service.client.issues.createIssue({
+        fields: {
+          project: { key: projectKey },
+          summary: summary,
+          description: this.service.convertToADF(description),
+          issuetype: { name: 'Bug' },
+          labels: ['appscan', 'security'],
+        },
+      });
+
+      // Audit the creation
+      auditService.logJiraCreate(projectKey, summary, issues.length, {
+        success: true,
+        jiraKey: jiraIssue.key,
+        jiraId: jiraIssue.id,
+      });
+
+      logger.info('Jira issue created successfully', { jiraKey: jiraIssue.key });
+      return jiraIssue;
+    } catch (error) {
+      logger.error('Failed to create Jira issue', error, {
+        projectKey,
+        summary,
+        issueCount: issues.length,
+      });
+
+      auditService.logJiraCreate(projectKey, summary, issues.length, {
+        success: false,
+        error: error.message,
+      });
+
+      throw error;
+    }
   }
 
   async getJiraIssue(issueKey) {

@@ -10,17 +10,17 @@ export const useStore = create((set, get) => ({
   selectedApp: null,
   selectedScan: null,
   selectedIssue: null,
-  
+
   // Data
   applications: [],
   scans: [],
   issues: [],
   issueDetails: null,
   articleContent: null,
-  
+
   // Multi-select state
   selectedIssueIds: [],
-  
+
   // Filter state
   filterStatus: null,
   filterSeverity: null,
@@ -31,37 +31,39 @@ export const useStore = create((set, get) => ({
   scanSearchText: null,
   scanFilterType: null, // 'SAST' | 'DAST' | etc.
   hideEmptyScans: true,
-  
+
   // UI state
   loading: false,
   error: null,
   showHelp: false,
   showJiraPanel: false,
-  
+
   // List navigation
   listCursor: 0,
-  
+
   // Actions - Navigation
   setView: (view) => set({ view, listCursor: 0 }),
-  
-  setSelectedApp: (app) => set({ 
-    selectedApp: app, 
-    selectedScan: null,
-    selectedIssue: null,
-    scans: [],
-    issues: [],
-    selectedIssueIds: []
-  }),
-  
-  setSelectedScan: (scan) => set({ 
-    selectedScan: scan,
-    selectedIssue: null,
-    issues: [],
-    selectedIssueIds: []
-  }),
-  
+
+  setSelectedApp: (app) =>
+    set({
+      selectedApp: app,
+      selectedScan: null,
+      selectedIssue: null,
+      scans: [],
+      issues: [],
+      selectedIssueIds: [],
+    }),
+
+  setSelectedScan: (scan) =>
+    set({
+      selectedScan: scan,
+      selectedIssue: null,
+      issues: [],
+      selectedIssueIds: [],
+    }),
+
   setSelectedIssue: (issue) => set({ selectedIssue: issue }),
-  
+
   goBack: () => {
     const { view } = get();
     if (view === 'issue-details') {
@@ -72,32 +74,32 @@ export const useStore = create((set, get) => ({
       set({ view: 'app-selection', selectedApp: null, scans: [] });
     }
   },
-  
+
   // Actions - Data
   setApplications: (applications) => set({ applications }),
   setScans: (scans) => set({ scans }),
   setIssues: (issues) => set({ issues, listCursor: 0 }),
   setIssueDetails: (issueDetails) => set({ issueDetails }),
   setArticleContent: (articleContent) => set({ articleContent }),
-  
+
   // Actions - Multi-select
   toggleIssueSelection: (issueId) => {
     const { selectedIssueIds } = get();
     const isSelected = selectedIssueIds.includes(issueId);
     set({
       selectedIssueIds: isSelected
-        ? selectedIssueIds.filter(id => id !== issueId)
-        : [...selectedIssueIds, issueId]
+        ? selectedIssueIds.filter((id) => id !== issueId)
+        : [...selectedIssueIds, issueId],
     });
   },
-  
+
   selectAllIssues: () => {
     const filteredIssues = get().getFilteredIssues();
-    set({ selectedIssueIds: filteredIssues.map(i => i.Id) });
+    set({ selectedIssueIds: filteredIssues.map((i) => i.Id) });
   },
-  
+
   clearSelection: () => set({ selectedIssueIds: [] }),
-  
+
   // Actions - Filters
   setFilterStatus: (status) => set({ filterStatus: status }),
   setFilterSeverity: (severity) => set({ filterSeverity: severity }),
@@ -108,126 +110,132 @@ export const useStore = create((set, get) => ({
   setScanSearchText: (text) => set({ scanSearchText: text }),
   setScanFilterType: (type) => set({ scanFilterType: type }),
   toggleHideEmptyScans: () => set((state) => ({ hideEmptyScans: !state.hideEmptyScans })),
-  
-  clearFilters: () => set({
-    filterStatus: null,
-    filterSeverity: null,
-    filterIssueType: null,
-    filterJira: null,
-    searchText: null
-  }),
-  
+
+  clearFilters: () =>
+    set({
+      filterStatus: null,
+      filterSeverity: null,
+      filterIssueType: null,
+      filterJira: null,
+      searchText: null,
+    }),
+
   // Actions - UI
   setLoading: (loading) => set({ loading }),
   setError: (error) => set({ error }),
   toggleHelp: () => set((state) => ({ showHelp: !state.showHelp })),
   toggleJiraPanel: () => set((state) => ({ showJiraPanel: !state.showJiraPanel })),
-  
+
   // Actions - List navigation
   setListCursor: (cursor) => set({ listCursor: cursor }),
-  moveCursorUp: () => set((state) => ({ 
-    listCursor: Math.max(0, state.listCursor - 1) 
-  })),
-  moveCursorDown: () => set((state) => {
-    const { listCursor, view, applications, issues } = state;
-    
-    // Calculate filtered issues inline to avoid calling get() in state update
-    let filtered = issues;
-    if (state.filterStatus) {
-      filtered = filtered.filter(i => i.Status === state.filterStatus);
-    }
-    if (state.filterSeverity) {
-      filtered = filtered.filter(i => i.Severity === state.filterSeverity);
-    }
-    if (state.filterIssueType) {
-      filtered = filtered.filter(i => i.IssueType === state.filterIssueType);
-    }
-    if (state.filterJira === 'with') {
-      filtered = filtered.filter(i => i.ExternalId && i.ExternalId.trim() !== '');
-    } else if (state.filterJira === 'without') {
-      filtered = filtered.filter(i => !i.ExternalId || i.ExternalId.trim() === '');
-    }
-    if (state.searchText) {
-      const searchLower = state.searchText.toLowerCase();
-      filtered = filtered.filter(i =>
-        (i.IssueType && i.IssueType.toLowerCase().includes(searchLower)) ||
-        (i.Location && i.Location.toLowerCase().includes(searchLower)) ||
-        (i.Api && i.Api.toLowerCase().includes(searchLower))
-      );
-    }
-    
-    // Calculate filtered scans inline
-    let filteredScans = state.scans;
-    if (state.scanSearchText) {
-      const search = state.scanSearchText.toLowerCase();
-      filteredScans = filteredScans.filter(s =>
-        (s.Name && s.Name.toLowerCase().includes(search)) ||
-        (s.ScanType && s.ScanType.toLowerCase().includes(search))
-      );
-    }
-    if (state.scanFilterType) {
-      filteredScans = filteredScans.filter(s => s.ScanType === state.scanFilterType);
-    }
-    if (state.hideEmptyScans) {
-      filteredScans = filteredScans.filter(s => s.NIssuesFound > 0);
-    }
-    
-    let maxCursor = 0;
-    if (view === 'issue-list') {
-      maxCursor = filtered.length - 1;
-    } else if (view === 'app-selection') {
-      maxCursor = applications.length - 1;
-    } else if (view === 'scan-selection') {
-      maxCursor = filteredScans.length - 1;
-    }
-    
-    return { listCursor: Math.min(maxCursor, listCursor + 1) };
-  }),
-  
+  moveCursorUp: () =>
+    set((state) => ({
+      listCursor: Math.max(0, state.listCursor - 1),
+    })),
+  moveCursorDown: () =>
+    set((state) => {
+      const { listCursor, view, applications, issues } = state;
+
+      // Calculate filtered issues inline to avoid calling get() in state update
+      let filtered = issues;
+      if (state.filterStatus) {
+        filtered = filtered.filter((i) => i.Status === state.filterStatus);
+      }
+      if (state.filterSeverity) {
+        filtered = filtered.filter((i) => i.Severity === state.filterSeverity);
+      }
+      if (state.filterIssueType) {
+        filtered = filtered.filter((i) => i.IssueType === state.filterIssueType);
+      }
+      if (state.filterJira === 'with') {
+        filtered = filtered.filter((i) => i.ExternalId && i.ExternalId.trim() !== '');
+      } else if (state.filterJira === 'without') {
+        filtered = filtered.filter((i) => !i.ExternalId || i.ExternalId.trim() === '');
+      }
+      if (state.searchText) {
+        const searchLower = state.searchText.toLowerCase();
+        filtered = filtered.filter(
+          (i) =>
+            (i.IssueType && i.IssueType.toLowerCase().includes(searchLower)) ||
+            (i.Location && i.Location.toLowerCase().includes(searchLower)) ||
+            (i.Api && i.Api.toLowerCase().includes(searchLower))
+        );
+      }
+
+      // Calculate filtered scans inline
+      let filteredScans = state.scans;
+      if (state.scanSearchText) {
+        const search = state.scanSearchText.toLowerCase();
+        filteredScans = filteredScans.filter(
+          (s) =>
+            (s.Name && s.Name.toLowerCase().includes(search)) ||
+            (s.ScanType && s.ScanType.toLowerCase().includes(search))
+        );
+      }
+      if (state.scanFilterType) {
+        filteredScans = filteredScans.filter((s) => s.ScanType === state.scanFilterType);
+      }
+      if (state.hideEmptyScans) {
+        filteredScans = filteredScans.filter((s) => s.NIssuesFound > 0);
+      }
+
+      let maxCursor = 0;
+      if (view === 'issue-list') {
+        maxCursor = filtered.length - 1;
+      } else if (view === 'app-selection') {
+        maxCursor = applications.length - 1;
+      } else if (view === 'scan-selection') {
+        maxCursor = filteredScans.length - 1;
+      }
+
+      return { listCursor: Math.min(maxCursor, listCursor + 1) };
+    }),
+
   // Computed/helper functions
   getFilteredIssues: () => {
-    const { 
-      issues, 
-      filterStatus, 
-      filterSeverity, 
-      filterIssueType, 
+    const {
+      issues,
+      filterStatus,
+      filterSeverity,
+      filterIssueType,
       filterJira,
       searchText,
-      sortBy
+      sortBy,
     } = get();
-    
+
     let filtered = [...issues];
-    
+
     if (filterStatus) {
-      filtered = filtered.filter(i => i.Status === filterStatus);
+      filtered = filtered.filter((i) => i.Status === filterStatus);
     }
-    
+
     if (filterSeverity) {
-      filtered = filtered.filter(i => i.Severity === filterSeverity);
+      filtered = filtered.filter((i) => i.Severity === filterSeverity);
     }
-    
+
     if (filterIssueType) {
-      filtered = filtered.filter(i => i.IssueType === filterIssueType);
+      filtered = filtered.filter((i) => i.IssueType === filterIssueType);
     }
-    
+
     if (filterJira === 'with') {
-      filtered = filtered.filter(i => i.ExternalId && i.ExternalId.trim() !== '');
+      filtered = filtered.filter((i) => i.ExternalId && i.ExternalId.trim() !== '');
     } else if (filterJira === 'without') {
-      filtered = filtered.filter(i => !i.ExternalId || i.ExternalId.trim() === '');
+      filtered = filtered.filter((i) => !i.ExternalId || i.ExternalId.trim() === '');
     }
-    
+
     if (searchText) {
       const searchLower = searchText.toLowerCase();
-      filtered = filtered.filter(i =>
-        (i.IssueType && i.IssueType.toLowerCase().includes(searchLower)) ||
-        (i.Location && i.Location.toLowerCase().includes(searchLower)) ||
-        (i.Api && i.Api.toLowerCase().includes(searchLower))
+      filtered = filtered.filter(
+        (i) =>
+          (i.IssueType && i.IssueType.toLowerCase().includes(searchLower)) ||
+          (i.Location && i.Location.toLowerCase().includes(searchLower)) ||
+          (i.Api && i.Api.toLowerCase().includes(searchLower))
       );
     }
-    
+
     // Apply sorting
-    const severityOrder = { 'Critical': 0, 'High': 1, 'Medium': 2, 'Low': 3, 'Informational': 4 };
-    
+    const severityOrder = { Critical: 0, High: 1, Medium: 2, Low: 3, Informational: 4 };
+
     if (sortBy === 'severity') {
       filtered.sort((a, b) => {
         const orderA = severityOrder[a.Severity] ?? 999;
@@ -247,45 +255,45 @@ export const useStore = create((set, get) => ({
         return statusA.localeCompare(statusB);
       });
     }
-    
+
     return filtered;
   },
-  
+
   hasActiveFilters: () => {
     const { filterStatus, filterSeverity, filterIssueType, filterJira, searchText } = get();
     return !!(filterStatus || filterSeverity || filterIssueType || filterJira || searchText);
   },
-  
+
   getFilteredScans: () => {
     const { scans, scanSearchText, scanFilterType, hideEmptyScans } = get();
     let filtered = [...scans];
-    
+
     // Filter by issue count
     if (hideEmptyScans) {
-      filtered = filtered.filter(scan => {
+      filtered = filtered.filter((scan) => {
         const issueCount = scan.LatestExecution?.NIssuesFound || 0;
         return issueCount > 0;
       });
     }
-    
+
     // Filter by scan type
     if (scanFilterType) {
-      filtered = filtered.filter(scan => {
+      filtered = filtered.filter((scan) => {
         const tech = scan.Technology || '';
         return tech.toUpperCase().includes(scanFilterType.toUpperCase());
       });
     }
-    
+
     // Filter by search text
     if (scanSearchText) {
       const searchLower = scanSearchText.toLowerCase();
-      filtered = filtered.filter(scan => 
-        (scan.Name && scan.Name.toLowerCase().includes(searchLower))
+      filtered = filtered.filter(
+        (scan) => scan.Name && scan.Name.toLowerCase().includes(searchLower)
       );
     }
-    
+
     return filtered;
-  }
+  },
 }));
 
 export default useStore;

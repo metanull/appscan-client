@@ -35,7 +35,9 @@ export const VulnList = () => {
   return (
     <Box flexDirection="column" borderStyle="single" borderColor="green" paddingX={1} flexGrow={1}>
       <Box flexDirection="column">
-        <Text bold color="green">🔍 Vulnerabilities</Text>
+        <Text bold color="green">
+          🔍 Vulnerabilities
+        </Text>
 
         {/* Summary Stats */}
         <Box marginTop={1}>
@@ -56,14 +58,18 @@ export const VulnList = () => {
           {Object.entries(stats.byStatus).map(([status, count], idx) => (
             <React.Fragment key={status}>
               {idx > 0 && <Text dimColor> | </Text>}
-              <Text>{status}: {count}</Text>
+              <Text>
+                {status}: {count}
+              </Text>
             </React.Fragment>
           ))}
         </Box>
 
         {/* Grouped Summary */}
         <Box marginTop={1} flexDirection="column">
-          <Text bold color="cyan">📊 Groups by Type:</Text>
+          <Text bold color="cyan">
+            📊 Groups by Type:
+          </Text>
           {groups.slice(0, 5).map((group, index) => (
             <Box key={index}>
               <Text dimColor>{index + 1}. </Text>
@@ -71,9 +77,7 @@ export const VulnList = () => {
               <Text dimColor> ({group.issues.length})</Text>
             </Box>
           ))}
-          {groups.length > 5 && (
-            <Text dimColor>... and {groups.length - 5} more</Text>
-          )}
+          {groups.length > 5 && <Text dimColor>... and {groups.length - 5} more</Text>}
         </Box>
       </Box>
 
