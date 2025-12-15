@@ -164,19 +164,23 @@ export const useStore = create((set, get) => ({
 
       // Calculate filtered scans inline
       let filteredScans = state.scans;
+      if (state.hideEmptyScans) {
+        filteredScans = filteredScans.filter((scan) => {
+          const issueCount = scan.LatestExecution?.NIssuesFound || 0;
+          return issueCount > 0;
+        });
+      }
+      if (state.scanFilterType) {
+        filteredScans = filteredScans.filter((scan) => {
+          const tech = scan.Technology || '';
+          return tech.toUpperCase().includes(state.scanFilterType.toUpperCase());
+        });
+      }
       if (state.scanSearchText) {
         const search = state.scanSearchText.toLowerCase();
         filteredScans = filteredScans.filter(
-          (s) =>
-            (s.Name && s.Name.toLowerCase().includes(search)) ||
-            (s.ScanType && s.ScanType.toLowerCase().includes(search))
+          (s) => s.Name && s.Name.toLowerCase().includes(search)
         );
-      }
-      if (state.scanFilterType) {
-        filteredScans = filteredScans.filter((s) => s.ScanType === state.scanFilterType);
-      }
-      if (state.hideEmptyScans) {
-        filteredScans = filteredScans.filter((s) => s.NIssuesFound > 0);
       }
 
       let maxCursor = 0;
