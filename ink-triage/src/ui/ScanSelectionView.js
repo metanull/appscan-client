@@ -23,11 +23,7 @@ export const ScanSelectionView = () => {
       <Text bold color="blue">
         📊 Scans
       </Text>
-      {selectedApp && (
-        <Text dimColor>
-          Application: {selectedApp.Name}
-        </Text>
-      )}
+      {selectedApp && <Text dimColor>Application: {selectedApp.Name}</Text>}
       <Box marginBottom={1}>
         <Text dimColor>
           {filteredScans.length}/{scans.length} scans
@@ -53,7 +49,8 @@ export const ScanSelectionView = () => {
                 {scan.Name}
               </Text>
               <Text dimColor>
-                {' '}([{scanType}] {issueCount} issues
+                {' '}
+                ([{scanType}] {issueCount} issues
                 {highCount > 0 && `, ${highCount} High`})
               </Text>
             </Box>
