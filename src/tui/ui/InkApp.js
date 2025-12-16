@@ -7,7 +7,6 @@ import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { Box, Text, useApp, useInput } from 'ink';
 import Spinner from 'ink-spinner';
 import { useStore } from '../state/AppContext.js';
-import { shallow } from 'zustand/shallow';
 import { filterIssues } from '../utils/issue-utils.js';
 import { Layout } from './components/Layout.js';
 import { Panel } from './components/Panel.js';

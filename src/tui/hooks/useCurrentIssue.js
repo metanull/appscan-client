@@ -5,7 +5,6 @@
 
 import { useMemo } from 'react';
 import { useStore } from '../state/AppContext.js';
-import { shallow } from 'zustand/shallow';
 import { filterIssues } from '../utils/issue-utils.js';
 
 export function useCurrentIssue() {
