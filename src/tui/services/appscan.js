@@ -15,6 +15,12 @@ export class AppScanService {
     this.config = configPath ? Config.loadFromFile(configPath) : new Config();
     this.service = new ParentAppScanService(this.config);
     this.authenticated = false;
+    // Emit helpful diagnostic info when running the TUI
+    logger.info('TUI AppScanService initialized', {
+      configValid: this.config.isValid(),
+      baseUrl: this.config.getBaseUrl(),
+      hasJira: this.config.isJiraValid(),
+    });
   }
 
   async authenticate() {

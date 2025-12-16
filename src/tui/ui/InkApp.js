@@ -135,7 +135,10 @@ const DetailsPreviewPanel = React.memo(({ issue, articleContent, loading }) => {
         )}
         {loading && (
           <Box marginTop={1}>
-            <Spinner /> <Text> Loading article...</Text>
+            <Box marginRight={1}>
+              <Spinner />
+            </Box>
+            <Text>Loading article...</Text>
           </Box>
         )}
         {articleContent && !loading && (
@@ -158,7 +161,10 @@ const StatusBar = React.memo(({ error, loading, message }) => {
       {error && <Text color="red">Error: {error}</Text>}
       {loading && !error && (
         <Box>
-          <Spinner /> <Text> {message || 'Loading...'}</Text>
+          <Box marginRight={1}>
+            <Spinner />
+          </Box>
+          <Text>{message || 'Loading...'}</Text>
         </Box>
       )}
       {!error && !loading && (
@@ -182,6 +188,11 @@ export const InkApp = ({ configPath }) => {
   const [appScanService] = useState(() => new AppScanService(configPath));
   const [jiraService] = useState(() => new JiraService(appScanService.getConfig()));
 
+  // Store setters
+  const setApplications = useStore((state) => state.setApplications);
+  const setLoading = useStore((state) => state.setLoading);
+  const setError = useStore((state) => state.setError);
+
   // Zustand state
   const selectedApp = useStore((state) => state.selectedApp);
   const selectedScan = useStore((state) => state.selectedScan);
@@ -190,11 +201,37 @@ export const InkApp = ({ configPath }) => {
   const listCursor = useStore((state) => state.listCursor);
   const loading = useStore((state) => state.loading);
   const error = useStore((state) => state.error);
+  const view = useStore((state) => state.view);
   const getFilteredIssues = useStore((state) => state.getFilteredIssues);
   
   // Local UI state
   const [showContextPane, setShowContextPane] = useState(true);
   const [activeModal, setActiveModal] = useState(null); // null | 'app' | 'scan' | 'filter' | 'search' | 'help' | etc.
+
+  // Load applications on mount (restore behavior from legacy InkApp)
+  React.useEffect(() => {
+    const loadApps = async () => {
+      try {
+        setLoading(true);
+        logger.info('Loading applications (TUI)');
+        const apps = await appScanService.listApplications();
+        setApplications(apps);
+        logger.info('Applications loaded', { count: apps.length });
+        setLoading(false);
+
+        // If we're in app-selection view, open the modal to select an app
+        if (view === 'app-selection' && apps.length > 0 && !activeModal) {
+          setActiveModal('app');
+        }
+      } catch (err) {
+        logger.error('Failed to load applications', err);
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    loadApps();
+  }, [appScanService, setLoading, setApplications, setError, view]);
 
   // Get current issue and article using hooks
   const currentIssue = useCurrentIssue();

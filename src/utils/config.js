@@ -1,12 +1,20 @@
 import dotenv from 'dotenv';
 import fs from 'fs';
 
-// Load environment variables silently (suppress dotenv tips/messages)
-process.env.DOTENV_CONFIG_QUIET = 'true';
-dotenv.config();
+// NOTE: dotenv is intentionally not executed at module import time to avoid
+// loading environment variables before the application has a chance to
+// determine the correct .env path (e.g., TUI may call dotenv with a specific
+// path before constructing Config). Load dotenv in the constructor instead.
 
 export class Config {
   constructor() {
+    // Ensure environment variables are loaded when a Config instance is created
+    try {
+      process.env.DOTENV_CONFIG_QUIET = 'true';
+      dotenv.config();
+    } catch {
+      // ignore dotenv failures
+    }
     this.apiKey = process.env.APPSCAN_API_KEY || null;
     this.apiSecret = process.env.APPSCAN_API_SECRET || null;
     this.baseUrl = process.env.APPSCAN_BASE_URL || 'https://cloud.appscan.com';

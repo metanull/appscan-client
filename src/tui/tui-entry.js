@@ -34,6 +34,14 @@ export async function launchTUI(options = {}) {
   // Check if configuration exists
   const hasEnv = fs.existsSync(envPath);
 
+  // Log effective environment detection for debugging
+  logger.info('TUI launch context', {
+    cwd: process.cwd(),
+    envPathExists: hasEnv,
+    apiKeyPresent: !!process.env.APPSCAN_API_KEY,
+    apiSecretPresent: !!process.env.APPSCAN_API_SECRET,
+  });
+
   // Force setup wizard if --setup flag or no .env file exists
   if (options.setup || !hasEnv) {
     logger.info('Starting setup wizard');
