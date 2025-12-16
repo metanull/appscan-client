@@ -42,7 +42,7 @@ await esbuild.build({
   jsx: 'automatic',
   jsxImportSource: 'react',
   banner: {
-    js: '#!/usr/bin/env node\nimport { createRequire } from "module"; const require = createRequire(import.meta.url);'
+    js: 'import { createRequire } from "module"; const require = createRequire(import.meta.url);'
   },
   minify: false,
   sourcemap: false,
