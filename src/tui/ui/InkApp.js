@@ -3,10 +3,12 @@
  * Optimized 3-pane layout with memoization and no render loops
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { Box, Text, useApp, useInput } from 'ink';
 import Spinner from 'ink-spinner';
 import { useStore } from '../state/AppContext.js';
+import { shallow } from 'zustand/shallow';
+import { filterIssues } from '../utils/issue-utils.js';
 import { Layout } from './components/Layout.js';
 import { Panel } from './components/Panel.js';
 import { ScrollableList } from './components/ScrollableList.js';
@@ -188,14 +190,7 @@ export const InkApp = ({ configPath }) => {
   const [appScanService] = useState(() => new AppScanService(configPath));
   const [jiraService] = useState(() => new JiraService(appScanService.getConfig()));
 
-  // Store setters
-  const setApplications = useStore((state) => state.setApplications);
-  const setLoading = useStore((state) => state.setLoading);
-  const setError = useStore((state) => state.setError);
-  const setScans = useStore((state) => state.setScans);
-  const setSelectedApp = useStore((state) => state.setSelectedApp);
-
-  // Zustand state
+  // Zustand state - ONLY subscribe to data, never to setters
   const selectedApp = useStore((state) => state.selectedApp);
   const selectedScan = useStore((state) => state.selectedScan);
   const applications = useStore((state) => state.applications);
@@ -204,20 +199,32 @@ export const InkApp = ({ configPath }) => {
   const loading = useStore((state) => state.loading);
   const error = useStore((state) => state.error);
   const view = useStore((state) => state.view);
-  const getFilteredIssues = useStore((state) => state.getFilteredIssues);
+  const issues = useStore((state) => state.issues);
+
+  // Filter state - subscribe to each individually to avoid object creation
+  const filterStatus = useStore((state) => state.filterStatus);
+  const filterSeverity = useStore((state) => state.filterSeverity);
+  const filterIssueType = useStore((state) => state.filterIssueType);
+  const filterJira = useStore((state) => state.filterJira);
+  const searchText = useStore((state) => state.searchText);
+  const sortBy = useStore((state) => state.sortBy);
   
   // Local UI state
   const [showContextPane, setShowContextPane] = useState(true);
   const [activeModal, setActiveModal] = useState(null); // null | 'app' | 'scan' | 'filter' | 'search' | 'help' | etc.
 
-  // Load applications on mount (restore behavior from legacy InkApp)
+  // Load applications on mount - runs once
+  const hasLoadedApps = useRef(false);
   React.useEffect(() => {
+    if (hasLoadedApps.current) return;  // Guard against double-mounting
+    hasLoadedApps.current = true;
+
     const loadApps = async () => {
       try {
-        setLoading(true);
+        useStore.getState().setLoading(true);
         logger.info('Loading applications (TUI)');
         const apps = await appScanService.listApplications();
-        setApplications(apps);
+        useStore.getState().setApplications(apps);
         logger.info('Applications loaded', { count: apps.length });
         // Log a sample application to inspect available fields
         if (apps.length > 0) {
@@ -230,21 +237,26 @@ export const InkApp = ({ configPath }) => {
             LatestExecution: sample.LatestExecution,
           });
         }
-        setLoading(false);
-
-        // If we're in app-selection view, open the modal to select an app
-        if (view === 'app-selection' && apps.length > 0 && !activeModal) {
-          setActiveModal('app');
-        }
+        useStore.getState().setLoading(false);
       } catch (err) {
         logger.error('Failed to load applications', err);
-        setError(err.message);
-        setLoading(false);
+        useStore.getState().setError(err.message);
+        useStore.getState().setLoading(false);
       }
     };
 
     loadApps();
-  }, [appScanService, setLoading, setApplications, setError, view]);
+  }, []); // Run once on mount
+
+  // Auto-open app selection modal when applications are loaded
+  // Only watch applications and view - NOT activeModal to avoid circular dependency
+  const hasOpenedAppModal = useRef(false);
+  React.useEffect(() => {
+    if (view === 'app-selection' && applications.length > 0 && !hasOpenedAppModal.current) {
+      hasOpenedAppModal.current = true;
+      setActiveModal('app');
+    }
+  }, [applications.length, view]); // Only depend on data, not activeModal
 
   // Get current issue and article using hooks
   const currentIssue = useCurrentIssue();
@@ -256,8 +268,42 @@ export const InkApp = ({ configPath }) => {
     }, [appScanService])
   );
 
-  // Filtered issues
-  const filteredIssues = useMemo(() => getFilteredIssues(), [getFilteredIssues]);
+  // Filtered issues - build from individual filter state
+  const filteredIssues = useMemo(() => {
+    return filterIssues(issues, {
+      status: filterStatus,
+      severity: filterSeverity,
+      issueType: filterIssueType,
+      jira: filterJira,
+      searchText: searchText,
+      sortBy: sortBy,
+    });
+  }, [issues, filterStatus, filterSeverity, filterIssueType, filterJira, searchText, sortBy]);
+
+  // Throttled cursor movement
+  const pendingCursorMove = useRef(0);
+  const flushTimeout = useRef(null);
+  const filteredIssuesLength = filteredIssues.length;
+
+  const flushCursorMove = useCallback(() => {
+    if (flushTimeout.current) return;
+
+    flushTimeout.current = setTimeout(() => {
+      const delta = pendingCursorMove.current;
+      if (delta !== 0) {
+        pendingCursorMove.current = 0;
+        
+        const currentCursor = useStore.getState().listCursor;
+        const maxCursor = filteredIssuesLength - 1;
+        const newCursor = Math.min(maxCursor, Math.max(0, currentCursor + delta));
+        
+        if (newCursor !== currentCursor) {
+          useStore.getState().setListCursor(newCursor);  // Use getState() instead of prop
+        }
+      }
+      flushTimeout.current = null;
+    }, 16);
+  }, [filteredIssuesLength]); // Only depend on data, not setter
 
   // Keyboard handling
   useInput((input, key) => {
@@ -332,12 +378,14 @@ export const InkApp = ({ configPath }) => {
 
     // Navigation
     if (key.upArrow) {
-      useStore.getState().moveCursorUp();
+      pendingCursorMove.current -= 1;
+      flushCursorMove();
       return;
     }
 
     if (key.downArrow) {
-      useStore.getState().moveCursorDown();
+      pendingCursorMove.current += 1;
+      flushCursorMove();
       return;
     }
   });
@@ -374,24 +422,24 @@ export const InkApp = ({ configPath }) => {
           applications={applications}
           onSelect={async (app) => {
             // Set selected app and load scans for it
-            setSelectedApp(app);
+            useStore.getState().setSelectedApp(app);
             setActiveModal(null);
             try {
-              setLoading(true);
+              useStore.getState().setLoading(true);
               logger.info('Loading scans for application', { appId: app.Id, appName: app.Name });
               const scanList = await appScanService.listScans(app.Id);
-              setScans(scanList);
+              useStore.getState().setScans(scanList);
               // Auto-open scan modal if there are scans
               if (scanList && scanList.length > 0) {
                 setActiveModal('scan');
                 // Log a sample scan to inspect fields
                 logger.debug('Sample scan fields', { sample: scanList[0], keys: Object.keys(scanList[0] || {}).slice(0,20) });
               }
-              setLoading(false);
+              useStore.getState().setLoading(false);
             } catch (err) {
               logger.error('Failed to load scans', err);
-              setError(err.message);
-              setLoading(false);
+              useStore.getState().setError(err.message);
+              useStore.getState().setLoading(false);
             }
           }}
           onCancel={() => setActiveModal(null)}

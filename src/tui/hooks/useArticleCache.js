@@ -12,11 +12,10 @@ const FETCH_DEBOUNCE_DELAY = 300; // 300ms
 
 export function useArticleCache(issueId, fetchFunction) {
   const articleCache = useStore((state) => state.articleCache);
-  const setArticleCache = useStore((state) => state.setArticleCache);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Create debounced fetch function
+  // Create debounced fetch function - use getState() to avoid setter dependency
   const debouncedFetch = useCallback(
     debounce(async (id) => {
       if (!id || !fetchFunction) return;
@@ -26,14 +25,14 @@ export function useArticleCache(issueId, fetchFunction) {
 
       try {
         const content = await fetchFunction(id);
-        setArticleCache(id, content);
+        useStore.getState().setArticleCache(id, content);  // Use getState() instead of prop
       } catch (err) {
         setError(err.message || 'Failed to fetch article');
       } finally {
         setLoading(false);
       }
     }, FETCH_DEBOUNCE_DELAY),
-    [fetchFunction, setArticleCache]
+    [fetchFunction]  // Only depend on fetchFunction, not setArticleCache
   );
 
   useEffect(() => {

@@ -11,7 +11,7 @@ export function getPackageInfo() {
     // Prefer URL resolution (works well with ESM and bundlers)
     const pkgUrl = new URL('../../package.json', import.meta.url);
     return JSON.parse(readFileSync(fileURLToPath(pkgUrl), 'utf8'));
-  } catch (e) {
+  } catch {
     // Fallback: walk up the directory tree from this file until package.json is found
     let dir = dirname(fileURLToPath(import.meta.url));
     while (true) {
@@ -19,7 +19,7 @@ export function getPackageInfo() {
       if (existsSync(candidate)) {
         try {
           return JSON.parse(readFileSync(candidate, 'utf8'));
-        } catch (_) {
+        } catch {
           break;
         }
       }

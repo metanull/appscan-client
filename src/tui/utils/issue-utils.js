@@ -101,6 +101,80 @@ export function getSeverityBadge(severity) {
 }
 
 /**
+ * Filter and sort issues based on criteria
+ * @param {Array} issues - List of issues
+ * @param {Object} filters - Filter criteria
+ * @returns {Array} Filtered and sorted issues
+ */
+export function filterIssues(issues, filters = {}) {
+  const {
+    status,
+    severity,
+    issueType,
+    jira,
+    searchText,
+    sortBy = 'severity'
+  } = filters;
+
+  let filtered = [...issues];
+
+  if (status) {
+    filtered = filtered.filter((i) => i.Status === status);
+  }
+
+  if (severity) {
+    filtered = filtered.filter((i) => i.Severity === severity);
+  }
+
+  if (issueType) {
+    filtered = filtered.filter((i) => i.IssueType === issueType);
+  }
+
+  if (jira === 'with') {
+    filtered = filtered.filter((i) => i.ExternalId && i.ExternalId.trim() !== '');
+  } else if (jira === 'without') {
+    filtered = filtered.filter((i) => !i.ExternalId || i.ExternalId.trim() === '');
+  }
+
+  if (searchText) {
+    const searchLower = searchText.toLowerCase();
+    filtered = filtered.filter(
+      (i) =>
+        (i.IssueType && i.IssueType.toLowerCase().includes(searchLower)) ||
+        (i.Location && i.Location.toLowerCase().includes(searchLower)) ||
+        (i.Api && i.Api.toLowerCase().includes(searchLower))
+    );
+  }
+
+  // Apply sorting
+  // Use local severity order to match AppContext logic (0 is highest priority)
+  const severityOrder = { Critical: 0, High: 1, Medium: 2, Low: 3, Informational: 4 };
+
+  if (sortBy === 'severity') {
+    filtered.sort((a, b) => {
+      const orderA = severityOrder[a.Severity] ?? 999;
+      const orderB = severityOrder[b.Severity] ?? 999;
+      return orderA - orderB;
+    });
+  } else if (sortBy === 'name') {
+    filtered.sort((a, b) => {
+      const nameA = (a.IssueType || '').toLowerCase();
+      const nameB = (b.IssueType || '').toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  } else if (sortBy === 'status') {
+    filtered.sort((a, b) => {
+      const statusA = (a.Status || '').toLowerCase();
+      const statusB = (b.Status || '').toLowerCase();
+      return statusA.localeCompare(statusB);
+    });
+  }
+
+  return filtered;
+}
+
+
+/**
  * Get status badge text
  */
 export function getStatusBadge(status) {

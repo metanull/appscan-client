@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 import { getPackageInfo } from '../utils/package-info.js';
 import { listApplications } from './commands/list-applications.js';
 import { listScans } from './commands/list-scans.js';
