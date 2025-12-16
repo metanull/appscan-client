@@ -7,9 +7,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 function resolveTuiEntry() {
-  const bundledPath = resolve(__dirname, 'tui/index.js');
-  if (existsSync(bundledPath)) {
-    return bundledPath;
+  const distSibling = resolve(__dirname, 'tui/index.js');
+  if (existsSync(distSibling)) {
+    return distSibling;
+  }
+
+  const rootDist = resolve(__dirname, '../../dist/tui/index.js');
+  if (existsSync(rootDist)) {
+    return rootDist;
   }
 
   const legacyPath = resolve(__dirname, '../../ink-triage/dist/index.js');
