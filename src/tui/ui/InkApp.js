@@ -26,6 +26,7 @@ import { useCurrentIssue } from '../hooks/useCurrentIssue.js';
 import { useArticleCache } from '../hooks/useArticleCache.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import logger from '../utils/logger.js';
+import { getPackageInfo } from '../../utils/package-info.js';
 
 /**
  * Context Pane - Shows selected app/scan info
@@ -175,23 +176,36 @@ DetailsPreviewPanel.displayName = 'DetailsPreviewPanel';
 /**
  * Status Bar
  */
+const pkg = getPackageInfo();
 const StatusBar = React.memo(({ error, loading, message }) => {
+  const rightText = `${pkg.version || 'v0.0.0'} • Pascal Havelange`;
   return (
-    <Box borderStyle="single" borderTop paddingX={1}>
-      {error && <Text color="red">Error: {error}</Text>}
-      {loading && !error && (
-        <Box>
-          <Box marginRight={1}>
-            <Spinner />
+    <Box
+      borderStyle="single"
+      borderTop
+      paddingX={1}
+      justifyContent="space-between"
+      width="100%"
+    >
+      <Box>
+        {error && <Text color="red">Error: {error}</Text>}
+        {loading && !error && (
+          <Box>
+            <Box marginRight={1}>
+              <Spinner />
+            </Box>
+            <Text>{message || 'Loading...'}</Text>
           </Box>
-          <Text>{message || 'Loading...'}</Text>
-        </Box>
-      )}
-      {!error && !loading && (
-        <Text dimColor>
-          Press ? for help | a: App | s: Scan | f: Filter | q: Quit
-        </Text>
-      )}
+        )}
+        {!error && !loading && (
+          <Text dimColor>
+            Press ? for help | a: App | s: Scan | f: Filter | q: Quit
+          </Text>
+        )}
+      </Box>
+      <Box>
+        <Text dimColor>{rightText}</Text>
+      </Box>
     </Box>
   );
 });

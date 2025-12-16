@@ -94,6 +94,13 @@ export const ScanSelectionModal = React.memo(
       }
     });
 
+    // Ensure cursor stays within bounds when the filtered list changes
+    React.useEffect(() => {
+      setCursor((prev) =>
+        Math.min(prev, Math.max(0, filteredScans.length - 1))
+      );
+    }, [filteredScans.length]);
+
     const renderItem = useCallback((scan, isSelected) => {
       const issueCount =
         (scan.LatestExecution?.NIssuesFound || 0) +

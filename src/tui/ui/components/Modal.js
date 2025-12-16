@@ -49,7 +49,17 @@ export const Modal = ({
       alignItems="center"
     >
       {/* Background overlay */}
-      {showOverlay && <Box position="absolute" width="100%" height="100%" />}
+      {showOverlay && (
+        <Box
+          position="absolute"
+          width="100%"
+          height="100%"
+          backgroundColor="black"
+        >
+          {/* filler to ensure overlay shows on all terminals */}
+          <Box width="100%" height="100%" />
+        </Box>
+      )}
 
       {/* Modal content */}
       <Box
@@ -60,6 +70,7 @@ export const Modal = ({
         borderColor="cyan"
         paddingX={2}
         paddingY={1}
+        backgroundColor="black"
       >
         {children}
       </Box>

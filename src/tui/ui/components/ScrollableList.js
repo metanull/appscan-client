@@ -55,7 +55,7 @@ export const ScrollableList = React.memo(
           const isSelected = actualIndex === cursor;
 
           return (
-            <Box key={item.id || item.Id || actualIndex}>
+            <Box key={`${item?.Id || item?.id || ''}-${actualIndex}`}>
               {renderItem(item, isSelected, actualIndex)}
             </Box>
           );
