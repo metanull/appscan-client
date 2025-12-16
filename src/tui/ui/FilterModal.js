@@ -6,6 +6,8 @@
 import React, { useState } from 'react';
 import { Box, Text } from 'ink';
 import SelectInput from 'ink-select-input';
+import { Modal } from './components/Modal.js';
+import { Panel } from './components/Panel.js';
 
 const FILTER_TYPES = [
   { label: 'Status Filter', value: 'status' },
@@ -76,58 +78,48 @@ export const FilterModal = ({ issues, onSelect, onClose }) => {
   };
 
   return (
-    <Box
-      flexDirection="column"
-      borderStyle="double"
-      borderColor="yellow"
-      paddingX={2}
-      paddingY={1}
-      width="50%"
-      marginX="auto"
-    >
-      <Text bold color="yellow">
-        🔍 Filters
-      </Text>
+    <Modal width={50} height={60}>
+      <Panel title="🔍 Filters" borderColor="yellow">
+        {step === 'type' && (
+          <Box flexDirection="column" marginTop={1}>
+            <Text>Select filter type:</Text>
+            <SelectInput items={FILTER_TYPES} onSelect={handleTypeSelect} />
+          </Box>
+        )}
 
-      {step === 'type' && (
-        <Box flexDirection="column" marginTop={1}>
-          <Text>Select filter type:</Text>
-          <SelectInput items={FILTER_TYPES} onSelect={handleTypeSelect} />
+        {step === 'status' && (
+          <Box flexDirection="column" marginTop={1}>
+            <Text>Select status:</Text>
+            <SelectInput items={STATUS_OPTIONS} onSelect={handleFilterSelect} />
+          </Box>
+        )}
+
+        {step === 'severity' && (
+          <Box flexDirection="column" marginTop={1}>
+            <Text>Select severity:</Text>
+            <SelectInput items={SEVERITY_OPTIONS} onSelect={handleFilterSelect} />
+          </Box>
+        )}
+
+        {step === 'jira' && (
+          <Box flexDirection="column" marginTop={1}>
+            <Text>Select Jira filter:</Text>
+            <SelectInput items={JIRA_OPTIONS} onSelect={handleFilterSelect} />
+          </Box>
+        )}
+
+        {step === 'issueType' && (
+          <Box flexDirection="column" marginTop={1}>
+            <Text>Select vulnerability type:</Text>
+            <SelectInput items={getIssueTypeOptions()} onSelect={handleFilterSelect} />
+          </Box>
+        )}
+
+        <Box marginTop={1}>
+          <Text dimColor>Press ESC to cancel</Text>
         </Box>
-      )}
-
-      {step === 'status' && (
-        <Box flexDirection="column" marginTop={1}>
-          <Text>Select status:</Text>
-          <SelectInput items={STATUS_OPTIONS} onSelect={handleFilterSelect} />
-        </Box>
-      )}
-
-      {step === 'severity' && (
-        <Box flexDirection="column" marginTop={1}>
-          <Text>Select severity:</Text>
-          <SelectInput items={SEVERITY_OPTIONS} onSelect={handleFilterSelect} />
-        </Box>
-      )}
-
-      {step === 'jira' && (
-        <Box flexDirection="column" marginTop={1}>
-          <Text>Select Jira filter:</Text>
-          <SelectInput items={JIRA_OPTIONS} onSelect={handleFilterSelect} />
-        </Box>
-      )}
-
-      {step === 'issueType' && (
-        <Box flexDirection="column" marginTop={1}>
-          <Text>Select vulnerability type:</Text>
-          <SelectInput items={getIssueTypeOptions()} onSelect={handleFilterSelect} />
-        </Box>
-      )}
-
-      <Box marginTop={1}>
-        <Text dimColor>Press ESC to cancel</Text>
-      </Box>
-    </Box>
+      </Panel>
+    </Modal>
   );
 };
 

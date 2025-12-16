@@ -7,6 +7,8 @@ import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
 import TextInput from 'ink-text-input';
+import { Modal } from './components/Modal.js';
+import { Panel } from './components/Panel.js';
 
 const GROUP_OPTIONS = [
   { label: 'Type (recommended)', value: 'type' },
@@ -65,49 +67,38 @@ export const CreateJiraModal = ({ issues, defaultProjectKey, onCreate, onClose }
   };
 
   return (
-    <Box
-      flexDirection="column"
-      borderStyle="double"
-      borderColor="green"
-      paddingX={2}
-      paddingY={1}
-      width="70%"
-      marginX="auto"
-    >
-      <Text bold color="green">
-        🎫 Create Jira Issue(s)
-      </Text>
-
-      <Box flexDirection="column" marginTop={1}>
-        <Text>Selected Issues: {issues.length}</Text>
-      </Box>
-
-      {error && (
-        <Box marginTop={1}>
-          <Text color="red">Error: {error}</Text>
-        </Box>
-      )}
-
-      {step === 'project' && (
+    <Modal width={70} height={60}>
+      <Panel title="🎫 Create Jira Issue(s)" borderColor="green">
         <Box flexDirection="column" marginTop={1}>
-          <Text>Enter Jira project key:</Text>
+          <Text>Selected Issues: {issues.length}</Text>
+        </Box>
+
+        {error && (
           <Box marginTop={1}>
-            <Text color="cyan">&gt; </Text>
-            <TextInput
-              value={projectKey}
-              onChange={setProjectKey}
-              onSubmit={handleProjectSubmit}
-              placeholder="e.g., SEC, PROJ..."
-            />
+            <Text color="red">Error: {error}</Text>
           </Box>
-        </Box>
-      )}
+        )}
 
-      {step === 'groupBy' && (
-        <Box flexDirection="column" marginTop={1}>
-          <Text>Group issues by:</Text>
-          <Text dimColor>Will create {getGroupCount()} Jira issue(s)</Text>
-          <SelectInput items={GROUP_OPTIONS} onSelect={handleGroupBySelect} />
+        {step === 'project' && (
+          <Box flexDirection="column" marginTop={1}>
+            <Text>Enter Jira project key:</Text>
+            <Box marginTop={1}>
+              <Text color="cyan">&gt; </Text>
+              <TextInput
+                value={projectKey}
+                onChange={setProjectKey}
+                onSubmit={handleProjectSubmit}
+                placeholder="e.g., SEC, PROJ..."
+              />
+            </Box>
+          </Box>
+        )}
+
+        {step === 'groupBy' && (
+          <Box flexDirection="column" marginTop={1}>
+            <Text>Group issues by:</Text>
+            <Text dimColor>Will create {getGroupCount()} Jira issue(s)</Text>
+            <SelectInput items={GROUP_OPTIONS} onSelect={handleGroupBySelect} />
         </Box>
       )}
 
@@ -117,18 +108,19 @@ export const CreateJiraModal = ({ issues, defaultProjectKey, onCreate, onClose }
         </Box>
       )}
 
-      {step === 'success' && (
-        <Box marginTop={1}>
-          <Text color="green">✅ Successfully created Jira issues!</Text>
-        </Box>
-      )}
+        {step === 'success' && (
+          <Box marginTop={1}>
+            <Text color="green">✅ Successfully created Jira issues!</Text>
+          </Box>
+        )}
 
-      {step !== 'creating' && step !== 'success' && (
-        <Box marginTop={1}>
-          <Text dimColor>Press ESC to cancel</Text>
-        </Box>
-      )}
-    </Box>
+        {step !== 'creating' && step !== 'success' && (
+          <Box marginTop={1}>
+            <Text dimColor>Press ESC to cancel</Text>
+          </Box>
+        )}
+      </Panel>
+    </Modal>
   );
 };
 
