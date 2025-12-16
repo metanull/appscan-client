@@ -31,28 +31,32 @@ import { getPackageInfo } from '../../utils/package-info.js';
 /**
  * Context Pane - Shows selected app/scan info
  */
-const ContextPane = React.memo(({ app, scan, onToggle: _onToggle }) => {
-  if (!app && !scan) return null;
+const ContextPane = React.memo(
+  ({ app, scan, issuesCount, onToggle: _onToggle }) => {
+    if (!app && !scan) return null;
 
-  return (
-    <Panel title="Context [c to toggle]" borderColor="blue" width={25}>
-      {app && (
-        <Box flexDirection="column">
-          <Text bold>App: </Text>
-          <Text wrap="truncate">{app.Name || 'Unknown'}</Text>
-          <Text dimColor>Issues: {app.IssueCountTotal || 0}</Text>
-        </Box>
-      )}
-      {scan && (
-        <Box flexDirection="column" marginTop={1}>
-          <Text bold>Scan: </Text>
-          <Text wrap="truncate">{scan.Name || 'Unknown'}</Text>
-          <Text dimColor>Type: {scan.Technology || 'N/A'}</Text>
-        </Box>
-      )}
-    </Panel>
-  );
-});
+    return (
+      <Panel title="Context [c to toggle]" borderColor="blue" width={40}>
+        {app && (
+          <Box flexDirection="column">
+            <Text bold>App: </Text>
+            <Text wrap="truncate">{app.Name || 'Unknown'}</Text>
+            <Text dimColor>
+              Issues: {issuesCount ?? app.IssueCountTotal ?? 0}
+            </Text>
+          </Box>
+        )}
+        {scan && (
+          <Box flexDirection="column" marginTop={1}>
+            <Text bold>Scan: </Text>
+            <Text wrap="truncate">{scan.Name || 'Unknown'}</Text>
+            <Text dimColor>Type: {scan.Technology || 'N/A'}</Text>
+          </Box>
+        )}
+      </Panel>
+    );
+  }
+);
 ContextPane.displayName = 'ContextPane';
 
 /**
@@ -480,7 +484,11 @@ export const InkApp = ({ configPath }) => {
       <Box flexDirection="row" height={height - 2}>
         {/* Context Pane */}
         {showContextPane && (
-          <ContextPane app={selectedApp} scan={selectedScan} />
+          <ContextPane
+            app={selectedApp}
+            scan={selectedScan}
+            issuesCount={issues.length}
+          />
         )}
 
         {/* Vulnerability List */}
