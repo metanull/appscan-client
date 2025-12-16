@@ -7,7 +7,10 @@ import React, { useState, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
 import TextInput from 'ink-text-input';
-import { getTemplatesForType, saveTemplate } from '../services/commentTemplates.js';
+import {
+  getTemplatesForType,
+  saveTemplate,
+} from '../services/commentTemplates.js';
 import { Modal } from './components/Modal.js';
 import { Panel } from './components/Panel.js';
 
@@ -20,7 +23,12 @@ const STATUS_OPTIONS = [
   { label: 'Fixed', value: 'Fixed' },
 ];
 
-export const UpdateStatusModal = ({ issueCount, issues = [], onUpdate, onClose }) => {
+export const UpdateStatusModal = ({
+  issueCount,
+  issues = [],
+  onUpdate,
+  onClose,
+}) => {
   const [step, setStep] = useState('status'); // 'status' | 'template' | 'comment'
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [comment, setComment] = useState('');
@@ -82,7 +90,12 @@ export const UpdateStatusModal = ({ issueCount, issues = [], onUpdate, onClose }
     }
 
     // Save custom comment as template if it's not empty and not already a template
-    if (comment && comment.trim() !== '' && !templates.includes(comment) && issueTypes.length > 0) {
+    if (
+      comment &&
+      comment.trim() !== '' &&
+      !templates.includes(comment) &&
+      issueTypes.length > 0
+    ) {
       // Save to first issue type
       saveTemplate(issueTypes[0], comment.trim());
     }
@@ -115,8 +128,13 @@ export const UpdateStatusModal = ({ issueCount, issues = [], onUpdate, onClose }
         {step === 'template' && (
           <Box flexDirection="column" marginTop={1}>
             <Text>Select comment template:</Text>
-            {issueTypes.length > 0 && <Text dimColor>For: {issueTypes[0]}</Text>}
-            <SelectInput items={templateOptions} onSelect={handleTemplateSelect} />
+            {issueTypes.length > 0 && (
+              <Text dimColor>For: {issueTypes[0]}</Text>
+            )}
+            <SelectInput
+              items={templateOptions}
+              onSelect={handleTemplateSelect}
+            />
           </Box>
         )}
 

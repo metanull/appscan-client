@@ -4,7 +4,13 @@
  * Follows Ink best practices for input handling
  */
 
-import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useRef,
+} from 'react';
 import { useInput } from 'ink';
 import logger from './logger.js';
 
@@ -128,7 +134,11 @@ export const KeyboardProvider = ({ children }) => {
     throttle,
   };
 
-  return <KeyboardContext.Provider value={value}>{children}</KeyboardContext.Provider>;
+  return (
+    <KeyboardContext.Provider value={value}>
+      {children}
+    </KeyboardContext.Provider>
+  );
 };
 
 /**

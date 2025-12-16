@@ -7,7 +7,12 @@ import React from 'react';
 import { Box, Text } from 'ink';
 import { getSeverityBadge, getStatusBadge } from '../utils/issue-utils.js';
 
-export const VulnRow = ({ issue, isSelected: _isSelected, isCursor, isMultiSelected }) => {
+export const VulnRow = ({
+  issue,
+  isSelected: _isSelected,
+  isCursor,
+  isMultiSelected,
+}) => {
   const severity = issue.Severity || 'Unknown';
   const status = issue.Status || 'Unknown';
   const type = issue.IssueType || 'Unknown';

@@ -57,7 +57,13 @@ class AuditService {
     const sanitized = { ...params };
 
     // Remove sensitive fields
-    const sensitiveFields = ['password', 'token', 'apiKey', 'secret', 'apiToken'];
+    const sensitiveFields = [
+      'password',
+      'token',
+      'apiKey',
+      'secret',
+      'apiToken',
+    ];
 
     for (const field of sensitiveFields) {
       if (sanitized[field]) {

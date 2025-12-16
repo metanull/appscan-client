@@ -163,7 +163,8 @@ export const useStore = create((set, get) => ({
   setSortBy: (sortBy) => set({ sortBy }),
   setScanSearchText: (text) => set({ scanSearchText: text }),
   setScanFilterType: (type) => set({ scanFilterType: type }),
-  toggleHideEmptyScans: () => set((state) => ({ hideEmptyScans: !state.hideEmptyScans })),
+  toggleHideEmptyScans: () =>
+    set((state) => ({ hideEmptyScans: !state.hideEmptyScans })),
 
   clearFilters: () =>
     set({
@@ -178,7 +179,8 @@ export const useStore = create((set, get) => ({
   setLoading: (loading) => set({ loading }),
   setError: (error) => set({ error }),
   toggleHelp: () => set((state) => ({ showHelp: !state.showHelp })),
-  toggleJiraPanel: () => set((state) => ({ showJiraPanel: !state.showJiraPanel })),
+  toggleJiraPanel: () =>
+    set((state) => ({ showJiraPanel: !state.showJiraPanel })),
 
   // Actions - List navigation
   setListCursor: (cursor) => set({ listCursor: cursor }),
@@ -201,12 +203,18 @@ export const useStore = create((set, get) => ({
         filtered = filtered.filter((i) => i.Severity === state.filterSeverity);
       }
       if (state.filterIssueType) {
-        filtered = filtered.filter((i) => i.IssueType === state.filterIssueType);
+        filtered = filtered.filter(
+          (i) => i.IssueType === state.filterIssueType
+        );
       }
       if (state.filterJira === 'with') {
-        filtered = filtered.filter((i) => i.ExternalId && i.ExternalId.trim() !== '');
+        filtered = filtered.filter(
+          (i) => i.ExternalId && i.ExternalId.trim() !== ''
+        );
       } else if (state.filterJira === 'without') {
-        filtered = filtered.filter((i) => !i.ExternalId || i.ExternalId.trim() === '');
+        filtered = filtered.filter(
+          (i) => !i.ExternalId || i.ExternalId.trim() === ''
+        );
       }
       if (state.searchText) {
         const searchLower = state.searchText.toLowerCase();
@@ -229,7 +237,9 @@ export const useStore = create((set, get) => ({
       if (state.scanFilterType) {
         filteredScans = filteredScans.filter((scan) => {
           const tech = scan.Technology || '';
-          return tech.toUpperCase().includes(state.scanFilterType.toUpperCase());
+          return tech
+            .toUpperCase()
+            .includes(state.scanFilterType.toUpperCase());
         });
       }
       if (state.scanSearchText) {
@@ -278,9 +288,13 @@ export const useStore = create((set, get) => ({
     }
 
     if (filterJira === 'with') {
-      filtered = filtered.filter((i) => i.ExternalId && i.ExternalId.trim() !== '');
+      filtered = filtered.filter(
+        (i) => i.ExternalId && i.ExternalId.trim() !== ''
+      );
     } else if (filterJira === 'without') {
-      filtered = filtered.filter((i) => !i.ExternalId || i.ExternalId.trim() === '');
+      filtered = filtered.filter(
+        (i) => !i.ExternalId || i.ExternalId.trim() === ''
+      );
     }
 
     if (searchText) {
@@ -294,7 +308,13 @@ export const useStore = create((set, get) => ({
     }
 
     // Apply sorting
-    const severityOrder = { Critical: 0, High: 1, Medium: 2, Low: 3, Informational: 4 };
+    const severityOrder = {
+      Critical: 0,
+      High: 1,
+      Medium: 2,
+      Low: 3,
+      Informational: 4,
+    };
 
     if (sortBy === 'severity') {
       filtered.sort((a, b) => {
@@ -320,8 +340,20 @@ export const useStore = create((set, get) => ({
   },
 
   hasActiveFilters: () => {
-    const { filterStatus, filterSeverity, filterIssueType, filterJira, searchText } = get();
-    return !!(filterStatus || filterSeverity || filterIssueType || filterJira || searchText);
+    const {
+      filterStatus,
+      filterSeverity,
+      filterIssueType,
+      filterJira,
+      searchText,
+    } = get();
+    return !!(
+      filterStatus ||
+      filterSeverity ||
+      filterIssueType ||
+      filterJira ||
+      searchText
+    );
   },
 
   getFilteredScans: () => {

@@ -12,11 +12,19 @@ export const LeftNav = () => {
   const selectedApp = useStore((state) => state.selectedApp);
   const selectedScan = useStore((state) => state.selectedScan);
 
-  const scanType = selectedScan ? Formatter.normalizeScanType(selectedScan.Technology) : null;
+  const scanType = selectedScan
+    ? Formatter.normalizeScanType(selectedScan.Technology)
+    : null;
   const baseUrl = 'https://cloud.appscan.com'; // This should come from config
 
   return (
-    <Box flexDirection="column" borderStyle="single" borderColor="blue" paddingX={1} width="20%">
+    <Box
+      flexDirection="column"
+      borderStyle="single"
+      borderColor="blue"
+      paddingX={1}
+      width="20%"
+    >
       <Text bold color="blue">
         📋 Context
       </Text>

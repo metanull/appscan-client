@@ -121,7 +121,10 @@ export const SetupWizard = ({ onComplete, onCancel }) => {
         }
         break;
       case STEPS.APPSCAN_URL:
-        setConfig({ ...config, baseUrl: inputValue || 'https://cloud.appscan.com' });
+        setConfig({
+          ...config,
+          baseUrl: inputValue || 'https://cloud.appscan.com',
+        });
         setInputValue('');
         setStep(STEPS.JIRA_CONFIRM);
         break;
@@ -221,7 +224,11 @@ ${config.confluenceUrl ? `CONFLUENCE_OWASP_ASVS_URL=${config.confluenceUrl}` : '
           onChange={setInputValue}
           onSubmit={handleSubmit}
           placeholder={getDefaultValue()}
-          mask={step === STEPS.APPSCAN_SECRET || step === STEPS.JIRA_TOKEN ? '*' : undefined}
+          mask={
+            step === STEPS.APPSCAN_SECRET || step === STEPS.JIRA_TOKEN
+              ? '*'
+              : undefined
+          }
         />
       </Box>
       <Box marginTop={1}>
@@ -241,12 +248,20 @@ ${config.confluenceUrl ? `CONFLUENCE_OWASP_ASVS_URL=${config.confluenceUrl}` : '
       {step === STEPS.WELCOME && (
         <Box flexDirection="column" padding={1}>
           <Text color="yellow">Welcome to the AppScan Triage Setup!</Text>
-          <Text marginTop={1}>This wizard will help you configure your credentials.</Text>
+          <Text marginTop={1}>
+            This wizard will help you configure your credentials.
+          </Text>
           <Box marginTop={2} flexDirection="column">
             <Text dimColor>You will need:</Text>
             <Text dimColor> • AppScan API Key and Secret</Text>
-            <Text dimColor> • (Optional) JIRA credentials for creating issues</Text>
-            <Text dimColor> • (Optional) Confluence OWASP ASVS documentation URL</Text>
+            <Text dimColor>
+              {' '}
+              • (Optional) JIRA credentials for creating issues
+            </Text>
+            <Text dimColor>
+              {' '}
+              • (Optional) Confluence OWASP ASVS documentation URL
+            </Text>
           </Box>
           <Box marginTop={2}>
             <Text color="green">Press Enter to start or 'q' to quit</Text>
@@ -268,7 +283,8 @@ ${config.confluenceUrl ? `CONFLUENCE_OWASP_ASVS_URL=${config.confluenceUrl}` : '
         <Box flexDirection="column" padding={1}>
           <Text color="cyan">Do you want to configure JIRA integration?</Text>
           <Text dimColor marginTop={1}>
-            JIRA integration allows you to create issues directly from vulnerabilities.
+            JIRA integration allows you to create issues directly from
+            vulnerabilities.
           </Text>
           <Box marginTop={2}>
             <Text color="green">Press 'y' for Yes or 'n' for No</Text>
@@ -278,7 +294,9 @@ ${config.confluenceUrl ? `CONFLUENCE_OWASP_ASVS_URL=${config.confluenceUrl}` : '
 
       {step === STEPS.CONFLUENCE_CONFIRM && (
         <Box flexDirection="column" padding={1}>
-          <Text color="cyan">Do you want to configure Confluence OWASP ASVS links?</Text>
+          <Text color="cyan">
+            Do you want to configure Confluence OWASP ASVS links?
+          </Text>
           <Text dimColor marginTop={1}>
             This adds links to your OWASP ASVS documentation in Confluence.
           </Text>
@@ -293,7 +311,8 @@ ${config.confluenceUrl ? `CONFLUENCE_OWASP_ASVS_URL=${config.confluenceUrl}` : '
           <Text color="yellow">Review your configuration:</Text>
           <Box marginTop={1} flexDirection="column">
             <Text>
-              • AppScan API Key: <Text color="green">***{config.apiKey.slice(-4)}</Text>
+              • AppScan API Key:{' '}
+              <Text color="green">***{config.apiKey.slice(-4)}</Text>
             </Text>
             <Text>
               • AppScan Base URL: <Text color="green">{config.baseUrl}</Text>
@@ -307,13 +326,15 @@ ${config.confluenceUrl ? `CONFLUENCE_OWASP_ASVS_URL=${config.confluenceUrl}` : '
                   • JIRA Email: <Text color="green">{config.jiraEmail}</Text>
                 </Text>
                 <Text>
-                  • JIRA Project: <Text color="green">{config.jiraProjectKey}</Text>
+                  • JIRA Project:{' '}
+                  <Text color="green">{config.jiraProjectKey}</Text>
                 </Text>
               </>
             )}
             {configureConfluence && (
               <Text>
-                • Confluence URL: <Text color="green">{config.confluenceUrl}</Text>
+                • Confluence URL:{' '}
+                <Text color="green">{config.confluenceUrl}</Text>
               </Text>
             )}
           </Box>
@@ -329,7 +350,10 @@ ${config.confluenceUrl ? `CONFLUENCE_OWASP_ASVS_URL=${config.confluenceUrl}` : '
           <Text marginTop={1}>Configuration saved to .env file</Text>
           <Box marginTop={2} flexDirection="column">
             <Text color="cyan">Next steps:</Text>
-            <Text dimColor> • The application will now load your credentials</Text>
+            <Text dimColor>
+              {' '}
+              • The application will now load your credentials
+            </Text>
             <Text dimColor> • You can start triaging vulnerabilities</Text>
           </Box>
           <Box marginTop={2}>

@@ -11,20 +11,20 @@
  */
 export function debounce(func, delay = 300) {
   let timeoutId;
-  
+
   const debounced = function (...args) {
     clearTimeout(timeoutId);
-    
+
     timeoutId = setTimeout(() => {
       func.apply(this, args);
     }, delay);
   };
-  
+
   // Add cancel method
   debounced.cancel = () => {
     clearTimeout(timeoutId);
   };
-  
+
   return debounced;
 }
 
@@ -37,17 +37,17 @@ export function debounce(func, delay = 300) {
 export function throttle(func, limit = 100) {
   let inThrottle;
   let lastResult;
-  
+
   return function (...args) {
     if (!inThrottle) {
       lastResult = func.apply(this, args);
       inThrottle = true;
-      
+
       setTimeout(() => {
         inThrottle = false;
       }, limit);
     }
-    
+
     return lastResult;
   };
 }
@@ -62,10 +62,10 @@ export function throttle(func, limit = 100) {
 export function debounceAsync(func, delay = 300) {
   let timeoutId;
   let pendingPromise = null;
-  
+
   return function (...args) {
     clearTimeout(timeoutId);
-    
+
     if (!pendingPromise) {
       pendingPromise = new Promise((resolve, reject) => {
         timeoutId = setTimeout(async () => {
@@ -80,7 +80,7 @@ export function debounceAsync(func, delay = 300) {
         }, delay);
       });
     }
-    
+
     return pendingPromise;
   };
 }

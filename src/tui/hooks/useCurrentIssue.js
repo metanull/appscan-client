@@ -17,7 +17,7 @@ export function useCurrentIssue() {
   const filterJira = useStore((state) => state.filterJira);
   const searchText = useStore((state) => state.searchText);
   const sortBy = useStore((state) => state.sortBy);
-  
+
   const currentIssue = useMemo(() => {
     const filteredIssues = filterIssues(issues, {
       status: filterStatus,
@@ -28,7 +28,16 @@ export function useCurrentIssue() {
       sortBy: sortBy,
     });
     return filteredIssues[listCursor] || null;
-  }, [listCursor, issues, filterStatus, filterSeverity, filterIssueType, filterJira, searchText, sortBy]);
-  
+  }, [
+    listCursor,
+    issues,
+    filterStatus,
+    filterSeverity,
+    filterIssueType,
+    filterJira,
+    searchText,
+    sortBy,
+  ]);
+
   return currentIssue;
 }

@@ -35,7 +35,11 @@ export class JiraService {
       });
 
       const builder = new JiraDescriptionBuilder(issues, baseUrl);
-      const description = builder.addSummary(null, null).addIssuesByType().addIssueIds().build();
+      const description = builder
+        .addSummary(null, null)
+        .addIssuesByType()
+        .addIssueIds()
+        .build();
 
       const jiraIssue = await this.service.client.issues.createIssue({
         fields: {
@@ -54,7 +58,9 @@ export class JiraService {
         jiraId: jiraIssue.id,
       });
 
-      logger.info('Jira issue created successfully', { jiraKey: jiraIssue.key });
+      logger.info('Jira issue created successfully', {
+        jiraKey: jiraIssue.key,
+      });
       return jiraIssue;
     } catch (error) {
       logger.error('Failed to create Jira issue', error, {
@@ -74,12 +80,16 @@ export class JiraService {
 
   async getJiraIssue(issueKey) {
     this.initialize();
-    return await this.service.client.issues.getIssue({ issueIdOrKey: issueKey });
+    return await this.service.client.issues.getIssue({
+      issueIdOrKey: issueKey,
+    });
   }
 
   async searchJiraIssues(jql) {
     this.initialize();
-    return await this.service.client.issueSearch.searchForIssuesUsingJql({ jql });
+    return await this.service.client.issueSearch.searchForIssuesUsingJql({
+      jql,
+    });
   }
 
   getJiraUrl(issueKey) {

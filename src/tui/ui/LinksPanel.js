@@ -16,7 +16,8 @@ export const LinksPanel = ({ onClose }) => {
 
   // Get current issue (selected or highlighted)
   const currentIssue =
-    selectedIssue || (filteredIssues.length > 0 ? filteredIssues[listCursor] : null);
+    selectedIssue ||
+    (filteredIssues.length > 0 ? filteredIssues[listCursor] : null);
 
   const baseUrl = 'https://cloud.appscan.com';
   const jiraHost = process.env.JIRA_HOST || null;
@@ -107,7 +108,12 @@ export const LinksPanel = ({ onClose }) => {
               <Text bold color="yellow">
                 {link.label}:
               </Text>
-              <Box marginLeft={2} borderStyle="single" borderColor="blue" paddingX={1}>
+              <Box
+                marginLeft={2}
+                borderStyle="single"
+                borderColor="blue"
+                paddingX={1}
+              >
                 <Text color="blue">{link.url}</Text>
               </Box>
             </Box>
@@ -116,7 +122,9 @@ export const LinksPanel = ({ onClose }) => {
       )}
 
       <Box marginTop={2}>
-        <Text dimColor>Press ESC or 'l' to close | Select and copy URLs from terminal</Text>
+        <Text dimColor>
+          Press ESC or 'l' to close | Select and copy URLs from terminal
+        </Text>
       </Box>
     </Box>
   );

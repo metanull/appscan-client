@@ -12,19 +12,11 @@ export const Layout = React.memo(({ header, children, footer }) => {
 
   return (
     <Box flexDirection="column" height={height}>
-      {header && (
-        <Box flexShrink={0}>
-          {header}
-        </Box>
-      )}
+      {header && <Box flexShrink={0}>{header}</Box>}
       <Box flexGrow={1} flexDirection="column">
         {children}
       </Box>
-      {footer && (
-        <Box flexShrink={0}>
-          {footer}
-        </Box>
-      )}
+      {footer && <Box flexShrink={0}>{footer}</Box>}
     </Box>
   );
 });

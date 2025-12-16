@@ -22,7 +22,10 @@ export const AppSelectionView = () => {
       <Box flexDirection="column">
         {applications.map((app, index) => (
           <Box key={app.Id}>
-            <Text color={index === listCursor ? 'cyan' : 'white'} bold={index === listCursor}>
+            <Text
+              color={index === listCursor ? 'cyan' : 'white'}
+              bold={index === listCursor}
+            >
               {index === listCursor ? '> ' : '  '}
               {app.Name}
             </Text>

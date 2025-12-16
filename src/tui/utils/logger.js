@@ -35,7 +35,8 @@ class Logger {
    */
   _format(level, message, context = {}) {
     const timestamp = new Date().toISOString();
-    const contextStr = Object.keys(context).length > 0 ? ` | ${JSON.stringify(context)}` : '';
+    const contextStr =
+      Object.keys(context).length > 0 ? ` | ${JSON.stringify(context)}` : '';
     return `[${timestamp}] [${level}]${contextStr} ${message}`;
   }
 
@@ -63,7 +64,11 @@ class Logger {
         }
       : context;
 
-    const formattedMessage = this._format(LOG_LEVELS.ERROR, message, errorDetails);
+    const formattedMessage = this._format(
+      LOG_LEVELS.ERROR,
+      message,
+      errorDetails
+    );
 
     console.error(formattedMessage);
     this._writeToFile(formattedMessage);

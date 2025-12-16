@@ -60,7 +60,10 @@ export class AppScanService {
 
   async getIssueComments(issueId) {
     await this.authenticate();
-    const response = await this.service.api.v4.Issues_GetIssueComments(issueId, {});
+    const response = await this.service.api.v4.Issues_GetIssueComments(
+      issueId,
+      {}
+    );
     return response.Items || [];
   }
 
@@ -123,7 +126,9 @@ export class AppScanService {
         result,
       });
 
-      logger.info('Issues updated successfully', { issueCount: issueIds.length });
+      logger.info('Issues updated successfully', {
+        issueCount: issueIds.length,
+      });
       return result;
     } catch (error) {
       logger.error('Failed to bulk update issues', error, {
@@ -149,7 +154,13 @@ export class AppScanService {
    * @param {Function} onProgress - Progress callback (current, total)
    * @returns {object} Summary of results
    */
-  async bulkUpdateIssuesChunked(issueIds, appId, updateData, chunkSize = 20, onProgress = null) {
+  async bulkUpdateIssuesChunked(
+    issueIds,
+    appId,
+    updateData,
+    chunkSize = 20,
+    onProgress = null
+  ) {
     await this.authenticate();
 
     logger.info('Starting chunked bulk update', {

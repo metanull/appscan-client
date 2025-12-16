@@ -5,7 +5,10 @@
 
 import React, { useEffect } from 'react';
 import { Box } from 'ink';
-import { useKeyboardManager, KeyboardMode } from '../../utils/KeyboardManager.js';
+import {
+  useKeyboardManager,
+  KeyboardMode,
+} from '../../utils/KeyboardManager.js';
 
 /**
  * Modal component

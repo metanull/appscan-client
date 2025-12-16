@@ -79,7 +79,13 @@ export const IssueDetailsView = () => {
   };
 
   return (
-    <Box flexDirection="column" padding={1} flexGrow={1} borderStyle="single" borderColor="magenta">
+    <Box
+      flexDirection="column"
+      padding={1}
+      flexGrow={1}
+      borderStyle="single"
+      borderColor="magenta"
+    >
       {/* Header */}
       <Box flexDirection="column">
         <Text bold color={getSeverityColor()}>
@@ -98,7 +104,12 @@ export const IssueDetailsView = () => {
       </Box>
 
       {/* Details Section */}
-      <Box flexDirection="column" marginTop={1} borderStyle="single" paddingX={1}>
+      <Box
+        flexDirection="column"
+        marginTop={1}
+        borderStyle="single"
+        paddingX={1}
+      >
         <Text bold color="cyan">
           📍 Location Details
         </Text>
@@ -135,7 +146,12 @@ export const IssueDetailsView = () => {
         {issue.Context && (
           <Box flexDirection="column" marginTop={1}>
             <Text dimColor>Code Context:</Text>
-            <Box marginLeft={1} borderStyle="single" borderColor="gray" paddingX={1}>
+            <Box
+              marginLeft={1}
+              borderStyle="single"
+              borderColor="gray"
+              paddingX={1}
+            >
               <Text>{issue.Context}</Text>
             </Box>
           </Box>
@@ -143,7 +159,12 @@ export const IssueDetailsView = () => {
       </Box>
 
       {/* Metadata */}
-      <Box flexDirection="column" marginTop={1} borderStyle="single" paddingX={1}>
+      <Box
+        flexDirection="column"
+        marginTop={1}
+        borderStyle="single"
+        paddingX={1}
+      >
         <Text bold color="cyan">
           📋 Metadata
         </Text>
@@ -158,7 +179,9 @@ export const IssueDetailsView = () => {
         {issue.IssueTypeId && (
           <Box>
             <Text dimColor>📚 Article: </Text>
-            <Text color="blue">https://cloud.appscan.com/main/issuedetail/{issue.IssueTypeId}</Text>
+            <Text color="blue">
+              https://cloud.appscan.com/main/issuedetail/{issue.IssueTypeId}
+            </Text>
           </Box>
         )}
 
@@ -185,7 +208,12 @@ export const IssueDetailsView = () => {
       </Box>
 
       {/* User Comments Section */}
-      <Box flexDirection="column" marginTop={1} borderStyle="single" paddingX={1}>
+      <Box
+        flexDirection="column"
+        marginTop={1}
+        borderStyle="single"
+        paddingX={1}
+      >
         <Text bold color="cyan">
           💬 User Comments
         </Text>
@@ -221,12 +249,15 @@ export const IssueDetailsView = () => {
                   <Text dimColor>Author: </Text>
                   <Text bold>{comment.Author || 'Unknown'}</Text>
                 </Box>
-                {comment.ModifiedAt && comment.ModifiedAt !== comment.CreatedAt && (
-                  <Box>
-                    <Text dimColor>Modified: </Text>
-                    <Text>{new Date(comment.ModifiedAt).toLocaleString()}</Text>
-                  </Box>
-                )}
+                {comment.ModifiedAt &&
+                  comment.ModifiedAt !== comment.CreatedAt && (
+                    <Box>
+                      <Text dimColor>Modified: </Text>
+                      <Text>
+                        {new Date(comment.ModifiedAt).toLocaleString()}
+                      </Text>
+                    </Box>
+                  )}
                 <Box marginTop={1}>
                   <Text>{comment.Comment}</Text>
                 </Box>
@@ -238,7 +269,13 @@ export const IssueDetailsView = () => {
 
       {/* Remediation Article */}
       {articleContent && (
-        <Box flexDirection="column" marginTop={1} borderStyle="single" paddingX={1} flexGrow={1}>
+        <Box
+          flexDirection="column"
+          marginTop={1}
+          borderStyle="single"
+          paddingX={1}
+          flexGrow={1}
+        >
           <Text bold color="cyan">
             📚 Remediation Article
           </Text>

@@ -25,14 +25,14 @@ export function useArticleCache(issueId, fetchFunction) {
 
       try {
         const content = await fetchFunction(id);
-        useStore.getState().setArticleCache(id, content);  // Use getState() instead of prop
+        useStore.getState().setArticleCache(id, content); // Use getState() instead of prop
       } catch (err) {
         setError(err.message || 'Failed to fetch article');
       } finally {
         setLoading(false);
       }
     }, FETCH_DEBOUNCE_DELAY),
-    [fetchFunction]  // Only depend on fetchFunction, not setArticleCache
+    [fetchFunction] // Only depend on fetchFunction, not setArticleCache
   );
 
   useEffect(() => {

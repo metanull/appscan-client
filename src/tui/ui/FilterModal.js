@@ -97,7 +97,10 @@ export const FilterModal = ({ issues, onSelect, onClose }) => {
         {step === 'severity' && (
           <Box flexDirection="column" marginTop={1}>
             <Text>Select severity:</Text>
-            <SelectInput items={SEVERITY_OPTIONS} onSelect={handleFilterSelect} />
+            <SelectInput
+              items={SEVERITY_OPTIONS}
+              onSelect={handleFilterSelect}
+            />
           </Box>
         )}
 
@@ -111,7 +114,10 @@ export const FilterModal = ({ issues, onSelect, onClose }) => {
         {step === 'issueType' && (
           <Box flexDirection="column" marginTop={1}>
             <Text>Select vulnerability type:</Text>
-            <SelectInput items={getIssueTypeOptions()} onSelect={handleFilterSelect} />
+            <SelectInput
+              items={getIssueTypeOptions()}
+              onSelect={handleFilterSelect}
+            />
           </Box>
         )}
 

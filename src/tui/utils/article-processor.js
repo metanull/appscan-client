@@ -15,13 +15,22 @@ export function sanitizeArticle(htmlContent) {
   if (!htmlContent) return '';
 
   const cleanHtml = sanitizeHtml(htmlContent, {
-    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']),
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+    ]),
     allowedAttributes: {
       a: ['href'],
     },
     disallowedTagsMode: 'discard',
     exclusiveFilter: (frame) => {
-      return frame.tag === 'img' || frame.tag === 'script' || frame.tag === 'style';
+      return (
+        frame.tag === 'img' || frame.tag === 'script' || frame.tag === 'style'
+      );
     },
   });
 

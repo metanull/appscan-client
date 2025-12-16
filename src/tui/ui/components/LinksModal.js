@@ -9,11 +9,7 @@ import Link from 'ink-link';
 import { Modal } from './Modal.js';
 import { Panel } from './Panel.js';
 
-export const LinksModal = React.memo(({ 
-  issue,
-  config,
-  onClose 
-}) => {
+export const LinksModal = React.memo(({ issue, config, onClose }) => {
   const [cursor, setCursor] = useState(0);
 
   if (!issue) {
@@ -22,7 +18,7 @@ export const LinksModal = React.memo(({
 
   // Generate links
   const links = [];
-  
+
   // AppScan issue link
   if (config?.asocApiUrl && issue.Id) {
     const baseUrl = config.asocApiUrl.replace('/api/v4', '');
@@ -55,12 +51,12 @@ export const LinksModal = React.memo(({
     }
 
     if (key.upArrow) {
-      setCursor(prev => Math.max(0, prev - 1));
+      setCursor((prev) => Math.max(0, prev - 1));
       return;
     }
 
     if (key.downArrow) {
-      setCursor(prev => Math.min(links.length - 1, prev + 1));
+      setCursor((prev) => Math.min(links.length - 1, prev + 1));
       return;
     }
   });
@@ -85,11 +81,14 @@ export const LinksModal = React.memo(({
       <Panel title="Links" borderColor="cyan">
         <Box flexDirection="column">
           <Text dimColor>Click a link to open in browser:</Text>
-          
+
           <Box flexDirection="column" marginTop={1}>
             {links.map((link, index) => (
               <Box key={index} marginY={0}>
-                <Text color={cursor === index ? 'cyan' : undefined} bold={cursor === index}>
+                <Text
+                  color={cursor === index ? 'cyan' : undefined}
+                  bold={cursor === index}
+                >
                   {cursor === index ? '▶ ' : '  '}
                 </Text>
                 <Link url={link.url}>

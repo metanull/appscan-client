@@ -24,7 +24,11 @@ describe('AuditService', () => {
   });
 
   it('should log audit entries', () => {
-    const entry = auditService.log('TEST_ACTION', { key: 'value' }, { success: true });
+    const entry = auditService.log(
+      'TEST_ACTION',
+      { key: 'value' },
+      { success: true }
+    );
 
     expect(entry.action).toBe('TEST_ACTION');
     expect(entry.params.key).toBe('value');
@@ -33,7 +37,10 @@ describe('AuditService', () => {
   });
 
   it('should sanitize sensitive parameters', () => {
-    const entry = auditService.log('TEST_ACTION', { password: 'secret123', token: 'abc' });
+    const entry = auditService.log('TEST_ACTION', {
+      password: 'secret123',
+      token: 'abc',
+    });
 
     expect(entry.params.password).toBe('***REDACTED***');
     expect(entry.params.token).toBe('***REDACTED***');
@@ -66,7 +73,9 @@ describe('AuditService', () => {
   });
 
   it('should log Jira link', () => {
-    const entry = auditService.logJiraLink('issue1', 'app123', 'PROJ-123', { success: true });
+    const entry = auditService.logJiraLink('issue1', 'app123', 'PROJ-123', {
+      success: true,
+    });
 
     expect(entry.action).toBe('JIRA_LINK');
     expect(entry.params.issueId).toBe('issue1');

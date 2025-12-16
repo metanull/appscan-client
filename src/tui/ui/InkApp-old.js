@@ -27,7 +27,10 @@ import { JiraService } from '../services/jira.js';
 import { processArticle } from '../utils/article-processor.js';
 import { groupIssuesBy } from '../utils/issue-utils.js';
 import { SetupWizard } from './SetupWizard.js';
-import { useKeyboardShortcuts, useKeyboardManager } from '../utils/KeyboardManager.js';
+import {
+  useKeyboardShortcuts,
+  useKeyboardManager,
+} from '../utils/KeyboardManager.js';
 import logger from '../utils/logger.js';
 import { auditService } from '../utils/audit.js';
 
@@ -35,7 +38,9 @@ export const InkApp = ({ configPath }) => {
   const { exit } = useApp();
   const { throttle } = useKeyboardManager();
   const [appScanService] = useState(() => new AppScanService(configPath));
-  const [jiraService] = useState(() => new JiraService(appScanService.getConfig()));
+  const [jiraService] = useState(
+    () => new JiraService(appScanService.getConfig())
+  );
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
@@ -43,7 +48,11 @@ export const InkApp = ({ configPath }) => {
   const [showSetup, setShowSetup] = useState(false);
   const [showLinksPanel, setShowLinksPanel] = useState(false);
   const [showProgressModal, setShowProgressModal] = useState(false);
-  const [progressState, setProgressState] = useState({ current: 0, total: 0, message: '' });
+  const [progressState, setProgressState] = useState({
+    current: 0,
+    total: 0,
+    message: '',
+  });
 
   // Refs to prevent concurrent API calls and rapid navigation
   const loadingRef = useRef(false);
@@ -139,7 +148,10 @@ export const InkApp = ({ configPath }) => {
     try {
       loadingRef.current = true;
       setLoading(true);
-      logger.info('Loading scans for application', { appId: app.Id, appName: app.Name });
+      logger.info('Loading scans for application', {
+        appId: app.Id,
+        appName: app.Name,
+      });
       const scanList = await appScanService.listScans(app.Id);
       setScans(scanList);
       setView('scan-selection');
@@ -170,7 +182,8 @@ export const InkApp = ({ configPath }) => {
     }
 
     const filteredScans = getFilteredScans();
-    const selectedScanItem = scan || (filteredScans.length > 0 ? filteredScans[listCursor] : null);
+    const selectedScanItem =
+      scan || (filteredScans.length > 0 ? filteredScans[listCursor] : null);
     if (!selectedScanItem) return;
 
     setSelectedScan(selectedScanItem);
@@ -190,7 +203,9 @@ export const InkApp = ({ configPath }) => {
       setLoading(false);
       loadingRef.current = false;
     } catch (error) {
-      logger.error('Failed to load issues', error, { scanId: selectedScanItem.Id });
+      logger.error('Failed to load issues', error, {
+        scanId: selectedScanItem.Id,
+      });
       setError(error.message);
       setLoading(false);
       loadingRef.current = false;
@@ -238,7 +253,9 @@ export const InkApp = ({ configPath }) => {
       setLoading(false);
       loadingRef.current = false;
     } catch (error) {
-      logger.error('Failed to load issue details', error, { issueId: issue.Id });
+      logger.error('Failed to load issue details', error, {
+        issueId: issue.Id,
+      });
       setError(error.message);
       setLoading(false);
       loadingRef.current = false;
@@ -247,7 +264,9 @@ export const InkApp = ({ configPath }) => {
 
   const handleOpenUpdateModal = () => {
     if (!selectedIssueIds || selectedIssueIds.length === 0) {
-      setError('No issues selected. Use Space to select vulnerabilities before updating.');
+      setError(
+        'No issues selected. Use Space to select vulnerabilities before updating.'
+      );
       return;
     }
     setShowUpdateModal(true);
@@ -255,7 +274,9 @@ export const InkApp = ({ configPath }) => {
 
   const handleOpenCreateJiraModal = () => {
     if (!jiraService.isConfigured()) {
-      setError('Jira is not configured. Please set JIRA_HOST, JIRA_EMAIL, and JIRA_API_TOKEN.');
+      setError(
+        'Jira is not configured. Please set JIRA_HOST, JIRA_EMAIL, and JIRA_API_TOKEN.'
+      );
       return;
     }
     setShowCreateJiraModal(true);
@@ -350,7 +371,9 @@ export const InkApp = ({ configPath }) => {
         setShowProgressModal(false);
 
         if (errors.length > 0) {
-          setError(`Updated issues, but ${errors.length} chunk(s) failed. Check logs for details.`);
+          setError(
+            `Updated issues, but ${errors.length} chunk(s) failed. Check logs for details.`
+          );
         }
 
         // Refresh issues
@@ -386,10 +409,14 @@ export const InkApp = ({ configPath }) => {
         for (const issue of group.issues) {
           try {
             const appId = issue.ApplicationId;
-            await appScanService.updateIssue(issue.Id, appId, { ExternalId: jiraKey });
+            await appScanService.updateIssue(issue.Id, appId, {
+              ExternalId: jiraKey,
+            });
 
             // Audit the link
-            auditService.logJiraLink(issue.Id, appId, jiraKey, { success: true });
+            auditService.logJiraLink(issue.Id, appId, jiraKey, {
+              success: true,
+            });
           } catch (updateError) {
             logger.error('Failed to link issue to Jira', updateError, {
               issueId: issue.Id,
@@ -402,12 +429,18 @@ export const InkApp = ({ configPath }) => {
               error: updateError.message,
             });
 
-            errors.push(`Failed to link issue ${issue.Id} to ${jiraKey}: ${updateError.message}`);
+            errors.push(
+              `Failed to link issue ${issue.Id} to ${jiraKey}: ${updateError.message}`
+            );
           }
         }
       } catch (createError) {
-        logger.error('Failed to create Jira issue', createError, { groupName: group.name });
-        errors.push(`Failed to create Jira for ${group.name}: ${createError.message}`);
+        logger.error('Failed to create Jira issue', createError, {
+          groupName: group.name,
+        });
+        errors.push(
+          `Failed to create Jira for ${group.name}: ${createError.message}`
+        );
       }
     }
 
@@ -505,7 +538,12 @@ export const InkApp = ({ configPath }) => {
         }
 
         // Backspace navigation
-        if (key.backspace || input === 'b' || input === '\u007F' || input === '\b') {
+        if (
+          key.backspace ||
+          input === 'b' ||
+          input === '\u007F' ||
+          input === '\b'
+        ) {
           goBack();
           return true;
         }
@@ -706,7 +744,12 @@ export const InkApp = ({ configPath }) => {
           alignItems="center"
         >
           {/* Background overlay - blocks content behind modal */}
-          <Box position="absolute" width="100%" height="100%" backgroundColor="black" />
+          <Box
+            position="absolute"
+            width="100%"
+            height="100%"
+            backgroundColor="black"
+          />
 
           {/* Modal content on top */}
           {showHelp && <HelpPanel />}
@@ -754,12 +797,16 @@ export const InkApp = ({ configPath }) => {
             <SetupWizard
               onComplete={() => {
                 setShowSetup(false);
-                setError('Configuration saved. Please restart the application to apply changes.');
+                setError(
+                  'Configuration saved. Please restart the application to apply changes.'
+                );
               }}
               onCancel={() => setShowSetup(false)}
             />
           )}
-          {showLinksPanel && <LinksPanel onClose={() => setShowLinksPanel(false)} />}
+          {showLinksPanel && (
+            <LinksPanel onClose={() => setShowLinksPanel(false)} />
+          )}
           {showProgressModal && (
             <ProgressModal
               title="Updating Issues"

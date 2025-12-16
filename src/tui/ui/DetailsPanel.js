@@ -110,7 +110,13 @@ export const DetailsPanel = () => {
   };
 
   return (
-    <Box flexDirection="column" borderStyle="single" borderColor="magenta" paddingX={1} width="30%">
+    <Box
+      flexDirection="column"
+      borderStyle="single"
+      borderColor="magenta"
+      paddingX={1}
+      width="30%"
+    >
       <Text bold color="magenta">
         📖 Details
       </Text>
@@ -192,7 +198,13 @@ export const DetailsPanel = () => {
         {issue.Context && (
           <Box flexDirection="column" marginTop={1}>
             <Text dimColor>Code:</Text>
-            <Box marginLeft={1} borderStyle="single" borderColor="gray" paddingX={1} paddingY={1}>
+            <Box
+              marginLeft={1}
+              borderStyle="single"
+              borderColor="gray"
+              paddingX={1}
+              paddingY={1}
+            >
               <Text>{truncate(issue.Context, 150)}</Text>
             </Box>
           </Box>
@@ -208,7 +220,9 @@ export const DetailsPanel = () => {
         {issue.IssueTypeId && (
           <Box marginTop={1}>
             <Text dimColor>📚 Article: </Text>
-            <Text color="blue">https://cloud.appscan.com/main/issuedetail/{issue.IssueTypeId}</Text>
+            <Text color="blue">
+              https://cloud.appscan.com/main/issuedetail/{issue.IssueTypeId}
+            </Text>
           </Box>
         )}
 
@@ -247,7 +261,9 @@ export const DetailsPanel = () => {
           💬 User Comments
         </Text>
         {loadingComments && <Text dimColor>Loading...</Text>}
-        {!loadingComments && comments.length === 0 && <Text dimColor>No comments</Text>}
+        {!loadingComments && comments.length === 0 && (
+          <Text dimColor>No comments</Text>
+        )}
         {!loadingComments && comments.length > 0 && (
           <Box flexDirection="column">
             {comments.map((comment, index) => (

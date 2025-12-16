@@ -44,7 +44,10 @@ export const ScanSelectionView = () => {
 
           return (
             <Box key={scan.Id}>
-              <Text color={index === listCursor ? 'cyan' : 'white'} bold={index === listCursor}>
+              <Text
+                color={index === listCursor ? 'cyan' : 'white'}
+                bold={index === listCursor}
+              >
                 {index === listCursor ? '> ' : '  '}
                 {scan.Name}
               </Text>

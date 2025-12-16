@@ -24,7 +24,10 @@ export const VulnList = () => {
   const stats = useMemo(() => calculateStats(filteredIssues), [filteredIssues]);
 
   // Group issues for summary
-  const groups = useMemo(() => groupIssuesBy(filteredIssues, 'IssueType'), [filteredIssues]);
+  const groups = useMemo(
+    () => groupIssuesBy(filteredIssues, 'IssueType'),
+    [filteredIssues]
+  );
 
   // Virtual scrolling - show only visible items
   const visibleCount = 25;
@@ -33,7 +36,13 @@ export const VulnList = () => {
   const visibleIssues = filteredIssues.slice(startIndex, endIndex);
 
   return (
-    <Box flexDirection="column" borderStyle="single" borderColor="green" paddingX={1} flexGrow={1}>
+    <Box
+      flexDirection="column"
+      borderStyle="single"
+      borderColor="green"
+      paddingX={1}
+      flexGrow={1}
+    >
       <Box flexDirection="column">
         <Text bold color="green">
           🔍 Vulnerabilities
@@ -43,11 +52,15 @@ export const VulnList = () => {
         <Box marginTop={1}>
           <Text dimColor>Total: {stats.total}</Text>
           {stats.Critical > 0 && <Text> | </Text>}
-          {stats.Critical > 0 && <Text color="redBright">Critical: {stats.Critical}</Text>}
+          {stats.Critical > 0 && (
+            <Text color="redBright">Critical: {stats.Critical}</Text>
+          )}
           {stats.High > 0 && <Text> | </Text>}
           {stats.High > 0 && <Text color="red">High: {stats.High}</Text>}
           {stats.Medium > 0 && <Text> | </Text>}
-          {stats.Medium > 0 && <Text color="yellow">Medium: {stats.Medium}</Text>}
+          {stats.Medium > 0 && (
+            <Text color="yellow">Medium: {stats.Medium}</Text>
+          )}
           {stats.Low > 0 && <Text> | </Text>}
           {stats.Low > 0 && <Text color="blue">Low: {stats.Low}</Text>}
         </Box>
@@ -77,7 +90,9 @@ export const VulnList = () => {
               <Text dimColor> ({group.issues.length})</Text>
             </Box>
           ))}
-          {groups.length > 5 && <Text dimColor>... and {groups.length - 5} more</Text>}
+          {groups.length > 5 && (
+            <Text dimColor>... and {groups.length - 5} more</Text>
+          )}
         </Box>
       </Box>
 
@@ -99,9 +114,13 @@ export const VulnList = () => {
                 />
               );
             })}
-            {startIndex > 0 && <Text dimColor>... {startIndex} more above</Text>}
+            {startIndex > 0 && (
+              <Text dimColor>... {startIndex} more above</Text>
+            )}
             {endIndex < filteredIssues.length && (
-              <Text dimColor>... {filteredIssues.length - endIndex} more below</Text>
+              <Text dimColor>
+                ... {filteredIssues.length - endIndex} more below
+              </Text>
             )}
           </>
         )}

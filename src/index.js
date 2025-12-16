@@ -20,8 +20,8 @@ const args = process.argv.slice(2);
 // Determine if we should launch TUI or CLI
 // No args or 'triage' command → launches TUI
 // Other commands → handled by CLI
-const shouldLaunchTUI = 
-  args.length === 0 || 
+const shouldLaunchTUI =
+  args.length === 0 ||
   args[0] === 'triage' ||
   (args[0] === '--help' && args.length === 1) ||
   (args[0] === '-h' && args.length === 1);
@@ -29,11 +29,15 @@ const shouldLaunchTUI =
 if (shouldLaunchTUI && args[0] !== '--help' && args[0] !== '-h') {
   // Launch TUI
   const { launchTUI } = await import('./tui/tui-entry.js');
-  
+
   // Pass config option if provided
-  const configIndex = args.indexOf('--config') !== -1 ? args.indexOf('--config') : args.indexOf('-c');
-  const config = configIndex !== -1 && args[configIndex + 1] ? args[configIndex + 1] : null;
-  
+  const configIndex =
+    args.indexOf('--config') !== -1
+      ? args.indexOf('--config')
+      : args.indexOf('-c');
+  const config =
+    configIndex !== -1 && args[configIndex + 1] ? args[configIndex + 1] : null;
+
   await launchTUI({ config });
 } else {
   // Launch CLI

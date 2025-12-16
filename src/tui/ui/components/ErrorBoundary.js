@@ -26,7 +26,12 @@ export class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <Box flexDirection="column" padding={2} borderStyle="round" borderColor="red">
+        <Box
+          flexDirection="column"
+          padding={2}
+          borderStyle="round"
+          borderColor="red"
+        >
           <Text bold color="red">
             ❌ Application Error
           </Text>

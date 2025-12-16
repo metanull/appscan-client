@@ -39,7 +39,9 @@ export function groupIssuesBy(issues, property = 'IssueType') {
 
   // Sort groups by severity
   return Object.values(grouped).sort((a, b) => {
-    return (SEVERITY_ORDER[b.severity] || 0) - (SEVERITY_ORDER[a.severity] || 0);
+    return (
+      (SEVERITY_ORDER[b.severity] || 0) - (SEVERITY_ORDER[a.severity] || 0)
+    );
   });
 }
 
@@ -113,7 +115,7 @@ export function filterIssues(issues, filters = {}) {
     issueType,
     jira,
     searchText,
-    sortBy = 'severity'
+    sortBy = 'severity',
   } = filters;
 
   let filtered = [...issues];
@@ -131,9 +133,13 @@ export function filterIssues(issues, filters = {}) {
   }
 
   if (jira === 'with') {
-    filtered = filtered.filter((i) => i.ExternalId && i.ExternalId.trim() !== '');
+    filtered = filtered.filter(
+      (i) => i.ExternalId && i.ExternalId.trim() !== ''
+    );
   } else if (jira === 'without') {
-    filtered = filtered.filter((i) => !i.ExternalId || i.ExternalId.trim() === '');
+    filtered = filtered.filter(
+      (i) => !i.ExternalId || i.ExternalId.trim() === ''
+    );
   }
 
   if (searchText) {
@@ -148,7 +154,13 @@ export function filterIssues(issues, filters = {}) {
 
   // Apply sorting
   // Use local severity order to match AppContext logic (0 is highest priority)
-  const severityOrder = { Critical: 0, High: 1, Medium: 2, Low: 3, Informational: 4 };
+  const severityOrder = {
+    Critical: 0,
+    High: 1,
+    Medium: 2,
+    Low: 3,
+    Informational: 4,
+  };
 
   if (sortBy === 'severity') {
     filtered.sort((a, b) => {
@@ -172,7 +184,6 @@ export function filterIssues(issues, filters = {}) {
 
   return filtered;
 }
-
 
 /**
  * Get status badge text

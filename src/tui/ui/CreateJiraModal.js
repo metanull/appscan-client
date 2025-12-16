@@ -16,7 +16,12 @@ const GROUP_OPTIONS = [
   { label: 'None (one issue per vulnerability)', value: 'none' },
 ];
 
-export const CreateJiraModal = ({ issues, defaultProjectKey, onCreate, onClose }) => {
+export const CreateJiraModal = ({
+  issues,
+  defaultProjectKey,
+  onCreate,
+  onClose,
+}) => {
   const [step, setStep] = useState('project'); // 'project' | 'groupBy' | 'creating' | 'success'
   const [projectKey, setProjectKey] = useState(defaultProjectKey || '');
   const [groupBy, setGroupBy] = useState('type');
@@ -99,14 +104,14 @@ export const CreateJiraModal = ({ issues, defaultProjectKey, onCreate, onClose }
             <Text>Group issues by:</Text>
             <Text dimColor>Will create {getGroupCount()} Jira issue(s)</Text>
             <SelectInput items={GROUP_OPTIONS} onSelect={handleGroupBySelect} />
-        </Box>
-      )}
+          </Box>
+        )}
 
-      {step === 'creating' && (
-        <Box marginTop={1}>
-          <Text color="yellow">⏳ Creating Jira issues...</Text>
-        </Box>
-      )}
+        {step === 'creating' && (
+          <Box marginTop={1}>
+            <Text color="yellow">⏳ Creating Jira issues...</Text>
+          </Box>
+        )}
 
         {step === 'success' && (
           <Box marginTop={1}>

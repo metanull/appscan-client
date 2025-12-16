@@ -43,7 +43,9 @@ export const HelpModal = React.memo(({ onClose }) => {
           {SHORTCUTS.map(({ key, description }) => (
             <Box key={key} marginY={0}>
               <Box width={20}>
-                <Text bold color="cyan">{key}</Text>
+                <Text bold color="cyan">
+                  {key}
+                </Text>
               </Box>
               <Text>{description}</Text>
             </Box>

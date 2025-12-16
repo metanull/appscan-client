@@ -63,21 +63,26 @@ const VulnRow = React.memo(({ issue, isSelected }) => {
   const status = issue.Status || 'Unknown';
   const type = issue.IssueType || 'Unknown';
 
-  const severityColor = {
-    Critical: 'red',
-    High: 'red',
-    Medium: 'yellow',
-    Low: 'blue',
-    Informational: 'gray',
-  }[severity] || 'white';
+  const severityColor =
+    {
+      Critical: 'red',
+      High: 'red',
+      Medium: 'yellow',
+      Low: 'blue',
+      Informational: 'gray',
+    }[severity] || 'white';
 
   return (
     <Box>
       <Box width={3}>
-        <Text color={isSelected ? 'cyan' : undefined}>{isSelected ? '▶' : ' '}</Text>
+        <Text color={isSelected ? 'cyan' : undefined}>
+          {isSelected ? '▶' : ' '}
+        </Text>
       </Box>
       <Box width={12}>
-        <Text color={severityColor} bold={isSelected}>{severity}</Text>
+        <Text color={severityColor} bold={isSelected}>
+          {severity}
+        </Text>
       </Box>
       <Box width={15}>
         <Text color={isSelected ? 'cyan' : undefined}>{status}</Text>
@@ -95,23 +100,29 @@ VulnRow.displayName = 'VulnRow';
 /**
  * Vulnerability List Panel
  */
-const VulnListPanel = React.memo(({ issues, cursor, onCursorChange: _onCursorChange, height }) => {
-  const renderItem = useCallback((issue, isSelected) => {
-    return <VulnRow issue={issue} isSelected={isSelected} />;
-  }, []);
+const VulnListPanel = React.memo(
+  ({ issues, cursor, onCursorChange: _onCursorChange, height }) => {
+    const renderItem = useCallback((issue, isSelected) => {
+      return <VulnRow issue={issue} isSelected={isSelected} />;
+    }, []);
 
-  return (
-    <Panel title={`Vulnerabilities (${issues.length})`} borderColor="cyan" flexGrow={1}>
-      <ScrollableList
-        items={issues}
-        cursor={cursor}
-        renderItem={renderItem}
-        visibleRows={height - 5}
-        emptyMessage="No vulnerabilities found"
-      />
-    </Panel>
-  );
-});
+    return (
+      <Panel
+        title={`Vulnerabilities (${issues.length})`}
+        borderColor="cyan"
+        flexGrow={1}
+      >
+        <ScrollableList
+          items={issues}
+          cursor={cursor}
+          renderItem={renderItem}
+          visibleRows={height - 5}
+          emptyMessage="No vulnerabilities found"
+        />
+      </Panel>
+    );
+  }
+);
 VulnListPanel.displayName = 'VulnListPanel';
 
 /**
@@ -129,11 +140,19 @@ const DetailsPreviewPanel = React.memo(({ issue, articleContent, loading }) => {
   return (
     <Panel title="Details" borderColor="magenta" width={40}>
       <Box flexDirection="column">
-        <Text><Text bold>Type:</Text> {issue.IssueType || 'N/A'}</Text>
-        <Text><Text bold>Severity:</Text> {issue.Severity || 'N/A'}</Text>
-        <Text><Text bold>Status:</Text> {issue.Status || 'N/A'}</Text>
+        <Text>
+          <Text bold>Type:</Text> {issue.IssueType || 'N/A'}
+        </Text>
+        <Text>
+          <Text bold>Severity:</Text> {issue.Severity || 'N/A'}
+        </Text>
+        <Text>
+          <Text bold>Status:</Text> {issue.Status || 'N/A'}
+        </Text>
         {issue.Location && (
-          <Text wrap="truncate"><Text bold>Location:</Text> {issue.Location}</Text>
+          <Text wrap="truncate">
+            <Text bold>Location:</Text> {issue.Location}
+          </Text>
         )}
         {loading && (
           <Box marginTop={1}>
@@ -188,7 +207,9 @@ export const InkApp = ({ configPath }) => {
 
   // Services
   const [appScanService] = useState(() => new AppScanService(configPath));
-  const [jiraService] = useState(() => new JiraService(appScanService.getConfig()));
+  const [jiraService] = useState(
+    () => new JiraService(appScanService.getConfig())
+  );
 
   // Zustand state - ONLY subscribe to data, never to setters
   const selectedApp = useStore((state) => state.selectedApp);
@@ -208,7 +229,7 @@ export const InkApp = ({ configPath }) => {
   const filterJira = useStore((state) => state.filterJira);
   const searchText = useStore((state) => state.searchText);
   const sortBy = useStore((state) => state.sortBy);
-  
+
   // Local UI state
   const [showContextPane, setShowContextPane] = useState(true);
   const [activeModal, setActiveModal] = useState(null); // null | 'app' | 'scan' | 'filter' | 'search' | 'help' | etc.
@@ -216,7 +237,7 @@ export const InkApp = ({ configPath }) => {
   // Load applications on mount - runs once
   const hasLoadedApps = useRef(false);
   React.useEffect(() => {
-    if (hasLoadedApps.current) return;  // Guard against double-mounting
+    if (hasLoadedApps.current) return; // Guard against double-mounting
     hasLoadedApps.current = true;
 
     const loadApps = async () => {
@@ -252,7 +273,11 @@ export const InkApp = ({ configPath }) => {
   // Only watch applications and view - NOT activeModal to avoid circular dependency
   const hasOpenedAppModal = useRef(false);
   React.useEffect(() => {
-    if (view === 'app-selection' && applications.length > 0 && !hasOpenedAppModal.current) {
+    if (
+      view === 'app-selection' &&
+      applications.length > 0 &&
+      !hasOpenedAppModal.current
+    ) {
       hasOpenedAppModal.current = true;
       setActiveModal('app');
     }
@@ -262,10 +287,13 @@ export const InkApp = ({ configPath }) => {
   const currentIssue = useCurrentIssue();
   const { content: articleContent, loading: articleLoading } = useArticleCache(
     currentIssue?.Id,
-    useCallback(async (id) => {
-      const article = await appScanService.getArticle(id);
-      return article;
-    }, [appScanService])
+    useCallback(
+      async (id) => {
+        const article = await appScanService.getArticle(id);
+        return article;
+      },
+      [appScanService]
+    )
   );
 
   // Filtered issues - build from individual filter state
@@ -278,7 +306,15 @@ export const InkApp = ({ configPath }) => {
       searchText: searchText,
       sortBy: sortBy,
     });
-  }, [issues, filterStatus, filterSeverity, filterIssueType, filterJira, searchText, sortBy]);
+  }, [
+    issues,
+    filterStatus,
+    filterSeverity,
+    filterIssueType,
+    filterJira,
+    searchText,
+    sortBy,
+  ]);
 
   // Throttled cursor movement
   const pendingCursorMove = useRef(0);
@@ -292,13 +328,16 @@ export const InkApp = ({ configPath }) => {
       const delta = pendingCursorMove.current;
       if (delta !== 0) {
         pendingCursorMove.current = 0;
-        
+
         const currentCursor = useStore.getState().listCursor;
         const maxCursor = filteredIssuesLength - 1;
-        const newCursor = Math.min(maxCursor, Math.max(0, currentCursor + delta));
-        
+        const newCursor = Math.min(
+          maxCursor,
+          Math.max(0, currentCursor + delta)
+        );
+
         if (newCursor !== currentCursor) {
-          useStore.getState().setListCursor(newCursor);  // Use getState() instead of prop
+          useStore.getState().setListCursor(newCursor); // Use getState() instead of prop
         }
       }
       flushTimeout.current = null;
@@ -398,7 +437,9 @@ export const InkApp = ({ configPath }) => {
     >
       <Box flexDirection="row" height={height - 2}>
         {/* Context Pane */}
-        {showContextPane && <ContextPane app={selectedApp} scan={selectedScan} />}
+        {showContextPane && (
+          <ContextPane app={selectedApp} scan={selectedScan} />
+        )}
 
         {/* Vulnerability List */}
         <VulnListPanel
@@ -416,7 +457,9 @@ export const InkApp = ({ configPath }) => {
       </Box>
 
       {/* Modals */}
-      {activeModal === 'help' && <HelpModal onClose={() => setActiveModal(null)} />}
+      {activeModal === 'help' && (
+        <HelpModal onClose={() => setActiveModal(null)} />
+      )}
       {activeModal === 'app' && (
         <AppSelectionModal
           applications={applications}
@@ -426,14 +469,20 @@ export const InkApp = ({ configPath }) => {
             setActiveModal(null);
             try {
               useStore.getState().setLoading(true);
-              logger.info('Loading scans for application', { appId: app.Id, appName: app.Name });
+              logger.info('Loading scans for application', {
+                appId: app.Id,
+                appName: app.Name,
+              });
               const scanList = await appScanService.listScans(app.Id);
               useStore.getState().setScans(scanList);
               // Auto-open scan modal if there are scans
               if (scanList && scanList.length > 0) {
                 setActiveModal('scan');
                 // Log a sample scan to inspect fields
-                logger.debug('Sample scan fields', { sample: scanList[0], keys: Object.keys(scanList[0] || {}).slice(0,20) });
+                logger.debug('Sample scan fields', {
+                  sample: scanList[0],
+                  keys: Object.keys(scanList[0] || {}).slice(0, 20),
+                });
               }
               useStore.getState().setLoading(false);
             } catch (err) {
@@ -459,10 +508,14 @@ export const InkApp = ({ configPath }) => {
         <FilterModal
           issues={filteredIssues}
           onSelect={(filterType, value) => {
-            if (filterType === 'status') useStore.getState().setFilterStatus(value);
-            else if (filterType === 'severity') useStore.getState().setFilterSeverity(value);
-            else if (filterType === 'type') useStore.getState().setFilterIssueType(value);
-            else if (filterType === 'jira') useStore.getState().setFilterJira(value);
+            if (filterType === 'status')
+              useStore.getState().setFilterStatus(value);
+            else if (filterType === 'severity')
+              useStore.getState().setFilterSeverity(value);
+            else if (filterType === 'type')
+              useStore.getState().setFilterIssueType(value);
+            else if (filterType === 'jira')
+              useStore.getState().setFilterJira(value);
           }}
           onClose={() => setActiveModal(null)}
         />
@@ -486,7 +539,11 @@ export const InkApp = ({ configPath }) => {
           issueCount={1}
           issues={[currentIssue]}
           onUpdate={async (status, comment) => {
-            await appScanService.updateIssueStatus(currentIssue.Id, status, comment);
+            await appScanService.updateIssueStatus(
+              currentIssue.Id,
+              status,
+              comment
+            );
             logger.info('Status updated');
             setActiveModal(null);
           }}
