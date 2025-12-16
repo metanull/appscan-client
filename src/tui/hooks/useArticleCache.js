@@ -3,7 +3,7 @@
  * Prevents excessive API calls during rapid cursor movement
  */
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useStore } from '../state/AppContext.js';
 import { debounce } from '../../utils/debounce.js';
 
@@ -15,7 +15,6 @@ export function useArticleCache(issueId, fetchFunction) {
   const setArticleCache = useStore((state) => state.setArticleCache);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const fetchRef = useRef(null);
 
   // Create debounced fetch function
   const debouncedFetch = useCallback(

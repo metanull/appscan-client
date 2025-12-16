@@ -1,7 +1,7 @@
 import chalk from 'chalk';
-import { AppScanService } from '../services/appscan-service.js';
-import { JiraService } from '../services/jira-service.js';
-import { Config } from '../utils/config.js';
+import { AppScanService } from '../../services/appscan-service.js';
+import { JiraService } from '../../services/jira-service.js';
+import { Config } from '../../utils/config.js';
 
 const severityOrder = {
   Critical: 5,

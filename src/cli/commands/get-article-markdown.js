@@ -1,5 +1,5 @@
-import { AppScanService } from '../services/appscan-service.js';
-import { Config } from '../utils/config.js';
+import { AppScanService } from '../../services/appscan-service.js';
+import { Config } from '../../utils/config.js';
 import TurndownService from 'turndown';
 import fs from 'fs';
 

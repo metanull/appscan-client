@@ -1,6 +1,6 @@
 import chalk from 'chalk';
-import { AppScanService } from '../services/appscan-service.js';
-import { Config } from '../utils/config.js';
+import { AppScanService } from '../../services/appscan-service.js';
+import { Config } from '../../utils/config.js';
 
 function normalizeScanType(tech) {
   const lower = (tech || '').toLowerCase();

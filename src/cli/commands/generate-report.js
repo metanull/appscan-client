@@ -1,8 +1,8 @@
 import chalk from 'chalk';
-import { AppScanService } from '../services/appscan-service.js';
-import { Config } from '../utils/config.js';
-import { MarkdownReportGenerator } from '../reports/markdown-report.js';
-import { HtmlReportGenerator } from '../reports/html-report.js';
+import { AppScanService } from '../../services/appscan-service.js';
+import { Config } from '../../utils/config.js';
+import { MarkdownReportGenerator } from '../../reports/markdown-report.js';
+import { HtmlReportGenerator } from '../../reports/html-report.js';
 import fs from 'fs';
 import path from 'path';
 

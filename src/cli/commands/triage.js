@@ -1,8 +1,8 @@
 import chalk from 'chalk';
 import { confirm } from '@inquirer/prompts';
-import { AppScanService } from '../services/appscan-service.js';
-import { JiraService } from '../services/jira-service.js';
-import { Config } from '../utils/config.js';
+import { AppScanService } from '../../services/appscan-service.js';
+import { JiraService } from '../../services/jira-service.js';
+import { Config } from '../../utils/config.js';
 import {
   groupIssuesByType,
   displayGroupedSummary,
@@ -17,7 +17,7 @@ import {
   displayError,
   displayInfo,
   calculateIssueStats,
-} from '../utils/triage-ui.js';
+} from '../../utils/triage-ui.js';
 
 /**
  * Create JIRA issue for vulnerabilities (extracted to avoid duplication)
@@ -41,7 +41,7 @@ async function createJiraIssueForVulnerabilities(
   const summary = `[Security] ${scanName} - ${mediumOrHigher.length} vulnerabilities (C:${stats.Critical} H:${stats.High} M:${stats.Medium})`;
 
   // Build compact JIRA description to avoid 32KB limit
-  const { convertToAbsoluteUrl } = await import('../utils/url-converter.js');
+  const { convertToAbsoluteUrl } = await import('../../utils/url-converter.js');
 
   let description = `## Summary\n`;
   description += `- Total: ${mediumOrHigher.length} vulnerabilities\n`;
@@ -454,7 +454,7 @@ export async function triage(options) {
                   try {
                     const article = await service.getArticle(issueId);
                     const { displayIssueDetails } =
-                      await import('../utils/triage-ui.js');
+                      await import('../../utils/triage-ui.js');
                     displayIssueDetails(issue, article, baseUrl);
                   } catch (error) {
                     console.error(

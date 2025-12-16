@@ -1,10 +1,10 @@
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
-import { AppScanService } from '../services/appscan-service.js';
-import { Config } from '../utils/config.js';
-import { MarkdownReportGenerator } from '../reports/markdown-report.js';
-import { HtmlReportGenerator } from '../reports/html-report.js';
+import { AppScanService } from '../../services/appscan-service.js';
+import { Config } from '../../utils/config.js';
+import { MarkdownReportGenerator } from '../../reports/markdown-report.js';
+import { HtmlReportGenerator } from '../../reports/html-report.js';
 
 const DEFAULT_OUTPUT_DIR = './reports';
 

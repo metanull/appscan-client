@@ -1,19 +1,19 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { AppScanService } from '../services/appscan-service.js';
-import { JiraService } from '../services/jira-service.js';
-import { Config } from '../utils/config.js';
-import { QueryBuilder } from '../utils/query-builder.js';
-import { FilterParser } from '../utils/filter-parser.js';
-import { Formatter } from '../utils/formatter.js';
-import { JiraDescriptionBuilder } from '../utils/jira-description-builder.js';
+import { AppScanService } from '../../services/appscan-service.js';
+import { JiraService } from '../../services/jira-service.js';
+import { Config } from '../../utils/config.js';
+import { QueryBuilder } from '../../utils/query-builder.js';
+import { FilterParser } from '../../utils/filter-parser.js';
+import { Formatter } from '../../utils/formatter.js';
+import { JiraDescriptionBuilder } from '../../utils/jira-description-builder.js';
 import { select, checkbox, input } from '@inquirer/prompts';
 import {
   groupIssuesByType,
   displayGroupedSummary,
   formatScanDisplay,
   ISSUE_STATUSES,
-} from '../utils/triage-ui.js';
+} from '../../utils/triage-ui.js';
 
 /**
  * Create the triage-report command with all subcommands
