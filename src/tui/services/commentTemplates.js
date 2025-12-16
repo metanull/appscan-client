@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Path to templates file (in the package root for source control)
-const TEMPLATES_FILE = path.join(__dirname, '../../comment-templates.txt');
+const TEMPLATES_FILE = path.join(__dirname, '../../../comment-templates.txt');
 
 /**
  * Parse templates file into structured data

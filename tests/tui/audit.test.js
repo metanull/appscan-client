@@ -4,7 +4,7 @@
 
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import fs from 'fs';
-import auditService from '../src/utils/audit.js';
+import auditService from '../../src/tui/utils/audit.js';
 
 describe('AuditService', () => {
   const auditFile = auditService.getAuditFilePath();

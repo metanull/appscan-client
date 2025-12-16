@@ -4,7 +4,7 @@
 
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import fs from 'fs';
-import logger from '../src/utils/logger.js';
+import logger from '../../src/tui/utils/logger.js';
 
 describe('Logger', () => {
   const mockLogFile = logger.getLogFilePath();
