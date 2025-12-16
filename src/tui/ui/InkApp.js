@@ -192,6 +192,8 @@ export const InkApp = ({ configPath }) => {
   const setApplications = useStore((state) => state.setApplications);
   const setLoading = useStore((state) => state.setLoading);
   const setError = useStore((state) => state.setError);
+  const setScans = useStore((state) => state.setScans);
+  const setSelectedApp = useStore((state) => state.setSelectedApp);
 
   // Zustand state
   const selectedApp = useStore((state) => state.selectedApp);
@@ -217,6 +219,17 @@ export const InkApp = ({ configPath }) => {
         const apps = await appScanService.listApplications();
         setApplications(apps);
         logger.info('Applications loaded', { count: apps.length });
+        // Log a sample application to inspect available fields
+        if (apps.length > 0) {
+          const sample = apps[0];
+          logger.debug('Sample application fields', {
+            id: sample.Id,
+            name: sample.Name,
+            keys: Object.keys(sample).slice(0, 20),
+            IssueCountTotal: sample.IssueCountTotal,
+            LatestExecution: sample.LatestExecution,
+          });
+        }
         setLoading(false);
 
         // If we're in app-selection view, open the modal to select an app
@@ -359,9 +372,27 @@ export const InkApp = ({ configPath }) => {
       {activeModal === 'app' && (
         <AppSelectionModal
           applications={applications}
-          onSelect={(app) => {
-            useStore.getState().setSelectedApp(app);
+          onSelect={async (app) => {
+            // Set selected app and load scans for it
+            setSelectedApp(app);
             setActiveModal(null);
+            try {
+              setLoading(true);
+              logger.info('Loading scans for application', { appId: app.Id, appName: app.Name });
+              const scanList = await appScanService.listScans(app.Id);
+              setScans(scanList);
+              // Auto-open scan modal if there are scans
+              if (scanList && scanList.length > 0) {
+                setActiveModal('scan');
+                // Log a sample scan to inspect fields
+                logger.debug('Sample scan fields', { sample: scanList[0], keys: Object.keys(scanList[0] || {}).slice(0,20) });
+              }
+              setLoading(false);
+            } catch (err) {
+              logger.error('Failed to load scans', err);
+              setError(err.message);
+              setLoading(false);
+            }
           }}
           onCancel={() => setActiveModal(null)}
         />

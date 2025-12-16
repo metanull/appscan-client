@@ -31,9 +31,14 @@ export const ScanSelectionModal = React.memo(({
     // Hide empty if requested
     if (hideEmpty) {
       filtered = filtered.filter(scan => {
-        const issueCount = scan.LatestExecution?.NIssuesFound || 0;
-        return issueCount > 0;
-      });
+          const issueCount = (scan.LatestExecution?.NIssuesFound || 0) +
+            (Number(scan.CriticalIssues) || 0) +
+            (Number(scan.HighIssues) || 0) +
+            (Number(scan.MediumIssues) || 0) +
+            (Number(scan.LowIssues) || 0) +
+            (Number(scan.InformationalIssues) || 0);
+          return issueCount > 0;
+        });
     }
 
     // Type filter
@@ -91,7 +96,12 @@ export const ScanSelectionModal = React.memo(({
   });
 
   const renderItem = useCallback((scan, isSelected) => {
-    const issueCount = scan.LatestExecution?.NIssuesFound || 0;
+    const issueCount = (scan.LatestExecution?.NIssuesFound || 0) +
+      (Number(scan.CriticalIssues) || 0) +
+      (Number(scan.HighIssues) || 0) +
+      (Number(scan.MediumIssues) || 0) +
+      (Number(scan.LowIssues) || 0) +
+      (Number(scan.InformationalIssues) || 0);
     const tech = scan.Technology || 'Unknown';
     
     return (

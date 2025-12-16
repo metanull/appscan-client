@@ -11,6 +11,12 @@ import { Panel } from './Panel.js';
 import { ScrollableList } from './ScrollableList.js';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 
+function computeAppIssueCount(app) {
+  if (typeof app.IssueCountTotal === 'number') return app.IssueCountTotal;
+  const fields = ['CriticalIssues','HighIssues','MediumIssues','LowIssues','InformationalIssues','IssuesInProgress'];
+  return fields.reduce((sum, f) => sum + (Number(app[f]) || 0), 0);
+}
+
 export const AppSelectionModal = React.memo(({ 
   applications, 
   onSelect, 
@@ -29,7 +35,7 @@ export const AppSelectionModal = React.memo(({
     // Hide empty if requested
     if (hideEmpty) {
       filtered = filtered.filter(app => {
-        const issueCount = app.IssueCountTotal || 0;
+        const issueCount = computeAppIssueCount(app);
         return issueCount > 0;
       });
     }
@@ -93,7 +99,7 @@ export const AppSelectionModal = React.memo(({
   });
 
   const renderItem = useCallback((app, isSelected) => {
-    const issueCount = app.IssueCountTotal || 0;
+    const issueCount = computeAppIssueCount(app);
     
     return (
       <Box>
