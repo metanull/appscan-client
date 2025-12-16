@@ -20,8 +20,8 @@ export async function createJiraIssue(source, sourceId, options) {
     } catch {
       throw new Error(
         'jira.js package is not installed. To use Jira integration features, install it with:\n' +
-        '  npm install -g jira.js@^5.2.2\n' +
-        'Or if using as a library, add it to your dependencies.'
+          '  npm install -g jira.js@^5.2.2\n' +
+          'Or if using as a library, add it to your dependencies.'
       );
     }
 
@@ -75,7 +75,7 @@ export async function createJiraIssue(source, sourceId, options) {
       const excludeStatus = options.excludeStatus || 'Noise';
       const response = await appScanService.listIssues(sourceId, excludeStatus);
       issues = response.Items || [];
-      
+
       // Get scan details for context
       const scanDetails = await appScanService.getScanDetails(sourceId);
       scanInfo = scanDetails.Items?.[0] || { Id: sourceId };
@@ -117,22 +117,22 @@ export async function createJiraIssue(source, sourceId, options) {
     // Create Jira issue(s)
     for (const issue of filteredIssues) {
       const summary = `[AppScan] ${issue.IssueType || 'Security Issue'} - ${issue.Severity || 'Unknown'} Severity`;
-      
+
       let description = `AppScan Security Issue\n\n`;
       description += `Issue ID: ${issue.Id}\n`;
       description += `Severity: ${issue.Severity || 'Unknown'}\n`;
       description += `Issue Type: ${issue.IssueType || 'N/A'}\n`;
       description += `Status: ${issue.Status || 'N/A'}\n`;
       description += `Scanner: ${issue.Scanner || 'N/A'}\n`;
-      
+
       if (issue.Location) {
         description += `Location: ${issue.Location}\n`;
       }
-      
+
       if (issue.SourceFileUri) {
         description += `Source File: ${issue.SourceFileUri}\n`;
       }
-      
+
       if (issue.ThreatClassId) {
         description += `Threat Class: ${issue.ThreatClassId}\n`;
       }
@@ -147,8 +147,10 @@ export async function createJiraIssue(source, sourceId, options) {
       description += `\nAppScan Cloud URL: ${config.getBaseUrl()}/issues/${issue.Id}`;
 
       const issueType = options.issueType || 'Bug';
-      const labels = options.labels ? options.labels.split(',').map(l => l.trim()) : ['appscan', 'security'];
-      
+      const labels = options.labels
+        ? options.labels.split(',').map((l) => l.trim())
+        : ['appscan', 'security'];
+
       // Note: Priority field is not set as different Jira instances have different priority schemes
       // Users can set priority manually in Jira if needed
 

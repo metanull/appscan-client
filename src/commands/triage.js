@@ -22,12 +22,18 @@ import {
 /**
  * Create JIRA issue for vulnerabilities (extracted to avoid duplication)
  */
-async function createJiraIssueForVulnerabilities(mediumOrHigher, selectedScanId, scans, config, service) {
+async function createJiraIssueForVulnerabilities(
+  mediumOrHigher,
+  selectedScanId,
+  scans,
+  config,
+  service
+) {
   const jiraService = new JiraService(config);
   const baseUrl = config.getBaseUrl();
 
   // Get scan details for JIRA issue
-  const scan = scans.find(s => s.Id === selectedScanId);
+  const scan = scans.find((s) => s.Id === selectedScanId);
   const scanName = scan?.Name || selectedScanId;
 
   // Build issue summary
@@ -36,7 +42,7 @@ async function createJiraIssueForVulnerabilities(mediumOrHigher, selectedScanId,
 
   // Build compact JIRA description to avoid 32KB limit
   const { convertToAbsoluteUrl } = await import('../utils/url-converter.js');
-  
+
   let description = `## Summary\n`;
   description += `- Total: ${mediumOrHigher.length} vulnerabilities\n`;
   description += `- Critical: ${stats.Critical} | High: ${stats.High} | Medium: ${stats.Medium}\n\n`;
@@ -44,7 +50,7 @@ async function createJiraIssueForVulnerabilities(mediumOrHigher, selectedScanId,
   description += `## Issues\n\n`;
 
   const jiraGroups = groupIssuesByType(mediumOrHigher);
-  
+
   // Helper to extract short path for display
   const extractShortPath = (url) => {
     if (!url) return 'N/A';
@@ -54,40 +60,43 @@ async function createJiraIssueForVulnerabilities(mediumOrHigher, selectedScanId,
       const parts = path.replace(/^\//, '').split('/');
       return parts.length > 3 ? parts.slice(-3).join('/') : parts.join('/');
     }
-    const parts = url.split('/').filter(p => p && !p.startsWith('?'));
+    const parts = url.split('/').filter((p) => p && !p.startsWith('?'));
     return parts.length > 3 ? parts.slice(-3).join('/') : parts.join('/');
   };
-  
+
   for (const group of jiraGroups) {
     description += `### ${group.type} (${group.severity}) - ${group.issues.length} issue(s)\n\n`;
-    
+
     for (const issue of group.issues) {
-      const location = issue.SourceFileUri || issue.Location || issue.Api || 'N/A';
+      const location =
+        issue.SourceFileUri || issue.Location || issue.Api || 'N/A';
       const absoluteUrl = convertToAbsoluteUrl(location, baseUrl);
       const shortPath = extractShortPath(location);
       const line = issue.LineNumber ? `:${issue.LineNumber}` : '';
-      
+
       // Format: [Severity] [short/path/to/file:line](absolute-url)
       description += `- [${issue.Severity}] [${shortPath}${line}](${absoluteUrl})`;
-      
+
       // Add code context as inline code if available (better for JIRA ADF)
       if (issue.Context) {
-        const context = issue.Context.substring(0, 150).replace(/\n/g, ' ').trim();
+        const context = issue.Context.substring(0, 150)
+          .replace(/\n/g, ' ')
+          .trim();
         description += ` → \`${context}${issue.Context.length > 150 ? '...' : ''}\``;
       }
-      
+
       description += `\n`;
     }
-    
+
     // Add remediation link for this specific issue type
     if (group.issues.length > 0 && group.issues[0].IssueTypeId) {
       const articleUrl = `${baseUrl}/api/v4/Reports/Article/?issuetype=${group.issues[0].IssueTypeId}`;
       description += `\n**Remediation:** [View guidance for ${group.type}](${articleUrl})\n`;
     }
-    
+
     description += `\n`;
   }
-  
+
   // Add AppScan comments in quote blocks (excluding duplicates)
   const uniqueComments = new Set();
   for (const issue of mediumOrHigher) {
@@ -95,7 +104,7 @@ async function createJiraIssueForVulnerabilities(mediumOrHigher, selectedScanId,
       uniqueComments.add(issue.Comment.trim());
     }
   }
-  
+
   if (uniqueComments.size > 0) {
     description += `\n## AppScan Comments\n\n`;
     for (const comment of uniqueComments) {
@@ -110,23 +119,34 @@ async function createJiraIssueForVulnerabilities(mediumOrHigher, selectedScanId,
     description,
     'Story',
     {
-      labels: ['vulnerability', 'security']
+      labels: ['vulnerability', 'security'],
     }
   );
 
   displaySuccess(`JIRA issue created: ${jiraIssue.key}`);
-  console.log(chalk.cyan('View issue at:'), chalk.blue.underline(jiraIssue.url || `${config.getJiraHost()}/browse/${jiraIssue.key}`));
-  
+  console.log(
+    chalk.cyan('View issue at:'),
+    chalk.blue.underline(
+      jiraIssue.url || `${config.getJiraHost()}/browse/${jiraIssue.key}`
+    )
+  );
+
   // Link JIRA issue to AppScan issues via ExternalId
   console.log(chalk.gray('\nLinking JIRA issue to AppScan vulnerabilities...'));
-  const issueIdsToLink = mediumOrHigher.map(i => i.Id);
+  const issueIdsToLink = mediumOrHigher.map((i) => i.Id);
   try {
     await service.bulkUpdateIssues(issueIdsToLink, null, null, jiraIssue.key);
-    console.log(chalk.green(`✓ Linked ${issueIdsToLink.length} issues to ${jiraIssue.key}\n`));
+    console.log(
+      chalk.green(
+        `✓ Linked ${issueIdsToLink.length} issues to ${jiraIssue.key}\n`
+      )
+    );
   } catch (error) {
-    console.log(chalk.yellow(`⚠ Could not link issues to JIRA: ${error.message}\n`));
+    console.log(
+      chalk.yellow(`⚠ Could not link issues to JIRA: ${error.message}\n`)
+    );
   }
-  
+
   return jiraIssue;
 }
 
@@ -140,7 +160,11 @@ export async function triage(options) {
     // Check if configuration is valid
     if (!config.isValid()) {
       displayError('Configuration not found or incomplete!');
-      console.log(chalk.yellow('Please run:'), chalk.cyan('appscan setup'), chalk.yellow('to configure your credentials.\n'));
+      console.log(
+        chalk.yellow('Please run:'),
+        chalk.cyan('appscan setup'),
+        chalk.yellow('to configure your credentials.\n')
+      );
       process.exit(1);
     }
 
@@ -153,21 +177,27 @@ export async function triage(options) {
 
     // Main triage loop
     let continueTriaging = true;
-    
+
     while (continueTriaging) {
       // Step 1: Load and display all scans (no pagination, no extra API calls for performance)
       console.log(chalk.cyan('\n📋 Loading scans...\n'));
       const scansResponse = await service.listScans();
       let scans = scansResponse.Items || [];
-      
+
       // Filter by scan type if specified
       if (options.scanType) {
-        const allowedTypes = ['StaticAnalyzer', 'DynamicAnalyzer', 'ScaAnalyzer'];
+        const allowedTypes = [
+          'StaticAnalyzer',
+          'DynamicAnalyzer',
+          'ScaAnalyzer',
+        ];
         if (!allowedTypes.includes(options.scanType)) {
-          displayError(`Invalid scan type. Allowed values: ${allowedTypes.join(', ')}`);
+          displayError(
+            `Invalid scan type. Allowed values: ${allowedTypes.join(', ')}`
+          );
           return;
         }
-        scans = scans.filter(s => s.Technology === options.scanType);
+        scans = scans.filter((s) => s.Technology === options.scanType);
         console.log(chalk.gray(`Filtered to ${options.scanType} scans only\n`));
       }
 
@@ -182,12 +212,21 @@ export async function triage(options) {
       console.log(chalk.gray(`Found ${scans.length} scan(s)\n`));
 
       // Format scan choices with app name and scan type
-      const scanChoices = scans.map(scan => {
+      const scanChoices = scans.map((scan) => {
         const appName = scan.AppName || 'Unknown App';
         const scanType = scan.Technology || 'Unknown';
-        const scanDate = new Date(scan.LatestExecution?.ExecutionEnd || scan.CreatedAt).toLocaleDateString();
-        const typeColor = scanType === 'StaticAnalyzer' ? 'cyan' : scanType === 'DynamicAnalyzer' ? 'magenta' : scanType === 'ScaAnalyzer' ? 'yellow' : 'gray';
-        
+        const scanDate = new Date(
+          scan.LatestExecution?.ExecutionEnd || scan.CreatedAt
+        ).toLocaleDateString();
+        const typeColor =
+          scanType === 'StaticAnalyzer'
+            ? 'cyan'
+            : scanType === 'DynamicAnalyzer'
+              ? 'magenta'
+              : scanType === 'ScaAnalyzer'
+                ? 'yellow'
+                : 'gray';
+
         return {
           name: `${chalk.gray(appName)} ${chalk[typeColor](`[${scanType}]`)} ${scan.Name} ${chalk.gray(`(${scanDate})`)}`,
           value: scan.Id,
@@ -215,11 +254,17 @@ export async function triage(options) {
         try {
           const jiraService = new JiraService(config);
           const projectKey = config.getJiraProjectKey();
-          const selectedScan = scans.find(s => s.Id === selectedScanId);
+          const selectedScan = scans.find((s) => s.Id === selectedScanId);
           if (selectedScan) {
-            existingJiraIssue = await jiraService.findIssueForScan(selectedScan.Name, projectKey);
+            existingJiraIssue = await jiraService.findIssueForScan(
+              selectedScan.Name,
+              projectKey
+            );
             if (existingJiraIssue) {
-              console.log(chalk.green('\n🎫 Existing JIRA issue found:'), chalk.blue.underline(existingJiraIssue.url));
+              console.log(
+                chalk.green('\n🎫 Existing JIRA issue found:'),
+                chalk.blue.underline(existingJiraIssue.url)
+              );
               console.log(chalk.gray(`   Status: ${existingJiraIssue.status}`));
             }
           }
@@ -230,7 +275,10 @@ export async function triage(options) {
 
       // Step 3: Load issues for selected scan
       console.log(chalk.cyan('\n📥 Loading issues...\n'));
-      const issuesResponse = await service.listIssues(selectedScanId, 'Noise,Fixed,Passed');
+      const issuesResponse = await service.listIssues(
+        selectedScanId,
+        'Noise,Fixed,Passed'
+      );
       let issues = issuesResponse.Items || [];
 
       if (issues.length === 0) {
@@ -242,7 +290,10 @@ export async function triage(options) {
       if (issues.length > 0 && issues[0].ApplicationId) {
         const baseUrl = config.getBaseUrl();
         const scanUrl = `${baseUrl}/main/myapps/${issues[0].ApplicationId}/scans/${selectedScanId}/scanIssues`;
-        console.log(chalk.gray('View scan in AppScan:'), chalk.blue.underline(scanUrl));
+        console.log(
+          chalk.gray('View scan in AppScan:'),
+          chalk.blue.underline(scanUrl)
+        );
         console.log('');
       }
 
@@ -252,7 +303,7 @@ export async function triage(options) {
 
       // Step 5: Select a group
       let continueWithScan = true;
-      
+
       while (continueWithScan && issues.length > 0) {
         const selectedGroupIndex = await promptGroupSelection(groups);
 
@@ -269,11 +320,18 @@ export async function triage(options) {
         let continueWithGroup = true;
 
         while (continueWithGroup && groupIssues.length > 0) {
-          console.log(chalk.cyan.bold(`\n📋 ${selectedGroup.type} (${groupIssues.length} issues)\n`));
+          console.log(
+            chalk.cyan.bold(
+              `\n📋 ${selectedGroup.type} (${groupIssues.length} issues)\n`
+            )
+          );
 
           // Select issues (pass base URL for URL conversion)
           const baseUrl = config.getBaseUrl();
-          const selectedIssueIds = await promptIssueSelection(groupIssues, baseUrl);
+          const selectedIssueIds = await promptIssueSelection(
+            groupIssues,
+            baseUrl
+          );
 
           if (selectedIssueIds.length === 0) {
             displayInfo('No issues selected.');
@@ -281,7 +339,9 @@ export async function triage(options) {
             break;
           }
 
-          console.log(chalk.green(`\n✓ Selected ${selectedIssueIds.length} issue(s)\n`));
+          console.log(
+            chalk.green(`\n✓ Selected ${selectedIssueIds.length} issue(s)\n`)
+          );
 
           // Select action
           const action = await promptAction();
@@ -292,7 +352,11 @@ export async function triage(options) {
               const newStatus = await promptStatusChange();
               const comment = await promptComment(false);
 
-              console.log(chalk.cyan(`\n🔄 Updating ${selectedIssueIds.length} issue(s)...\n`));
+              console.log(
+                chalk.cyan(
+                  `\n🔄 Updating ${selectedIssueIds.length} issue(s)...\n`
+                )
+              );
 
               try {
                 const result = await service.bulkUpdateIssues(
@@ -301,29 +365,40 @@ export async function triage(options) {
                   comment || undefined
                 );
 
-                displaySuccess(`Updated ${result.totalUpdated} issue(s) to status: ${newStatus}`);
+                displaySuccess(
+                  `Updated ${result.totalUpdated} issue(s) to status: ${newStatus}`
+                );
 
                 if (comment) {
                   console.log(chalk.gray(`Comment: "${comment}"\n`));
                 }
 
                 // Remove updated issues from the group
-                groupIssues.splice(0, groupIssues.length, 
-                  ...groupIssues.filter(issue => !selectedIssueIds.includes(issue.Id))
+                groupIssues.splice(
+                  0,
+                  groupIssues.length,
+                  ...groupIssues.filter(
+                    (issue) => !selectedIssueIds.includes(issue.Id)
+                  )
                 );
 
                 // Update total issues list
-                issues = issues.filter(issue => !selectedIssueIds.includes(issue.Id));
+                issues = issues.filter(
+                  (issue) => !selectedIssueIds.includes(issue.Id)
+                );
 
                 // Update stats
-                displayInfo(`${groupIssues.length} issue(s) remaining in this group`);
+                displayInfo(
+                  `${groupIssues.length} issue(s) remaining in this group`
+                );
                 displayInfo(`${issues.length} issue(s) remaining in this scan`);
 
                 if (groupIssues.length === 0) {
-                  displaySuccess('All issues in this group have been processed!');
+                  displaySuccess(
+                    'All issues in this group have been processed!'
+                  );
                   continueWithGroup = false;
                 }
-
               } catch (error) {
                 displayError(`Failed to update issues: ${error.message}`);
               }
@@ -333,17 +408,19 @@ export async function triage(options) {
             case 'jira': {
               // Create JIRA issue for true positives
               if (!config.isJiraValid()) {
-                displayError('JIRA is not configured. Please run: appscan setup');
+                displayError(
+                  'JIRA is not configured. Please run: appscan setup'
+                );
                 break;
               }
 
               // Count true positives (non-Noise, non-Passed, non-Fixed)
               const truePositives = issues.filter(
-                issue => !['Noise', 'Passed', 'Fixed'].includes(issue.Status)
+                (issue) => !['Noise', 'Passed', 'Fixed'].includes(issue.Status)
               );
 
-              const mediumOrHigher = truePositives.filter(
-                issue => ['Critical', 'High', 'Medium'].includes(issue.Severity)
+              const mediumOrHigher = truePositives.filter((issue) =>
+                ['Critical', 'High', 'Medium'].includes(issue.Severity)
               );
 
               const shouldCreate = await promptJiraCreation(
@@ -354,7 +431,13 @@ export async function triage(options) {
               if (shouldCreate) {
                 try {
                   console.log(chalk.cyan('\n🎫 Creating JIRA issue...\n'));
-                  await createJiraIssueForVulnerabilities(mediumOrHigher, selectedScanId, scans, config, service);
+                  await createJiraIssueForVulnerabilities(
+                    mediumOrHigher,
+                    selectedScanId,
+                    scans,
+                    config,
+                    service
+                  );
                 } catch (error) {
                   displayError(`Failed to create JIRA issue: ${error.message}`);
                 }
@@ -366,19 +449,26 @@ export async function triage(options) {
               // View detailed information about selected issues
               const baseUrl = config.getBaseUrl();
               for (const issueId of selectedIssueIds.slice(0, 3)) {
-                const issue = groupIssues.find(i => i.Id === issueId);
+                const issue = groupIssues.find((i) => i.Id === issueId);
                 if (issue) {
                   try {
                     const article = await service.getArticle(issueId);
-                    const { displayIssueDetails } = await import('../utils/triage-ui.js');
+                    const { displayIssueDetails } =
+                      await import('../utils/triage-ui.js');
                     displayIssueDetails(issue, article, baseUrl);
                   } catch (error) {
-                    console.error(chalk.red(`Error loading details: ${error.message}`));
+                    console.error(
+                      chalk.red(`Error loading details: ${error.message}`)
+                    );
                   }
                 }
               }
               if (selectedIssueIds.length > 3) {
-                console.log(chalk.gray(`... and ${selectedIssueIds.length - 3} more issues\n`));
+                console.log(
+                  chalk.gray(
+                    `... and ${selectedIssueIds.length - 3} more issues\n`
+                  )
+                );
               }
               break;
             }
@@ -386,13 +476,16 @@ export async function triage(options) {
             case 'refresh': {
               // Reload issues
               console.log(chalk.cyan('\n🔄 Refreshing issues...\n'));
-              const refreshedResponse = await service.listIssues(selectedScanId, 'Noise,Fixed,Passed');
+              const refreshedResponse = await service.listIssues(
+                selectedScanId,
+                'Noise,Fixed,Passed'
+              );
               issues = refreshedResponse.Items || [];
-              
+
               // Update groups
               const refreshedGroups = groupIssuesByType(issues);
               groups.splice(0, groups.length, ...refreshedGroups);
-              
+
               displaySuccess('Issues refreshed');
               displayGroupedSummary(groups);
               continueWithGroup = false;
@@ -409,7 +502,7 @@ export async function triage(options) {
         // Check if all issues in scan are processed
         if (issues.length === 0) {
           displaySuccess('All issues in this scan have been processed!');
-          
+
           // Offer to create JIRA issue for the scan before moving on
           if (config.isJiraValid()) {
             const createJira = await confirm({
@@ -420,31 +513,43 @@ export async function triage(options) {
             if (createJira) {
               try {
                 // Reload ALL issues for the scan (including those we just triaged)
-                const allIssuesResponse = await service.listIssues(selectedScanId, '');
+                const allIssuesResponse = await service.listIssues(
+                  selectedScanId,
+                  ''
+                );
                 const allIssues = allIssuesResponse.Items || [];
 
                 // Filter for non-closed issues (exclude Noise, Passed, Fixed)
                 const openIssues = allIssues.filter(
-                  issue => !['Noise', 'Passed', 'Fixed'].includes(issue.Status)
+                  (issue) =>
+                    !['Noise', 'Passed', 'Fixed'].includes(issue.Status)
                 );
 
                 // Filter for Medium or higher severity
-                const mediumOrHigher = openIssues.filter(
-                  issue => ['Critical', 'High', 'Medium'].includes(issue.Severity)
+                const mediumOrHigher = openIssues.filter((issue) =>
+                  ['Critical', 'High', 'Medium'].includes(issue.Severity)
                 );
 
                 if (mediumOrHigher.length === 0) {
-                  displayInfo('No open issues with Medium or higher severity to include in JIRA.');
+                  displayInfo(
+                    'No open issues with Medium or higher severity to include in JIRA.'
+                  );
                 } else {
                   console.log(chalk.cyan('\n🎫 Creating JIRA issue...\n'));
-                  await createJiraIssueForVulnerabilities(mediumOrHigher, selectedScanId, scans, config, service);
+                  await createJiraIssueForVulnerabilities(
+                    mediumOrHigher,
+                    selectedScanId,
+                    scans,
+                    config,
+                    service
+                  );
                 }
               } catch (error) {
                 displayError(`Failed to create JIRA issue: ${error.message}`);
               }
             }
           }
-          
+
           const triageAnother = await confirm({
             message: 'Do you want to triage another scan?',
             default: true,
@@ -453,14 +558,13 @@ export async function triage(options) {
           if (!triageAnother) {
             continueTriaging = false;
           }
-          
+
           continueWithScan = false;
         }
       }
     }
 
     console.log(chalk.green.bold('\n✅ Triage session complete!\n'));
-
   } catch (error) {
     if (error.name === 'ExitPromptError') {
       console.log(chalk.yellow('\n⚠️  Triage cancelled by user.\n'));

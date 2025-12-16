@@ -1,4 +1,4 @@
-# Comprehensive Analysis Summary
+# `Triage-report`: Refactoring of individual commands into a single tool
 
 ## Analysis Overview
 
@@ -177,16 +177,6 @@ GET /api/v4/Reports/Article/                  → HTML article
 
 ### 2.2 Real-World API Response Analysis
 
-**Sample Data Examined:**
-
-From `/reports/api-samples/`:
-- `applications.json` — 3437 lines, contains 10+ real applications
-- `scans.json` — 164 lines, detailed scan models
-- `sample-sast-issues.json` — 292 lines, detailed SAST issues (C#, secrets, logging)
-- `sample-sast-scan.json` — Scan execution data
-- `sample-dast-issues.json` — Web vulnerability examples
-- `sample-sca-issues.json` — Dependency vulnerabilities
-
 **Key Observations from Real Data:**
 
 1. **Severity representation:**
@@ -263,7 +253,6 @@ Open (initial) → False Positive → Noise (dismissed)
 - ✅ Jira integration
 - ✅ AppScan link preservation
 - ❌ No grouping strategy
-- ❌ No content limit handling
 
 **Existing `update-issue-status.js`:**
 - ✅ Single issue update
@@ -308,14 +297,6 @@ Open (initial) → False Positive → Noise (dismissed)
 - `doc/appscan-api-responses.md` — Comprehensive API documentation (391 lines)
 - `doc/appscan-swagger-v4.json` — OpenAPI 3.0 specification
 - Multiple feature documentation files (list-issues, create-jira, etc.)
-
-**Quality Assessment:**
-- ✅ API documentation is thorough and accurate
-- ✅ Enum mappings documented
-- ✅ Real-world examples provided
-- ✅ Business rules explained
-- ❌ Command-level documentation scattered
-- ❌ No unified CLI design guide
 
 ### 4.2 Key Documentation Insights
 
@@ -389,126 +370,3 @@ Open (initial) → False Positive → Noise (dismissed)
 - Leverage @inquirer/prompts (checkbox, select, input)
 - Maintain compatibility with existing triage-ui.js helpers
 - Add new prompt builders for filters and sorts
-
----
-
-## 6. Implementation Approach
-
-### 6.1 Recommended Implementation Sequence
-
-**Phase 1: Core Query & Filtering (Low Risk)**
-1. QueryBuilder class
-2. Query subcommand (applications, scans, vulnerabilities)
-3. Formatter utilities
-
-**Phase 2: Status & Update (Medium Risk)**
-1. Status report subcommand
-2. Update subcommand (single + bulk)
-3. Integration tests with mock data
-
-**Phase 3: Jira Integration (High Risk)**
-1. Extend JiraDescriptionBuilder
-2. Create-Jira subcommand
-3. Find-Jira and Link-Jira subcommands
-4. Content limit tests
-
-**Phase 4: Interactive Workflow (High Risk)**
-1. Interactive subcommand structure
-2. Multi-select UI
-3. Filter/sort actions
-4. Integration with phase 1-3 components
-
-**Phase 5: Testing & Documentation**
-1. Comprehensive test suite
-2. User documentation
-3. Code review and refinement
-
-### 6.2 Risk Mitigation
-
-**Known Risks:**
-1. **Jira Content Limits** → Test with oversized data, implement truncation
-2. **API Rate Limiting** → Implement backoff strategy, batch operations
-3. **UI Complexity** → Keep interactive flow simple, test with users
-4. **Field Mapping Bugs** → Comprehensive enum tests with real data
-5. **Performance** → Avoid N+1 queries, implement pagination
-
-**Mitigation Strategies:**
-- Use mock data from `/reports/api-samples/` for testing
-- Implement content size checking before Jira submission
-- Test filter combinations thoroughly
-- Version API client method calls for stability
-- Document assumptions and edge cases
-
----
-
-## 7. Conclusion
-
-### 7.1 Feasibility Assessment
-
-**Overall Feasibility:** ✅ **HIGH**
-
-**Supporting Factors:**
-- ✅ Comprehensive API documentation available
-- ✅ Real-world data samples for testing
-- ✅ Existing service layer well-designed
-- ✅ Triage requirements clearly defined
-- ✅ Technology stack proven (Node.js, inquirer, axios, jira.js)
-- ✅ No external dependencies missing
-
-**Complexity Areas:**
-- ⚠️ Interactive UI (multi-select, filtering, sorting)
-- ⚠️ Jira content limit handling
-- ⚠️ OData filter generation
-- ⚠️ HTML to Markdown conversion quality
-
-### 7.2 Estimated Effort
-
-| Component | Effort | Risk |
-|-----------|--------|------|
-| Query commands | 3 days | Low |
-| Update commands | 2 days | Low |
-| Status reports | 2 days | Low |
-| Jira integration | 5 days | High |
-| Interactive UI | 4 days | High |
-| Testing (unit + integration) | 4 days | Medium |
-| Documentation | 2 days | Low |
-| **Total** | **22 days** | **Medium-High** |
-
-**Team Recommendations:**
-- 2-3 person team recommended
-- Parallel work on query/update and Jira/interactive tracks
-- Dedicated QA for interactive UI testing
-- AppScan tenant access for final integration testing
-
-### 7.3 Success Criteria
-
-Implementation is successful when:
-1. ✅ All 8 subcommands functional per specification
-2. ✅ JSON output valid and complete for all query types
-3. ✅ Filtering (status, severity, name, date) works correctly
-4. ✅ Bulk operations batch by application
-5. ✅ Jira descriptions under 32KB with all content
-6. ✅ Interactive workflow responsive and intuitive
-7. ✅ Tests pass (unit + integration)
-8. ✅ Documentation complete and clear
-9. ✅ No modifications to existing commands
-
----
-
-## Appendix: Reference Files Location
-
-- API Documentation: `doc/appscan-api-responses.md`
-- OpenAPI Spec: `doc/appscan-swagger-v4.json`
-- Real API Samples: `reports/api-samples/`
-- Triage Requirements: `doc/triage-requirements.md`
-- Existing Triage: `src/commands/triage.js`
-- AppScan Service: `src/services/appscan-service.js`
-- Jira Service: `src/services/jira-service.js`
-- Configuration: `src/utils/config.js`
-- UI Helpers: `src/utils/triage-ui.js`
-
----
-
-**Document Prepared By:** Analysis Agent  
-**Date:** December 10, 2025  
-**Status:** Ready for Implementation Planning

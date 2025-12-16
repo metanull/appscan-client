@@ -7,9 +7,8 @@ export class HtmlReportGenerator {
   }
 
   async generateApplicationsReport(applications) {
-    const markdown = await this.markdownGenerator.generateApplicationsReport(
-      applications
-    );
+    const markdown =
+      await this.markdownGenerator.generateApplicationsReport(applications);
     return this.wrapInHtml(
       marked.parse(markdown),
       'AppScan Applications Report'

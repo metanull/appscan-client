@@ -63,7 +63,8 @@ export class Config {
         instance.jiraHost = config.jiraHost || instance.jiraHost;
         instance.jiraEmail = config.jiraEmail || instance.jiraEmail;
         instance.jiraApiToken = config.jiraApiToken || instance.jiraApiToken;
-        instance.jiraProjectKey = config.jiraProjectKey || instance.jiraProjectKey;
+        instance.jiraProjectKey =
+          config.jiraProjectKey || instance.jiraProjectKey;
         return instance;
       } catch (error) {
         throw new Error(`Failed to parse config file: ${error.message}`);

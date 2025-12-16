@@ -52,7 +52,7 @@ describe('Formatter', () => {
       MediumIssues: 3,
       LowIssues: 4,
       InformationalIssues: 0,
-      CreatedAt: '2025-01-01T00:00:00Z'
+      CreatedAt: '2025-01-01T00:00:00Z',
     };
 
     const formatted = formatter.formatApplication(app);
@@ -75,8 +75,8 @@ describe('Formatter', () => {
       LatestExecution: {
         Status: 'Ready',
         ExecutionProgress: 'Completed',
-        UpdatedAt: '2025-01-02T00:00:00Z'
-      }
+        UpdatedAt: '2025-01-02T00:00:00Z',
+      },
     };
 
     const formatted = formatter.formatScan(scan);
@@ -96,15 +96,19 @@ describe('Formatter', () => {
       Severity: 'High',
       Status: 'Open',
       Location: '/path/to/file.js',
-      DateCreated: '2025-01-01T00:00:00Z'
+      DateCreated: '2025-01-01T00:00:00Z',
     };
 
     const formatted = formatter.formatVulnerability(issue);
     expect(formatted.id).toBe('issue-123');
     expect(formatted.severity).toBe('High');
     expect(formatted.severityValue).toBe(4);
-    expect(formatted.appScanUrl).toBe('https://cloud.appscan.com/issues/issue-123');
-    expect(formatted.remediationUrl).toBe('https://cloud.appscan.com/api/v4/Reports/Article/?issuetype=SQLInjection');
+    expect(formatted.appScanUrl).toBe(
+      'https://cloud.appscan.com/issues/issue-123'
+    );
+    expect(formatted.remediationUrl).toBe(
+      'https://cloud.appscan.com/api/v4/Reports/Article/?issuetype=SQLInjection'
+    );
   });
 
   test('stripAnsi removes ANSI color codes', () => {

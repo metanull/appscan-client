@@ -1,4 +1,4 @@
-# Implementation Plan: Unified AppScan Triage & Reporting Tool
+# `ink-Triage`: Refactoring of `triage-report` into a console Cli app
 
 **Document Version:** 1.0  
 **Date:** December 10, 2025  

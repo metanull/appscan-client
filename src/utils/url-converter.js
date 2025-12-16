@@ -17,26 +17,31 @@ export function isAbsoluteUrl(url) {
  * - /eesc-cor/Aura/_git/Aura?path=/DataLayerCore/DBProcessor.cs
  * - Converts to: https://dev.azure.com/eesc-cor/Aura/_git/Aura?path=/DataLayerCore/DBProcessor.cs&version=GBmaster
  */
-export function convertAzureDevOpsUrl(relativePath, baseUrl = 'https://dev.azure.com') {
+export function convertAzureDevOpsUrl(
+  relativePath,
+  baseUrl = 'https://dev.azure.com'
+) {
   if (!relativePath || typeof relativePath !== 'string') return relativePath;
-  
+
   // Already absolute
   if (isAbsoluteUrl(relativePath)) {
     return relativePath;
   }
 
   // Clean up the path
-  const cleanPath = relativePath.startsWith('/') ? relativePath.substring(1) : relativePath;
-  
+  const cleanPath = relativePath.startsWith('/')
+    ? relativePath.substring(1)
+    : relativePath;
+
   // If it looks like an Azure DevOps path (contains _git), make it absolute
   if (cleanPath.includes('/_git/')) {
     const absoluteUrl = `${baseUrl}/${cleanPath}`;
-    
+
     // Add version parameter if path parameter exists and no version is specified
     if (absoluteUrl.includes('?path=') && !absoluteUrl.includes('&version=')) {
       return `${absoluteUrl}&version=GBmaster`;
     }
-    
+
     return absoluteUrl;
   }
 
@@ -50,7 +55,7 @@ export function convertAzureDevOpsUrl(relativePath, baseUrl = 'https://dev.azure
  */
 export function convertAppScanUrl(relativePath, baseUrl) {
   if (!relativePath || typeof relativePath !== 'string') return relativePath;
-  
+
   // Already absolute
   if (isAbsoluteUrl(relativePath)) {
     return relativePath;
@@ -68,9 +73,12 @@ export function convertAppScanUrl(relativePath, baseUrl) {
  * Smart URL converter that handles multiple formats
  * Tries to detect the URL type and convert appropriately
  */
-export function convertToAbsoluteUrl(url, appScanBaseUrl = 'https://eu.cloud.appscan.com') {
+export function convertToAbsoluteUrl(
+  url,
+  appScanBaseUrl = 'https://eu.cloud.appscan.com'
+) {
   if (!url || typeof url !== 'string') return url;
-  
+
   // Already absolute
   if (isAbsoluteUrl(url)) {
     return url;
@@ -105,14 +113,17 @@ export function convertToAbsoluteUrl(url, appScanBaseUrl = 'https://eu.cloud.app
  */
 export function getUrlLabel(url) {
   if (!url || typeof url !== 'string') return 'N/A';
-  
+
   try {
     // If it's an absolute URL, try to extract meaningful parts
     if (isAbsoluteUrl(url)) {
       const parsed = new URL(url);
-      
+
       // Azure DevOps
-      if (parsed.hostname === 'dev.azure.com' || parsed.hostname.endsWith('.dev.azure.com')) {
+      if (
+        parsed.hostname === 'dev.azure.com' ||
+        parsed.hostname.endsWith('.dev.azure.com')
+      ) {
         const pathParam = parsed.searchParams.get('path');
         if (pathParam) {
           // Return just the file path
@@ -121,20 +132,23 @@ export function getUrlLabel(url) {
         // Return the pathname without leading slash
         return parsed.pathname.replace(/^\/+/, '');
       }
-      
+
       // AppScan Cloud
-      if (parsed.hostname === 'cloud.appscan.com' || parsed.hostname.endsWith('.cloud.appscan.com')) {
+      if (
+        parsed.hostname === 'cloud.appscan.com' ||
+        parsed.hostname.endsWith('.cloud.appscan.com')
+      ) {
         // For issue URLs, return just "Issue Details"
         if (parsed.pathname.includes('/Issues/')) {
           return 'Issue Details';
         }
         return parsed.pathname;
       }
-      
+
       // Other URLs - return hostname + path
       return `${parsed.hostname}${parsed.pathname}`;
     }
-    
+
     // For relative paths, return as-is but clean up
     return url.replace(/^\/+/, '');
   } catch {
@@ -146,7 +160,10 @@ export function getUrlLabel(url) {
  * Format URL for display in terminal
  * Returns object with display text and absolute URL
  */
-export function formatUrlForDisplay(url, appScanBaseUrl = 'https://eu.cloud.appscan.com') {
+export function formatUrlForDisplay(
+  url,
+  appScanBaseUrl = 'https://eu.cloud.appscan.com'
+) {
   if (!url) {
     return { text: 'N/A', url: null };
   }

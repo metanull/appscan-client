@@ -43,7 +43,9 @@ function ensureEmptyDirectory(outDir) {
       throw new Error(`Output path ${outDir} exists but is not a directory`);
     }
     if (fs.readdirSync(outDir).length > 0) {
-      throw new Error(`Output directory ${outDir} already exists and is not empty`);
+      throw new Error(
+        `Output directory ${outDir} already exists and is not empty`
+      );
     }
   } else {
     fs.mkdirSync(outDir, { recursive: true });
@@ -77,7 +79,10 @@ export async function generateAllReports(options) {
     : new Config();
   const service = new AppScanService(config);
   const format = options.html ? 'html' : 'markdown';
-  const reportConfig = { grouped: options.grouped !== false, columns: options.columns };
+  const reportConfig = {
+    grouped: options.grouped !== false,
+    columns: options.columns,
+  };
   const excludeStatus = options.excludeStatus ?? 'Noise';
   const technologyFilter = normalizeTechnologyFilter(options.technology);
   const markdownGenerator = new MarkdownReportGenerator();
@@ -123,7 +128,9 @@ export async function generateAllReports(options) {
           'unknown-app',
       };
 
-      writeStatus(`Generating report for scan ${scanName} (${scanTechnology})...`);
+      writeStatus(
+        `Generating report for scan ${scanName} (${scanTechnology})...`
+      );
 
       const issuesResponse = await service.listIssues(scan.Id, excludeStatus);
       let issues = issuesResponse.Items || [];
@@ -142,7 +149,9 @@ export async function generateAllReports(options) {
         console.warn(
           `Warning: no issues found for scan ${scanName} (app: ${scanMeta.appName}) with current filters` +
             (excludeStatus ? ` (excluded status: ${excludeStatus})` : '') +
-            (options.minSeverity ? ` (minSeverity: ${options.minSeverity})` : '')
+            (options.minSeverity
+              ? ` (minSeverity: ${options.minSeverity})`
+              : '')
         );
         continue;
       }
@@ -192,9 +201,10 @@ export async function generateAllReports(options) {
     indexContent += '| Application | Technology | Scan | Created | Link |\n';
     indexContent += '|-------------|------------|------|---------|------|\n';
     reportIndex.forEach((entry) => {
-      const timestamp = entry.timestamp !== 'unknown-date'
-        ? new Date(entry.timestamp).toLocaleString()
-        : 'unknown-date';
+      const timestamp =
+        entry.timestamp !== 'unknown-date'
+          ? new Date(entry.timestamp).toLocaleString()
+          : 'unknown-date';
       indexContent += `| ${entry.appName} | ${entry.technology} | ${entry.scanName} | ${timestamp} | [View](./${entry.fileName}) |\n`;
     });
     const indexPath = path.join(outDir, 'index.md');
