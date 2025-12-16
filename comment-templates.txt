@@ -10,3 +10,26 @@ ErrorHandling.RevealDetails.Message|In compliance with CyberSecurity Policy, onl
 Improper Handling of Exceptional Conditions|Unable to backtrack to the code. Closing...
 Cross-Site Scripting|Unable to backtrack to the code. Closing...
 Missing or insecure "X-Content-Type-Options" header|In agreement with the vulnerabilities strategy - Focus on Critical and High Risk Vulnerabilities. Medium and Low risk vulnerabilities will be remediated later.
+Open Source Component|Report is outdated, a new scan is required to validate latest release of the software.
+Authentication.Credentials.Unprotected|Unable to backtrack to the code. Closing...
+SessionManagement.Timeout.Absolute|In compliance with CyberSecurity Policy, only CRITICAL+HIGH risk are currently in scope
+Vulnerable Component|Report is outdated, a new scan is required to validate latest release of the software.
+Missing Secure Attribute in Encrypted Session (SSL) Cookie|In agreement with the vulnerabilities strategy - Focus on Critical and High Risk Vulnerabilities. Medium and Low risk vulnerabilities will be remediated later.
+API Security: Broken Object Level Authorization|**Suspected** [ASVS 8.2.2] Applications often expose object identifiers without enforcing that the requesting consumer is authorized to access that specific object
+Authentication.Credentials.Unprotected|False Positv
+Open Redirect|In agreement with the vulnerabilities strategy - Focus on Critical and High Risk Vulnerabilities. Medium and Low risk vulnerabilities will be remediated later.
+Authentication.Credentials.Unprotected|False Positive - Variable name; not a secret valu
+Authentication.Credentials.Unprotected|False Positive - Badly interpreted javascript built assets
+Cross-Site Scripting|False Positive - Badly interpreted javascript built assets
+Reflected Cross Site Scripting|False Positive - Code originating from third party dependency. Mitigated by keeping library up to date.
+PathTraversal|False Positive - Code originating from third party binary. Mitigated by keeping library up to date.
+PathTraversal|False Positive - User does not control the path included
+Reflected Cross Site Scripting|Data is validated externally or originates from developer controlled templates
+Cross-Site Scripting|Data is validated externally or originates from developer controlled templates
+SessionManagement.Cookies|Code originating from third party binary. Mitigated by keeping library up to date.
+URL Validation Required|Data is validated externally or originates from developer controlled templates
+Inappropriate Encoding for Output Context|False Positive
+Validation Required|False Positive - Data is validated externally or originates from developer controlled templates
+LDAP Injection|Data is validated externally or originates from developer controlled templates
+LDAP Injection|**Likely** [ASVS 1.2.1] When untrusted data is inserted into a context without correct context-specific encoding, an attacker can inject content that changes the document structure or executes code
+Authentication.Credentials.Unprotected|False Positive - Variable name; not a secret value
