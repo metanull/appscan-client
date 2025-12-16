@@ -295,6 +295,35 @@ export const InkApp = ({ configPath }) => {
     )
   );
 
+  // Load issues when a scan is selected (runs when `selectedScan` changes)
+  const lastLoadedScanRef = useRef(null);
+  React.useEffect(() => {
+    if (!selectedScan || !selectedScan.Id) return;
+    if (lastLoadedScanRef.current === selectedScan.Id) return; // Already loaded this scan
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        useStore.getState().setLoading(true);
+        const issueList = await appScanService.listIssues(selectedScan.Id);
+        if (cancelled) return;
+        useStore.getState().setIssues(issueList || []);
+        useStore.getState().setView('issue-list');
+        lastLoadedScanRef.current = selectedScan.Id;
+        useStore.getState().setLoading(false);
+      } catch (err) {
+        if (cancelled) return;
+        useStore.getState().setError(err.message || 'Failed to load issues');
+        useStore.getState().setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedScan, appScanService]);
+
   // Filtered issues - build from individual filter state
   const filteredIssues = useMemo(() => {
     return filterIssues(issues, {
