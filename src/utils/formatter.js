@@ -13,11 +13,11 @@ export class Formatter {
    */
   static normalizeScanType(technology) {
     const map = {
-      'StaticAnalyzer': 'SAST',
-      'DynamicAnalyzer': 'DAST',
-      'ScaAnalyzer': 'SCA',
-      'IASTAnalyzer': 'IAST',
-      'InfrastructureAnalyzer': 'IAC',
+      StaticAnalyzer: 'SAST',
+      DynamicAnalyzer: 'DAST',
+      ScaAnalyzer: 'SCA',
+      IASTAnalyzer: 'IAST',
+      InfrastructureAnalyzer: 'IAC',
     };
     return map[technology] || technology;
   }
@@ -27,13 +27,13 @@ export class Formatter {
    */
   static severityToValue(severity) {
     const map = {
-      'Critical': 5,
-      'High': 4,
-      'Medium': 3,
-      'Low': 2,
-      'Informational': 1,
-      'Undetermined': 0,
-      'Unknown': 0
+      Critical: 5,
+      High: 4,
+      Medium: 3,
+      Low: 2,
+      Informational: 1,
+      Undetermined: 0,
+      Unknown: 0,
     };
     return map[severity] || 0;
   }
@@ -43,11 +43,11 @@ export class Formatter {
    */
   static getSeverityColor(severity) {
     const map = {
-      'Critical': 'redBright',
-      'High': 'red',
-      'Medium': 'yellow',
-      'Low': 'blue',
-      'Informational': 'gray'
+      Critical: 'redBright',
+      High: 'red',
+      Medium: 'yellow',
+      Low: 'blue',
+      Informational: 'gray',
     };
     return map[severity] || 'white';
   }
@@ -71,7 +71,7 @@ export class Formatter {
       informationalIssues: app.InformationalIssues || 0,
       scanTechnologies: this.extractScanTechnologies(app),
       dateCreated: app.CreatedAt,
-      url: `${this.baseUrl}/apps/${app.Id}`
+      url: `${this.baseUrl}/apps/${app.Id}`,
     };
   }
 
@@ -88,9 +88,12 @@ export class Formatter {
       numberOfExecutions: scan.NumberOfExecutions || 0,
       createdAt: scan.CreatedAt,
       lastModified: scan.UpdatedAt,
-      latestExecutionStatus: scan.LatestExecution?.ExecutionProgress || scan.LatestExecution?.Status || 'Unknown',
+      latestExecutionStatus:
+        scan.LatestExecution?.ExecutionProgress ||
+        scan.LatestExecution?.Status ||
+        'Unknown',
       latestExecutionDate: scan.LatestExecution?.UpdatedAt || null,
-      url: `${this.baseUrl}/scans/${scan.Id}`
+      url: `${this.baseUrl}/scans/${scan.Id}`,
     };
   }
 
@@ -114,7 +117,7 @@ export class Formatter {
       informationalIssues: execution.NInfoIssues || 0,
       newAppIssues: execution.NNewAppIssues || 0,
       issuesFound: execution.NIssuesFound || 0,
-      createdBy: execution.UserEmail
+      createdBy: execution.UserEmail,
     };
   }
 
@@ -148,9 +151,9 @@ export class Formatter {
       comment: issue.Comment || null,
       sourceFileUri: issue.SourceFileUri || null,
       appScanUrl: `${this.baseUrl}/issues/${issue.Id}`,
-      remediationUrl: issue.IssueTypeId 
+      remediationUrl: issue.IssueTypeId
         ? `${this.baseUrl}/api/v4/Reports/Article/?issuetype=${issue.IssueTypeId}`
-        : null
+        : null,
     };
   }
 
@@ -160,16 +163,16 @@ export class Formatter {
    */
   extractScanTechnologies(app) {
     const techs = new Set();
-    
+
     // Check various sources for technology information
     if (app.Scans && Array.isArray(app.Scans)) {
-      app.Scans.forEach(scan => {
+      app.Scans.forEach((scan) => {
         if (scan.Technology) {
           techs.add(Formatter.normalizeScanType(scan.Technology));
         }
       });
     }
-    
+
     return Array.from(techs).sort();
   }
 
@@ -181,10 +184,10 @@ export class Formatter {
       return chalk.gray('No data to display');
     }
 
-    const rows = [columns.map(col => chalk.bold(col.header))];
-    
+    const rows = [columns.map((col) => chalk.bold(col.header))];
+
     for (const item of data) {
-      const row = columns.map(col => {
+      const row = columns.map((col) => {
         const value = col.getter(item);
         return col.color ? chalk[col.color](value) : value;
       });
@@ -202,17 +205,23 @@ export class Formatter {
     // Calculate max width for each column
     const widths = [];
     for (let i = 0; i < rows[0].length; i++) {
-      widths[i] = Math.max(...rows.map(row => this.stripAnsi(row[i]).length));
+      widths[i] = Math.max(...rows.map((row) => this.stripAnsi(row[i]).length));
     }
 
     // Format rows with padding
-    return rows.map(row => {
-      return row.map((cell, i) => {
-        const stripped = this.stripAnsi(cell);
-        const padding = ' '.repeat(Math.max(0, widths[i] - stripped.length));
-        return cell + padding;
-      }).join('  ');
-    }).join('\n');
+    return rows
+      .map((row) => {
+        return row
+          .map((cell, i) => {
+            const stripped = this.stripAnsi(cell);
+            const padding = ' '.repeat(
+              Math.max(0, widths[i] - stripped.length)
+            );
+            return cell + padding;
+          })
+          .join('  ');
+      })
+      .join('\n');
   }
 
   /**

@@ -12,26 +12,39 @@ import {
   groupIssuesByType,
   displayGroupedSummary,
   formatScanDisplay,
-  ISSUE_STATUSES
+  ISSUE_STATUSES,
 } from '../utils/triage-ui.js';
 
 /**
  * Create the triage-report command with all subcommands
  */
 export function createTriageReportCommand() {
-  const command = new Command('triage-report')
-    .description('Comprehensive triage, reporting, and Jira integration tool');
+  const command = new Command('triage-report').description(
+    'Comprehensive triage, reporting, and Jira integration tool'
+  );
 
   // Query subcommand
   command
     .command('query')
     .description('Query applications, scans, vulnerabilities, and articles')
-    .requiredOption('--type <type>', 'Query type: applications, scans, scan-executions, vulnerabilities, articles')
-    .option('--app <appId>', 'Application ID (for scans, scan-executions, vulnerabilities)')
+    .requiredOption(
+      '--type <type>',
+      'Query type: applications, scans, scan-executions, vulnerabilities, articles'
+    )
+    .option(
+      '--app <appId>',
+      'Application ID (for scans, scan-executions, vulnerabilities)'
+    )
     .option('--scan <scanId>', 'Scan ID (for scan-executions, vulnerabilities)')
     .option('--issue <issueId>', 'Issue ID (for articles)')
-    .option('--scan-type <type>', 'Filter by scan type: SAST, DAST, SCA, IAST, IAC')
-    .option('--filter <expr>', 'Filter expression (e.g., "status:Open;severity:High")')
+    .option(
+      '--scan-type <type>',
+      'Filter by scan type: SAST, DAST, SCA, IAST, IAC'
+    )
+    .option(
+      '--filter <expr>',
+      'Filter expression (e.g., "status:Open;severity:High")'
+    )
     .option('--limit <n>', 'Maximum number of results', '100')
     .option('--offset <n>', 'Number of results to skip', '0')
     .option('--json', 'Output as JSON (default: true)', true)
@@ -66,7 +79,10 @@ export function createTriageReportCommand() {
     .command('update')
     .description('Update a single vulnerability')
     .requiredOption('--issue <issueId>', 'Issue ID')
-    .requiredOption('--status <status>', 'New status: Open, InProgress, Noise, Passed, Fixed')
+    .requiredOption(
+      '--status <status>',
+      'New status: Open, InProgress, Noise, Passed, Fixed'
+    )
     .option('--comment <text>', 'Add a comment')
     .option('--external-id <id>', 'Set external ID (e.g., Jira key)')
     .option('--json', 'Output as JSON', true)
@@ -78,7 +94,10 @@ export function createTriageReportCommand() {
     .command('bulk-update')
     .description('Update multiple specific vulnerabilities')
     .requiredOption('--issues <ids>', 'Comma-separated issue IDs')
-    .requiredOption('--status <status>', 'New status: Open, InProgress, Noise, Passed, Fixed')
+    .requiredOption(
+      '--status <status>',
+      'New status: Open, InProgress, Noise, Passed, Fixed'
+    )
     .option('--comment <text>', 'Add a comment')
     .option('--external-id <id>', 'Set external ID (e.g., Jira key)')
     .option('--json', 'Output as JSON', true)
@@ -91,7 +110,10 @@ export function createTriageReportCommand() {
     .description('Update vulnerabilities matching a filter')
     .requiredOption('--app <appId>', 'Application ID')
     .requiredOption('--filter <expr>', 'Filter expression')
-    .requiredOption('--status <status>', 'New status: Open, InProgress, Noise, Passed, Fixed')
+    .requiredOption(
+      '--status <status>',
+      'New status: Open, InProgress, Noise, Passed, Fixed'
+    )
     .option('--comment <text>', 'Add a comment')
     .option('--external-id <id>', 'Set external ID (e.g., Jira key)')
     .option('--json', 'Output as JSON', true)
@@ -104,7 +126,11 @@ export function createTriageReportCommand() {
     .description('Create Jira issues for vulnerabilities')
     .requiredOption('--issues <ids>', 'Comma-separated issue IDs')
     .requiredOption('--project <key>', 'Jira project key')
-    .option('--group-by <strategy>', 'Grouping strategy: type, severity, none', 'type')
+    .option(
+      '--group-by <strategy>',
+      'Grouping strategy: type, severity, none',
+      'type'
+    )
     .option('--issue-type <type>', 'Jira issue type', 'Bug')
     .option('--labels <labels>', 'Comma-separated labels', 'appscan,security')
     .option('--dry-run', 'Show what would be created without creating')
@@ -136,7 +162,10 @@ export function createTriageReportCommand() {
     .command('interactive')
     .description('Interactive guided triage workflow')
     .option('--app <appId>', 'Pre-select application')
-    .option('--scan-type <type>', 'Filter by scan type: SAST, DAST, SCA, IAST, IAC')
+    .option(
+      '--scan-type <type>',
+      'Filter by scan type: SAST, DAST, SCA, IAST, IAC'
+    )
     .option('-c, --config <path>', 'Path to configuration file')
     .action(interactiveAction);
 
@@ -148,7 +177,9 @@ export function createTriageReportCommand() {
  */
 async function queryAction(options) {
   try {
-    const config = options.config ? Config.loadFromFile(options.config) : new Config();
+    const config = options.config
+      ? Config.loadFromFile(options.config)
+      : new Config();
     const service = new AppScanService(config);
     const formatter = new Formatter(config.getBaseUrl());
 
@@ -190,13 +221,13 @@ async function queryAction(options) {
 async function queryApplications(service, formatter, options) {
   const response = await service.listApplications();
   const apps = response.Items || response || [];
-  
+
   let filtered = apps;
-  
+
   // Apply filter if provided
   if (options.filter) {
     const filterLower = options.filter.toLowerCase();
-    filtered = apps.filter(app => {
+    filtered = apps.filter((app) => {
       if (filterLower.includes('name:')) {
         const nameMatch = filterLower.match(/name:([^;|]+)/);
         if (nameMatch) {
@@ -209,8 +240,8 @@ async function queryApplications(service, formatter, options) {
   }
 
   return {
-    applications: filtered.map(app => formatter.formatApplication(app)),
-    total: filtered.length
+    applications: filtered.map((app) => formatter.formatApplication(app)),
+    total: filtered.length,
   };
 }
 
@@ -220,22 +251,22 @@ async function queryApplications(service, formatter, options) {
 async function queryScans(service, formatter, options) {
   const response = await service.listScans(options.app);
   const scans = response.Items || response || [];
-  
+
   let filtered = scans;
-  
+
   // Filter by scan type if provided
   if (options.scanType) {
     const normalizedType = options.scanType.toUpperCase();
-    filtered = scans.filter(scan => {
+    filtered = scans.filter((scan) => {
       const scanType = Formatter.normalizeScanType(scan.Technology);
       return scanType === normalizedType;
     });
   }
-  
+
   // Apply additional filters
   if (options.filter) {
     const filterLower = options.filter.toLowerCase();
-    filtered = filtered.filter(scan => {
+    filtered = filtered.filter((scan) => {
       if (filterLower.includes('name:')) {
         const nameMatch = filterLower.match(/name:([^;|]+)/);
         if (nameMatch) {
@@ -248,8 +279,8 @@ async function queryScans(service, formatter, options) {
   }
 
   return {
-    scans: filtered.map(scan => formatter.formatScan(scan)),
-    total: filtered.length
+    scans: filtered.map((scan) => formatter.formatScan(scan)),
+    total: filtered.length,
   };
 }
 
@@ -263,11 +294,11 @@ async function queryScanExecutions(service, formatter, options) {
 
   const response = await service.listScanExecutions(options.scan);
   const executions = response.Items || response || [];
-  
+
   return {
     scanId: options.scan,
-    executions: executions.map(exec => formatter.formatExecution(exec)),
-    total: executions.length
+    executions: executions.map((exec) => formatter.formatExecution(exec)),
+    total: executions.length,
   };
 }
 
@@ -276,7 +307,9 @@ async function queryScanExecutions(service, formatter, options) {
  */
 async function queryVulnerabilities(service, formatter, options) {
   if (!options.app && !options.scan) {
-    throw new Error('Either --app or --scan option is required for vulnerabilities query');
+    throw new Error(
+      'Either --app or --scan option is required for vulnerabilities query'
+    );
   }
 
   const scope = options.scan ? 'Scan' : 'Application';
@@ -298,9 +331,11 @@ async function queryVulnerabilities(service, formatter, options) {
   const issues = response.Items || [];
 
   return {
-    vulnerabilities: issues.map(issue => formatter.formatVulnerability(issue)),
+    vulnerabilities: issues.map((issue) =>
+      formatter.formatVulnerability(issue)
+    ),
     total: issues.length,
-    filtered: issues.length
+    filtered: issues.length,
   };
 }
 
@@ -314,9 +349,9 @@ async function queryArticles(service, formatter, options) {
 
   // Get issue details to find IssueTypeId
   const issueResponse = await service.api.v4.Issues_Get('Application', '*', {
-    $filter: `Id eq ${options.issue}`
+    $filter: `Id eq ${options.issue}`,
   });
-  
+
   if (!issueResponse.Items || issueResponse.Items.length === 0) {
     throw new Error(`Issue not found: ${options.issue}`);
   }
@@ -340,7 +375,7 @@ async function queryArticles(service, formatter, options) {
     issueTypeId: issueTypeId,
     issueType: issue.IssueType,
     appScanUrl: `${formatter.baseUrl}/api/v4/Reports/Article/?issuetype=${issueTypeId}`,
-    fullHtml: articleHtml.data
+    fullHtml: articleHtml.data,
   };
 
   // Convert to Markdown if requested
@@ -349,7 +384,7 @@ async function queryArticles(service, formatter, options) {
     const turndown = new TurndownService();
     return {
       ...baseResult,
-      markdownVersion: turndown.turndown(articleHtml.data)
+      markdownVersion: turndown.turndown(articleHtml.data),
     };
   }
 
@@ -365,7 +400,9 @@ async function statusAction(options) {
       throw new Error('Either --app or --scan option is required');
     }
 
-    const config = options.config ? Config.loadFromFile(options.config) : new Config();
+    const config = options.config
+      ? Config.loadFromFile(options.config)
+      : new Config();
     const service = new AppScanService(config);
     const formatter = new Formatter(config.getBaseUrl());
 
@@ -383,7 +420,7 @@ async function statusAction(options) {
       total: issues.length,
       byStatus: {},
       bySeverity: {},
-      bySeverityAndStatus: {}
+      bySeverityAndStatus: {},
     };
 
     // Count by status
@@ -401,11 +438,13 @@ async function statusAction(options) {
     // Count by severity and status
     const severities = ['Critical', 'High', 'Medium', 'Low', 'Informational'];
     const statuses = ['Open', 'InProgress', 'Noise', 'Passed', 'Fixed'];
-    
+
     for (const severity of severities) {
       report.bySeverityAndStatus[severity] = {};
       for (const status of statuses) {
-        const count = issues.filter(i => i.Severity === severity && i.Status === status).length;
+        const count = issues.filter(
+          (i) => i.Severity === severity && i.Status === status
+        ).length;
         report.bySeverityAndStatus[severity][status] = count;
       }
     }
@@ -414,8 +453,8 @@ async function statusAction(options) {
     if (options.includeJira && config.isJiraValid()) {
       const jiraService = new JiraService(config);
       jiraService.initialize();
-      
-      const issuesWithJira = issues.filter(i => i.ExternalId);
+
+      const issuesWithJira = issues.filter((i) => i.ExternalId);
       report.vulnerabilitiesWithJira = issuesWithJira.length;
       report.jiraStatuses = {};
 
@@ -427,16 +466,16 @@ async function statusAction(options) {
       entityType: options.scan ? 'scan' : 'application',
       entityId: scopeId,
       report: report,
-      vulnerabilities: issues.slice(0, 20).map(issue => ({
+      vulnerabilities: issues.slice(0, 20).map((issue) => ({
         id: issue.Id,
         issueType: issue.IssueType,
         severity: issue.Severity,
         status: issue.Status,
         jiraKey: issue.ExternalId || null,
-        remediationUrl: issue.IssueTypeId 
+        remediationUrl: issue.IssueTypeId
           ? `${formatter.baseUrl}/api/v4/Reports/Article/?issuetype=${issue.IssueTypeId}`
-          : null
-      }))
+          : null,
+      })),
     };
 
     outputResult(result, options);
@@ -451,15 +490,17 @@ async function statusAction(options) {
  */
 async function summaryAction(options) {
   try {
-    const config = options.config ? Config.loadFromFile(options.config) : new Config();
+    const config = options.config
+      ? Config.loadFromFile(options.config)
+      : new Config();
     const service = new AppScanService(config);
 
     await service.authenticate();
 
     // Get application details
     const apps = await service.listApplications();
-    const app = apps.find(a => a.Id === options.app);
-    
+    const app = apps.find((a) => a.Id === options.app);
+
     if (!app) {
       throw new Error(`Application not found: ${options.app}`);
     }
@@ -475,12 +516,12 @@ async function summaryAction(options) {
         openIssues: app.OpenIssues || 0,
         // Add other counts as available from API
       },
-      scans: scans.map(scan => ({
+      scans: scans.map((scan) => ({
         id: scan.Id,
         name: scan.Name,
         scanType: Formatter.normalizeScanType(scan.Technology),
-        totalIssues: scan.LatestExecution?.NIssuesFound || 0
-      }))
+        totalIssues: scan.LatestExecution?.NIssuesFound || 0,
+      })),
     };
 
     outputResult(result, options);
@@ -495,7 +536,9 @@ async function summaryAction(options) {
  */
 async function updateAction(options) {
   try {
-    const config = options.config ? Config.loadFromFile(options.config) : new Config();
+    const config = options.config
+      ? Config.loadFromFile(options.config)
+      : new Config();
     const service = new AppScanService(config);
 
     await service.authenticate();
@@ -503,14 +546,16 @@ async function updateAction(options) {
     // Validate status
     const validStatuses = ['Open', 'InProgress', 'Noise', 'Passed', 'Fixed'];
     if (!validStatuses.includes(options.status)) {
-      throw new Error(`Invalid status: ${options.status}. Valid: ${validStatuses.join(', ')}`);
+      throw new Error(
+        `Invalid status: ${options.status}. Valid: ${validStatuses.join(', ')}`
+      );
     }
 
     // Get issue to find its application
     const issueResponse = await service.api.v4.Issues_Get('Application', '*', {
-      $filter: `Id eq ${options.issue}`
+      $filter: `Id eq ${options.issue}`,
     });
-    
+
     if (!issueResponse.Items || issueResponse.Items.length === 0) {
       throw new Error(`Issue not found: ${options.issue}`);
     }
@@ -538,7 +583,7 @@ async function updateAction(options) {
       issueId: options.issue,
       newStatus: options.status,
       commentAdded: !!options.comment,
-      externalIdSet: !!options.externalId
+      externalIdSet: !!options.externalId,
     };
 
     outputResult(result, options);
@@ -553,7 +598,9 @@ async function updateAction(options) {
  */
 async function bulkUpdateAction(options) {
   try {
-    const config = options.config ? Config.loadFromFile(options.config) : new Config();
+    const config = options.config
+      ? Config.loadFromFile(options.config)
+      : new Config();
     const service = new AppScanService(config);
 
     await service.authenticate();
@@ -561,28 +608,37 @@ async function bulkUpdateAction(options) {
     // Validate status
     const validStatuses = ['Open', 'InProgress', 'Noise', 'Passed', 'Fixed'];
     if (!validStatuses.includes(options.status)) {
-      throw new Error(`Invalid status: ${options.status}. Valid: ${validStatuses.join(', ')}`);
+      throw new Error(
+        `Invalid status: ${options.status}. Valid: ${validStatuses.join(', ')}`
+      );
     }
 
     // Parse issue IDs
-    const issueIds = options.issues.split(',').map(id => id.trim()).filter(Boolean);
-    
+    const issueIds = options.issues
+      .split(',')
+      .map((id) => id.trim())
+      .filter(Boolean);
+
     if (issueIds.length === 0) {
       throw new Error('No issue IDs provided');
     }
 
     // Fetch all issues to group by application
     const issuesByApp = {};
-    
+
     for (const issueId of issueIds) {
-      const issueResponse = await service.api.v4.Issues_Get('Application', '*', {
-        $filter: `Id eq ${issueId}`
-      });
-      
+      const issueResponse = await service.api.v4.Issues_Get(
+        'Application',
+        '*',
+        {
+          $filter: `Id eq ${issueId}`,
+        }
+      );
+
       if (issueResponse.Items && issueResponse.Items.length > 0) {
         const issue = issueResponse.Items[0];
         const appId = issue.ApplicationId;
-        
+
         if (!issuesByApp[appId]) {
           issuesByApp[appId] = [];
         }
@@ -597,8 +653,8 @@ async function bulkUpdateAction(options) {
     if (options.externalId) updateData.ExternalId = options.externalId;
 
     for (const [appId, appIssueIds] of Object.entries(issuesByApp)) {
-      const odataFilter = appIssueIds.map(id => `Id eq ${id}`).join(' or ');
-      
+      const odataFilter = appIssueIds.map((id) => `Id eq ${id}`).join(' or ');
+
       // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
       await service.api.v4.Issues_UpdateFilteredIssues(
         'Application',
@@ -610,7 +666,7 @@ async function bulkUpdateAction(options) {
       results.push({
         applicationId: appId,
         issuesUpdated: appIssueIds.length,
-        status: 'success'
+        status: 'success',
       });
     }
 
@@ -618,7 +674,7 @@ async function bulkUpdateAction(options) {
       success: true,
       totalRequests: results.length,
       results: results,
-      totalIssuesUpdated: issueIds.length
+      totalIssuesUpdated: issueIds.length,
     };
 
     outputResult(result, options);
@@ -633,7 +689,9 @@ async function bulkUpdateAction(options) {
  */
 async function bulkUpdateFilterAction(options) {
   try {
-    const config = options.config ? Config.loadFromFile(options.config) : new Config();
+    const config = options.config
+      ? Config.loadFromFile(options.config)
+      : new Config();
     const service = new AppScanService(config);
 
     await service.authenticate();
@@ -641,7 +699,9 @@ async function bulkUpdateFilterAction(options) {
     // Validate status
     const validStatuses = ['Open', 'InProgress', 'Noise', 'Passed', 'Fixed'];
     if (!validStatuses.includes(options.status)) {
-      throw new Error(`Invalid status: ${options.status}. Valid: ${validStatuses.join(', ')}`);
+      throw new Error(
+        `Invalid status: ${options.status}. Valid: ${validStatuses.join(', ')}`
+      );
     }
 
     // Build filter
@@ -671,7 +731,7 @@ async function bulkUpdateFilterAction(options) {
       success: true,
       applicationId: options.app,
       issuesUpdated: result.UpdatedIssues || 0,
-      filter: options.filter
+      filter: options.filter,
     };
 
     outputResult(response, options);
@@ -686,7 +746,9 @@ async function bulkUpdateFilterAction(options) {
  */
 async function createJiraAction(options) {
   try {
-    const config = options.config ? Config.loadFromFile(options.config) : new Config();
+    const config = options.config
+      ? Config.loadFromFile(options.config)
+      : new Config();
     const service = new AppScanService(config);
     const jiraService = new JiraService(config);
 
@@ -694,8 +756,11 @@ async function createJiraAction(options) {
     jiraService.initialize();
 
     // Parse issue IDs
-    const issueIds = options.issues.split(',').map(id => id.trim()).filter(Boolean);
-    
+    const issueIds = options.issues
+      .split(',')
+      .map((id) => id.trim())
+      .filter(Boolean);
+
     if (issueIds.length === 0) {
       throw new Error('No issue IDs provided');
     }
@@ -703,10 +768,14 @@ async function createJiraAction(options) {
     // Fetch all issues
     const issues = [];
     for (const issueId of issueIds) {
-      const issueResponse = await service.api.v4.Issues_Get('Application', '*', {
-        $filter: `Id eq ${issueId}`
-      });
-      
+      const issueResponse = await service.api.v4.Issues_Get(
+        'Application',
+        '*',
+        {
+          $filter: `Id eq ${issueId}`,
+        }
+      );
+
       if (issueResponse.Items && issueResponse.Items.length > 0) {
         issues.push(issueResponse.Items[0]);
       }
@@ -720,11 +789,16 @@ async function createJiraAction(options) {
     const groups = groupIssuesForJira(issues, options.groupBy);
 
     const jiraIssuesCreated = [];
-    const labels = options.labels ? options.labels.split(',').map(l => l.trim()) : [];
+    const labels = options.labels
+      ? options.labels.split(',').map((l) => l.trim())
+      : [];
 
     for (const group of groups) {
       // Build Jira description
-      const builder = new JiraDescriptionBuilder(group.issues, config.getBaseUrl());
+      const builder = new JiraDescriptionBuilder(
+        group.issues,
+        config.getBaseUrl()
+      );
       const description = builder
         .addSummary(null, null)
         .addIssuesByType()
@@ -737,8 +811,12 @@ async function createJiraAction(options) {
       if (options.dryRun) {
         console.log(chalk.cyan('\nWould create Jira issue:'));
         console.log(chalk.white(`  Summary: ${summary}`));
-        console.log(chalk.white(`  Description length: ${description.length} bytes`));
-        console.log(chalk.white(`  Issues: ${group.issues.map(i => i.Id).join(', ')}`));
+        console.log(
+          chalk.white(`  Description length: ${description.length} bytes`)
+        );
+        console.log(
+          chalk.white(`  Issues: ${group.issues.map((i) => i.Id).join(', ')}`)
+        );
         continue;
       }
 
@@ -749,8 +827,8 @@ async function createJiraAction(options) {
           summary: summary,
           description: jiraService.convertToADF(description),
           issuetype: { name: options.issueType },
-          labels: labels
-        }
+          labels: labels,
+        },
       });
 
       const jiraKey = jiraIssue.key;
@@ -769,17 +847,17 @@ async function createJiraAction(options) {
       }
 
       jiraIssuesCreated.push({
-        appScanIssues: group.issues.map(i => i.Id),
+        appScanIssues: group.issues.map((i) => i.Id),
         jiraKey: jiraKey,
         jiraUrl: jiraUrl,
-        summary: summary
+        summary: summary,
       });
     }
 
     const result = {
       success: true,
       jiraIssuesCreated: jiraIssuesCreated,
-      totalIssuesCreated: jiraIssuesCreated.length
+      totalIssuesCreated: jiraIssuesCreated.length,
     };
 
     outputResult(result, options);
@@ -794,7 +872,9 @@ async function createJiraAction(options) {
  */
 async function findJiraAction(options) {
   try {
-    const config = options.config ? Config.loadFromFile(options.config) : new Config();
+    const config = options.config
+      ? Config.loadFromFile(options.config)
+      : new Config();
     const service = new AppScanService(config);
     const jiraService = new JiraService(config);
 
@@ -803,9 +883,9 @@ async function findJiraAction(options) {
 
     // Get issue details
     const issueResponse = await service.api.v4.Issues_Get('Application', '*', {
-      $filter: `Id eq ${options.issue}`
+      $filter: `Id eq ${options.issue}`,
     });
-    
+
     if (!issueResponse.Items || issueResponse.Items.length === 0) {
       throw new Error(`Issue not found: ${options.issue}`);
     }
@@ -818,23 +898,28 @@ async function findJiraAction(options) {
     if (externalId) {
       // Fetch Jira issue by key
       try {
-        const jiraIssue = await jiraService.client.issues.getIssue({ issueIdOrKey: externalId });
+        const jiraIssue = await jiraService.client.issues.getIssue({
+          issueIdOrKey: externalId,
+        });
         jiraIssues.push({
           key: jiraIssue.key,
           summary: jiraIssue.fields.summary,
           status: jiraIssue.fields.status.name,
-          url: `${config.getJiraHost()}/browse/${jiraIssue.key}`
+          url: `${config.getJiraHost()}/browse/${jiraIssue.key}`,
         });
       } catch (error) {
         // Jira issue not found or invalid key - this is not a fatal error
-        console.warn(`Could not fetch Jira issue ${externalId}:`, error.message);
+        console.warn(
+          `Could not fetch Jira issue ${externalId}:`,
+          error.message
+        );
       }
     }
 
     const result = {
       appScanIssueId: options.issue,
       externalId: externalId || null,
-      jiraIssues: jiraIssues
+      jiraIssues: jiraIssues,
     };
 
     outputResult(result, options);
@@ -849,16 +934,18 @@ async function findJiraAction(options) {
  */
 async function linkJiraAction(options) {
   try {
-    const config = options.config ? Config.loadFromFile(options.config) : new Config();
+    const config = options.config
+      ? Config.loadFromFile(options.config)
+      : new Config();
     const service = new AppScanService(config);
 
     await service.authenticate();
 
     // Get issue to find its application
     const issueResponse = await service.api.v4.Issues_Get('Application', '*', {
-      $filter: `Id eq ${options.issue}`
+      $filter: `Id eq ${options.issue}`,
     });
-    
+
     if (!issueResponse.Items || issueResponse.Items.length === 0) {
       throw new Error(`Issue not found: ${options.issue}`);
     }
@@ -879,7 +966,7 @@ async function linkJiraAction(options) {
       success: true,
       message: 'Jira issue linked successfully',
       issueId: options.issue,
-      jiraKey: options.jiraKey
+      jiraKey: options.jiraKey,
     };
 
     outputResult(result, options);
@@ -894,7 +981,9 @@ async function linkJiraAction(options) {
  */
 async function interactiveAction(options) {
   try {
-    const config = options.config ? Config.loadFromFile(options.config) : new Config();
+    const config = options.config
+      ? Config.loadFromFile(options.config)
+      : new Config();
     const service = new AppScanService(config);
 
     await service.authenticate();
@@ -909,15 +998,15 @@ async function interactiveAction(options) {
       if (!appId) {
         const response = await service.listApplications();
         const apps = response.Items || response || [];
-        const appChoices = apps.map(app => ({
+        const appChoices = apps.map((app) => ({
           name: `${app.Name} (${app.TotalIssues || 0} issues)`,
           value: app.Id,
-          description: app.Description || ''
+          description: app.Description || '',
         }));
 
         appId = await select({
           message: 'Select an application:',
-          choices: appChoices
+          choices: appChoices,
         });
       }
 
@@ -928,28 +1017,42 @@ async function interactiveAction(options) {
 
       if (options.scanType) {
         const normalizedType = options.scanType.toUpperCase();
-        filteredScans = scans.filter(scan => {
-          return Formatter.normalizeScanType(scan.Technology) === normalizedType;
+        filteredScans = scans.filter((scan) => {
+          return (
+            Formatter.normalizeScanType(scan.Technology) === normalizedType
+          );
         });
-        
+
         if (filteredScans.length === 0) {
-          console.log(chalk.yellow(`\nNo ${options.scanType} scans found for this application.`));
+          console.log(
+            chalk.yellow(
+              `\nNo ${options.scanType} scans found for this application.`
+            )
+          );
           console.log(chalk.gray('Available scan types in this application:'));
-          const availableTypes = [...new Set(scans.map(s => Formatter.normalizeScanType(s.Technology)))];
-          availableTypes.forEach(type => {
-            const count = scans.filter(s => Formatter.normalizeScanType(s.Technology) === type).length;
+          const availableTypes = [
+            ...new Set(
+              scans.map((s) => Formatter.normalizeScanType(s.Technology))
+            ),
+          ];
+          availableTypes.forEach((type) => {
+            const count = scans.filter(
+              (s) => Formatter.normalizeScanType(s.Technology) === type
+            ).length;
             console.log(chalk.gray(`  - ${type}: ${count} scan(s)`));
           });
-          console.log(chalk.cyan('\n↩️  Returning to application selection...\n'));
+          console.log(
+            chalk.cyan('\n↩️  Returning to application selection...\n')
+          );
           continue; // Go back to application selection
         }
       }
 
-      const scanChoices = filteredScans.map(scan => {
+      const scanChoices = filteredScans.map((scan) => {
         const stats = {
           total: scan.LatestExecution?.NIssuesFound || 0,
           High: scan.LatestExecution?.NHighIssues || 0,
-          Medium: scan.LatestExecution?.NMediumIssues || 0
+          Medium: scan.LatestExecution?.NMediumIssues || 0,
         };
         return formatScanDisplay(scan, stats);
       });
@@ -958,11 +1061,13 @@ async function interactiveAction(options) {
       if (filteredScans.length === 1) {
         // Auto-select if only one scan available
         scanId = filteredScans[0].Id;
-        console.log(chalk.green(`\n✓ Auto-selected scan: ${filteredScans[0].Name}`));
+        console.log(
+          chalk.green(`\n✓ Auto-selected scan: ${filteredScans[0].Name}`)
+        );
       } else {
         scanId = await select({
           message: 'Select a scan:',
-          choices: scanChoices
+          choices: scanChoices,
         });
       }
 
@@ -976,7 +1081,11 @@ async function interactiveAction(options) {
 
       while (continueBrowsing) {
         // Fetch and display issues
-        const issuesResponse = await service.api.v4.Issues_Get('Scan', scanId, {});
+        const issuesResponse = await service.api.v4.Issues_Get(
+          'Scan',
+          scanId,
+          {}
+        );
         let issues = issuesResponse.Items || [];
 
         if (issues.length === 0) {
@@ -987,35 +1096,50 @@ async function interactiveAction(options) {
 
         // Apply filters
         if (filterStatus) {
-          issues = issues.filter(i => i.Status === filterStatus);
+          issues = issues.filter((i) => i.Status === filterStatus);
         }
         if (filterSeverity) {
-          issues = issues.filter(i => i.Severity === filterSeverity);
+          issues = issues.filter((i) => i.Severity === filterSeverity);
         }
         if (filterIssueType) {
-          issues = issues.filter(i => i.IssueType === filterIssueType);
+          issues = issues.filter((i) => i.IssueType === filterIssueType);
         }
         if (filterJira === 'with') {
-          issues = issues.filter(i => i.ExternalId && i.ExternalId.trim() !== '');
+          issues = issues.filter(
+            (i) => i.ExternalId && i.ExternalId.trim() !== ''
+          );
         } else if (filterJira === 'without') {
-          issues = issues.filter(i => !i.ExternalId || i.ExternalId.trim() === '');
+          issues = issues.filter(
+            (i) => !i.ExternalId || i.ExternalId.trim() === ''
+          );
         }
         if (searchText) {
           const searchLower = searchText.toLowerCase();
-          issues = issues.filter(i => 
-            (i.IssueType && i.IssueType.toLowerCase().includes(searchLower)) ||
-            (i.Location && i.Location.toLowerCase().includes(searchLower)) ||
-            (i.Api && i.Api.toLowerCase().includes(searchLower))
+          issues = issues.filter(
+            (i) =>
+              (i.IssueType &&
+                i.IssueType.toLowerCase().includes(searchLower)) ||
+              (i.Location && i.Location.toLowerCase().includes(searchLower)) ||
+              (i.Api && i.Api.toLowerCase().includes(searchLower))
           );
         }
 
         console.log(chalk.green(`\nShowing ${issues.length} issues`));
-        if (filterStatus || filterSeverity || filterIssueType || filterJira || searchText) {
+        if (
+          filterStatus ||
+          filterSeverity ||
+          filterIssueType ||
+          filterJira ||
+          searchText
+        ) {
           const filters = [];
           if (filterStatus) filters.push(`Status: ${filterStatus}`);
           if (filterSeverity) filters.push(`Severity: ${filterSeverity}`);
           if (filterIssueType) filters.push(`Type: ${filterIssueType}`);
-          if (filterJira) filters.push(`Jira: ${filterJira === 'with' ? 'Has Jira link' : 'No Jira link'}`);
+          if (filterJira)
+            filters.push(
+              `Jira: ${filterJira === 'with' ? 'Has Jira link' : 'No Jira link'}`
+            );
           if (searchText) filters.push(`Search: "${searchText}"`);
           console.log(chalk.cyan(`Filters active: ${filters.join(', ')}`));
         }
@@ -1025,11 +1149,21 @@ async function interactiveAction(options) {
         const severityCounts = {};
         for (const issue of issues) {
           statusCounts[issue.Status] = (statusCounts[issue.Status] || 0) + 1;
-          severityCounts[issue.Severity] = (severityCounts[issue.Severity] || 0) + 1;
+          severityCounts[issue.Severity] =
+            (severityCounts[issue.Severity] || 0) + 1;
         }
         console.log(chalk.cyan('\n📊 Status Summary:'));
-        for (const [status, count] of Object.entries(statusCounts).sort((a, b) => b[1] - a[1])) {
-          const icon = status === 'Open' ? '🔴' : status === 'InProgress' ? '🟡' : status === 'Noise' ? '⚫' : '✅';
+        for (const [status, count] of Object.entries(statusCounts).sort(
+          (a, b) => b[1] - a[1]
+        )) {
+          const icon =
+            status === 'Open'
+              ? '🔴'
+              : status === 'InProgress'
+                ? '🟡'
+                : status === 'Noise'
+                  ? '⚫'
+                  : '✅';
           console.log(`  ${icon} ${status}: ${count}`);
         }
 
@@ -1038,24 +1172,47 @@ async function interactiveAction(options) {
         displayGroupedSummary(grouped);
 
         // Display active filters before action menu
-        if (filterStatus || filterSeverity || filterIssueType || filterJira || searchText) {
+        if (
+          filterStatus ||
+          filterSeverity ||
+          filterIssueType ||
+          filterJira ||
+          searchText
+        ) {
           console.log(chalk.yellow('\n⚠️  Active Filters:'));
-          if (filterStatus) console.log(chalk.yellow(`  • Status: ${filterStatus}`));
-          if (filterSeverity) console.log(chalk.yellow(`  • Severity: ${filterSeverity}`));
-          if (filterIssueType) console.log(chalk.yellow(`  • Type: ${filterIssueType}`));
-          if (filterJira) console.log(chalk.yellow(`  • Jira: ${filterJira === 'with' ? 'Has Jira link' : 'No Jira link'}`));
-          if (searchText) console.log(chalk.yellow(`  • Search: "${searchText}"`));
-          console.log(chalk.gray('  (Some vulnerabilities may be hidden by these filters)'));
+          if (filterStatus)
+            console.log(chalk.yellow(`  • Status: ${filterStatus}`));
+          if (filterSeverity)
+            console.log(chalk.yellow(`  • Severity: ${filterSeverity}`));
+          if (filterIssueType)
+            console.log(chalk.yellow(`  • Type: ${filterIssueType}`));
+          if (filterJira)
+            console.log(
+              chalk.yellow(
+                `  • Jira: ${filterJira === 'with' ? 'Has Jira link' : 'No Jira link'}`
+              )
+            );
+          if (searchText)
+            console.log(chalk.yellow(`  • Search: "${searchText}"`));
+          console.log(
+            chalk.gray(
+              '  (Some vulnerabilities may be hidden by these filters)'
+            )
+          );
         }
 
         // Step 4: Select action
         const action = await select({
-          message: '\nWhat would you like to do? (Use ↑↓ arrows to select, Enter to confirm)',
+          message:
+            '\nWhat would you like to do? (Use ↑↓ arrows to select, Enter to confirm)',
           choices: [
             { name: '📝 Select issues to update status', value: 'update' },
             { name: '🎫 Select issues to create Jira', value: 'jira' },
             { name: '🔍 View issue details (quick)', value: 'details' },
-            { name: '📖 View issue details with article', value: 'details-with-article' },
+            {
+              name: '📖 View issue details with article',
+              value: 'details-with-article',
+            },
             { name: '🔎 Filter by status', value: 'filter-status' },
             { name: '📊 Filter by severity', value: 'filter-severity' },
             { name: '🏷️  Filter by vulnerability type', value: 'filter-type' },
@@ -1064,8 +1221,8 @@ async function interactiveAction(options) {
             { name: '🔄 Clear filters', value: 'clear-filters' },
             { name: '🔄 Refresh', value: 'refresh' },
             { name: '⬅️  Back to scan selection', value: 'back' },
-            { name: '❌ Exit', value: 'exit' }
-          ]
+            { name: '❌ Exit', value: 'exit' },
+          ],
         });
 
         if (action === 'exit') {
@@ -1088,11 +1245,11 @@ async function interactiveAction(options) {
         } else if (action === 'filter-status') {
           const statusChoices = [
             { name: 'All statuses', value: null },
-            ...ISSUE_STATUSES
+            ...ISSUE_STATUSES,
           ];
           filterStatus = await select({
             message: 'Filter by status:',
-            choices: statusChoices
+            choices: statusChoices,
           });
           continue;
         } else if (action === 'filter-severity') {
@@ -1102,54 +1259,56 @@ async function interactiveAction(options) {
             { name: 'High', value: 'High' },
             { name: 'Medium', value: 'Medium' },
             { name: 'Low', value: 'Low' },
-            { name: 'Informational', value: 'Informational' }
+            { name: 'Informational', value: 'Informational' },
           ];
           filterSeverity = await select({
             message: 'Filter by severity:',
-            choices: severityChoices
+            choices: severityChoices,
           });
           continue;
         } else if (action === 'filter-type') {
           // Get unique issue types from current issues
-          const issueTypes = [...new Set(issues.map(i => i.IssueType))].sort();
+          const issueTypes = [
+            ...new Set(issues.map((i) => i.IssueType)),
+          ].sort();
           const typeChoices = [
             { name: 'Show all types', value: null },
-            ...issueTypes.map(type => ({
-              name: `${type} (${issues.filter(i => i.IssueType === type).length} issues)`,
-              value: type
-            }))
+            ...issueTypes.map((type) => ({
+              name: `${type} (${issues.filter((i) => i.IssueType === type).length} issues)`,
+              value: type,
+            })),
           ];
           filterIssueType = await select({
             message: 'Filter by vulnerability type:',
             choices: typeChoices,
-            pageSize: 20
+            pageSize: 20,
           });
           continue;
         } else if (action === 'filter-jira') {
           const jiraChoices = [
             { name: 'Show all', value: null },
             { name: 'Only issues WITH Jira link', value: 'with' },
-            { name: 'Only issues WITHOUT Jira link', value: 'without' }
+            { name: 'Only issues WITHOUT Jira link', value: 'without' },
           ];
           filterJira = await select({
             message: 'Filter by Jira link:',
-            choices: jiraChoices
+            choices: jiraChoices,
           });
           continue;
         } else if (action === 'search') {
           searchText = await input({
             message: 'Enter search text (leave empty to clear):',
-            default: searchText || ''
+            default: searchText || '',
           });
           if (!searchText) searchText = null;
           continue;
         } else if (action === 'details' || action === 'details-with-article') {
           const showArticle = action === 'details-with-article';
-          
+
           // View issue details
-          const issueChoices = issues.slice(0, 50).map(issue => ({
+          const issueChoices = issues.slice(0, 50).map((issue) => ({
             name: `[${issue.Severity}] [${issue.Status}] ${issue.IssueType} - ${issue.Location || issue.Api || 'N/A'}${issue.ExternalId ? ` (Jira: ${issue.ExternalId})` : ''}`,
-            value: issue.Id
+            value: issue.Id,
           }));
 
           if (issueChoices.length === 0) {
@@ -1160,81 +1319,119 @@ async function interactiveAction(options) {
           const selectedIssueId = await select({
             message: `Select issue to view details${showArticle ? ' with article' : ''}:`,
             choices: issueChoices,
-            pageSize: 15
+            pageSize: 15,
           });
 
-          const selectedIssue = issues.find(i => i.Id === selectedIssueId);
+          const selectedIssue = issues.find((i) => i.Id === selectedIssueId);
           if (selectedIssue) {
-            console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+            console.log(
+              chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+            );
             console.log(chalk.bold.white(`\n📋 Issue Details\n`));
-            console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+            console.log(
+              chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+            );
             console.log(chalk.bold('Type:'), selectedIssue.IssueType);
-            console.log(chalk.bold('Severity:'), chalk[Formatter.getSeverityColor(selectedIssue.Severity)](selectedIssue.Severity));
+            console.log(
+              chalk.bold('Severity:'),
+              chalk[Formatter.getSeverityColor(selectedIssue.Severity)](
+                selectedIssue.Severity
+              )
+            );
             console.log(chalk.bold('Status:'), selectedIssue.Status);
-            console.log(chalk.bold('Location:'), selectedIssue.Location || selectedIssue.Api || 'N/A');
-            if (selectedIssue.SourceFile) console.log(chalk.bold('File:'), selectedIssue.SourceFile);
-            if (selectedIssue.Line) console.log(chalk.bold('Line:'), selectedIssue.Line);
-            if (selectedIssue.Context) console.log(chalk.bold('Context:'), selectedIssue.Context);
-            if (selectedIssue.Language) console.log(chalk.bold('Language:'), selectedIssue.Language);
-            if (selectedIssue.Cwe) console.log(chalk.bold('CWE:'), selectedIssue.Cwe);
+            console.log(
+              chalk.bold('Location:'),
+              selectedIssue.Location || selectedIssue.Api || 'N/A'
+            );
+            if (selectedIssue.SourceFile)
+              console.log(chalk.bold('File:'), selectedIssue.SourceFile);
+            if (selectedIssue.Line)
+              console.log(chalk.bold('Line:'), selectedIssue.Line);
+            if (selectedIssue.Context)
+              console.log(chalk.bold('Context:'), selectedIssue.Context);
+            if (selectedIssue.Language)
+              console.log(chalk.bold('Language:'), selectedIssue.Language);
+            if (selectedIssue.Cwe)
+              console.log(chalk.bold('CWE:'), selectedIssue.Cwe);
             if (selectedIssue.ExternalId) {
               console.log(chalk.bold('Jira Key:'), selectedIssue.ExternalId);
               const jiraHost = config.getJiraHost();
               if (jiraHost) {
                 const jiraUrl = `${jiraHost}/browse/${selectedIssue.ExternalId}`;
-                console.log(chalk.bold('Jira URL:'), chalk.blue.underline(jiraUrl));
+                console.log(
+                  chalk.bold('Jira URL:'),
+                  chalk.blue.underline(jiraUrl)
+                );
               }
             }
-            if (selectedIssue.SourceFileUri) console.log(chalk.bold('Source:'), selectedIssue.SourceFileUri);
-            console.log(chalk.bold('Created:'), new Date(selectedIssue.DateCreated).toLocaleDateString());
-            console.log(chalk.bold('Updated:'), new Date(selectedIssue.LastUpdated).toLocaleDateString());
-            
+            if (selectedIssue.SourceFileUri)
+              console.log(chalk.bold('Source:'), selectedIssue.SourceFileUri);
+            console.log(
+              chalk.bold('Created:'),
+              new Date(selectedIssue.DateCreated).toLocaleDateString()
+            );
+            console.log(
+              chalk.bold('Updated:'),
+              new Date(selectedIssue.LastUpdated).toLocaleDateString()
+            );
+
             // Fetch and display article only if requested
             if (showArticle && selectedIssue.IssueTypeId) {
-              console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+              console.log(
+                chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+              );
               console.log(chalk.bold.white('📖 Remediation Guidance\n'));
-              console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+              console.log(
+                chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+              );
               try {
                 const articleHtml = await service.getArticle(selectedIssue.Id);
                 if (articleHtml) {
                   // Step 1: Sanitize HTML - remove scripts, styles, and images
                   const sanitizeHtml = (await import('sanitize-html')).default;
                   const cleanHtml = sanitizeHtml(articleHtml, {
-                    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['h1', 'h2']),
+                    allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+                      'h1',
+                      'h2',
+                    ]),
                     allowedAttributes: {
-                      'a': ['href']
+                      a: ['href'],
                     },
                     disallowedTagsMode: 'discard',
                     // Remove img, script, style tags completely
                     exclusiveFilter: (frame) => {
-                      return frame.tag === 'img' || frame.tag === 'script' || frame.tag === 'style';
-                    }
+                      return (
+                        frame.tag === 'img' ||
+                        frame.tag === 'script' ||
+                        frame.tag === 'style'
+                      );
+                    },
                   });
-                  
+
                   // Step 2: Convert clean HTML to Markdown
                   const TurndownService = (await import('turndown')).default;
                   const turndown = new TurndownService({
                     headingStyle: 'atx',
-                    codeBlockStyle: 'fenced'
+                    codeBlockStyle: 'fenced',
                   });
-                  
+
                   // Custom rule to preserve URLs in a console-friendly format
                   turndown.addRule('links', {
                     filter: 'a',
-                    replacement: function(content, node) {
+                    replacement: function (content, node) {
                       const href = node.getAttribute('href');
                       if (!href) return content;
-                      
+
                       // For console, show both text and URL
                       if (content && content !== href) {
                         return `${content} (${href})`;
                       }
                       return href;
-                    }
+                    },
                   });
-                  
+
                   const articleMarkdown = turndown.turndown(cleanHtml);
-                  
+
                   // Step 3: Render Markdown with formatting in console
                   const cliMarkdown = (await import('cli-markdown')).default;
                   const formattedArticle = cliMarkdown(articleMarkdown);
@@ -1243,27 +1440,35 @@ async function interactiveAction(options) {
                   console.log(chalk.yellow('No article content available'));
                 }
               } catch (e) {
-                console.log(chalk.yellow(`Article not available: ${e.message}`));
+                console.log(
+                  chalk.yellow(`Article not available: ${e.message}`)
+                );
               }
             }
-            console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'));
+            console.log(
+              chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+            );
           }
           continue;
         }
 
         // Step 5: Select issues
-        const issueChoices = issues.map(issue => ({
+        const issueChoices = issues.map((issue) => ({
           name: `[${issue.Severity}] [${issue.Status}] ${issue.IssueType} - ${issue.Location || issue.Api || 'N/A'}${issue.ExternalId ? ` (Jira: ${issue.ExternalId})` : ''}`,
           value: issue.Id,
-          checked: false
+          checked: false,
         }));
 
-        console.log(chalk.gray('\nTip: Use Space to select, Enter to confirm, or press Enter without selecting anything to go back.\n'));
+        console.log(
+          chalk.gray(
+            '\nTip: Use Space to select, Enter to confirm, or press Enter without selecting anything to go back.\n'
+          )
+        );
 
         const selectedIssueIds = await checkbox({
           message: 'Select issues (or press Enter to cancel):',
           choices: issueChoices,
-          pageSize: 15
+          pageSize: 15,
         });
 
         if (selectedIssueIds.length === 0) {
@@ -1271,7 +1476,9 @@ async function interactiveAction(options) {
           continue;
         }
 
-        console.log(chalk.green(`\n✓ Selected ${selectedIssueIds.length} issue(s)`));
+        console.log(
+          chalk.green(`\n✓ Selected ${selectedIssueIds.length} issue(s)`)
+        );
 
         // Step 6: Choose what to do with selected issues
         const selectedAction = await select({
@@ -1280,8 +1487,8 @@ async function interactiveAction(options) {
             { name: '📝 Update status', value: 'update' },
             { name: '🎫 Create Jira issue(s)', value: 'jira' },
             { name: '📄 View details of all selected', value: 'view-details' },
-            { name: '⬅️  Back (clear selection)', value: 'back' }
-          ]
+            { name: '⬅️  Back (clear selection)', value: 'back' },
+          ],
         });
 
         if (selectedAction === 'back') {
@@ -1292,18 +1499,20 @@ async function interactiveAction(options) {
         if (selectedAction === 'update') {
           const statusChoice = await select({
             message: 'Select new status:',
-            choices: ISSUE_STATUSES
+            choices: ISSUE_STATUSES,
           });
 
           const comment = await input({
             message: 'Add comment (optional):',
-            default: ''
+            default: '',
           });
 
           // Bulk update
-          const selectedIssues = issues.filter(i => selectedIssueIds.includes(i.Id));
+          const selectedIssues = issues.filter((i) =>
+            selectedIssueIds.includes(i.Id)
+          );
           const issuesByApp = {};
-          
+
           for (const issue of selectedIssues) {
             const appIdForIssue = issue.ApplicationId;
             if (!issuesByApp[appIdForIssue]) {
@@ -1315,8 +1524,12 @@ async function interactiveAction(options) {
           const updateData = { Status: statusChoice };
           if (comment) updateData.Comment = comment;
 
-          for (const [appIdForUpdate, appIssueIds] of Object.entries(issuesByApp)) {
-            const odataFilter = appIssueIds.map(id => `Id eq ${id}`).join(' or ');
+          for (const [appIdForUpdate, appIssueIds] of Object.entries(
+            issuesByApp
+          )) {
+            const odataFilter = appIssueIds
+              .map((id) => `Id eq ${id}`)
+              .join(' or ');
             // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
             await service.api.v4.Issues_UpdateFilteredIssues(
               'Application',
@@ -1326,84 +1539,136 @@ async function interactiveAction(options) {
             );
           }
 
-          console.log(chalk.green(`\n✓ Updated ${selectedIssueIds.length} issues to ${statusChoice}`));
+          console.log(
+            chalk.green(
+              `\n✓ Updated ${selectedIssueIds.length} issues to ${statusChoice}`
+            )
+          );
           continue; // Continue browsing issues
         } else if (selectedAction === 'view-details') {
           // Display details for all selected issues
-          const selectedIssues = issues.filter(i => selectedIssueIds.includes(i.Id));
-          
+          const selectedIssues = issues.filter((i) =>
+            selectedIssueIds.includes(i.Id)
+          );
+
           for (let idx = 0; idx < selectedIssues.length; idx++) {
             const selectedIssue = selectedIssues[idx];
-            console.log(chalk.cyan(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`));
-            console.log(chalk.bold.white(`\n📋 Issue ${idx + 1} of ${selectedIssues.length}\n`));
-            console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+            console.log(
+              chalk.cyan(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`)
+            );
+            console.log(
+              chalk.bold.white(
+                `\n📋 Issue ${idx + 1} of ${selectedIssues.length}\n`
+              )
+            );
+            console.log(
+              chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+            );
             console.log(chalk.bold('Type:'), selectedIssue.IssueType);
-            console.log(chalk.bold('Severity:'), chalk[Formatter.getSeverityColor(selectedIssue.Severity)](selectedIssue.Severity));
+            console.log(
+              chalk.bold('Severity:'),
+              chalk[Formatter.getSeverityColor(selectedIssue.Severity)](
+                selectedIssue.Severity
+              )
+            );
             console.log(chalk.bold('Status:'), selectedIssue.Status);
-            console.log(chalk.bold('Location:'), selectedIssue.Location || selectedIssue.Api || 'N/A');
-            if (selectedIssue.SourceFile) console.log(chalk.bold('File:'), selectedIssue.SourceFile);
-            if (selectedIssue.Line) console.log(chalk.bold('Line:'), selectedIssue.Line);
-            if (selectedIssue.Context) console.log(chalk.bold('Context:'), selectedIssue.Context);
-            if (selectedIssue.Language) console.log(chalk.bold('Language:'), selectedIssue.Language);
-            if (selectedIssue.Cwe) console.log(chalk.bold('CWE:'), selectedIssue.Cwe);
+            console.log(
+              chalk.bold('Location:'),
+              selectedIssue.Location || selectedIssue.Api || 'N/A'
+            );
+            if (selectedIssue.SourceFile)
+              console.log(chalk.bold('File:'), selectedIssue.SourceFile);
+            if (selectedIssue.Line)
+              console.log(chalk.bold('Line:'), selectedIssue.Line);
+            if (selectedIssue.Context)
+              console.log(chalk.bold('Context:'), selectedIssue.Context);
+            if (selectedIssue.Language)
+              console.log(chalk.bold('Language:'), selectedIssue.Language);
+            if (selectedIssue.Cwe)
+              console.log(chalk.bold('CWE:'), selectedIssue.Cwe);
             if (selectedIssue.ExternalId) {
               console.log(chalk.bold('Jira Key:'), selectedIssue.ExternalId);
               const jiraHost = config.getJiraHost();
               if (jiraHost) {
                 const jiraUrl = `${jiraHost}/browse/${selectedIssue.ExternalId}`;
-                console.log(chalk.bold('Jira URL:'), chalk.blue.underline(jiraUrl));
+                console.log(
+                  chalk.bold('Jira URL:'),
+                  chalk.blue.underline(jiraUrl)
+                );
               }
             }
-            if (selectedIssue.SourceFileUri) console.log(chalk.bold('Source:'), selectedIssue.SourceFileUri);
-            console.log(chalk.bold('Created:'), new Date(selectedIssue.DateCreated).toLocaleDateString());
-            console.log(chalk.bold('Updated:'), new Date(selectedIssue.LastUpdated).toLocaleDateString());
-            
+            if (selectedIssue.SourceFileUri)
+              console.log(chalk.bold('Source:'), selectedIssue.SourceFileUri);
+            console.log(
+              chalk.bold('Created:'),
+              new Date(selectedIssue.DateCreated).toLocaleDateString()
+            );
+            console.log(
+              chalk.bold('Updated:'),
+              new Date(selectedIssue.LastUpdated).toLocaleDateString()
+            );
+
             // Fetch and display article (only for first issue to avoid too much output)
             if (idx === 0 && selectedIssue.IssueTypeId) {
-              console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
-              console.log(chalk.bold.white('📖 Remediation Guidance (for this issue type)\n'));
-              console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+              console.log(
+                chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+              );
+              console.log(
+                chalk.bold.white(
+                  '📖 Remediation Guidance (for this issue type)\n'
+                )
+              );
+              console.log(
+                chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+              );
               try {
                 const articleHtml = await service.getArticle(selectedIssue.Id);
                 if (articleHtml) {
                   // Step 1: Sanitize HTML - remove scripts, styles, and images
                   const sanitizeHtml = (await import('sanitize-html')).default;
                   const cleanHtml = sanitizeHtml(articleHtml, {
-                    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['h1', 'h2']),
+                    allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+                      'h1',
+                      'h2',
+                    ]),
                     allowedAttributes: {
-                      'a': ['href']
+                      a: ['href'],
                     },
                     disallowedTagsMode: 'discard',
                     // Remove img, script, style tags completely
                     exclusiveFilter: (frame) => {
-                      return frame.tag === 'img' || frame.tag === 'script' || frame.tag === 'style';
-                    }
+                      return (
+                        frame.tag === 'img' ||
+                        frame.tag === 'script' ||
+                        frame.tag === 'style'
+                      );
+                    },
                   });
-                  
+
                   // Step 2: Convert clean HTML to Markdown
                   const TurndownService = (await import('turndown')).default;
                   const turndown = new TurndownService({
                     headingStyle: 'atx',
-                    codeBlockStyle: 'fenced'
+                    codeBlockStyle: 'fenced',
                   });
-                  
+
                   // Custom rule to preserve URLs in a console-friendly format
                   turndown.addRule('links', {
                     filter: 'a',
-                    replacement: function(content, node) {
+                    replacement: function (content, node) {
                       const href = node.getAttribute('href');
                       if (!href) return content;
-                      
+
                       // For console, show both text and URL
                       if (content && content !== href) {
                         return `${content} (${href})`;
                       }
                       return href;
-                    }
+                    },
                   });
-                  
+
                   const articleMarkdown = turndown.turndown(cleanHtml);
-                  
+
                   // Step 3: Render Markdown with formatting in console
                   const cliMarkdown = (await import('cli-markdown')).default;
                   const formattedArticle = cliMarkdown(articleMarkdown);
@@ -1412,42 +1677,62 @@ async function interactiveAction(options) {
                   console.log(chalk.yellow('No article content available'));
                 }
               } catch (e) {
-                console.log(chalk.yellow(`Article not available: ${e.message}`));
+                console.log(
+                  chalk.yellow(`Article not available: ${e.message}`)
+                );
               }
             }
           }
-          console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'));
-          console.log(chalk.green(`\n✓ Displayed details for ${selectedIssues.length} issue(s)`));
+          console.log(
+            chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+          );
+          console.log(
+            chalk.green(
+              `\n✓ Displayed details for ${selectedIssues.length} issue(s)`
+            )
+          );
           continue;
         } else if (selectedAction === 'jira') {
           if (!config.isJiraValid()) {
-            console.error(chalk.red('\nJira is not configured. Please set JIRA_HOST, JIRA_EMAIL, and JIRA_API_TOKEN.'));
+            console.error(
+              chalk.red(
+                '\nJira is not configured. Please set JIRA_HOST, JIRA_EMAIL, and JIRA_API_TOKEN.'
+              )
+            );
             continue;
           }
 
-          const projectKey = config.getJiraProjectKey() || await input({
-            message: 'Enter Jira project key:',
-            validate: (value) => value.length > 0 || 'Project key is required'
-          });
+          const projectKey =
+            config.getJiraProjectKey() ||
+            (await input({
+              message: 'Enter Jira project key:',
+              validate: (value) =>
+                value.length > 0 || 'Project key is required',
+            }));
 
           const groupBy = await select({
             message: 'Group issues by:',
             choices: [
               { name: 'Type (recommended)', value: 'type' },
               { name: 'Severity', value: 'severity' },
-              { name: 'None (one issue per vulnerability)', value: 'none' }
-            ]
+              { name: 'None (one issue per vulnerability)', value: 'none' },
+            ],
           });
 
           // Create Jira issues
           const jiraService = new JiraService(config);
           jiraService.initialize();
 
-          const selectedIssues = issues.filter(i => selectedIssueIds.includes(i.Id));
+          const selectedIssues = issues.filter((i) =>
+            selectedIssueIds.includes(i.Id)
+          );
           const groups = groupIssuesForJira(selectedIssues, groupBy);
 
           for (const group of groups) {
-            const builder = new JiraDescriptionBuilder(group.issues, config.getBaseUrl());
+            const builder = new JiraDescriptionBuilder(
+              group.issues,
+              config.getBaseUrl()
+            );
             const description = builder
               .addSummary(null, null)
               .addIssuesByType()
@@ -1462,8 +1747,8 @@ async function interactiveAction(options) {
                 summary: summary,
                 description: jiraService.convertToADF(description),
                 issuetype: { name: 'Bug' },
-                labels: ['appscan', 'security']
-              }
+                labels: ['appscan', 'security'],
+              },
             });
 
             const jiraKey = jiraIssue.key;
@@ -1482,12 +1767,15 @@ async function interactiveAction(options) {
             }
           }
 
-          console.log(chalk.green(`\n✓ Created ${groups.length} Jira issue(s) and linked to AppScan`));
+          console.log(
+            chalk.green(
+              `\n✓ Created ${groups.length} Jira issue(s) and linked to AppScan`
+            )
+          );
           continue; // Continue browsing issues
         }
       }
     }
-
   } catch (error) {
     console.error(chalk.red(`\nError: ${error.message}`));
     process.exit(1);
@@ -1499,9 +1787,9 @@ async function interactiveAction(options) {
  */
 function groupIssuesForJira(issues, strategy) {
   if (strategy === 'none') {
-    return issues.map(issue => ({
+    return issues.map((issue) => ({
       name: issue.IssueType,
-      issues: [issue]
+      issues: [issue],
     }));
   } else if (strategy === 'severity') {
     const grouped = {};

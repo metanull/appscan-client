@@ -114,7 +114,9 @@ export async function generateYearlySummary(year, options) {
 }
 
 function printSummary(summary) {
-  console.log(chalk.bold.cyan(`\n=== AppScan Yearly Summary (${summary.year}) ===\n`));
+  console.log(
+    chalk.bold.cyan(`\n=== AppScan Yearly Summary (${summary.year}) ===\n`)
+  );
 
   console.log(chalk.bold('Overview:'));
   console.log(`  Total Applications: ${summary.totalApps}`);
@@ -137,7 +139,13 @@ function printSummary(summary) {
 
   if (Object.keys(summary.issuesBySeverity).length > 0) {
     console.log(chalk.bold('\nIssues by Severity:'));
-    const severityOrder = ['Critical', 'High', 'Medium', 'Low', 'Informational'];
+    const severityOrder = [
+      'Critical',
+      'High',
+      'Medium',
+      'Low',
+      'Informational',
+    ];
     severityOrder.forEach((severity) => {
       if (summary.issuesBySeverity[severity]) {
         console.log(`  ${severity}: ${summary.issuesBySeverity[severity]}`);

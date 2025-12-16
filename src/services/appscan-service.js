@@ -189,7 +189,7 @@ export class AppScanService {
       }
 
       const response = await this.api.v4.Reports_GetArticle(queryParams);
-      
+
       // Fix relative URLs in the article HTML by converting them to absolute URLs
       if (response && typeof response === 'string') {
         const baseUrl = this.config.getBaseUrl();
@@ -199,7 +199,7 @@ export class AppScanService {
           `href="${baseUrl}${articleApiPath}$1"`
         );
       }
-      
+
       return response;
     } catch (error) {
       // Provide more detailed error information
@@ -370,9 +370,14 @@ export class AppScanService {
    * @param {string} externalId - External ID (optional)
    * @returns {Promise<Object>} Update results
    */
-  async bulkUpdateIssues(issueIds, status = null, comment = null, externalId = null) {
+  async bulkUpdateIssues(
+    issueIds,
+    status = null,
+    comment = null,
+    externalId = null
+  ) {
     await this.ensureAuthenticated();
-    
+
     if (!issueIds || issueIds.length === 0) {
       throw new Error('No issue IDs provided for bulk update');
     }
@@ -413,21 +418,25 @@ export class AppScanService {
 
       // Must have at least one field to update
       if (Object.keys(updateData).length === 0) {
-        throw new Error('No fields to update. Must provide status, comment, or externalId');
+        throw new Error(
+          'No fields to update. Must provide status, comment, or externalId'
+        );
       }
 
       // Get the first issue to determine the application ID
       const firstIssue = await this.api.v4.Issues_GetIssue(issueIds[0], {});
-      
+
       if (!firstIssue || !firstIssue.ApplicationId) {
-        throw new Error(`Cannot determine ApplicationId from issue: ${issueIds[0]}`);
+        throw new Error(
+          `Cannot determine ApplicationId from issue: ${issueIds[0]}`
+        );
       }
 
       const applicationId = firstIssue.ApplicationId;
 
       // Build OData filter for multiple IDs
       // Format: Id eq guid1 or Id eq guid2 or Id eq guid3
-      const odataFilter = issueIds.map(id => `Id eq ${id}`).join(' or ');
+      const odataFilter = issueIds.map((id) => `Id eq ${id}`).join(' or ');
 
       // Update all issues using filtered update
       // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
@@ -443,7 +452,8 @@ export class AppScanService {
       return {
         success: true,
         totalRequested: issueIds.length,
-        totalUpdated: result?.UpdatedIssues || result?.TotalIssues || issueIds.length,
+        totalUpdated:
+          result?.UpdatedIssues || result?.TotalIssues || issueIds.length,
         result,
       };
     } catch (error) {
@@ -459,16 +469,21 @@ export class AppScanService {
    * @param {string} externalId - Optional external ID (e.g., Jira key)
    * @returns {Promise<Object>} Update result
    */
-  async updateAllIssuesInScan(scanId, status, comment = null, externalId = null) {
+  async updateAllIssuesInScan(
+    scanId,
+    status,
+    comment = null,
+    externalId = null
+  ) {
     await this.ensureAuthenticated();
     try {
       // Build update payload
       const updateData = { Status: status };
-      
+
       if (comment) {
         updateData.Comment = comment;
       }
-      
+
       if (externalId) {
         updateData.ExternalId = externalId;
       }
@@ -500,16 +515,21 @@ export class AppScanService {
    * @param {string} externalId - Optional external ID (e.g., Jira key)
    * @returns {Promise<Object>} Update result
    */
-  async updateAllIssuesInApplication(applicationId, status, comment = null, externalId = null) {
+  async updateAllIssuesInApplication(
+    applicationId,
+    status,
+    comment = null,
+    externalId = null
+  ) {
     await this.ensureAuthenticated();
     try {
       // Build update payload
       const updateData = { Status: status };
-      
+
       if (comment) {
         updateData.Comment = comment;
       }
-      
+
       if (externalId) {
         updateData.ExternalId = externalId;
       }
@@ -529,7 +549,9 @@ export class AppScanService {
         result,
       };
     } catch (error) {
-      throw new Error(`Failed to update all issues in application: ${error.message}`);
+      throw new Error(
+        `Failed to update all issues in application: ${error.message}`
+      );
     }
   }
 
@@ -554,7 +576,7 @@ export class AppScanService {
         Informational: 0,
       };
 
-      issues.forEach(issue => {
+      issues.forEach((issue) => {
         const severity = issue.Severity || 'Unknown';
         if (stats[severity] !== undefined) {
           stats[severity]++;

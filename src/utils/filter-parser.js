@@ -17,7 +17,10 @@ export class FilterParser {
     }
 
     // Split by semicolon for AND conditions
-    const andConditions = filterStr.split(';').map(s => s.trim()).filter(Boolean);
+    const andConditions = filterStr
+      .split(';')
+      .map((s) => s.trim())
+      .filter(Boolean);
 
     for (const condition of andConditions) {
       this.parseCondition(condition, queryBuilder);
@@ -36,10 +39,13 @@ export class FilterParser {
       return;
     }
 
-    const [key, valueExpr] = condition.split(':', 2).map(s => s.trim());
-    
+    const [key, valueExpr] = condition.split(':', 2).map((s) => s.trim());
+
     // Split by pipe for OR conditions
-    const values = valueExpr.split('|').map(s => s.trim()).filter(Boolean);
+    const values = valueExpr
+      .split('|')
+      .map((s) => s.trim())
+      .filter(Boolean);
 
     switch (key.toLowerCase()) {
       case 'status':

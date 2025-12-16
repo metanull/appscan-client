@@ -15,7 +15,10 @@ describe('FilterParser', () => {
   });
 
   test('parse combined filters with semicolon', () => {
-    const qb = FilterParser.parse('status:Open;severity:High', new QueryBuilder());
+    const qb = FilterParser.parse(
+      'status:Open;severity:High',
+      new QueryBuilder()
+    );
     const filter = qb.toODataFilter();
     expect(filter).toContain("Status eq 'Open'");
     expect(filter).toContain("Severity eq 'High'");
@@ -59,7 +62,10 @@ describe('FilterParser', () => {
   });
 
   test('complex filter with multiple conditions', () => {
-    const qb = FilterParser.parse('status:Open|InProgress;severity:High|Critical;name:SQL', new QueryBuilder());
+    const qb = FilterParser.parse(
+      'status:Open|InProgress;severity:High|Critical;name:SQL',
+      new QueryBuilder()
+    );
     const filter = qb.toODataFilter();
     expect(filter).toContain("Status eq 'Open' or Status eq 'InProgress'");
     expect(filter).toContain("Severity eq 'High' or Severity eq 'Critical'");

@@ -26,12 +26,16 @@ export class JiraService {
     if (!Version3Client) {
       throw new Error(
         'jira.js package is not installed. To use Jira integration features, install it with:\n' +
-        '  npm install -g jira.js@^5.2.2\n' +
-        'Or if using as a library, add it to your dependencies.'
+          '  npm install -g jira.js@^5.2.2\n' +
+          'Or if using as a library, add it to your dependencies.'
       );
     }
 
-    if (!this.config.jiraHost || !this.config.jiraEmail || !this.config.jiraApiToken) {
+    if (
+      !this.config.jiraHost ||
+      !this.config.jiraEmail ||
+      !this.config.jiraApiToken
+    ) {
       throw new Error(
         'Jira credentials not configured. Please set JIRA_HOST, JIRA_EMAIL, and JIRA_API_TOKEN environment variables.'
       );
@@ -56,21 +60,21 @@ export class JiraService {
   convertToADF(markdownText) {
     const lines = markdownText.split('\n');
     const content = [];
-    
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      
+
       // Empty line
       if (line.trim() === '') {
         continue;
       }
-      
+
       // Heading 1
       if (line.startsWith('# ')) {
         content.push({
           type: 'heading',
           attrs: { level: 1 },
-          content: [{ type: 'text', text: line.substring(2) }]
+          content: [{ type: 'text', text: line.substring(2) }],
         });
       }
       // Heading 2
@@ -78,7 +82,7 @@ export class JiraService {
         content.push({
           type: 'heading',
           attrs: { level: 2 },
-          content: [{ type: 'text', text: line.substring(3) }]
+          content: [{ type: 'text', text: line.substring(3) }],
         });
       }
       // Heading 3
@@ -86,7 +90,7 @@ export class JiraService {
         content.push({
           type: 'heading',
           attrs: { level: 3 },
-          content: [{ type: 'text', text: line.substring(4) }]
+          content: [{ type: 'text', text: line.substring(4) }],
         });
       }
       // Heading 4
@@ -94,7 +98,7 @@ export class JiraService {
         content.push({
           type: 'heading',
           attrs: { level: 4 },
-          content: [{ type: 'text', text: line.substring(5) }]
+          content: [{ type: 'text', text: line.substring(5) }],
         });
       }
       // Heading 5
@@ -102,7 +106,7 @@ export class JiraService {
         content.push({
           type: 'heading',
           attrs: { level: 5 },
-          content: [{ type: 'text', text: line.substring(6) }]
+          content: [{ type: 'text', text: line.substring(6) }],
         });
       }
       // Heading 6
@@ -110,7 +114,7 @@ export class JiraService {
         content.push({
           type: 'heading',
           attrs: { level: 6 },
-          content: [{ type: 'text', text: line.substring(7) }]
+          content: [{ type: 'text', text: line.substring(7) }],
         });
       }
       // Bullet list item
@@ -118,19 +122,24 @@ export class JiraService {
         // Check if we need to start a new list or continue existing
         const listItem = {
           type: 'listItem',
-          content: [{
-            type: 'paragraph',
-            content: this.parseInlineContent(line.substring(2))
-          }]
+          content: [
+            {
+              type: 'paragraph',
+              content: this.parseInlineContent(line.substring(2)),
+            },
+          ],
         };
-        
+
         // Look back to see if previous item was a list
-        if (content.length > 0 && content[content.length - 1].type === 'bulletList') {
+        if (
+          content.length > 0 &&
+          content[content.length - 1].type === 'bulletList'
+        ) {
           content[content.length - 1].content.push(listItem);
         } else {
           content.push({
             type: 'bulletList',
-            content: [listItem]
+            content: [listItem],
           });
         }
       }
@@ -138,18 +147,23 @@ export class JiraService {
       else {
         content.push({
           type: 'paragraph',
-          content: this.parseInlineContent(line)
+          content: this.parseInlineContent(line),
         });
       }
     }
-    
+
     return {
       type: 'doc',
       version: 1,
-      content: content.length > 0 ? content : [{
-        type: 'paragraph',
-        content: [{ type: 'text', text: markdownText }]
-      }]
+      content:
+        content.length > 0
+          ? content
+          : [
+              {
+                type: 'paragraph',
+                content: [{ type: 'text', text: markdownText }],
+              },
+            ],
     };
   }
 
@@ -158,12 +172,12 @@ export class JiraService {
    */
   parseInlineContent(text) {
     const content = [];
-    
+
     // Simple link pattern: [text](url)
     const linkPattern = /\[([^\]]+)\]\(([^\)]+)\)/g;
     let lastIndex = 0;
     let match;
-    
+
     while ((match = linkPattern.exec(text)) !== null) {
       // Add text before link
       if (match.index > lastIndex) {
@@ -172,29 +186,37 @@ export class JiraService {
           content.push({ type: 'text', text: beforeText });
         }
       }
-      
+
       // Add link
       content.push({
         type: 'text',
         text: match[1],
-        marks: [{
-          type: 'link',
-          attrs: { href: match[2] }
-        }]
+        marks: [
+          {
+            type: 'link',
+            attrs: { href: match[2] },
+          },
+        ],
       });
-      
+
       lastIndex = match.index + match[0].length;
     }
-    
+
     // Add remaining text
     if (lastIndex < text.length) {
       content.push({ type: 'text', text: text.substring(lastIndex) });
     }
-    
+
     return content.length > 0 ? content : [{ type: 'text', text: text }];
   }
 
-  async createIssue(projectKey, summary, description, issueType = 'Bug', options = {}) {
+  async createIssue(
+    projectKey,
+    summary,
+    description,
+    issueType = 'Bug',
+    options = {}
+  ) {
     if (!this.client) {
       this.initialize();
     }
@@ -207,9 +229,10 @@ export class JiraService {
             key: projectKey,
           },
           summary: summary,
-          description: typeof description === 'string' 
-            ? this.convertToADF(description)
-            : description,
+          description:
+            typeof description === 'string'
+              ? this.convertToADF(description)
+              : description,
           issuetype: {
             name: issueType,
           },
@@ -232,30 +255,39 @@ export class JiraService {
       // Log the description length for debugging
       const descriptionJson = JSON.stringify(issueData.fields.description);
       const descriptionLength = descriptionJson.length;
-      console.log(chalk.gray(`\nJIRA Description length: ${descriptionLength} characters`));
-      console.log(chalk.gray(`ADF nodes: ${issueData.fields.description.content?.length || 0} nodes\n`));
-      
+      console.log(
+        chalk.gray(`\nJIRA Description length: ${descriptionLength} characters`)
+      );
+      console.log(
+        chalk.gray(
+          `ADF nodes: ${issueData.fields.description.content?.length || 0} nodes\n`
+        )
+      );
+
       const response = await this.client.issues.createIssue(issueData);
       return response;
     } catch (error) {
       // Provide detailed error information for debugging
       let errorMessage = `Failed to create Jira issue: ${error.message}`;
-      
+
       if (error.response) {
         errorMessage += `\n  Status: ${error.response.status}`;
         if (error.response.data) {
           errorMessage += `\n  Details: ${JSON.stringify(error.response.data, null, 2)}`;
         }
       }
-      
+
       // Add description size info for CONTENT_LIMIT_EXCEEDED errors
-      if (issueData && error.response?.data?.errorMessages?.includes('CONTENT_LIMIT_EXCEEDED')) {
+      if (
+        issueData &&
+        error.response?.data?.errorMessages?.includes('CONTENT_LIMIT_EXCEEDED')
+      ) {
         const descriptionJson = JSON.stringify(issueData.fields.description);
         errorMessage += `\n  Description size: ${descriptionJson.length} characters`;
         errorMessage += `\n  Description nodes: ${issueData.fields.description.content?.length || 0} nodes`;
         errorMessage += `\n  Note: JIRA has a content limit (typically 32KB for description field)`;
       }
-      
+
       throw new Error(errorMessage);
     }
   }
@@ -266,7 +298,9 @@ export class JiraService {
     }
 
     try {
-      const project = await this.client.projects.getProject({ projectIdOrKey: projectKey });
+      const project = await this.client.projects.getProject({
+        projectIdOrKey: projectKey,
+      });
       return project;
     } catch (error) {
       throw new Error(`Failed to get Jira project: ${error.message}`);
@@ -284,9 +318,9 @@ export class JiraService {
     }
 
     try {
-      const project = await this.client.projects.getProject({ 
+      const project = await this.client.projects.getProject({
         projectIdOrKey: projectKey,
-        expand: 'issueTypes'
+        expand: 'issueTypes',
       });
       return project.issueTypes || [];
     } catch (error) {
@@ -315,12 +349,13 @@ export class JiraService {
 
       // Use the correct v3 API method: searchForIssuesUsingJqlEnhancedSearch
       // This is the new recommended endpoint that replaced the deprecated searchForIssuesUsingJql
-      const response = await this.client.issueSearch.searchForIssuesUsingJqlEnhancedSearch({
-        jql,
-        maxResults: 50,
-        fields: ['summary', 'status', 'key', 'created', 'updated'],
-        validateQuery: 'strict'
-      });
+      const response =
+        await this.client.issueSearch.searchForIssuesUsingJqlEnhancedSearch({
+          jql,
+          maxResults: 50,
+          fields: ['summary', 'status', 'key', 'created', 'updated'],
+          validateQuery: 'strict',
+        });
 
       return response.issues || [];
     } catch {
@@ -340,7 +375,7 @@ export class JiraService {
     try {
       const searchText = `[Security] ${scanName}`;
       const issues = await this.searchIssuesBySummary(searchText, projectKey);
-      
+
       // Return the most recent issue that matches
       if (issues.length > 0) {
         return {
@@ -349,10 +384,10 @@ export class JiraService {
           status: issues[0].fields.status.name,
           url: `${this.config.jiraHost}/browse/${issues[0].key}`,
           created: issues[0].fields.created,
-          updated: issues[0].fields.updated
+          updated: issues[0].fields.updated,
         };
       }
-      
+
       return null;
     } catch {
       // Silent failure - just return null

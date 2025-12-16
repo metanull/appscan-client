@@ -12,7 +12,7 @@ export class QueryBuilder {
    */
   filterByStatus(statuses) {
     if (!statuses || statuses.length === 0) return this;
-    const conditions = statuses.map(s => `Status eq '${s}'`).join(' or ');
+    const conditions = statuses.map((s) => `Status eq '${s}'`).join(' or ');
     this.filters.push(`(${conditions})`);
     return this;
   }
@@ -23,7 +23,7 @@ export class QueryBuilder {
    */
   filterBySeverity(severities) {
     if (!severities || severities.length === 0) return this;
-    const conditions = severities.map(s => `Severity eq '${s}'`).join(' or ');
+    const conditions = severities.map((s) => `Severity eq '${s}'`).join(' or ');
     this.filters.push(`(${conditions})`);
     return this;
   }
@@ -122,7 +122,7 @@ export class QueryBuilder {
       '>=': 'ge',
       '<=': 'le',
       '==': 'eq',
-      '=': 'eq'
+      '=': 'eq',
     };
     return map[operator] || 'eq';
   }

@@ -28,7 +28,9 @@ export async function updateIssueStatus(issueId, status, options) {
       );
     }
 
-    console.error(chalk.blue(`Updating issue ${issueId} to status ${status}...`));
+    console.error(
+      chalk.blue(`Updating issue ${issueId} to status ${status}...`)
+    );
 
     // Build the update payload
     const updateData = {
@@ -52,7 +54,7 @@ export async function updateIssueStatus(issueId, status, options) {
     // Update the issue by using the Issues_UpdateFilteredIssues endpoint
     // We need to get the application ID for this issue first
     const issue = await service.api.v4.Issues_GetIssue(issueId, {});
-    
+
     if (!issue) {
       throw new Error(`Issue not found: ${issueId}`);
     }
@@ -62,7 +64,7 @@ export async function updateIssueStatus(issueId, status, options) {
     }
 
     const applicationId = issue.ApplicationId;
-    
+
     // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
     const result = await service.api.v4.Issues_UpdateFilteredIssues(
       'Application',
@@ -82,7 +84,9 @@ export async function updateIssueStatus(issueId, status, options) {
         )
       );
       if (result) {
-        console.error(chalk.green(`Total issues updated: ${result.TotalIssues || 1}`));
+        console.error(
+          chalk.green(`Total issues updated: ${result.TotalIssues || 1}`)
+        );
         if (result.UpdatedIssues) {
           console.error(chalk.green(`Issues updated: ${result.UpdatedIssues}`));
         }

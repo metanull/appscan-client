@@ -70,7 +70,9 @@ export async function generateReport(type, id, options) {
         const excludeStatus =
           options.excludeStatus !== undefined ? options.excludeStatus : 'Noise';
         if (excludeStatus) {
-          writeStatus(`Fetching issues for scan ${id} (excluding status: ${excludeStatus})...`);
+          writeStatus(
+            `Fetching issues for scan ${id} (excluding status: ${excludeStatus})...`
+          );
         } else {
           writeStatus(`Fetching issues for scan ${id}...`);
         }
@@ -81,7 +83,7 @@ export async function generateReport(type, id, options) {
         // Filter by minimum severity if specified
         const minSeverity = parseInt(options.minSeverity || '3', 10);
         if (!Number.isNaN(minSeverity)) {
-          issues = issues.filter(issue => {
+          issues = issues.filter((issue) => {
             const severityValue = issue.SeverityValue ?? 0;
             return severityValue >= minSeverity;
           });
@@ -93,7 +95,9 @@ export async function generateReport(type, id, options) {
           console.warn(
             `Warning: no issues found for scan ${id} with current filters` +
               (excludeStatus ? ` (excluded status: ${excludeStatus})` : '') +
-              (options.minSeverity ? ` (minSeverity: ${options.minSeverity})` : '')
+              (options.minSeverity
+                ? ` (minSeverity: ${options.minSeverity})`
+                : '')
           );
           return;
         }
@@ -105,13 +109,18 @@ export async function generateReport(type, id, options) {
           appId: scanDetails.ApplicationId ?? scanDetails.AppId,
           id: scanDetails.Id ?? scanDetails.ScanId,
           technology:
-            scanDetails.Technology ?? scanDetails.ScanType ?? scanDetails.ScanTechnology,
+            scanDetails.Technology ??
+            scanDetails.ScanType ??
+            scanDetails.ScanTechnology,
           appName:
             scanDetails.Application?.Name ??
             scanDetails.ApplicationName ??
             scanDetails.AppName,
         };
-        const reportConfig = { grouped: options.grouped ?? false, columns: options.columns };
+        const reportConfig = {
+          grouped: options.grouped ?? false,
+          columns: options.columns,
+        };
         const markdownService = reportConfig.grouped ? service : null;
         report =
           format === 'html'

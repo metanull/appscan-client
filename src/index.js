@@ -27,7 +27,9 @@ import triageReportCommand from './commands/triage-report.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const packageJson = JSON.parse(readFileSync(join(__dirname, '../package.json'), 'utf8'));
+const packageJson = JSON.parse(
+  readFileSync(join(__dirname, '../package.json'), 'utf8')
+);
 
 const program = new Command();
 
@@ -40,10 +42,13 @@ program
   .command('setup')
   .description('Interactive setup wizard to configure .env file')
   .option('-f, --force', 'Force overwrite existing .env file')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan setup
-  $ appscan setup --force`)
+  $ appscan setup --force`
+  )
   .action(setup);
 
 program
@@ -51,17 +56,22 @@ program
   .alias('check')
   .description('Verify API credentials and test connection to AppScan')
   .option('-c, --config <path>', 'Path to configuration file')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan connection-check
-  $ appscan check --config ./config.env`)
+  $ appscan check --config ./config.env`
+  )
   .action(connectionCheck);
 
 program
   .command('triage')
   .description('Interactive triage tool for vulnerability management')
   .option('-c, --config <path>', 'Path to configuration file')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Interactive workflow:
   1. Select a scan from the list (with issue counts)
   2. Browse grouped vulnerabilities by type
@@ -72,7 +82,8 @@ Interactive workflow:
 
 Examples:
   $ appscan triage
-  $ appscan triage --config ./config.env`)
+  $ appscan triage --config ./config.env`
+  )
   .action(triage);
 
 program.addCommand(triageReportCommand);
@@ -82,7 +93,9 @@ program
   .command('triage-ui')
   .description('Launch modern terminal UI for vulnerability triage (Ink-based)')
   .option('-c, --config <path>', 'Path to configuration file')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Modern 3-pane terminal UI features:
   - VS Code-style layout with applications/scans/issues panels
   - Keyboard-driven navigation (vim-style keybindings)
@@ -95,7 +108,8 @@ Note: This is a new experimental UI. For the stable version, use 'triage-report 
 
 Examples:
   $ appscan triage-ui
-  $ appscan triage-ui --config ./config.env`)
+  $ appscan triage-ui --config ./config.env`
+  )
   .action(async (options) => {
     try {
       // Check if ink-triage is built
@@ -105,7 +119,7 @@ Examples:
       const __filename = fileURLToPath(import.meta.url);
       const __dirname = dirname(__filename);
       const inkTriagePath = join(__dirname, '../ink-triage/dist/index.js');
-      
+
       if (!existsSync(inkTriagePath)) {
         console.error('Error: Ink TUI not built.');
         console.error('Please run: cd ink-triage && npm run build');
@@ -117,7 +131,7 @@ Examples:
       const args = options.config ? ['--config', options.config] : [];
       const child = spawn('node', [inkTriagePath, ...args], {
         stdio: 'inherit',
-        cwd: process.cwd()
+        cwd: process.cwd(),
       });
 
       child.on('exit', (code) => {
@@ -135,11 +149,14 @@ program
   .description('List all applications')
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan list-applications
   $ appscan apps --json
-  $ appscan list-applications --config ./config.env`)
+  $ appscan list-applications --config ./config.env`
+  )
   .action(listApplications);
 
 program
@@ -149,11 +166,14 @@ program
   .argument('[appId]', 'Application ID (optional)')
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan list-scans
   $ appscan scans <appId>
-  $ appscan list-scans --json`)
+  $ appscan list-scans --json`
+  )
   .action(listScans);
 
 program
@@ -163,10 +183,13 @@ program
   .argument('<scanId>', 'Scan ID')
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan list-scan-executions <scanId>
-  $ appscan executions <scanId> --json`)
+  $ appscan executions <scanId> --json`
+  )
   .action(listScanExecutions);
 
 program
@@ -185,13 +208,19 @@ program
     '-g, --grouped',
     'Sort issues by application, issue type, and severity before printing'
   )
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan list-issues <scanId>
   $ appscan issues <scanId> --json
   $ appscan issues <scanId> --exclude-status "Noise,Ignore"
-  $ appscan issues <scanId> --grouped`)
-  .option('--columns <type>', 'Force columns: sast, dast, sca, all (overrides auto-detection)')
+  $ appscan issues <scanId> --grouped`
+  )
+  .option(
+    '--columns <type>',
+    'Force columns: sast, dast, sca, all (overrides auto-detection)'
+  )
   .action(listIssues);
 
 program
@@ -199,10 +228,13 @@ program
   .argument('<type>', 'Authentication type (bearer)')
   .description('Authenticate and display bearer token')
   .option('-c, --config <path>', 'Path to configuration file')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan auth bearer
-  $ appscan auth bearer --config ./config.env`)
+  $ appscan auth bearer --config ./config.env`
+  )
   .action((type, options) => {
     if (type === 'bearer') {
       authBearer(options);
@@ -234,12 +266,15 @@ program
     '-o, --output <path>',
     'Output file path (if not specified, outputs to console)'
   )
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan get-issue-details <issueId>
   $ appscan issue-details <issueId> --format xml
   $ appscan issue-details <issueId> --output ./issue.html
-  $ appscan issue-details <issueId> --locale fr-FR`)
+  $ appscan issue-details <issueId> --locale fr-FR`
+  )
   .action(getIssueDetails);
 
 program
@@ -265,12 +300,15 @@ program
     'Minimum severity value (integer) to include in report (default: 3)',
     '3'
   )
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan generate-report applications
   $ appscan report scans <appId> --format html
   $ appscan report issues <scanId> --output ./report.md
-  $ appscan report issues <scanId> --grouped --min-severity 2`)
+  $ appscan report issues <scanId> --grouped --min-severity 2`
+  )
   .action(generateReport);
 
 program
@@ -287,7 +325,10 @@ program
     'Statuses to filter out when listing issues (default: Noise)',
     'Noise'
   )
-  .option('--grouped', 'Use grouped issues layout with remediation snippets (default)')
+  .option(
+    '--grouped',
+    'Use grouped issues layout with remediation snippets (default)'
+  )
   .option('--no-grouped', 'Disable grouped layout (not recommended)')
   .option(
     '-s, --min-severity <value>',
@@ -295,12 +336,15 @@ program
     '3'
   )
   .option('-c, --config <path>', 'Path to configuration file')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan all-reports
   $ appscan all-reports --html --outdir ./security-reports
   $ appscan all-reports --technology StaticAnalyzer,DynamicAnalyzer
-  $ appscan all-reports --min-severity 2 --no-grouped`)
+  $ appscan all-reports --min-severity 2 --no-grouped`
+  )
   .action(generateAllReports);
 
 program
@@ -328,12 +372,15 @@ program
   .option('--odata-filter <filter>', 'OData filter for issues')
   .option('--open-only', 'Include only issues with Status = Open')
   .option('-j, --json', 'Output result as JSON')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan generate-api-report Scan <scanId>
   $ appscan api-report Application <appId> --format Pdf
   $ appscan api-report Scan <scanId> --format Csv --output ./report.csv
-  $ appscan api-report ScanExecution <execId> --open-only --title "Security Report"`)
+  $ appscan api-report ScanExecution <execId> --open-only --title "Security Report"`
+  )
   .action(generateAndDownloadReport);
 
 program
@@ -352,11 +399,14 @@ program
   .option('-l, --locale <locale>', 'Report locale (default: en-US)', 'en-US')
   .option('--odata-filter <filter>', 'OData filter for issues')
   .option('--open-only', 'Include only issues with Status = Open')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan generate-markdown-api-report Scan <scanId>
   $ appscan md-report Application <appId> --output ./report.md
-  $ appscan md-report Scan <scanId> --open-only --title "Vulnerabilities"`)
+  $ appscan md-report Scan <scanId> --open-only --title "Vulnerabilities"`
+  )
   .action(generateMarkdownReport);
 
 program
@@ -373,12 +423,15 @@ program
   .option('--mode <mode>', 'Display mode: light or dark', 'light')
   .option('--enable-training-links', 'Enable training links')
   .option('--debug', 'Show debug information')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan get-article <issueId>
   $ appscan article <issueId> --output ./article.html
   $ appscan article <issueId> --language JavaScript --nl es
-  $ appscan article <issueId> --enable-training-links --mode dark`)
+  $ appscan article <issueId> --enable-training-links --mode dark`
+  )
   .action(getArticle);
 
 program
@@ -394,11 +447,14 @@ program
   .option('--nl <nl>', 'Natural language', 'en')
   .option('--mode <mode>', 'Display mode: light or dark', 'light')
   .option('--enable-training-links', 'Enable training links')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan get-article-markdown <issueId>
   $ appscan article-md <issueId> --output ./article.md
-  $ appscan article-md <issueId> --language Python --nl fr`)
+  $ appscan article-md <issueId> --language Python --nl fr`
+  )
   .action(getArticleMarkdown);
 
 program
@@ -408,11 +464,14 @@ program
   .argument('[year]', 'Target year (defaults to current year)')
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan yearly-summary
   $ appscan summary 2024
-  $ appscan yearly-summary 2023 --json`)
+  $ appscan yearly-summary 2023 --json`
+  )
   .action(generateYearlySummary);
 
 program
@@ -420,16 +479,25 @@ program
   .alias('update-status')
   .description('Update the status of an issue')
   .argument('<issueId>', 'Issue ID')
-  .argument('<status>', 'New status (Open, InProgress, Reopened, Noise, Passed, Fixed, New)')
+  .argument(
+    '<status>',
+    'New status (Open, InProgress, Reopened, Noise, Passed, Fixed, New)'
+  )
   .option('-c, --config <path>', 'Path to configuration file')
   .option('--comment <comment>', 'Add a comment when updating status')
-  .option('--external-id <externalId>', 'Set external ID (e.g., Jira issue key)')
+  .option(
+    '--external-id <externalId>',
+    'Set external ID (e.g., Jira issue key)'
+  )
   .option('-j, --json', 'Output as JSON')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan update-issue-status <issueId> InProgress
   $ appscan update-status <issueId> Fixed --comment "Fixed in version 1.2.3"
-  $ appscan update-status <issueId> Noise --external-id "JIRA-123"`)
+  $ appscan update-status <issueId> Noise --external-id "JIRA-123"`
+  )
   .action(updateIssueStatus);
 
 program
@@ -439,10 +507,13 @@ program
   .argument('<issueId>', 'Issue ID')
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan get-issue-comments <issueId>
-  $ appscan comments <issueId> --json`)
+  $ appscan comments <issueId> --json`
+  )
   .action(getIssueComments);
 
 program
@@ -452,18 +523,35 @@ program
   .argument('<source>', 'Source type: scan or issue')
   .argument('<sourceId>', 'Source ID (Scan ID or Issue ID)')
   .option('-c, --config <path>', 'Path to configuration file')
-  .option('-p, --project <projectKey>', 'Jira project key (overrides JIRA_PROJECT_KEY env var)')
-  .option('-s, --min-severity <value>', 'Minimum severity value (0-5, default: 0)', '0')
-  .option('-e, --exclude-status <status>', 'Exclude issues by status (comma-separated, default: Noise)', 'Noise')
+  .option(
+    '-p, --project <projectKey>',
+    'Jira project key (overrides JIRA_PROJECT_KEY env var)'
+  )
+  .option(
+    '-s, --min-severity <value>',
+    'Minimum severity value (0-5, default: 0)',
+    '0'
+  )
+  .option(
+    '-e, --exclude-status <status>',
+    'Exclude issues by status (comma-separated, default: Noise)',
+    'Noise'
+  )
   .option('-t, --issue-type <type>', 'Jira issue type (default: Bug)', 'Bug')
-  .option('-l, --labels <labels>', 'Comma-separated labels (default: appscan,security)')
+  .option(
+    '-l, --labels <labels>',
+    'Comma-separated labels (default: appscan,security)'
+  )
   .option('-j, --json', 'Output as JSON')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   $ appscan create-jira-issue scan <scanId>
   $ appscan jira scan <scanId> --min-severity 3 --project PROJ
   $ appscan jira issue <issueId> --project PROJ --issue-type Task
-  $ appscan jira scan <scanId> --min-severity 4 --labels "security,critical"`)
+  $ appscan jira scan <scanId> --min-severity 4 --labels "security,critical"`
+  )
   .action(createJiraIssue);
 
 program.parse(process.argv);

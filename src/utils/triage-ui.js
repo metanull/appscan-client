@@ -40,7 +40,7 @@ export const ISSUE_STATUSES = [
  */
 export function formatScanDisplay(scan, issueStats) {
   const scanName = scan.Name || scan.Id;
-  const lastRun = scan.LatestExecution?.UpdatedAt 
+  const lastRun = scan.LatestExecution?.UpdatedAt
     ? new Date(scan.LatestExecution.UpdatedAt).toLocaleDateString()
     : 'N/A';
 
@@ -51,7 +51,7 @@ export function formatScanDisplay(scan, issueStats) {
     const high = issueStats.High || 0;
     const medium = issueStats.Medium || 0;
     const low = issueStats.Low || 0;
-    
+
     statsDisplay = ` [${chalk.gray(total)} total: `;
     const parts = [];
     if (critical > 0) parts.push(chalk.redBright(`C:${critical}`));
@@ -73,8 +73,8 @@ export function formatScanDisplay(scan, issueStats) {
  */
 export function groupIssuesByType(issues) {
   const grouped = {};
-  
-  issues.forEach(issue => {
+
+  issues.forEach((issue) => {
     const key = issue.IssueType || 'Unknown';
     if (!grouped[key]) {
       grouped[key] = {
@@ -88,57 +88,64 @@ export function groupIssuesByType(issues) {
 
   // Sort groups by severity
   return Object.values(grouped).sort((a, b) => {
-    return (SEVERITY_ORDER[b.severity] || 0) - (SEVERITY_ORDER[a.severity] || 0);
+    return (
+      (SEVERITY_ORDER[b.severity] || 0) - (SEVERITY_ORDER[a.severity] || 0)
+    );
   });
 }
 
 /**
  * Format issue for display in selection list
  */
-export function formatIssueDisplay(issue, includeDetails = false, appScanBaseUrl = 'https://eu.cloud.appscan.com') {
+export function formatIssueDisplay(
+  issue,
+  includeDetails = false,
+  appScanBaseUrl = 'https://eu.cloud.appscan.com'
+) {
   const severity = issue.Severity || 'Unknown';
   const color = SEVERITY_COLORS[severity] || 'white';
   const severityBadge = chalk[color].bold(`[${severity.charAt(0)}]`);
-  
+
   const issueType = issue.IssueType || 'Unknown Issue';
   const status = issue.Status || 'Unknown';
-  const statusColor = status === 'Open' ? 'red' : status === 'InProgress' ? 'yellow' : 'gray';
-  
+  const statusColor =
+    status === 'Open' ? 'red' : status === 'InProgress' ? 'yellow' : 'gray';
+
   let display = `${severityBadge} ${chalk.white(issueType)} ${chalk[statusColor](`(${status})`)}`;
-  
+
   if (includeDetails) {
     // Show source file/location with absolute URL
     const sourceUrl = issue.SourceFileUri || issue.Location;
     if (sourceUrl) {
       const formatted = formatUrlForDisplay(sourceUrl, appScanBaseUrl);
-      const displayText = formatted.isAbsolute 
+      const displayText = formatted.isAbsolute
         ? chalk.blue.underline(formatted.url)
         : chalk.cyan(formatted.text);
       display += `\n    ${chalk.gray('Location:')} ${displayText}`;
     }
-    
+
     // Show API/URL for DAST issues
     if (issue.Api) {
       const formatted = formatUrlForDisplay(issue.Api, appScanBaseUrl);
-      const displayText = formatted.isAbsolute 
+      const displayText = formatted.isAbsolute
         ? chalk.blue.underline(formatted.url)
         : chalk.cyan(formatted.text);
       display += `\n    ${chalk.gray('API/URL:')} ${displayText}`;
     }
-    
+
     // Show code context if available
     if (issue.Context) {
       const contextPreview = issue.Context.substring(0, 80).replace(/\n/g, ' ');
       display += `\n    ${chalk.gray('Context:')} ${chalk.white(contextPreview)}${issue.Context.length > 80 ? '...' : ''}`;
     }
-    
+
     // Add AppScan article link for remediation guidance
     if (issue.IssueTypeId) {
       const articleUrl = `${appScanBaseUrl}/api/v4/Reports/Article/?issuetype=${issue.IssueTypeId}`;
       display += `\n    ${chalk.gray('Article:')} ${chalk.blue.underline(articleUrl)}`;
     }
   }
-  
+
   return {
     name: display,
     value: issue.Id,
@@ -151,71 +158,84 @@ export function formatIssueDisplay(issue, includeDetails = false, appScanBaseUrl
  */
 export function displayGroupedSummary(groups) {
   console.log(chalk.cyan.bold('\n📊 Vulnerability Groups:\n'));
-  
+
   groups.forEach((group, index) => {
     const color = SEVERITY_COLORS[group.severity] || 'white';
     const severityBadge = chalk[color].bold(`[${group.severity}]`);
-    console.log(`${index + 1}. ${severityBadge} ${chalk.white.bold(group.type)} ${chalk.gray(`(${group.issues.length} issues)`)}`);
+    console.log(
+      `${index + 1}. ${severityBadge} ${chalk.white.bold(group.type)} ${chalk.gray(`(${group.issues.length} issues)`)}`
+    );
   });
-  
+
   console.log('');
 }
 
 /**
  * Display issue details for triage
  */
-export function displayIssueDetails(issue, articleHtml = null, appScanBaseUrl = 'https://eu.cloud.appscan.com') {
+export function displayIssueDetails(
+  issue,
+  articleHtml = null,
+  appScanBaseUrl = 'https://eu.cloud.appscan.com'
+) {
   const severity = issue.Severity || 'Unknown';
   const color = SEVERITY_COLORS[severity] || 'white';
-  
+
   console.log(chalk[color].bold(`\n${'='.repeat(80)}`));
   console.log(chalk[color].bold(`${issue.IssueType || 'Unknown Issue'}`));
   console.log(chalk[color].bold(`${'='.repeat(80)}\n`));
-  
+
   console.log(chalk.cyan('Severity:'), chalk[color].bold(severity));
   console.log(chalk.cyan('Status:'), issue.Status || 'Unknown');
   console.log(chalk.cyan('ID:'), chalk.gray(issue.Id));
-  
+
   // Show source file/location with absolute URL
-  const sourceUrl = issue.SourceFileUri || issue.SourceFileLocation || issue.Location;
+  const sourceUrl =
+    issue.SourceFileUri || issue.SourceFileLocation || issue.Location;
   if (sourceUrl) {
     const absoluteUrl = convertToAbsoluteUrl(sourceUrl, appScanBaseUrl);
     console.log(chalk.cyan('Location:'), chalk.blue.underline(absoluteUrl));
   }
-  
+
   // Show API/URL for DAST issues
   if (issue.Api) {
     const absoluteUrl = convertToAbsoluteUrl(issue.Api, appScanBaseUrl);
     console.log(chalk.cyan('API/URL:'), chalk.blue.underline(absoluteUrl));
   }
-  
+
   if (issue.LineNumber) {
     console.log(chalk.cyan('Line:'), issue.LineNumber);
   }
-  
+
   if (issue.CweId) {
-    console.log(chalk.cyan('CWE:'), `CWE-${issue.CweId}`, chalk.gray(`https://cwe.mitre.org/data/definitions/${issue.CweId}.html`));
+    console.log(
+      chalk.cyan('CWE:'),
+      `CWE-${issue.CweId}`,
+      chalk.gray(`https://cwe.mitre.org/data/definitions/${issue.CweId}.html`)
+    );
   }
-  
+
   if (issue.Cve) {
     console.log(chalk.cyan('CVE:'), issue.Cve);
   }
-  
+
   // Show snippet from article if available
   if (articleHtml && typeof articleHtml === 'string') {
     // Extract text from HTML using sanitize-html for security
     const text = sanitizeHtml(articleHtml, {
       allowedTags: [],
-      allowedAttributes: {}
-    }).replace(/\s+/g, ' ').trim();
-    
+      allowedAttributes: {},
+    })
+      .replace(/\s+/g, ' ')
+      .trim();
+
     if (text.length > 0) {
       const preview = text.substring(0, 300);
       console.log(chalk.cyan('\n📖 Description:'));
       console.log(chalk.gray(preview + (text.length > 300 ? '...' : '')));
     }
   }
-  
+
   console.log(chalk.gray(`\n${'-'.repeat(80)}\n`));
 }
 
@@ -260,8 +280,13 @@ export async function promptGroupSelection(groups) {
 /**
  * Prompt for issue selection (multi-select)
  */
-export async function promptIssueSelection(issues, appScanBaseUrl = 'https://eu.cloud.appscan.com') {
-  const choices = issues.map(issue => formatIssueDisplay(issue, true, appScanBaseUrl));
+export async function promptIssueSelection(
+  issues,
+  appScanBaseUrl = 'https://eu.cloud.appscan.com'
+) {
+  const choices = issues.map((issue) =>
+    formatIssueDisplay(issue, true, appScanBaseUrl)
+  );
 
   return await checkbox({
     message: 'Select issues to update (use Space to select, Enter to confirm):',
@@ -314,11 +339,20 @@ export async function promptAction() {
 /**
  * Prompt for JIRA confirmation
  */
-export async function promptJiraCreation(truePositiveCount, mediumOrHigherCount) {
+export async function promptJiraCreation(
+  truePositiveCount,
+  mediumOrHigherCount
+) {
   console.log(chalk.cyan.bold('\n🎫 JIRA Issue Creation\n'));
-  console.log(chalk.white(`Found ${chalk.yellow(truePositiveCount)} true positive(s)`));
-  console.log(chalk.white(`Including ${chalk.red(mediumOrHigherCount)} Medium or higher severity\n`));
-  
+  console.log(
+    chalk.white(`Found ${chalk.yellow(truePositiveCount)} true positive(s)`)
+  );
+  console.log(
+    chalk.white(
+      `Including ${chalk.red(mediumOrHigherCount)} Medium or higher severity\n`
+    )
+  );
+
   return await confirm({
     message: 'Create JIRA issue for remaining vulnerabilities?',
     default: true,
@@ -360,7 +394,7 @@ export function calculateIssueStats(issues) {
     byStatus: {},
   };
 
-  issues.forEach(issue => {
+  issues.forEach((issue) => {
     const severity = issue.Severity || 'Unknown';
     if (stats[severity] !== undefined) {
       stats[severity]++;

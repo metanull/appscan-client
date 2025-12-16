@@ -10,7 +10,9 @@ const __dirname = dirname(__filename);
 export async function setup(options) {
   try {
     console.log(chalk.blue.bold('\n🔧 AppScan Client Setup\n'));
-    console.log(chalk.gray('This wizard will help you configure your .env file.\n'));
+    console.log(
+      chalk.gray('This wizard will help you configure your .env file.\n')
+    );
 
     // Check if .env already exists
     const envPath = join(__dirname, '../../.env');
@@ -21,14 +23,18 @@ export async function setup(options) {
       });
 
       if (!overwrite) {
-        console.log(chalk.yellow('\n⚠️  Setup cancelled. Use --force to skip this prompt.\n'));
+        console.log(
+          chalk.yellow(
+            '\n⚠️  Setup cancelled. Use --force to skip this prompt.\n'
+          )
+        );
         return;
       }
     }
 
     // AppScan Configuration
     console.log(chalk.cyan.bold('\n📡 AppScan API Configuration\n'));
-    
+
     const apiKey = await input({
       message: 'Enter your AppScan API Key:',
       required: true,
@@ -59,7 +65,11 @@ export async function setup(options) {
 
     // JIRA Configuration (optional)
     console.log(chalk.cyan.bold('\n🎫 JIRA Configuration (Optional)\n'));
-    console.log(chalk.gray('Configure JIRA to create issues from vulnerability reports.\n'));
+    console.log(
+      chalk.gray(
+        'Configure JIRA to create issues from vulnerability reports.\n'
+      )
+    );
 
     const configureJira = await confirm({
       message: 'Do you want to configure JIRA integration?',
@@ -73,7 +83,8 @@ export async function setup(options) {
 
     if (configureJira) {
       jiraHost = await input({
-        message: 'Enter your JIRA Host (e.g., https://yourcompany.atlassian.net):',
+        message:
+          'Enter your JIRA Host (e.g., https://yourcompany.atlassian.net):',
         validate: (value) => {
           if (value && !value.startsWith('http')) {
             return 'JIRA Host must start with http:// or https://';
@@ -103,8 +114,14 @@ export async function setup(options) {
     }
 
     // Confluence OWASP ASVS Configuration (optional)
-    console.log(chalk.cyan.bold('\n📚 Confluence OWASP ASVS Configuration (Optional)\n'));
-    console.log(chalk.gray('Configure links to your Confluence OWASP ASVS documentation.\n'));
+    console.log(
+      chalk.cyan.bold('\n📚 Confluence OWASP ASVS Configuration (Optional)\n')
+    );
+    console.log(
+      chalk.gray(
+        'Configure links to your Confluence OWASP ASVS documentation.\n'
+      )
+    );
 
     const configureConfluence = await confirm({
       message: 'Do you want to configure Confluence OWASP ASVS links?',
@@ -142,9 +159,16 @@ ${confluenceBaseUrl ? `CONFLUENCE_OWASP_ASVS_URL=${confluenceBaseUrl}` : '# CONF
     console.log(chalk.green.bold('\n✅ Setup complete!\n'));
     console.log(chalk.gray(`Configuration saved to: ${envPath}\n`));
     console.log(chalk.cyan('Next steps:'));
-    console.log(chalk.white('  1. Run'), chalk.yellow('appscan connection-check'), chalk.white('to verify your setup'));
-    console.log(chalk.white('  2. Run'), chalk.yellow('appscan triage'), chalk.white('to start triaging vulnerabilities\n'));
-
+    console.log(
+      chalk.white('  1. Run'),
+      chalk.yellow('appscan connection-check'),
+      chalk.white('to verify your setup')
+    );
+    console.log(
+      chalk.white('  2. Run'),
+      chalk.yellow('appscan triage'),
+      chalk.white('to start triaging vulnerabilities\n')
+    );
   } catch (error) {
     if (error.name === 'ExitPromptError') {
       console.log(chalk.yellow('\n⚠️  Setup cancelled by user.\n'));
