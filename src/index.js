@@ -5,6 +5,7 @@ import { setupCLI } from './cli/index.js';
 // Detect if running in TUI mode (no args or 'triage' command)
 const args = process.argv.slice(2);
 const isTuiMode = args.length === 0 || args[0] === 'triage';
+// Strip the triage command keyword before passing through to the TUI
 const tuiArgs = args[0] === 'triage' ? args.slice(1) : args;
 
 if (isTuiMode && !args.includes('--help') && !args.includes('-h')) {

@@ -18,7 +18,8 @@
     "lint": "eslint src",
     "format": "prettier --write \"src/**/*.js\" \"tests/**/*.js\"",
     "generate-api": "node scripts/generate-api-client.js",
-    "prepublishOnly": "npm run generate-api && npm test"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run generate-api && npm test && npm run build"
   },
   "keywords": [
     "appscan",
