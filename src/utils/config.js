@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import fs from 'fs';
+import { ConfigManager } from './config-manager.js';
 
 // Load environment variables silently (suppress dotenv tips/messages)
 process.env.DOTENV_CONFIG_QUIET = 'true';
@@ -53,24 +54,17 @@ export class Config {
   }
 
   static loadFromFile(filePath) {
-    if (fs.existsSync(filePath)) {
-      try {
-        const config = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-        const instance = new Config();
-        instance.apiKey = config.apiKey || instance.apiKey;
-        instance.apiSecret = config.apiSecret || instance.apiSecret;
-        instance.baseUrl = config.baseUrl || instance.baseUrl;
-        instance.jiraHost = config.jiraHost || instance.jiraHost;
-        instance.jiraEmail = config.jiraEmail || instance.jiraEmail;
-        instance.jiraApiToken = config.jiraApiToken || instance.jiraApiToken;
-        instance.jiraProjectKey =
-          config.jiraProjectKey || instance.jiraProjectKey;
-        return instance;
-      } catch (error) {
-        throw new Error(`Failed to parse config file: ${error.message}`);
-      }
-    }
-    return new Config();
+    const manager = new ConfigManager({ configPath: filePath });
+    const cfg = manager.getConfig();
+    const instance = new Config();
+    instance.apiKey = cfg.apiKey;
+    instance.apiSecret = cfg.apiSecret;
+    instance.baseUrl = cfg.baseUrl;
+    instance.jiraHost = cfg.jiraHost;
+    instance.jiraEmail = cfg.jiraEmail;
+    instance.jiraApiToken = cfg.jiraApiToken;
+    instance.jiraProjectKey = cfg.jiraProjectKey;
+    return instance;
   }
 }
 
