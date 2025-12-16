@@ -19,6 +19,7 @@
     "format": "prettier --write \"src/**/*.js\" \"tests/**/*.js\"",
     "generate-api": "node scripts/generate-api-client.js",
     "prepare": "npm run build",
+    "postinstall": "npm run build",
     "prepublishOnly": "npm run generate-api && npm test && npm run build"
   },
   "keywords": [

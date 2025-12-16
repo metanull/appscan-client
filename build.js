@@ -5,6 +5,11 @@ import { dirname, resolve } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const TUI_ENTRY = process.env.TUI_ENTRY || resolve(__dirname, 'ink-triage/src/index.js');
+
+if (!existsSync(TUI_ENTRY)) {
+  throw new Error(`TUI entry point not found: ${TUI_ENTRY}`);
+}
 
 const sharedOptions = {
   bundle: true,
@@ -42,16 +47,7 @@ await esbuild.build({
   ...sharedOptions,
   entryPoints: [
     { in: resolve(__dirname, 'src/index.js'), out: 'index' },
-    {
-      in: (() => {
-        const tuiEntry = resolve(__dirname, 'ink-triage/src/index.js');
-        if (!existsSync(tuiEntry)) {
-          throw new Error(`TUI entry point not found: ${tuiEntry}`);
-        }
-        return tuiEntry;
-      })(),
-      out: 'tui/index'
-    }
+    { in: TUI_ENTRY, out: 'tui/index' }
   ],
   outdir: 'dist'
 });

@@ -12,11 +12,6 @@ function resolveTuiEntry() {
     return bundledDist;
   }
 
-  const siblingDist = resolve(__dirname, '../tui/index.js');
-  if (existsSync(siblingDist)) {
-    return siblingDist;
-  }
-
   const legacyPath = resolve(__dirname, '..', '..', 'ink-triage', 'dist', 'index.js');
   if (existsSync(legacyPath)) {
     return legacyPath;
