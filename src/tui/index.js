@@ -7,17 +7,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 function resolveTuiEntry() {
-  const candidates = [
-    resolve(__dirname, 'tui/index.js'),
-    resolve(__dirname, '../tui/index.js'),
-    resolve(__dirname, '../../dist/tui/index.js'),
-    resolve(__dirname, '../../ink-triage/dist/index.js')
-  ];
+  const bundledDist = resolve(__dirname, '..', '..', 'dist', 'tui', 'index.js');
+  if (existsSync(bundledDist)) {
+    return bundledDist;
+  }
 
-  for (const candidate of candidates) {
-    if (existsSync(candidate)) {
-      return candidate;
-    }
+  const siblingDist = resolve(__dirname, '../tui/index.js');
+  if (existsSync(siblingDist)) {
+    return siblingDist;
+  }
+
+  const legacyPath = resolve(__dirname, '..', '..', 'ink-triage', 'dist', 'index.js');
+  if (existsSync(legacyPath)) {
+    return legacyPath;
   }
 
   return null;

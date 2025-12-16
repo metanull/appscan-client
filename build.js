@@ -1,4 +1,5 @@
 import * as esbuild from 'esbuild';
+import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 
@@ -41,7 +42,16 @@ await esbuild.build({
   ...sharedOptions,
   entryPoints: [
     { in: resolve(__dirname, 'src/index.js'), out: 'index' },
-    { in: resolve(__dirname, 'ink-triage/src/index.js'), out: 'tui/index' }
+    {
+      in: (() => {
+        const tuiEntry = resolve(__dirname, 'ink-triage/src/index.js');
+        if (!existsSync(tuiEntry)) {
+          throw new Error(`TUI entry point not found: ${tuiEntry}`);
+        }
+        return tuiEntry;
+      })(),
+      out: 'tui/index'
+    }
   ],
   outdir: 'dist'
 });
