@@ -40,6 +40,8 @@ export const useStore = create((set, get) => ({
 
   // List navigation
   listCursor: 0,
+  appSelectionCursor: 0, // Saved cursor position for app selection list
+  scanSelectionCursor: 0, // Saved cursor position for scan selection list
 
   // Actions - Navigation
   setView: (view) => set({ view, listCursor: 0 }),
@@ -52,6 +54,7 @@ export const useStore = create((set, get) => ({
       scans: [],
       issues: [],
       selectedIssueIds: [],
+      appSelectionCursor: get().listCursor, // Save current cursor position
     }),
 
   setSelectedScan: (scan) =>
@@ -60,18 +63,30 @@ export const useStore = create((set, get) => ({
       selectedIssue: null,
       issues: [],
       selectedIssueIds: [],
+      scanSelectionCursor: get().listCursor, // Save current cursor position
     }),
 
   setSelectedIssue: (issue) => set({ selectedIssue: issue }),
 
   goBack: () => {
-    const { view } = get();
+    const { view, appSelectionCursor, scanSelectionCursor } = get();
     if (view === 'issue-details') {
       set({ view: 'issue-list', selectedIssue: null, articleContent: null });
     } else if (view === 'issue-list') {
-      set({ view: 'scan-selection', selectedScan: null, issues: [], selectedIssueIds: [] });
+      set({
+        view: 'scan-selection',
+        selectedScan: null,
+        issues: [],
+        selectedIssueIds: [],
+        listCursor: scanSelectionCursor, // Restore saved scan selection cursor
+      });
     } else if (view === 'scan-selection') {
-      set({ view: 'app-selection', selectedApp: null, scans: [] });
+      set({
+        view: 'app-selection',
+        selectedApp: null,
+        scans: [],
+        listCursor: appSelectionCursor, // Restore saved app selection cursor
+      });
     }
   },
 
@@ -128,6 +143,8 @@ export const useStore = create((set, get) => ({
 
   // Actions - List navigation
   setListCursor: (cursor) => set({ listCursor: cursor }),
+  setAppSelectionCursor: (cursor) => set({ appSelectionCursor: cursor }),
+  setScanSelectionCursor: (cursor) => set({ scanSelectionCursor: cursor }),
   moveCursorUp: () =>
     set((state) => ({
       listCursor: Math.max(0, state.listCursor - 1),
