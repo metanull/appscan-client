@@ -4,6 +4,7 @@ import { Command } from 'commander';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { getPackageInfo } from '../utils/package-info.js';
 import { listApplications } from './commands/list-applications.js';
 import { listScans } from './commands/list-scans.js';
 import { listScanExecutions } from './commands/list-scan-executions.js';
@@ -25,11 +26,7 @@ import { connectionCheck } from './commands/connection-check.js';
 import { triage } from './commands/triage.js';
 import triageReportCommand from './commands/triage-report.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const packageJson = JSON.parse(
-  readFileSync(join(__dirname, '../../package.json'), 'utf8')
-);
+const packageJson = getPackageInfo();
 
 const program = new Command();
 

@@ -6,21 +6,9 @@
 import React from 'react';
 import { Box, Text } from 'ink';
 import useStore from '../state/AppContext.js';
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { getPackageInfo } from '../../utils/package-info.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Read version from package.json
-let packageInfo = { version: '1.0.0' };
-try {
-  const packagePath = join(__dirname, '../../package.json');
-  packageInfo = JSON.parse(readFileSync(packagePath, 'utf8'));
-} catch {
-  // Fallback if package.json not found
-}
+const packageInfo = getPackageInfo();
 
 export const CommandBar = () => {
   const view = useStore((state) => state.view);
