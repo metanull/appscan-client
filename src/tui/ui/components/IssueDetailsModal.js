@@ -39,12 +39,12 @@ export const IssueDetailsModal = React.memo(
     }
 
     return (
-      <Modal width={90} height={85}>
+      <Modal width={90} height={80}>
         <Panel
           title={`Issue Details - ${issue.IssueType || 'Unknown'}`}
           borderColor="cyan"
         >
-          <Box flexDirection="column">
+          <Box flexDirection="column" height="100%">
             {/* Header section */}
             <Box flexDirection="column">
               <Box>
@@ -53,7 +53,7 @@ export const IssueDetailsModal = React.memo(
                     Issue Type:
                   </Text>
                 </Box>
-                <Text>{issue.IssueType || 'N/A'}</Text>
+                <Text wrap="wrap">{issue.IssueType || 'N/A'}</Text>
               </Box>
               <Box>
                 <Box width={15}>
@@ -62,6 +62,7 @@ export const IssueDetailsModal = React.memo(
                   </Text>
                 </Box>
                 <Text
+                  wrap="wrap"
                   color={
                     issue.Severity === 'High'
                       ? 'red'
@@ -79,7 +80,10 @@ export const IssueDetailsModal = React.memo(
                     Status:
                   </Text>
                 </Box>
-                <Text color={issue.Status === 'Open' ? 'red' : 'green'}>
+                <Text
+                  wrap="wrap"
+                  color={issue.Status === 'Open' ? 'red' : 'green'}
+                >
                   {issue.Status || 'N/A'}
                 </Text>
               </Box>
@@ -89,7 +93,7 @@ export const IssueDetailsModal = React.memo(
                     Location:
                   </Text>
                 </Box>
-                <Text>{issue.Location || 'N/A'}</Text>
+                <Text wrap="wrap">{issue.Location || 'N/A'}</Text>
               </Box>
 
               {issue.ExternalId && (
@@ -99,7 +103,7 @@ export const IssueDetailsModal = React.memo(
                       External ID:
                     </Text>
                   </Box>
-                  <Text>{issue.ExternalId}</Text>
+                  <Text wrap="wrap">{issue.ExternalId}</Text>
                 </Box>
               )}
 
@@ -109,7 +113,7 @@ export const IssueDetailsModal = React.memo(
               {issue.SourceFileUri && (
                 <Box>
                   <Link url={issue.SourceFileUri}>
-                    <Text color="blue" underline>
+                    <Text color="blue" underline wrap="wrap">
                       🔗 Azure DevOps Source
                     </Text>
                   </Link>
@@ -119,7 +123,7 @@ export const IssueDetailsModal = React.memo(
               {focusedArticleUrl && (
                 <Box>
                   <Link url={focusedArticleUrl}>
-                    <Text color="blue" underline>
+                    <Text color="blue" underline wrap="wrap">
                       📚 AppScan Article
                     </Text>
                   </Link>
@@ -131,21 +135,30 @@ export const IssueDetailsModal = React.memo(
 
             {/* Article content */}
             {articleContent && (
-              <Box flexDirection="column" marginTop={1}>
+              <Box
+                flexDirection="column"
+                marginTop={1}
+                borderStyle="single"
+                borderColor="cyan"
+                paddingX={1}
+                flexGrow={1}
+                minHeight={0}
+              >
                 <Text color="cyan" bold>
-                  ─── Remediation Article ───
+                  Remediation Article
                 </Text>
-                <Box marginTop={1}>
+                <Box marginTop={1} flexGrow={1} minHeight={0}>
                   <MarkdownBox
                     markdown={articleContent}
                     enableScrolling={true}
+                    
                   />
                 </Box>
               </Box>
             )}
 
             {/* Controls */}
-            <Box marginTop={1} borderStyle="single" borderTop paddingTop={1}>
+            <Box marginTop={1} paddingTop={1}>
               <Text dimColor>ESC: Close</Text>
             </Box>
           </Box>

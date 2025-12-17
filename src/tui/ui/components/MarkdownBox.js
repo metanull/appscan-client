@@ -144,9 +144,9 @@ const tokensToLines = (tokens) => {
 };
 
 export const MarkdownBox = React.memo(
-  ({ markdown, maxHeight, enableScrolling = true }) => {
+  ({ markdown, maxHeight, enableScrolling = true, maxWidth }) => {
     const [scrollOffset, setScrollOffset] = useState(0);
-    const { height: terminalHeight } = useTerminalSize();
+    const { height: terminalHeight, width: terminalWidth } = useTerminalSize();
 
     // Parse markdown using marked tokenizer
     const elements = useMemo(() => {
@@ -168,6 +168,9 @@ export const MarkdownBox = React.memo(
 
     // Calculate visible height
     const visibleLines = maxHeight || Math.max(15, terminalHeight - 10);
+
+    // Calculate content width (90% of modal width minus padding)
+    const contentWidth = maxWidth || Math.floor(terminalWidth * 0.9) - 10;
 
     // Handle scrolling
     useInput(
@@ -211,7 +214,7 @@ export const MarkdownBox = React.memo(
     );
 
     return (
-      <Box flexDirection="column">
+      <Box flexDirection="column" width={contentWidth}>
         {visibleElements.map((element) => {
           if (element.type === 'space') {
             return <Text key={element.id}> </Text>;
@@ -223,6 +226,7 @@ export const MarkdownBox = React.memo(
               color={element.color}
               bold={element.bold}
               dimColor={element.dimColor}
+              wrap="wrap"
             >
               {element.text}
             </Text>
@@ -231,7 +235,7 @@ export const MarkdownBox = React.memo(
 
         {enableScrolling && elements.length > visibleLines && (
           <Box marginTop={1}>
-            <Text dimColor>
+            <Text dimColor wrap="wrap">
               Line {scrollOffset + 1}/{elements.length} (↑/↓: Scroll |
               PgUp/PgDn: Page)
             </Text>
