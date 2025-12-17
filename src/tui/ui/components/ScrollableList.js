@@ -6,6 +6,7 @@
 
 import React, { useMemo } from 'react';
 import { Box, Text } from 'ink';
+import logger from '../../utils/logger.js';
 
 export const ScrollableList = React.memo(
   ({
@@ -50,7 +51,10 @@ export const ScrollableList = React.memo(
 
     const debugList = process.env.TUI_DEBUG_LIST === '1';
 
-    if (process.env.TUI_DEBUG_LIST === '1' || process.env.TUI_ALWAYS_DEBUG_LIST === '1') {
+    if (
+      process.env.TUI_DEBUG_LIST === '1' ||
+      process.env.TUI_ALWAYS_DEBUG_LIST === '1'
+    ) {
       // Print diagnostics to console for troubleshooting vertical overlap
       try {
         const rows = visibleItems.map((it, idx) => {
@@ -58,15 +62,14 @@ export const ScrollableList = React.memo(
           const name = (it && (it.Name || it.name)) || String(it || '');
           return { index: actualIndex, name, id: it?.Id || it?.id };
         });
-        // eslint-disable-next-line no-console
-        console.error('[ScrollableList] debug', {
+        logger.info('[ScrollableList] debug', {
           itemsLength: items.length,
           startIndex,
           visibleCount: visibleItems.length,
           visibleRows,
           rows,
         });
-      } catch (err) {
+      } catch {
         // ignore
       }
     }
@@ -78,13 +81,20 @@ export const ScrollableList = React.memo(
           const isSelected = actualIndex === cursor;
 
           return (
-            <Box key={`${item?.Id || item?.id || ''}-${actualIndex}`} width="100%">
+            <Box
+              key={`${item?.Id || item?.id || ''}-${actualIndex}`}
+              width="100%"
+            >
               {debugList ? (
                 <Box>
                   <Box width={4} marginRight={1}>
-                    <Text dimColor>#{String(actualIndex).padStart(2, '0')}</Text>
+                    <Text dimColor>
+                      #{String(actualIndex).padStart(2, '0')}
+                    </Text>
                   </Box>
-                  <Box flexGrow={1}>{renderItem(item, isSelected, actualIndex)}</Box>
+                  <Box flexGrow={1}>
+                    {renderItem(item, isSelected, actualIndex)}
+                  </Box>
                 </Box>
               ) : (
                 renderItem(item, isSelected, actualIndex)

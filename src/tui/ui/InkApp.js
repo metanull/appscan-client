@@ -130,16 +130,24 @@ const VulnListPanel = React.memo(
         {/* Column Headers */}
         <Box marginBottom={1}>
           <Box width={2} justifyContent="flex-start">
-            <Text bold dimColor> </Text>
+            <Text bold dimColor>
+              {' '}
+            </Text>
           </Box>
           <Box width={14} justifyContent="flex-start">
-            <Text bold dimColor>Severity</Text>
+            <Text bold dimColor>
+              Severity
+            </Text>
           </Box>
           <Box width={16} justifyContent="flex-start">
-            <Text bold dimColor>Status</Text>
+            <Text bold dimColor>
+              Status
+            </Text>
           </Box>
           <Box flexGrow={1} minWidth={0} justifyContent="flex-start">
-            <Text bold dimColor>Vulnerability</Text>
+            <Text bold dimColor>
+              Vulnerability
+            </Text>
           </Box>
         </Box>
 
