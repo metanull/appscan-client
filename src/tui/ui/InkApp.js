@@ -659,6 +659,8 @@ export const InkApp = ({ configPath }) => {
         <IssueDetailsModal
           issue={currentIssue}
           articleContent={articleContent}
+          appScanService={appScanService}
+          config={appScanService.getConfig()}
           onClose={() => setActiveModal(null)}
         />
       )}

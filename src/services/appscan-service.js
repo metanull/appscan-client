@@ -223,8 +223,9 @@ export class AppScanService {
   async getIssueArticle(issue) {
     await this.ensureAuthenticated();
     try {
-      // Import turndown dynamically
+      // Import dependencies
       const TurndownService = (await import('turndown')).default;
+      const { parse } = await import('node-html-parser');
 
       // Get the focused article URL
       const focusedUrl = await this.getFocusedArticleUrl(issue);
@@ -242,21 +243,41 @@ export class AppScanService {
 
       const html = await response.text();
 
-      // Convert to markdown using turndown
+      // Parse HTML and extract body content using proper DOM parser
+      const root = parse(html);
+      const bodyElement = root.querySelector('body');
+      const bodyContent = bodyElement ? bodyElement.innerHTML : html;
+
+      // Configure turndown for better markdown conversion
       const turndownService = new TurndownService({
         headingStyle: 'atx',
         hr: '---',
         bulletListMarker: '-',
         codeBlockStyle: 'fenced',
+        fence: '```',
+        emDelimiter: '_',
+        strongDelimiter: '**',
+        linkStyle: 'inlined',
+        linkReferenceStyle: 'full',
       });
 
-      // Add custom rule to remove script elements
+      // Remove script and style elements
       turndownService.addRule('removeScripts', {
-        filter: ['script', 'style'],
+        filter: ['script', 'style', 'noscript'],
         replacement: () => '',
       });
 
-      const markdown = turndownService.turndown(html);
+      // Keep code blocks intact
+      turndownService.addRule('preserveCodeBlocks', {
+        filter: 'pre',
+        replacement: (content, node) => {
+          const codeElement = node.querySelector('code');
+          const code = codeElement ? codeElement.textContent : node.textContent;
+          return '\n\n```\n' + code + '\n```\n\n';
+        },
+      });
+
+      const markdown = turndownService.turndown(bodyContent);
       return markdown;
     } catch (error) {
       throw new Error(`Failed to get issue article: ${error.message}`);

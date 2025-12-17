@@ -3,41 +3,33 @@
  * Modal showing full issue details and article content
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
+import Link from 'ink-link';
 import { Modal } from './Modal.js';
 import { Panel } from './Panel.js';
-import { useTerminalSize } from '../../hooks/useTerminalSize.js';
+import { MarkdownBox } from './MarkdownBox.js';
 
 export const IssueDetailsModal = React.memo(
-  ({ issue, articleContent, onClose }) => {
-    const [scrollOffset, setScrollOffset] = useState(0);
-    const { height } = useTerminalSize();
+  ({ issue, articleContent, appScanService, _config, onClose }) => {
+    const [focusedArticleUrl, setFocusedArticleUrl] = useState(null);
+
+    // Fetch focused article URL
+    useEffect(() => {
+      if (issue && appScanService) {
+        appScanService
+          .getFocusedArticleUrl(issue)
+          .then((url) => setFocusedArticleUrl(url))
+          .catch(() => {
+            // Silently fail, URL will remain null
+          });
+      }
+    }, [issue?.Id, appScanService]);
 
     // Handle keyboard input
     useInput((input, key) => {
       if (key.escape) {
         onClose();
-        return;
-      }
-
-      if (key.upArrow) {
-        setScrollOffset((prev) => Math.max(0, prev - 1));
-        return;
-      }
-
-      if (key.downArrow) {
-        setScrollOffset((prev) => prev + 1);
-        return;
-      }
-
-      if (key.pageUp) {
-        setScrollOffset((prev) => Math.max(0, prev - 10));
-        return;
-      }
-
-      if (key.pageDown) {
-        setScrollOffset((prev) => prev + 10);
         return;
       }
     });
@@ -46,33 +38,6 @@ export const IssueDetailsModal = React.memo(
       return null;
     }
 
-    const visibleLines = Math.max(15, height - 10);
-
-    // Prepare content lines
-    const contentLines = [];
-
-    contentLines.push(`Issue Type: ${issue.IssueType || 'N/A'}`);
-    contentLines.push(`Severity: ${issue.Severity || 'N/A'}`);
-    contentLines.push(`Status: ${issue.Status || 'N/A'}`);
-    contentLines.push(`Location: ${issue.Location || 'N/A'}`);
-    if (issue.Api) contentLines.push(`API: ${issue.Api}`);
-    if (issue.ExternalId) contentLines.push(`External ID: ${issue.ExternalId}`);
-    contentLines.push('');
-
-    if (articleContent) {
-      contentLines.push('--- Remediation Article ---');
-      contentLines.push('');
-      // Split article content by lines
-      const articleLines = articleContent.split('\n');
-      contentLines.push(...articleLines);
-    }
-
-    // Get visible slice
-    const visibleContent = contentLines.slice(
-      scrollOffset,
-      scrollOffset + visibleLines
-    );
-
     return (
       <Modal width={90} height={85}>
         <Panel
@@ -80,19 +45,108 @@ export const IssueDetailsModal = React.memo(
           borderColor="cyan"
         >
           <Box flexDirection="column">
-            {/* Content */}
-            <Box flexDirection="column" flexGrow={1}>
-              {visibleContent.map((line, index) => (
-                <Text key={scrollOffset + index}>{line}</Text>
-              ))}
+            {/* Header section */}
+            <Box flexDirection="column">
+              <Box>
+                <Box width={15}>
+                  <Text bold color="cyan">
+                    Issue Type:
+                  </Text>
+                </Box>
+                <Text>{issue.IssueType || 'N/A'}</Text>
+              </Box>
+              <Box>
+                <Box width={15}>
+                  <Text bold color="cyan">
+                    Severity:
+                  </Text>
+                </Box>
+                <Text
+                  color={
+                    issue.Severity === 'High'
+                      ? 'red'
+                      : issue.Severity === 'Medium'
+                        ? 'yellow'
+                        : 'green'
+                  }
+                >
+                  {issue.Severity || 'N/A'}
+                </Text>
+              </Box>
+              <Box>
+                <Box width={15}>
+                  <Text bold color="cyan">
+                    Status:
+                  </Text>
+                </Box>
+                <Text color={issue.Status === 'Open' ? 'red' : 'green'}>
+                  {issue.Status || 'N/A'}
+                </Text>
+              </Box>
+              <Box>
+                <Box width={15}>
+                  <Text bold color="cyan">
+                    Location:
+                  </Text>
+                </Box>
+                <Text>{issue.Location || 'N/A'}</Text>
+              </Box>
+
+              {issue.ExternalId && (
+                <Box>
+                  <Box width={15}>
+                    <Text bold color="cyan">
+                      External ID:
+                    </Text>
+                  </Box>
+                  <Text>{issue.ExternalId}</Text>
+                </Box>
+              )}
+
+              <Text> </Text>
+
+              {/* Links */}
+              {issue.SourceFileUri && (
+                <Box>
+                  <Link url={issue.SourceFileUri}>
+                    <Text color="blue" underline>
+                      🔗 Azure DevOps Source
+                    </Text>
+                  </Link>
+                </Box>
+              )}
+
+              {focusedArticleUrl && (
+                <Box>
+                  <Link url={focusedArticleUrl}>
+                    <Text color="blue" underline>
+                      📚 AppScan Article
+                    </Text>
+                  </Link>
+                </Box>
+              )}
+
+              {(issue.SourceFileUri || focusedArticleUrl) && <Text> </Text>}
             </Box>
+
+            {/* Article content */}
+            {articleContent && (
+              <Box flexDirection="column" marginTop={1}>
+                <Text color="cyan" bold>
+                  ─── Remediation Article ───
+                </Text>
+                <Box marginTop={1}>
+                  <MarkdownBox
+                    markdown={articleContent}
+                    enableScrolling={true}
+                  />
+                </Box>
+              </Box>
+            )}
 
             {/* Controls */}
             <Box marginTop={1} borderStyle="single" borderTop paddingTop={1}>
-              <Text dimColor>
-                ↑/↓: Scroll | PgUp/PgDn: Page | ESC: Close | Line{' '}
-                {scrollOffset + 1}/{contentLines.length}
-              </Text>
+              <Text dimColor>ESC: Close</Text>
             </Box>
           </Box>
         </Panel>
