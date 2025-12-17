@@ -8,58 +8,109 @@ import { Box, Text, useInput } from 'ink';
 import Link from 'ink-link';
 import { Modal } from './Modal.js';
 import { Panel } from './Panel.js';
+import open from 'open';
 
-export const LinksModal = React.memo(({ issue, config, onClose }) => {
-  const [cursor, setCursor] = useState(0);
+export const LinksModal = React.memo(
+  ({ issue, app, scan, config, onClose }) => {
+    const [cursor, setCursor] = useState(0);
 
-  if (!issue) {
-    return null;
-  }
-
-  // Generate links
-  const links = [];
-
-  // AppScan issue link
-  if (config?.asocApiUrl && issue.Id) {
-    const baseUrl = config.asocApiUrl.replace('/api/v4', '');
-    links.push({
-      label: 'Open in AppScan',
-      url: `${baseUrl}/issues/${issue.Id}`,
-    });
-  }
-
-  // Jira link if available
-  if (issue.ExternalId && config?.jiraUrl) {
-    links.push({
-      label: `Open Jira Issue (${issue.ExternalId})`,
-      url: `${config.jiraUrl}/browse/${issue.ExternalId}`,
-    });
-  }
-
-  // CVE link if available
-  if (issue.CveId) {
-    links.push({
-      label: `CVE Details (${issue.CveId})`,
-      url: `https://cve.mitre.org/cgi-bin/cvename.cgi?name=${issue.CveId}`,
-    });
-  }
-
-  useInput((input, key) => {
-    if (key.escape) {
-      onClose();
-      return;
+    if (!issue) {
+      return null;
     }
 
-    if (key.upArrow) {
-      setCursor((prev) => Math.max(0, prev - 1));
-      return;
+    // Generate links
+    const links = [];
+
+    // Get base URL from config (e.g., https://eu.cloud.appscan.com)
+    const baseUrl = config?.getBaseUrl
+      ? config.getBaseUrl()
+      : config?.baseUrl || 'https://cloud.appscan.com';
+
+    // AppScan Application link
+    if (app?.Id) {
+      links.push({
+        label: '🔗 AppScan Application',
+        url: `${baseUrl}/main/myapps/${app.Id}`,
+      });
     }
 
-    if (key.downArrow) {
-      setCursor((prev) => Math.min(links.length - 1, prev + 1));
-      return;
+    // AppScan Scan link
+    if (app?.Id && scan?.Id) {
+      links.push({
+        label: '🔗 AppScan Scan',
+        url: `${baseUrl}/main/myapps/${app.Id}/scans/${scan.Id}`,
+      });
     }
-  });
+
+    // AppScan Issue link - format: /main/myapps/{appId}/issues/{issueId}
+    if (app?.Id && issue.Id) {
+      links.push({
+        label: '🔗 AppScan Issue',
+        url: `${baseUrl}/main/myapps/${app.Id}/issues/${issue.Id}`,
+      });
+    }
+
+    // AppScan Article link (if available) - use IssueTypeId not IssueType
+    if (issue.IssueTypeId) {
+      links.push({
+        label: '📚 AppScan Article',
+        url: `${baseUrl}/main/issuedetail/${issue.IssueTypeId}`,
+      });
+    }
+
+    // Azure DevOps link - use SourceFileUri if available (absolute URL from AppScan)
+    if (issue.SourceFileUri) {
+      links.push({
+        label: '🔗 Azure DevOps Source',
+        url: issue.SourceFileUri,
+      });
+    }
+
+    // Jira link if available - use jiraHost from config
+    if (issue.ExternalId) {
+      const jiraHost = config?.jiraHost || config?.jiraUrl;
+      if (jiraHost) {
+        links.push({
+          label: `🎫 Jira Issue (${issue.ExternalId})`,
+          url: `${jiraHost}/browse/${issue.ExternalId}`,
+        });
+      }
+    }
+
+    // CVE link if available
+    if (issue.CveId) {
+      links.push({
+        label: `🔒 CVE Details (${issue.CveId})`,
+        url: `https://cve.mitre.org/cgi-bin/cvename.cgi?name=${issue.CveId}`,
+      });
+    }
+
+    useInput((input, key) => {
+      if (key.escape) {
+        onClose();
+        return;
+      }
+
+      if (key.upArrow) {
+        setCursor((prev) => Math.max(0, prev - 1));
+        return;
+      }
+
+      if (key.downArrow) {
+        setCursor((prev) => Math.min(links.length - 1, prev + 1));
+        return;
+      }
+
+      if (key.return && links[cursor]) {
+        // Open the selected link in default browser
+        const selectedLink = links[cursor];
+        open(selectedLink.url).catch((err) => {
+          // Silently fail if we can't open the link
+          // The terminal-based link should still be clickable
+        });
+        return;
+      }
+    });
 
   if (links.length === 0) {
     return (
@@ -101,12 +152,13 @@ export const LinksModal = React.memo(({ issue, config, onClose }) => {
           </Box>
 
           <Box marginTop={2}>
-            <Text dimColor>↑/↓: Navigate | ESC: Close</Text>
+            <Text dimColor>↑/↓: Navigate | ENTER: Open | ESC: Close</Text>
           </Box>
         </Box>
       </Panel>
     </Modal>
   );
-});
+  }
+);
 
 LinksModal.displayName = 'LinksModal';

@@ -607,6 +607,8 @@ export const InkApp = ({ configPath }) => {
       {activeModal === 'links' && currentIssue && (
         <LinksModal
           issue={currentIssue}
+          app={selectedApp}
+          scan={selectedScan}
           config={appScanService.getConfig()}
           onClose={() => setActiveModal(null)}
         />

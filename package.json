@@ -58,6 +58,7 @@
     "ink-use-stdout-dimensions": "^1.0.5",
     "marked": "^17.0.1",
     "meow": "^14.0.0",
+    "open": "^10.1.0",
     "react": "^19.2.3",
     "sanitize-html": "^2.17.0",
     "turndown": "^7.2.0",
