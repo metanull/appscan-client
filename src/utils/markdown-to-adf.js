@@ -1,10 +1,10 @@
 /**
  * Markdown to Atlassian Document Format (ADF) converter
  * Uses marked library for consistent markdown parsing with MarkdownBox
- * 
+ *
  * Based on official Atlassian ADF documentation:
  * https://developer.atlassian.com/cloud/jira/platform/apis/document/structure/
- * 
+ *
  * Key ADF rules enforced:
  * - text nodes must not be empty (must have non-empty text property)
  * - paragraph can have zero or more inline nodes
@@ -89,9 +89,11 @@ function tokenToADF(token) {
       return null;
 
     case 'list': {
-      const items = token.items.map((item) => listItemToADF(item)).filter(Boolean);
+      const items = token.items
+        .map((item) => listItemToADF(item))
+        .filter(Boolean);
       if (items.length === 0) return null;
-      
+
       return {
         type: token.ordered ? 'orderedList' : 'bulletList',
         content: items,
@@ -166,7 +168,7 @@ function tokenToADF(token) {
  */
 function listItemToADF(item) {
   const itemContent = [];
-  
+
   if (item.tokens && item.tokens.length > 0) {
     // Convert all tokens in the list item
     for (const subToken of item.tokens) {
@@ -180,7 +182,7 @@ function listItemToADF(item) {
       }
     }
   }
-  
+
   // listItem must have at least one valid node
   if (itemContent.length === 0) {
     // Fallback: try to get text from item
@@ -198,7 +200,7 @@ function listItemToADF(item) {
       });
     }
   }
-  
+
   return {
     type: 'listItem',
     content: itemContent,
@@ -212,7 +214,7 @@ function listItemToADF(item) {
  */
 function tableToADF(token) {
   const rows = [];
-  
+
   // Header row
   if (token.header && token.header.length > 0) {
     rows.push({
@@ -229,7 +231,7 @@ function tableToADF(token) {
       })),
     });
   }
-  
+
   // Body rows
   if (token.rows && token.rows.length > 0) {
     for (const row of token.rows) {
@@ -248,15 +250,15 @@ function tableToADF(token) {
       });
     }
   }
-  
+
   // Table must have at least one row
   if (rows.length === 0) return null;
-  
+
   return {
     type: 'table',
-    attrs: { 
-      isNumberColumnEnabled: false, 
-      layout: 'default' 
+    attrs: {
+      isNumberColumnEnabled: false,
+      layout: 'default',
     },
     content: rows,
   };

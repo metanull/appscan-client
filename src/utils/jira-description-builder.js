@@ -29,39 +29,63 @@ export class JiraDescriptionBuilder {
   }
 
   /**
-   * Add issues grouped by type
+   * Add issues grouped by type with full details
+   * Note: This method is synchronous but expects issues to have been enriched
+   * with article content and comments before calling this method.
    */
   addIssuesByType() {
     const grouped = this.groupByType();
-    let issuesSection = '## Vulnerabilities by Type\n\n';
+    let issuesSection = '';
 
     for (const group of grouped) {
-      issuesSection += `### ${group.type} (${group.severity})\n\n`;
-      issuesSection += `**Count:** ${group.issues.length} occurrence(s)\n\n`;
+      // Get highest severity for the group
+      const highestSeverity = this.getHighestSeverity(group.issues);
+      
+      // Header for this vulnerability type
+      issuesSection += `# ${group.type} (${highestSeverity})\n\n`;
 
-      // Add up to 10 occurrences per group to avoid bloat
-      const displayCount = Math.min(group.issues.length, 10);
+      // Add article description from first issue if available
+      if (group.issues[0]?.articleMarkdown) {
+        issuesSection += '## Description\n\n';
+        issuesSection += '> ' + group.issues[0].articleMarkdown.split('\n').join('\n> ') + '\n\n';
+      }
 
-      for (let i = 0; i < displayCount; i++) {
+      // Loop through each issue
+      for (let i = 0; i < group.issues.length; i++) {
         const issue = group.issues[i];
+        const issueNumber = i + 1;
         const location = this.formatLocation(issue);
-        const context = this.formatContext(issue);
 
-        issuesSection += `- **[${issue.Severity}]** ${location}`;
-        if (context) {
-          issuesSection += `\n  ${context}`;
+        // Issue header
+        issuesSection += `## ${issueNumber}. ${location} (${issue.Severity})\n\n`;
+
+        // AZDO URL (SourceFileUri)
+        if (issue.SourceFileUri) {
+          issuesSection += `- [🔗 Source](${issue.SourceFileUri})\n`;
         }
+
+        // Remediation article URL
+        const articleUrl = this.buildArticleUrl(issue);
+        if (articleUrl) {
+          issuesSection += `- [🔗 Remediation](${articleUrl})\n`;
+        }
+
         issuesSection += '\n';
-      }
 
-      if (group.issues.length > displayCount) {
-        issuesSection += `\n_... and ${group.issues.length - displayCount} more occurrence(s)_\n`;
-      }
+        // Issue context - NOT TRIMMED
+        if (issue.Context) {
+          issuesSection += '### Issue\n\n';
+          issuesSection += '```\n';
+          issuesSection += issue.Context + '\n';
+          issuesSection += '```\n\n';
+        }
 
-      // Add remediation link
-      if (group.issues[0].IssueTypeId) {
-        const articleUrl = `${this.baseUrl}/api/v4/Reports/Article/?issuetype=${group.issues[0].IssueTypeId}`;
-        issuesSection += `\n**Remediation Guide:** [View Article](${articleUrl})\n`;
+        // First comment - NOT TRIMMED, as quote block
+        if (issue.comments && issue.comments.length > 0) {
+          const firstComment = issue.comments[0];
+          issuesSection += '### Comment\n\n';
+          issuesSection += '> ' + (firstComment.Comment || '').split('\n').join('\n> ') + '\n\n';
+        }
       }
 
       issuesSection += '\n';
@@ -69,6 +93,56 @@ export class JiraDescriptionBuilder {
 
     this.sections.push(issuesSection);
     return this;
+  }
+
+  /**
+   * Get highest severity from a list of issues
+   * @private
+   */
+  getHighestSeverity(issues) {
+    const severityOrder = {
+      Critical: 5,
+      High: 4,
+      Medium: 3,
+      Low: 2,
+      Informational: 1,
+    };
+
+    let highest = 'Informational';
+    let highestValue = 0;
+
+    for (const issue of issues) {
+      const severity = issue.Severity || 'Informational';
+      const value = severityOrder[severity] || 0;
+      if (value > highestValue) {
+        highestValue = value;
+        highest = severity;
+      }
+    }
+
+    return highest;
+  }
+
+  /**
+   * Build the focused article URL for an issue
+   * @private
+   */
+  buildArticleUrl(issue) {
+    if (!issue.IssueTypeId) return null;
+
+    const params = new URLSearchParams({
+      issuetype: issue.IssueTypeId,
+    });
+
+    if (issue.Language) {
+      params.append('language', issue.Language);
+    }
+
+    if (issue.Api) {
+      params.append('api', issue.Api);
+    }
+
+    return `${this.baseUrl}/api/v4/Reports/Article/?${params.toString()}`;
   }
 
   /**

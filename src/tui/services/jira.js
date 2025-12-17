@@ -129,7 +129,9 @@ export class JiraService {
         }, {});
       } else {
         // No grouping - one Jira per issue
-        grouped = Object.fromEntries(issues.map((i, idx) => [`Issue ${idx + 1}`, [i]]));
+        grouped = Object.fromEntries(
+          issues.map((i, idx) => [`Issue ${idx + 1}`, [i]])
+        );
       }
 
       const results = [];
@@ -139,7 +141,7 @@ export class JiraService {
           projectKey,
           summary,
           groupIssues,
-          this.config.getAppScanBaseUrl()
+          this.config.getBaseUrl()
         );
         results.push(result);
       }
