@@ -1,4 +1,6 @@
 import chalk from 'chalk';
+import { marked } from 'marked';
+import { markdownToADF } from '../utils/markdown-to-adf.js';
 
 let Version3Client;
 
@@ -55,120 +57,32 @@ export class JiraService {
   }
 
   /**
-   * Convert markdown-like text to JIRA ADF (Atlassian Document Format)
+   * Convert markdown text to JIRA ADF (Atlassian Document Format)
+   * Uses marked library for proper markdown parsing
    */
   convertToADF(markdownText) {
-    const lines = markdownText.split('\n');
-    const content = [];
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-
-      // Empty line
-      if (line.trim() === '') {
-        continue;
-      }
-
-      // Heading 1
-      if (line.startsWith('# ')) {
-        content.push({
-          type: 'heading',
-          attrs: { level: 1 },
-          content: [{ type: 'text', text: line.substring(2) }],
-        });
-      }
-      // Heading 2
-      else if (line.startsWith('## ')) {
-        content.push({
-          type: 'heading',
-          attrs: { level: 2 },
-          content: [{ type: 'text', text: line.substring(3) }],
-        });
-      }
-      // Heading 3
-      else if (line.startsWith('### ')) {
-        content.push({
-          type: 'heading',
-          attrs: { level: 3 },
-          content: [{ type: 'text', text: line.substring(4) }],
-        });
-      }
-      // Heading 4
-      else if (line.startsWith('#### ')) {
-        content.push({
-          type: 'heading',
-          attrs: { level: 4 },
-          content: [{ type: 'text', text: line.substring(5) }],
-        });
-      }
-      // Heading 5
-      else if (line.startsWith('##### ')) {
-        content.push({
-          type: 'heading',
-          attrs: { level: 5 },
-          content: [{ type: 'text', text: line.substring(6) }],
-        });
-      }
-      // Heading 6
-      else if (line.startsWith('###### ')) {
-        content.push({
-          type: 'heading',
-          attrs: { level: 6 },
-          content: [{ type: 'text', text: line.substring(7) }],
-        });
-      }
-      // Bullet list item
-      else if (line.startsWith('- ')) {
-        // Check if we need to start a new list or continue existing
-        const listItem = {
-          type: 'listItem',
-          content: [
-            {
-              type: 'paragraph',
-              content: this.parseInlineContent(line.substring(2)),
-            },
-          ],
-        };
-
-        // Look back to see if previous item was a list
-        if (
-          content.length > 0 &&
-          content[content.length - 1].type === 'bulletList'
-        ) {
-          content[content.length - 1].content.push(listItem);
-        } else {
-          content.push({
-            type: 'bulletList',
-            content: [listItem],
-          });
-        }
-      }
-      // Regular paragraph
-      else {
-        content.push({
-          type: 'paragraph',
-          content: this.parseInlineContent(line),
-        });
-      }
+    try {
+      const tokens = marked.lexer(markdownText);
+      return markdownToADF(tokens);
+    } catch (error) {
+      console.error('Failed to convert markdown to ADF:', error);
+      // Fallback to simple paragraph
+      return {
+        type: 'doc',
+        version: 1,
+        content: [
+          {
+            type: 'paragraph',
+            content: [{ type: 'text', text: markdownText }],
+          },
+        ],
+      };
     }
-
-    return {
-      type: 'doc',
-      version: 1,
-      content:
-        content.length > 0
-          ? content
-          : [
-              {
-                type: 'paragraph',
-                content: [{ type: 'text', text: markdownText }],
-              },
-            ],
-    };
   }
 
   /**
    * Parse inline content (links, bold, etc.)
+   * @deprecated - Kept for backward compatibility, but convertToADF now uses marked
    */
   parseInlineContent(text) {
     const content = [];

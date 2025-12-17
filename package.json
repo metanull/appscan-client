@@ -1,18 +1,18 @@
 {
   "name": "@metanull/appscan-client",
-  "version": "1.6.3",
+  "version": "2.1.0",
   "description": "Utility to work with HCL AppScan Cloud API",
   "main": "src/index.js",
   "type": "module",
   "bin": {
-    "appscan": "./src/index.js",
-    "triage": "./ink-triage/src/index.js"
+    "appscan": "./dist/index.js"
   },
   "engines": {
     "node": ">=20.0.0"
   },
   "scripts": {
-    "start": "node src/index.js",
+    "build": "node build.js",
+    "start": "npm run build && node dist/index.js",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch",
     "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage",
@@ -26,7 +26,9 @@
     "appscan",
     "security",
     "cli",
-    "hcl"
+    "tui",
+    "hcl",
+    "ink"
   ],
   "author": "metanull",
   "license": "ISC",
@@ -48,18 +50,31 @@
     "cli-markdown": "^3.5.1",
     "commander": "^14.0.2",
     "dotenv": "^17.2.3",
+    "ink": "^6.5.1",
+    "ink-link": "^4.1.0",
+    "ink-select-input": "^6.0.0",
+    "ink-spinner": "^5.0.0",
+    "ink-text-input": "^6.0.0",
+    "ink-use-stdout-dimensions": "^1.0.5",
     "marked": "^17.0.1",
+    "meow": "^14.0.0",
+    "node-html-parser": "^7.0.1",
+    "open": "^10.1.0",
+    "react": "^19.2.3",
     "sanitize-html": "^2.17.0",
-    "turndown": "^7.2.0"
+    "turndown": "^7.2.0",
+    "zustand": "^5.0.2"
   },
   "optionalDependencies": {
     "jira.js": "^5.2.2"
   },
   "devDependencies": {
     "cross-env": "^10.1.0",
-    "eslint": "^9.39.1",
+    "esbuild": "^0.27.1",
+    "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jest": "^29.2.1",
+    "eslint-plugin-react": "^7.37.5",
     "jest": "^30.2.0",
     "prettier": "^3.7.4",
     "swagger-typescript-api": "^13.2.16"

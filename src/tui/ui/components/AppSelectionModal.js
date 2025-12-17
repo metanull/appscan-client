@@ -1,0 +1,169 @@
+/**
+ * AppSelectionModal
+ * Modal for selecting an application with search, sort, and filter options
+ */
+
+import React, { useState, useMemo, useCallback } from 'react';
+import { Box, Text, useInput } from 'ink';
+import TextInput from 'ink-text-input';
+import { Modal } from './Modal.js';
+import { Panel } from './Panel.js';
+import { ScrollableList } from './ScrollableList.js';
+import { useTerminalSize } from '../../hooks/useTerminalSize.js';
+
+function computeAppIssueCount(app) {
+  if (typeof app.IssueCountTotal === 'number') return app.IssueCountTotal;
+  const fields = [
+    'CriticalIssues',
+    'HighIssues',
+    'MediumIssues',
+    'LowIssues',
+    'InformationalIssues',
+    'IssuesInProgress',
+  ];
+  return fields.reduce((sum, f) => sum + (Number(app[f]) || 0), 0);
+}
+
+export const AppSelectionModal = React.memo(
+  ({ applications, onSelect, onCancel, hideEmpty = false }) => {
+    const [searchText, setSearchText] = useState('');
+    const [cursor, setCursor] = useState(0);
+    const [sortBy, setSortBy] = useState('name'); // 'name' | 'issues'
+    const { height } = useTerminalSize();
+
+    // Filter and sort applications
+    const filteredApps = useMemo(() => {
+      let filtered = [...applications];
+
+      // Hide empty if requested
+      if (hideEmpty) {
+        filtered = filtered.filter((app) => {
+          const issueCount = computeAppIssueCount(app);
+          return issueCount > 0;
+        });
+      }
+
+      // Search filter
+      if (searchText) {
+        const search = searchText.toLowerCase();
+        filtered = filtered.filter(
+          (app) =>
+            app.Name?.toLowerCase().includes(search) ||
+            app.Description?.toLowerCase().includes(search)
+        );
+      }
+
+      // Sort
+      filtered.sort((a, b) => {
+        if (sortBy === 'name') {
+          return (a.Name || '').localeCompare(b.Name || '');
+        } else if (sortBy === 'issues') {
+          const aCount = a.IssueCountTotal || 0;
+          const bCount = b.IssueCountTotal || 0;
+          return bCount - aCount; // Descending
+        }
+        return 0;
+      });
+
+      return filtered;
+    }, [applications, searchText, sortBy, hideEmpty]);
+
+    // Handle keyboard input
+    useInput((input, key) => {
+      if (key.escape) {
+        onCancel();
+        return;
+      }
+
+      if (key.upArrow) {
+        setCursor((prev) => Math.max(0, prev - 1));
+        return;
+      }
+
+      if (key.downArrow) {
+        setCursor((prev) => Math.min(filteredApps.length - 1, prev + 1));
+        return;
+      }
+
+      if (key.return && filteredApps[cursor]) {
+        onSelect(filteredApps[cursor]);
+        return;
+      }
+
+      if (input === 's') {
+        // Toggle sort
+        setSortBy((prev) => (prev === 'name' ? 'issues' : 'name'));
+        return;
+      }
+
+      if (input === 'h') {
+        // Toggle hide empty (not implemented in this simplified version)
+        return;
+      }
+    });
+
+    const renderItem = useCallback((app, isSelected) => {
+      const issueCount = computeAppIssueCount(app);
+
+      return (
+        <Box>
+          <Text color={isSelected ? 'cyan' : undefined} bold={isSelected}>
+            {isSelected ? '▶ ' : '  '}
+            {app.Name || 'Unnamed App'}
+          </Text>
+          <Text dimColor> ({issueCount} issues)</Text>
+        </Box>
+      );
+    }, []);
+
+    // Calculate available rows for the list
+    // Modal takes 80% of height, then subtract chrome:
+    // - Modal padding (2 lines)
+    // - Panel border (2 lines)
+    // - Panel title (1 line)
+    // - Search box (3 lines: label + input + margin)
+    // - Controls hint (1 line + margin = 2 lines)
+    // - Footer (1 line + margin = 2 lines)
+    // Total chrome: ~13 lines
+    const modalHeight = Math.floor(height * 0.8);
+    const chromeLines = 13;
+    const availableRows = modalHeight - chromeLines;
+    const visibleRows = Math.max(1, availableRows);
+
+    return (
+      <Modal width={70} height={80}>
+        <Panel title="Select Application" borderColor="cyan">
+          <Box flexDirection="column" gap={1}>
+            {/* Search box */}
+            <Box flexDirection="column" marginBottom={1}>
+              <Text dimColor>Search: </Text>
+              <TextInput
+                value={searchText}
+                onChange={setSearchText}
+                placeholder="Type to search..."
+              />
+            </Box>
+
+            {/* List */}
+            <ScrollableList
+              items={filteredApps}
+              cursor={cursor}
+              renderItem={renderItem}
+              visibleRows={visibleRows}
+              emptyMessage="No applications found"
+            />
+
+            {/* Footer */}
+            <Box marginTop={1}>
+              <Text dimColor>
+                {filteredApps.length} of {applications.length} applications
+              </Text>
+            </Box>
+          </Box>
+        </Panel>
+      </Modal>
+    );
+  }
+);
+
+AppSelectionModal.displayName = 'AppSelectionModal';

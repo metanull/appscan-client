@@ -143,3 +143,6 @@ vite.config.ts.timestamp-*
 /reports/
 report.md
 report.html
+
+# Temp
+/temp/

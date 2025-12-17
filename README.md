@@ -1,18 +1,19 @@
 # appscan-client
 
-A Node.js command-line interface (CLI) tool for interacting with the HCL AppScan Cloud API.
+A Node.js command-line interface (CLI) and Terminal User Interface (TUI) tool for interacting with the HCL AppScan Cloud API.
 
 ## Features
 
 - 🔐 API Key authentication
 - 🛠️ **Interactive setup wizard** - Easy configuration with guided prompts
 - ✅ **Connection check** - Verify your API credentials before starting
-- 🎯 **Interactive triage tool** - Efficient vulnerability management workflow
-  - Multi-select issues for bulk operations
-  - Grouped display of similar vulnerabilities
-  - Status updates with comments
-  - JIRA integration for true positives
-  - Confluence OWASP ASVS linking
+- 🎯 **Modern TUI (Terminal UI)** - Ink-based 3-pane interface for vulnerability triage
+  - VS Code-style layout with context, list, and details panes
+  - Real-time filtering and search
+  - Keyboard-driven navigation with vim-style shortcuts
+  - Modal-based workflow for all operations
+  - Cached article loading for instant access
+  - Multi-select and bulk operations
 - 📋 List applications, scans, scan executions, and security issues
 - 📊 Generate reports in Markdown and HTML formats
 - ⚙️ Flexible configuration via environment variables or config files
@@ -85,19 +86,41 @@ appscan connection-check
 
 ### 3. Start Triaging Vulnerabilities
 
-Launch the interactive triage tool:
+Launch the modern terminal UI:
 
 ```bash
+appscan
+# or
 appscan triage
 ```
 
-The triage workflow:
-1. **Select a scan** - View all scans with issue counts by severity
-2. **Browse groups** - Vulnerabilities grouped by type for efficiency
-3. **Multi-select issues** - Use spacebar to select multiple issues
-4. **Bulk update** - Change status and add comments in one operation
-5. **Create JIRA issues** - Automatically create tickets for true positives
-6. **Repeat** - Continue until all scans are processed
+The TUI provides a 3-pane layout:
+- **Context Pane** (left) - Shows selected app/scan info (toggle with `c`)
+- **Vulnerability List** (center) - Filterable list of issues
+- **Details Preview** (right) - Quick preview of selected issue
+
+#### Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| `↑/↓` | Move cursor |
+| `PageUp/PageDown` | Page navigation |
+| `Home/End` | Go to first/last |
+| `Enter` | Open details modal |
+| `Space` | Toggle selection |
+| `Ctrl+A` | Select all |
+| `Escape` | Close modal / go back |
+| `a` | Change application |
+| `s` | Change scan |
+| `f` | Filter |
+| `/` | Search |
+| `l` | Links |
+| `u` | Update status |
+| `j` | Create Jira |
+| `c` | Toggle context pane |
+| `r` | Refresh |
+| `h` or `?` | Help |
+| `q` | Quit |
 
 ## Configuration
 

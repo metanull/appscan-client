@@ -1,70 +1,118 @@
-import TurndownService from 'turndown';
-
 /**
  * JiraDescriptionBuilder - Build Jira issue descriptions from vulnerabilities
  * Ensures descriptions stay under 32KB limit
  */
 export class JiraDescriptionBuilder {
-  constructor(issues, baseUrl = 'https://cloud.appscan.com') {
+  constructor(
+    issues,
+    baseUrl = 'https://cloud.appscan.com',
+    app = null,
+    scan = null
+  ) {
     this.issues = issues;
     this.baseUrl = baseUrl;
+    this.app = app;
+    this.scan = scan;
     this.sections = [];
     this.maxBytes = 30000; // Leave some buffer under 32KB
   }
 
   /**
-   * Add summary section with counts
+   * Add metadata section with application and scan information
    */
-  addSummary(scanName = null, appName = null) {
-    const stats = this.calculateStats();
-    let summary = '## Summary\n\n';
+  addMetadata() {
+    let metadata = '';
 
-    if (appName) summary += `**Application:** ${appName}\n`;
-    if (scanName) summary += `**Scan:** ${scanName}\n`;
-    summary += `**Total Vulnerabilities:** ${this.issues.length}\n`;
-    summary += `**Critical:** ${stats.Critical} | **High:** ${stats.High} | **Medium:** ${stats.Medium} | **Low:** ${stats.Low}\n\n`;
+    if (this.app) {
+      const appUrl = `${this.baseUrl}/main/myapps/${this.app.Id}`;
+      metadata += `**Application:** [${this.app.Name}](${appUrl}) - ${this.app.Id}\n\n`;
+    }
 
-    this.sections.push(summary);
+    if (this.app && this.scan) {
+      const scanUrl = `${this.baseUrl}/main/myapps/${this.app.Id}/scans/${this.scan.Id}`;
+      metadata += `**Scan:** [${this.scan.Name}](${scanUrl}) - ${this.scan.Id}\n\n`;
+    }
+
+    if (metadata) {
+      metadata += '---\n\n';
+      this.sections.push(metadata);
+    }
+
     return this;
   }
 
   /**
-   * Add issues grouped by type
+   * Add issues grouped by type with full details
+   * Note: This method is synchronous but expects issues to have been enriched
+   * with article content and comments before calling this method.
    */
   addIssuesByType() {
     const grouped = this.groupByType();
-    let issuesSection = '## Vulnerabilities by Type\n\n';
+    let issuesSection = '';
 
-    for (const group of grouped) {
-      issuesSection += `### ${group.type} (${group.severity})\n\n`;
-      issuesSection += `**Count:** ${group.issues.length} occurrence(s)\n\n`;
+    for (let groupIndex = 0; groupIndex < grouped.length; groupIndex++) {
+      const group = grouped[groupIndex];
 
-      // Add up to 10 occurrences per group to avoid bloat
-      const displayCount = Math.min(group.issues.length, 10);
+      // Get highest severity for the group
+      const highestSeverity = this.getHighestSeverity(group.issues);
 
-      for (let i = 0; i < displayCount; i++) {
+      // Header for this vulnerability type
+      issuesSection += `# ${group.type} (${highestSeverity})\n\n`;
+
+      // Add Remediation link once after the header (if available)
+      if (group.issues[0]?.focusedArticleUrl) {
+        issuesSection += `[🔗 Remediation](${group.issues[0].focusedArticleUrl})\n\n`;
+      }
+
+      // Loop through each issue
+      for (let i = 0; i < group.issues.length; i++) {
         const issue = group.issues[i];
+        const issueNumber = i + 1;
         const location = this.formatLocation(issue);
-        const context = this.formatContext(issue);
 
-        issuesSection += `- **[${issue.Severity}]** ${location}`;
-        if (context) {
-          issuesSection += `\n  ${context}`;
+        // Issue header
+        issuesSection += `## ${issueNumber}. ${location} (${issue.Severity})\n\n`;
+
+        // AZDO URL (SourceFileUri)
+        if (issue.SourceFileUri) {
+          issuesSection += `- [🔗 Source](${issue.SourceFileUri})\n`;
         }
+
+        // AppScan Issue link
+        if (this.app?.Id && issue.Id) {
+          const issueUrl = `${this.baseUrl}/main/myapps/${this.app.Id}/issues/${issue.Id}`;
+          issuesSection += `- [🔗 AppScan - ${issue.Id}](${issueUrl})\n`;
+        }
+
         issuesSection += '\n';
+
+        // Issue context - NOT TRIMMED
+        if (issue.Context) {
+          issuesSection += '### Issue\n\n';
+          issuesSection += '```\n';
+          issuesSection += issue.Context + '\n';
+          issuesSection += '```\n\n';
+        }
+
+        // First comment - NOT TRIMMED
+        if (issue.comments && issue.comments.length > 0) {
+          const firstComment = issue.comments[0];
+          issuesSection += '### Comment\n\n';
+          issuesSection += (firstComment.Comment || '') + '\n\n';
+        }
       }
 
-      if (group.issues.length > displayCount) {
-        issuesSection += `\n_... and ${group.issues.length - displayCount} more occurrence(s)_\n`;
+      // Add article description at the bottom of the type (after all issues)
+      if (group.issues[0]?.articleMarkdown) {
+        issuesSection += '---\n\n';
+        issuesSection += '## Remediation\n\n';
+        issuesSection += group.issues[0].articleMarkdown + '\n\n';
       }
 
-      // Add remediation link
-      if (group.issues[0].IssueTypeId) {
-        const articleUrl = `${this.baseUrl}/api/v4/Reports/Article/?issuetype=${group.issues[0].IssueTypeId}`;
-        issuesSection += `\n**Remediation Guide:** [View Article](${articleUrl})\n`;
+      // Add separator between vulnerability types (except after the last one)
+      if (groupIndex < grouped.length - 1) {
+        issuesSection += '---\n\n';
       }
-
-      issuesSection += '\n';
     }
 
     this.sections.push(issuesSection);
@@ -72,25 +120,53 @@ export class JiraDescriptionBuilder {
   }
 
   /**
-   * Add remediation section with HTML converted to Markdown
+   * Get highest severity from a list of issues
+   * @private
    */
-  addRemediation(articleHtml) {
-    if (!articleHtml) return this;
+  getHighestSeverity(issues) {
+    const severityOrder = {
+      Critical: 5,
+      High: 4,
+      Medium: 3,
+      Low: 2,
+      Informational: 1,
+    };
 
-    const markdown = this.convertHtmlToMarkdown(articleHtml);
-    if (markdown) {
-      this.sections.push('## Remediation\n\n' + markdown + '\n\n');
+    let highest = 'Informational';
+    let highestValue = 0;
+
+    for (const issue of issues) {
+      const severity = issue.Severity || 'Informational';
+      const value = severityOrder[severity] || 0;
+      if (value > highestValue) {
+        highestValue = value;
+        highest = severity;
+      }
     }
-    return this;
+
+    return highest;
   }
 
   /**
-   * Add AppScan issue IDs for traceability
+   * Build the focused article URL for an issue
+   * @private
    */
-  addIssueIds() {
-    const ids = this.issues.map((i) => i.Id).join(', ');
-    this.sections.push(`## AppScan Issue IDs\n\n${ids}\n\n`);
-    return this;
+  buildArticleUrl(issue) {
+    if (!issue.IssueTypeId) return null;
+
+    const params = new URLSearchParams({
+      issuetype: issue.IssueTypeId,
+    });
+
+    if (issue.Language) {
+      params.append('language', issue.Language);
+    }
+
+    if (issue.Api) {
+      params.append('api', issue.Api);
+    }
+
+    return `${this.baseUrl}/api/v4/Reports/Article/?${params.toString()}`;
   }
 
   /**
@@ -197,43 +273,5 @@ export class JiraDescriptionBuilder {
       return match ? match[1] : issue.SourceFileUri;
     }
     return 'Location not specified';
-  }
-
-  /**
-   * Format code context
-   * @private
-   */
-  formatContext(issue) {
-    if (!issue.Context) return null;
-
-    // Truncate context to 100 chars
-    const context = issue.Context.replace(/\n/g, ' ').trim();
-    if (context.length > 100) {
-      return '`' + context.substring(0, 100) + '...`';
-    }
-    return '`' + context + '`';
-  }
-
-  /**
-   * Convert HTML to Markdown
-   * @private
-   */
-  convertHtmlToMarkdown(html) {
-    const turndown = new TurndownService({
-      headingStyle: 'atx',
-      codeBlockStyle: 'fenced',
-    });
-
-    try {
-      const markdown = turndown.turndown(html);
-      // Truncate to reasonable size (5000 chars)
-      return markdown.length > 5000
-        ? markdown.substring(0, 5000) + '\n\n_[Truncated]_'
-        : markdown;
-    } catch (error) {
-      // Log error for debugging but don't fail the entire operation
-      console.warn('Failed to convert HTML to Markdown:', error.message);
-      return null;
-    }
   }
 }
