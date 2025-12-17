@@ -110,6 +110,16 @@ const VulnListPanel = React.memo(
       return <VulnRow issue={issue} isSelected={isSelected} />;
     }, []);
 
+    // Calculate available rows for the list
+    // Height passed is the content area height (terminal - 2 for header/footer)
+    // Subtract panel chrome:
+    // - Panel border (2 lines)
+    // - Panel title (1 line)
+    // - Panel padding (1 line)
+    const chromeLines = 4;
+    const availableRows = height - chromeLines;
+    const visibleRows = Math.max(1, availableRows);
+
     return (
       <Panel
         title={`Vulnerabilities (${issues.length})`}
@@ -120,7 +130,7 @@ const VulnListPanel = React.memo(
           items={issues}
           cursor={cursor}
           renderItem={renderItem}
-          visibleRows={height - 5}
+          visibleRows={visibleRows}
           emptyMessage="No vulnerabilities found"
         />
       </Panel>
@@ -495,7 +505,7 @@ export const InkApp = ({ configPath }) => {
         <VulnListPanel
           issues={filteredIssues}
           cursor={listCursor}
-          height={height}
+          height={height - 2}
         />
 
         {/* Details Preview */}

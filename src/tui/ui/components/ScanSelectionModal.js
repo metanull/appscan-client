@@ -125,7 +125,19 @@ export const ScanSelectionModal = React.memo(
       );
     }, []);
 
-    const visibleRows = Math.max(10, height - 12);
+    // Calculate available rows for the list
+    // Modal takes 80% of height, then subtract chrome:
+    // - Modal padding (2 lines)
+    // - Panel border (2 lines)
+    // - Panel title (1 line)
+    // - Search box (3 lines: label + input + margin)
+    // - Controls hint (1 line + margin = 2 lines)
+    // - Footer (1 line + margin = 2 lines)
+    // Total chrome: ~13 lines
+    const modalHeight = Math.floor(height * 0.8);
+    const chromeLines = 13;
+    const availableRows = modalHeight - chromeLines;
+    const visibleRows = Math.max(1, availableRows);
 
     return (
       <Modal width={70} height={80}>
