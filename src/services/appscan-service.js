@@ -341,7 +341,7 @@ export class AppScanService {
       }
 
       return generalArticleUrl;
-    } catch (error) {
+    } catch {
       return generalArticleUrl;
     }
   }
