@@ -1,89 +1,146 @@
 /**
  * MarkdownBox
  * Reusable component for displaying markdown content with scrolling support
+ * Uses marked library for proper markdown tokenization
  */
 
 import React, { useState, useMemo } from 'react';
 import { Box, Text, useInput } from 'ink';
+import { marked } from 'marked';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 
-// Parse markdown line for TUI display
-const parseMarkdownLine = (line) => {
-  const trimmed = line.trim();
+/**
+ * Extract plain text from marked tokens (handles inline formatting)
+ */
+const extractText = (token) => {
+  if (typeof token === 'string') return token;
+  if (token.text) return token.text;
+  if (token.tokens) return token.tokens.map(extractText).join('');
+  return '';
+};
 
-  // Headings
-  if (trimmed.startsWith('##### ')) {
-    return {
-      type: 'h5',
-      text: trimmed.substring(6),
-      color: 'white',
-      bold: true,
-    };
-  }
-  if (trimmed.startsWith('#### ')) {
-    return {
-      type: 'h4',
-      text: trimmed.substring(5),
-      color: 'blue',
-      bold: false,
-    };
-  }
-  if (trimmed.startsWith('### ')) {
-    return {
-      type: 'h3',
-      text: trimmed.substring(4),
-      color: 'blue',
-      bold: true,
-    };
-  }
-  if (trimmed.startsWith('## ')) {
-    return {
-      type: 'h2',
-      text: trimmed.substring(3),
-      color: 'cyan',
-      bold: true,
-    };
-  }
-  if (trimmed.startsWith('# ')) {
-    return {
-      type: 'h1',
-      text: trimmed.substring(2),
-      color: 'cyan',
-      bold: true,
-    };
-  }
+/**
+ * Convert marked tokens into renderable line elements
+ */
+const tokensToLines = (tokens) => {
+  const lines = [];
+  let lineCounter = 0;
 
-  // Horizontal rule
-  if (trimmed.match(/^[-*_]{3,}$/)) {
-    return { type: 'hr', text: '─'.repeat(60), color: 'gray' };
-  }
+  const addLine = (type, text, props = {}) => {
+    lines.push({ id: lineCounter++, type, text, ...props });
+  };
 
-  // List items
-  if (trimmed.match(/^[\s]*[-*+]\s/)) {
-    return {
-      type: 'list',
-      text: line.replace(/^(\s*)[-*+]\s/, '$1• '),
-      color: 'white',
-    };
-  }
+  const processToken = (token, depth = 0) => {
+    const indent = '  '.repeat(depth);
 
-  // Numbered list
-  if (trimmed.match(/^\d+\.\s/)) {
-    return { type: 'list', text: line, color: 'white' };
-  }
+    switch (token.type) {
+      case 'heading':
+        addLine(
+          `h${token.depth}`,
+          extractText(token),
+          token.depth === 1
+            ? { color: 'cyan', bold: true }
+            : token.depth === 2
+              ? { color: 'cyan', bold: true }
+              : token.depth === 3
+                ? { color: 'blue', bold: true }
+                : token.depth === 4
+                  ? { color: 'blue', bold: false }
+                  : { color: 'white', bold: true }
+        );
+        addLine('space', '');
+        break;
 
-  // Code fence
-  if (trimmed.startsWith('```')) {
-    return { type: 'code-fence', text: trimmed };
-  }
+      case 'paragraph':
+        if (token.tokens) {
+          const text = extractText(token);
+          if (text.trim()) {
+            addLine('paragraph', text, { color: 'white' });
+          }
+        }
+        addLine('space', '');
+        break;
 
-  // Empty line
-  if (!trimmed) {
-    return { type: 'empty', text: '' };
-  }
+      case 'list': {
+        const ordered = token.ordered;
+        token.items.forEach((item, index) => {
+          const prefix = ordered ? `${index + 1}. ` : '• ';
+          const itemText = extractText(item);
+          addLine('list-item', `${indent}${prefix}${itemText}`, {
+            color: 'white',
+          });
 
-  // Regular text
-  return { type: 'text', text: line, color: 'white' };
+          // Handle nested lists
+          if (item.tokens) {
+            item.tokens.forEach((subToken) => {
+              if (subToken.type === 'list') {
+                processToken(subToken, depth + 1);
+              }
+            });
+          }
+        });
+        addLine('space', '');
+        break;
+      }
+
+      case 'code':
+        addLine('code-fence-start', '╭─ Code ─────────────────────', {
+          color: 'gray',
+          dimColor: true,
+        });
+        token.text.split('\n').forEach((line) => {
+          addLine('code', line, { color: 'gray', dimColor: true });
+        });
+        addLine('code-fence-end', '╰────────────────────────────', {
+          color: 'gray',
+          dimColor: true,
+        });
+        addLine('space', '');
+        break;
+
+      case 'blockquote':
+        if (token.tokens) {
+          token.tokens.forEach((subToken) => {
+            const text = extractText(subToken);
+            if (text.trim()) {
+              addLine('blockquote', `│ ${text}`, {
+                color: 'yellow',
+                dimColor: true,
+              });
+            }
+          });
+        }
+        addLine('space', '');
+        break;
+
+      case 'hr':
+        addLine('hr', '─'.repeat(60), { color: 'gray' });
+        addLine('space', '');
+        break;
+
+      case 'space':
+        addLine('space', '');
+        break;
+
+      case 'text':
+        // Standalone text (not in paragraph)
+        if (token.text && token.text.trim()) {
+          addLine('text', token.text, { color: 'white' });
+        }
+        break;
+
+      default:
+        // Handle other token types as plain text
+        const text = extractText(token);
+        if (text && text.trim()) {
+          addLine('text', text, { color: 'white' });
+        }
+        break;
+    }
+  };
+
+  tokens.forEach((token) => processToken(token));
+  return lines;
 };
 
 export const MarkdownBox = React.memo(
@@ -91,48 +148,22 @@ export const MarkdownBox = React.memo(
     const [scrollOffset, setScrollOffset] = useState(0);
     const { height: terminalHeight } = useTerminalSize();
 
-    // Parse markdown into renderable elements
+    // Parse markdown using marked tokenizer
     const elements = useMemo(() => {
       if (!markdown) return [];
 
-      const lines = markdown.split('\n');
-      const parsed = [];
-      let inCodeBlock = false;
-
-      for (const line of lines) {
-        const trimmed = line.trim();
-
-        // Handle code fences
-        if (trimmed.startsWith('```')) {
-          if (!inCodeBlock) {
-            parsed.push({
-              type: 'code-fence-start',
-              text: '╭─ Code ─────────────────────',
-              color: 'gray',
-            });
-            inCodeBlock = true;
-          } else {
-            parsed.push({
-              type: 'code-fence-end',
-              text: '╰────────────────────────────',
-              color: 'gray',
-            });
-            inCodeBlock = false;
-          }
-          continue;
-        }
-
-        // Inside code block
-        if (inCodeBlock) {
-          parsed.push({ type: 'code', text: line, color: 'gray' });
-          continue;
-        }
-
-        // Parse markdown
-        parsed.push(parseMarkdownLine(line));
+      try {
+        const tokens = marked.lexer(markdown);
+        return tokensToLines(tokens);
+      } catch {
+        // Fallback to raw text if parsing fails
+        return markdown.split('\n').map((line, index) => ({
+          id: index,
+          type: 'text',
+          text: line,
+          color: 'white',
+        }));
       }
-
-      return parsed;
     }, [markdown]);
 
     // Calculate visible height
@@ -150,7 +181,7 @@ export const MarkdownBox = React.memo(
 
         if (key.downArrow) {
           setScrollOffset((prev) =>
-            Math.min(elements.length - visibleLines, prev + 1)
+            Math.min(Math.max(0, elements.length - visibleLines), prev + 1)
           );
           return;
         }
@@ -162,7 +193,10 @@ export const MarkdownBox = React.memo(
 
         if (key.pageDown) {
           setScrollOffset((prev) =>
-            Math.min(elements.length - visibleLines, prev + visibleLines)
+            Math.min(
+              Math.max(0, elements.length - visibleLines),
+              prev + visibleLines
+            )
           );
           return;
         }
@@ -178,46 +212,17 @@ export const MarkdownBox = React.memo(
 
     return (
       <Box flexDirection="column">
-        {visibleElements.map((element, index) => {
-          const key = scrollOffset + index;
-
-          if (element.type === 'empty') {
-            return <Text key={key}> </Text>;
-          }
-
-          if (
-            element.type === 'code-fence-start' ||
-            element.type === 'code-fence-end'
-          ) {
-            return (
-              <Text key={key} color={element.color} dimColor>
-                {element.text}
-              </Text>
-            );
-          }
-
-          if (element.type === 'code') {
-            return (
-              <Text key={key} color={element.color} dimColor>
-                {element.text}
-              </Text>
-            );
-          }
-
-          if (element.type === 'hr') {
-            return (
-              <Text key={key} color={element.color}>
-                {element.text}
-              </Text>
-            );
+        {visibleElements.map((element) => {
+          if (element.type === 'space') {
+            return <Text key={element.id}> </Text>;
           }
 
           return (
             <Text
-              key={key}
+              key={element.id}
               color={element.color}
               bold={element.bold}
-              dimColor={!element.text.trim()}
+              dimColor={element.dimColor}
             >
               {element.text}
             </Text>
