@@ -172,10 +172,7 @@ const VulnListPanel = React.memo(
             <Text color="cyan" bold>
               ✓ Selected: {selectedIssueIds.length} of {issues.length}
             </Text>
-            <Text dimColor>
-              {' '}
-              (Space: toggle | CTRL+a: all | ALT+a: clear)
-            </Text>
+            <Text dimColor> (Space: toggle | CTRL+a: all | ALT+a: clear)</Text>
           </Box>
         )}
 

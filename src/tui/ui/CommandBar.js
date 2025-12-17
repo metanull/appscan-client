@@ -52,8 +52,7 @@ export const CommandBar = () => {
       <Box justifyContent="space-between">
         <Text dimColor>{hints || 'Loading...'}</Text>
         <Text dimColor>
-          Author: Pascal Havelange | {packageInfo.name} v
-          {packageInfo.version} |{' '}
+          Author: Pascal Havelange | {packageInfo.name} v{packageInfo.version} |{' '}
           <Link url="https://opensource.org/licenses/MIT">MIT License</Link>
         </Text>
       </Box>
