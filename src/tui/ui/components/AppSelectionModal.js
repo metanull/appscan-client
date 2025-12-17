@@ -144,14 +144,6 @@ export const AppSelectionModal = React.memo(
               />
             </Box>
 
-            {/* Controls hint */}
-            <Box marginBottom={1}>
-              <Text dimColor>
-                Sort: [s] {sortBy === 'name' ? 'Name' : 'Issues'} | ESC: Cancel
-                | Enter: Select
-              </Text>
-            </Box>
-
             {/* List */}
             <ScrollableList
               items={filteredApps}

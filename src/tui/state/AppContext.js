@@ -152,14 +152,27 @@ export const useStore = create((set, get) => ({
     set({ selectedIssueIds: filteredIssues.map((i) => i.Id) });
   },
 
+  selectNone: () => set({ selectedIssueIds: [] }),
+
+  invertSelection: () => {
+    const filteredIssues = get().getFilteredIssues();
+    const { selectedIssueIds } = get();
+    const allIds = filteredIssues.map((i) => i.Id);
+    const newSelection = allIds.filter((id) => !selectedIssueIds.includes(id));
+    set({ selectedIssueIds: newSelection });
+  },
+
   clearSelection: () => set({ selectedIssueIds: [] }),
 
   // Actions - Filters
-  setFilterStatus: (status) => set({ filterStatus: status }),
-  setFilterSeverity: (severity) => set({ filterSeverity: severity }),
-  setFilterIssueType: (type) => set({ filterIssueType: type }),
-  setFilterJira: (jira) => set({ filterJira: jira }),
-  setSearchText: (text) => set({ searchText: text }),
+  setFilterStatus: (status) =>
+    set({ filterStatus: status, selectedIssueIds: [] }),
+  setFilterSeverity: (severity) =>
+    set({ filterSeverity: severity, selectedIssueIds: [] }),
+  setFilterIssueType: (type) =>
+    set({ filterIssueType: type, selectedIssueIds: [] }),
+  setFilterJira: (jira) => set({ filterJira: jira, selectedIssueIds: [] }),
+  setSearchText: (text) => set({ searchText: text, selectedIssueIds: [] }),
   setSortBy: (sortBy) => set({ sortBy }),
   setScanSearchText: (text) => set({ scanSearchText: text }),
   setScanFilterType: (type) => set({ scanFilterType: type }),
@@ -173,6 +186,7 @@ export const useStore = create((set, get) => ({
       filterIssueType: null,
       filterJira: null,
       searchText: null,
+      selectedIssueIds: [],
     }),
 
   // Actions - UI

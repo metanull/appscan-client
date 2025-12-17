@@ -151,7 +151,6 @@ export const IssueDetailsModal = React.memo(
                   <MarkdownBox
                     markdown={articleContent}
                     enableScrolling={true}
-                    
                   />
                 </Box>
               </Box>

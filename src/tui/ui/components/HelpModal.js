@@ -7,29 +7,12 @@ import React from 'react';
 import { Box, Text, useInput } from 'ink';
 import { Modal } from './Modal.js';
 import { Panel } from './Panel.js';
+import { useGroupedShortcuts } from '../../hooks/useKeyboardShortcuts.js';
+import { formatKeyForDisplay } from '../../utils/keyboard-shortcuts.js';
 
-const SHORTCUTS = [
-  { key: '↑/↓', description: 'Move cursor' },
-  { key: 'PageUp/PageDown', description: 'Page navigation' },
-  { key: 'Home/End', description: 'Go to first/last' },
-  { key: 'Enter', description: 'Open details modal' },
-  { key: 'Space', description: 'Toggle selection' },
-  { key: 'Ctrl+A', description: 'Select all' },
-  { key: 'Escape', description: 'Close modal / go back' },
-  { key: 'a', description: 'Change application' },
-  { key: 's', description: 'Change scan' },
-  { key: 'f', description: 'Filter' },
-  { key: '/', description: 'Search' },
-  { key: 'l', description: 'Links' },
-  { key: 'u', description: 'Update status' },
-  { key: 'j', description: 'Create Jira' },
-  { key: 'c', description: 'Toggle context pane' },
-  { key: 'r', description: 'Refresh' },
-  { key: 'h or ?', description: 'Help (this screen)' },
-  { key: 'q', description: 'Quit' },
-];
+export const HelpModal = React.memo(({ view, onClose }) => {
+  const groupedShortcuts = useGroupedShortcuts(view || 'issue-list');
 
-export const HelpModal = React.memo(({ onClose }) => {
   useInput((input, key) => {
     if (key.escape || input === 'h' || input === '?') {
       onClose();
@@ -40,14 +23,21 @@ export const HelpModal = React.memo(({ onClose }) => {
     <Modal width={60} height={70}>
       <Panel title="Keyboard Shortcuts" borderColor="yellow">
         <Box flexDirection="column">
-          {SHORTCUTS.map(({ key, description }) => (
-            <Box key={key} marginY={0}>
-              <Box width={20}>
-                <Text bold color="cyan">
-                  {key}
-                </Text>
-              </Box>
-              <Text>{description}</Text>
+          {Object.entries(groupedShortcuts).map(([groupName, shortcuts]) => (
+            <Box key={groupName} flexDirection="column" marginBottom={1}>
+              <Text bold color="green">
+                {groupName}
+              </Text>
+              {shortcuts.map((shortcut) => (
+                <Box key={shortcut.key} marginY={0}>
+                  <Box width={20}>
+                    <Text bold color="cyan">
+                      {formatKeyForDisplay(shortcut.key)}
+                    </Text>
+                  </Box>
+                  <Text>{shortcut.description}</Text>
+                </Box>
+              ))}
             </Box>
           ))}
 

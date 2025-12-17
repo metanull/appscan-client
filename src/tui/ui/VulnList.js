@@ -15,10 +15,24 @@ export const VulnList = () => {
   const selectedIssueIds = useStore((state) => state.selectedIssueIds);
   const listCursor = useStore((state) => state.listCursor);
   const view = useStore((state) => state.view);
+  const filterStatus = useStore((state) => state.filterStatus);
+  const filterSeverity = useStore((state) => state.filterSeverity);
+  const filterIssueType = useStore((state) => state.filterIssueType);
+  const filterJira = useStore((state) => state.filterJira);
+  const searchText = useStore((state) => state.searchText);
 
   if (view !== 'issue-list') {
     return null;
   }
+
+  // Build filter display text
+  const activeFilters = [];
+  if (filterStatus) activeFilters.push(`Status:${filterStatus}`);
+  if (filterSeverity) activeFilters.push(`Severity:${filterSeverity}`);
+  if (filterIssueType) activeFilters.push(`Type:${filterIssueType}`);
+  if (filterJira) activeFilters.push(`Jira:${filterJira}`);
+  if (searchText) activeFilters.push(`Search:"${searchText}"`);
+  const hasFilters = activeFilters.length > 0;
 
   // Calculate statistics
   const stats = useMemo(() => calculateStats(filteredIssues), [filteredIssues]);
@@ -47,6 +61,30 @@ export const VulnList = () => {
         <Text bold color="green">
           🔍 Vulnerabilities
         </Text>
+
+        {/* Selection Count */}
+        {selectedIssueIds.length > 0 && (
+          <Box marginTop={1}>
+            <Text color="cyan" bold>
+              ✓ Selected: {selectedIssueIds.length} of {filteredIssues.length}{' '}
+              issue(s)
+            </Text>
+            <Text dimColor>
+              {' '}
+              (Space: toggle | CTRL+a: all | CTRL+SHIFT+a: none | CTRL+i:
+              invert)
+            </Text>
+          </Box>
+        )}
+
+        {/* Active Filters */}
+        {hasFilters && (
+          <Box marginTop={1}>
+            <Text color="yellow">🔍 Filters: </Text>
+            <Text color="cyan">{activeFilters.join(' | ')}</Text>
+            <Text dimColor> (DEL: clear)</Text>
+          </Box>
+        )}
 
         {/* Summary Stats */}
         <Box marginTop={1}>

@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Box, Text } from 'ink';
+import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
 import { Modal } from './components/Modal.js';
 import { Panel } from './components/Panel.js';
@@ -45,6 +45,13 @@ const JIRA_OPTIONS = [
 export const FilterModal = ({ issues, onSelect, onClose }) => {
   const [step, setStep] = useState('type'); // 'type' | 'status' | 'severity' | 'jira' | 'issueType'
   const [filterType, setFilterType] = useState(null);
+
+  // Handle ESC key to cancel
+  useInput((input, key) => {
+    if (key.escape) {
+      onClose();
+    }
+  });
 
   const handleTypeSelect = (item) => {
     if (item.value === 'cancel') {

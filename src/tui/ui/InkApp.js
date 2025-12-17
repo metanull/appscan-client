@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useCallback, useMemo, useRef } from 'react';
-import { Box, Text, useApp, useInput } from 'ink';
+import { Box, Text, useApp } from 'ink';
 import Spinner from 'ink-spinner';
 import { useStore } from '../state/AppContext.js';
 import { filterIssues } from '../utils/issue-utils.js';
@@ -25,6 +25,7 @@ import { JiraService } from '../services/jira.js';
 import { useCurrentIssue } from '../hooks/useCurrentIssue.js';
 import { useArticleCache } from '../hooks/useArticleCache.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts.js';
 import logger from '../utils/logger.js';
 import { getPackageInfo } from '../../utils/package-info.js';
 
@@ -62,7 +63,7 @@ ContextPane.displayName = 'ContextPane';
 /**
  * Vulnerability List Row - Memoized
  */
-const VulnRow = React.memo(({ issue, isSelected }) => {
+const VulnRow = React.memo(({ issue, isSelected, isMultiSelected }) => {
   const severity = issue.Severity || 'Unknown';
   const status = issue.Status || 'Unknown';
   const type = issue.IssueType || 'Unknown';
@@ -83,12 +84,17 @@ const VulnRow = React.memo(({ issue, isSelected }) => {
           {isSelected ? '▶' : ' '}
         </Text>
       </Box>
-      <Box width={14} justifyContent="flex-start">
+      <Box width={4} justifyContent="flex-start">
+        <Text color={isMultiSelected ? 'cyan' : undefined}>
+          {isMultiSelected ? '[✓]' : '[ ]'}
+        </Text>
+      </Box>
+      <Box width={12} justifyContent="flex-start">
         <Text color={severityColor} bold={isSelected}>
           {severity}
         </Text>
       </Box>
-      <Box width={16} justifyContent="flex-start">
+      <Box width={14} justifyContent="flex-start">
         <Text color={isSelected ? 'cyan' : undefined}>{status}</Text>
       </Box>
       <Box flexGrow={1} minWidth={0} justifyContent="flex-start">
@@ -105,19 +111,52 @@ VulnRow.displayName = 'VulnRow';
  * Vulnerability List Panel
  */
 const VulnListPanel = React.memo(
-  ({ issues, cursor, onCursorChange: _onCursorChange, height }) => {
-    const renderItem = useCallback((issue, isSelected) => {
-      return <VulnRow issue={issue} isSelected={isSelected} />;
-    }, []);
+  ({
+    issues,
+    cursor,
+    selectedIssueIds,
+    filterStatus,
+    filterSeverity,
+    filterIssueType,
+    filterJira,
+    searchText,
+    onCursorChange: _onCursorChange,
+    height,
+  }) => {
+    const renderItem = useCallback(
+      (issue, isSelected) => {
+        const isMultiSelected = selectedIssueIds.includes(issue.Id);
+        return (
+          <VulnRow
+            issue={issue}
+            isSelected={isSelected}
+            isMultiSelected={isMultiSelected}
+          />
+        );
+      },
+      [selectedIssueIds]
+    );
+
+    // Build filter display text
+    const activeFilters = [];
+    if (filterStatus) activeFilters.push(`Status:${filterStatus}`);
+    if (filterSeverity) activeFilters.push(`Severity:${filterSeverity}`);
+    if (filterIssueType) activeFilters.push(`Type:${filterIssueType}`);
+    if (filterJira) activeFilters.push(`Jira:${filterJira}`);
+    if (searchText) activeFilters.push(`Search:"${searchText}"`);
+    const hasFilters = activeFilters.length > 0;
 
     // Calculate available rows for the list
     // Height passed is the content area height (terminal - 2 for header/footer)
     // Subtract panel chrome:
     // - Panel border (2 lines)
     // - Panel title (1 line)
+    // - Selection count (conditional, 1 line)
+    // - Filter status (conditional, 1 line)
     // - Column headers (1 line)
     // - Panel padding (1 line)
-    const chromeLines = 5;
+    const chromeLines =
+      5 + (selectedIssueIds.length > 0 ? 1 : 0) + (hasFilters ? 1 : 0);
     const availableRows = height - chromeLines;
     const visibleRows = Math.max(1, availableRows);
 
@@ -127,6 +166,28 @@ const VulnListPanel = React.memo(
         borderColor="cyan"
         flexGrow={1}
       >
+        {/* Selection Count */}
+        {selectedIssueIds.length > 0 && (
+          <Box marginBottom={1}>
+            <Text color="cyan" bold>
+              ✓ Selected: {selectedIssueIds.length} of {issues.length}
+            </Text>
+            <Text dimColor>
+              {' '}
+              (Space: toggle | CTRL+a: all | ALT+a: clear)
+            </Text>
+          </Box>
+        )}
+
+        {/* Active Filters */}
+        {hasFilters && (
+          <Box marginBottom={1}>
+            <Text color="yellow">🔍 Filtering &gt; </Text>
+            <Text color="cyan">{activeFilters.join(' | ')}</Text>
+            <Text dimColor> (ALT+f: clear)</Text>
+          </Box>
+        )}
+
         {/* Column Headers */}
         <Box marginBottom={1}>
           <Box width={2} justifyContent="flex-start">
@@ -134,12 +195,17 @@ const VulnListPanel = React.memo(
               {' '}
             </Text>
           </Box>
-          <Box width={14} justifyContent="flex-start">
+          <Box width={4} justifyContent="flex-start">
+            <Text bold dimColor>
+              Sel
+            </Text>
+          </Box>
+          <Box width={12} justifyContent="flex-start">
             <Text bold dimColor>
               Severity
             </Text>
           </Box>
-          <Box width={16} justifyContent="flex-start">
+          <Box width={14} justifyContent="flex-start">
             <Text bold dimColor>
               Status
             </Text>
@@ -217,7 +283,7 @@ DetailsPreviewPanel.displayName = 'DetailsPreviewPanel';
  */
 const pkg = getPackageInfo();
 const StatusBar = React.memo(({ error, loading, message }) => {
-  const rightText = `${pkg.version || 'v0.0.0'} • Pascal Havelange`;
+  const rightText = `${pkg.name || 'appscan-client'} ${pkg.version || 'v0.0.0'} • Pascal Havelange`;
   return (
     <Box
       borderStyle="single"
@@ -237,9 +303,7 @@ const StatusBar = React.memo(({ error, loading, message }) => {
           </Box>
         )}
         {!error && !loading && (
-          <Text dimColor>
-            Press ? for help | a: App | s: Scan | f: Filter | q: Quit
-          </Text>
+          <Text dimColor>? Help | CTRL+O App | CTRL+W Scan | q Quit</Text>
         )}
       </Box>
       <Box>
@@ -281,10 +345,12 @@ export const InkApp = ({ configPath }) => {
   const filterJira = useStore((state) => state.filterJira);
   const searchText = useStore((state) => state.searchText);
   const sortBy = useStore((state) => state.sortBy);
+  const selectedIssueIds = useStore((state) => state.selectedIssueIds);
 
   // Local UI state
   const [showContextPane, setShowContextPane] = useState(true);
   const [activeModal, setActiveModal] = useState(null); // null | 'app' | 'scan' | 'filter' | 'search' | 'help' | etc.
+  const isInitialSetup = useRef(true); // Track if we're in initial setup phase
 
   // Load applications on mount - runs once
   const hasLoadedApps = useRef(false);
@@ -431,89 +497,206 @@ export const InkApp = ({ configPath }) => {
     }, 16);
   }, [filteredIssuesLength]); // Only depend on data, not setter
 
-  // Keyboard handling
-  useInput((input, key) => {
-    // Modal open - don't handle shortcuts
-    if (activeModal) return;
+  // Define keyboard shortcuts for issue-list view
+  const issueListShortcuts = useMemo(
+    () => [
+      // Navigation
+      {
+        key: 'uparrow',
+        action: () => {
+          pendingCursorMove.current -= 1;
+          flushCursorMove();
+        },
+        description: 'Navigate',
+        group: 'Navigation',
+      },
+      {
+        key: 'downarrow',
+        action: () => {
+          pendingCursorMove.current += 1;
+          flushCursorMove();
+        },
+        description: 'Navigate',
+        group: 'Navigation',
+      },
+      {
+        key: 'enter',
+        action: () => currentIssue && setActiveModal('details'),
+        description: 'View',
+        condition: () => !!currentIssue,
+        group: 'Navigation',
+      },
 
-    // Quit
-    if (input === 'q') {
-      exit();
-      return;
-    }
+      // Selection
+      {
+        key: 'space',
+        action: () =>
+          currentIssue &&
+          useStore.getState().toggleIssueSelection(currentIssue.Id),
+        description: 'Select',
+        condition: () => !!currentIssue,
+        group: 'Selection',
+      },
+      {
+        key: 'ctrl+a',
+        action: () => useStore.getState().selectAllIssues(),
+        description: 'Select all',
+        condition: () => filteredIssues.length > 0,
+        group: 'Selection',
+      },
+      {
+        key: 'alt+a',
+        action: () => useStore.getState().selectNone(),
+        description: 'Clear selection',
+        condition: () => selectedIssueIds.length > 0,
+        group: 'Selection',
+      },
 
-    // Help
-    if (input === 'h' || input === '?') {
-      setActiveModal('help');
-      return;
-    }
+      // Actions
+      {
+        key: 'l',
+        action: () => currentIssue && setActiveModal('links'),
+        description: 'Links',
+        condition: () => !!currentIssue,
+        group: 'Actions',
+      },
+      {
+        key: 'u',
+        action: () => currentIssue && setActiveModal('update'),
+        description: 'Update',
+        condition: () => !!currentIssue,
+        group: 'Actions',
+      },
+      {
+        key: 'j',
+        action: () => currentIssue && setActiveModal('jira'),
+        description: 'Jira',
+        condition: () => !!currentIssue,
+        group: 'Actions',
+      },
 
-    // Toggle context pane
-    if (input === 'c') {
-      setShowContextPane((prev) => !prev);
-      return;
-    }
+      // Filtering
+      {
+        key: 'f',
+        action: () => filteredIssues.length > 0 && setActiveModal('filter'),
+        description: 'Filter',
+        condition: () => filteredIssues.length > 0,
+        group: 'Filtering',
+      },
+      {
+        key: '/',
+        action: () => setActiveModal('search'),
+        description: 'Search',
+        group: 'Filtering',
+      },
+      {
+        key: 'alt+f',
+        action: () => {
+          const store = useStore.getState();
+          const hasFilters = store.hasActiveFilters();
+          if (hasFilters) {
+            store.clearFilters();
+          }
+        },
+        description: 'Clear Filters',
+        condition: () => {
+          const store = useStore.getState();
+          return store.hasActiveFilters();
+        },
+        group: 'Filtering',
+      },
 
-    // App selection
-    if (input === 'a') {
-      setActiveModal('app');
-      return;
-    }
+      // Sorting
+      {
+        key: 'o',
+        action: () => {
+          // Create a simple sort modal or cycle through sort options
+          const currentSort = useStore.getState().sortBy;
+          const sortOptions = ['severity', 'name', 'status'];
+          const currentIndex = sortOptions.indexOf(currentSort);
+          const nextIndex = (currentIndex + 1) % sortOptions.length;
+          useStore.getState().setSortBy(sortOptions[nextIndex]);
+        },
+        description: 'Sort',
+        group: 'Sorting',
+      },
 
-    // Scan selection
-    if (input === 's' && selectedApp) {
-      setActiveModal('scan');
-      return;
-    }
+      // General
+      {
+        key: 'c',
+        action: () => setShowContextPane((prev) => !prev),
+        description: 'Toggle Context',
+        group: 'General',
+      },
+      {
+        key: 'r',
+        action: async () => {
+          // Reload current scan's issues
+          if (selectedScan && selectedScan.Id) {
+            try {
+              useStore.getState().setLoading(true);
+              const issueList = await appScanService.listIssues(
+                selectedScan.Id
+              );
+              useStore.getState().setIssues(issueList || []);
+              useStore.getState().setLoading(false);
+            } catch (err) {
+              useStore.getState().setError(err.message);
+              useStore.getState().setLoading(false);
+            }
+          }
+        },
+        description: 'Reload',
+        condition: () => !!selectedScan,
+        group: 'General',
+      },
+      {
+        key: 'ctrl+o',
+        action: () => setActiveModal('app'),
+        description: 'App',
+        group: 'General',
+      },
+      {
+        key: 'ctrl+w',
+        action: () => selectedApp && setActiveModal('scan'),
+        description: 'Scan',
+        condition: () => !!selectedApp,
+        group: 'General',
+      },
+      {
+        key: 'h',
+        action: () => setActiveModal('help'),
+        description: 'Help',
+        group: 'General',
+      },
+      {
+        key: '?',
+        action: () => setActiveModal('help'),
+        description: 'Help',
+        group: 'General',
+      },
+      {
+        key: 'q',
+        action: () => exit(),
+        description: 'Quit',
+        group: 'General',
+      },
+    ],
+    [
+      currentIssue,
+      filteredIssues.length,
+      selectedIssueIds.length,
+      selectedApp,
+      selectedScan,
+      appScanService,
+      exit,
+      flushCursorMove,
+    ]
+  );
 
-    // Filter
-    if (input === 'f' && filteredIssues.length > 0) {
-      setActiveModal('filter');
-      return;
-    }
-
-    // Search
-    if (input === '/') {
-      setActiveModal('search');
-      return;
-    }
-
-    // Links
-    if (input === 'l' && currentIssue) {
-      setActiveModal('links');
-      return;
-    }
-
-    // Update status
-    if (input === 'u' && currentIssue) {
-      setActiveModal('update');
-      return;
-    }
-
-    // Create Jira
-    if (input === 'j' && currentIssue) {
-      setActiveModal('jira');
-      return;
-    }
-
-    // Details modal
-    if (key.return && currentIssue) {
-      setActiveModal('details');
-      return;
-    }
-
-    // Navigation
-    if (key.upArrow) {
-      pendingCursorMove.current -= 1;
-      flushCursorMove();
-      return;
-    }
-
-    if (key.downArrow) {
-      pendingCursorMove.current += 1;
-      flushCursorMove();
-      return;
-    }
+  // Register and handle keyboard shortcuts
+  useKeyboardShortcuts('issue-list', issueListShortcuts, {
+    enabled: !activeModal && view === 'issue-list',
   });
 
   // Main layout
@@ -536,6 +719,12 @@ export const InkApp = ({ configPath }) => {
         <VulnListPanel
           issues={filteredIssues}
           cursor={listCursor}
+          selectedIssueIds={selectedIssueIds}
+          filterStatus={filterStatus}
+          filterSeverity={filterSeverity}
+          filterIssueType={filterIssueType}
+          filterJira={filterJira}
+          searchText={searchText}
           height={height - 2}
         />
 
@@ -549,7 +738,7 @@ export const InkApp = ({ configPath }) => {
 
       {/* Modals */}
       {activeModal === 'help' && (
-        <HelpModal onClose={() => setActiveModal(null)} />
+        <HelpModal view={view} onClose={() => setActiveModal(null)} />
       )}
       {activeModal === 'app' && (
         <AppSelectionModal
@@ -582,7 +771,16 @@ export const InkApp = ({ configPath }) => {
               useStore.getState().setLoading(false);
             }
           }}
-          onCancel={() => setActiveModal(null)}
+          onCancel={() => {
+            if (isInitialSetup.current) {
+              // During initial setup, exit the app
+              logger.info('User cancelled application selection');
+              exit();
+            } else {
+              // After initial setup, just close the modal
+              setActiveModal(null);
+            }
+          }}
         />
       )}
       {activeModal === 'scan' && (
@@ -591,8 +789,19 @@ export const InkApp = ({ configPath }) => {
           onSelect={(scan) => {
             useStore.getState().setSelectedScan(scan);
             setActiveModal(null);
+            // Mark initial setup as complete once a scan is selected
+            isInitialSetup.current = false;
           }}
-          onCancel={() => setActiveModal(null)}
+          onCancel={() => {
+            if (isInitialSetup.current) {
+              // During initial setup, exit the app
+              logger.info('User cancelled scan selection');
+              exit();
+            } else {
+              // After initial setup, just close the modal
+              setActiveModal(null);
+            }
+          }}
         />
       )}
       {activeModal === 'filter' && (
@@ -639,6 +848,7 @@ export const InkApp = ({ configPath }) => {
               comment
             );
             logger.info('Status updated');
+            useStore.getState().clearSelection();
             setActiveModal(null);
           }}
           onClose={() => setActiveModal(null)}
@@ -651,6 +861,7 @@ export const InkApp = ({ configPath }) => {
           onCreate={async (projectKey, groupBy, issues) => {
             await jiraService.createIssues(projectKey, groupBy, issues);
             logger.info('Jira issue created');
+            useStore.getState().clearSelection();
           }}
           onClose={() => setActiveModal(null)}
         />

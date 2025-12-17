@@ -6,46 +6,30 @@
 import React from 'react';
 import { Box, Text } from 'ink';
 import useStore from '../state/AppContext.js';
+import { useCommandBarHints } from '../hooks/useKeyboardShortcuts.js';
 import { getPackageInfo } from '../../utils/package-info.js';
 
 const packageInfo = getPackageInfo();
 
 export const CommandBar = () => {
   const view = useStore((state) => state.view);
-  const hasActiveFiltersFunc = useStore((state) => state.hasActiveFilters);
-  const hasActiveFilters = hasActiveFiltersFunc();
-  const filterStatus = useStore((state) => state.filterStatus);
-  const filterSeverity = useStore((state) => state.filterSeverity);
-  const filterIssueType = useStore((state) => state.filterIssueType);
-  const filterJira = useStore((state) => state.filterJira);
-  const searchText = useStore((state) => state.searchText);
-  const selectedIssueIds = useStore((state) => state.selectedIssueIds);
   const sortBy = useStore((state) => state.sortBy);
 
-  const getHints = () => {
-    switch (view) {
-      case 'app-selection':
-        return '↑↓ Navigate | Enter Select | q Quit | ? Help';
-      case 'scan-selection':
-        return '↑↓ Navigate | Enter Select | / Search | t Type | h Hide Empty | l Links | b/Back | q Quit | ? Help';
-      case 'issue-list':
-        return '↑↓ Navigate | Space Select | Enter View | l Links | s Sort | u Update | c Create Jira | f Filter | 1-9 Group | / Search | b/Back | q Quit | ? Help';
-      case 'issue-details':
-        return 'l Links | b/Backspace Back | q Quit';
-      default:
-        return '';
-    }
-  };
+  // Get auto-generated hints for current view
+  const hints = useCommandBarHints(view);
 
-  const getFilterSummary = () => {
-    const filters = [];
-    if (filterStatus) filters.push(`Status:${filterStatus}`);
-    if (filterSeverity) filters.push(`Severity:${filterSeverity}`);
-    if (filterIssueType) filters.push(`Type:${filterIssueType}`);
-    if (filterJira)
-      filters.push(`Jira:${filterJira === 'with' ? 'Has' : 'None'}`);
-    if (searchText) filters.push(`Search:"${searchText}"`);
-    return filters.join(' | ');
+  // Format sort display
+  const getSortLabel = () => {
+    switch (sortBy) {
+      case 'severity':
+        return 'Severity';
+      case 'name':
+        return 'Name';
+      case 'status':
+        return 'Status';
+      default:
+        return 'Unknown';
+    }
   };
 
   return (
@@ -55,37 +39,22 @@ export const CommandBar = () => {
       borderColor="gray"
       paddingX={1}
     >
-      {view === 'issue-list' && sortBy && (
+      {/* Show sort indicator in issue-list view */}
+      {view === 'issue-list' && (
         <Box>
           <Text color="cyan">📊 Sort: </Text>
-          <Text color="yellow">
-            {sortBy === 'severity'
-              ? 'By Severity'
-              : sortBy === 'name'
-                ? 'By Name'
-                : 'By Status'}
+          <Text color="yellow" bold>
+            {getSortLabel()}
           </Text>
-          <Text dimColor> (s to change)</Text>
-        </Box>
-      )}
-      {hasActiveFilters && (
-        <Box>
-          <Text color="yellow">🔍 Filters: </Text>
-          <Text color="cyan">{getFilterSummary()}</Text>
-          <Text dimColor> (DEL to clear)</Text>
-        </Box>
-      )}
-      {selectedIssueIds.length > 0 && (
-        <Box>
-          <Text color="green">
-            ✓ Selected: {selectedIssueIds.length} issue(s)
-          </Text>
+          <Text dimColor> (o: cycle)</Text>
         </Box>
       )}
       <Box justifyContent="space-between">
-        <Text dimColor>{getHints()}</Text>
+        <Text dimColor>{hints || 'Loading...'}</Text>
         <Text dimColor>
-          Author: Pascal Havelange | v{packageInfo.version} | MIT License
+          Author: Pascal Havelange | {packageInfo.name} v
+          {packageInfo.version} |{' '}
+          <Link url="https://opensource.org/licenses/MIT">MIT License</Link>
         </Text>
       </Box>
     </Box>

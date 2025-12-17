@@ -153,13 +153,6 @@ export const ScanSelectionModal = React.memo(
               />
             </Box>
 
-            {/* Controls hint */}
-            <Box marginBottom={1}>
-              <Text dimColor>
-                Filter: [f] {filterType || 'All'} | ESC: Cancel | Enter: Select
-              </Text>
-            </Box>
-
             {/* List */}
             <ScrollableList
               items={filteredScans}
