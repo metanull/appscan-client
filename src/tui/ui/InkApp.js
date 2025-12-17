@@ -115,8 +115,9 @@ const VulnListPanel = React.memo(
     // Subtract panel chrome:
     // - Panel border (2 lines)
     // - Panel title (1 line)
+    // - Column headers (1 line)
     // - Panel padding (1 line)
-    const chromeLines = 4;
+    const chromeLines = 5;
     const availableRows = height - chromeLines;
     const visibleRows = Math.max(1, availableRows);
 
@@ -126,6 +127,22 @@ const VulnListPanel = React.memo(
         borderColor="cyan"
         flexGrow={1}
       >
+        {/* Column Headers */}
+        <Box marginBottom={1}>
+          <Box width={2} justifyContent="flex-start">
+            <Text bold dimColor> </Text>
+          </Box>
+          <Box width={14} justifyContent="flex-start">
+            <Text bold dimColor>Severity</Text>
+          </Box>
+          <Box width={16} justifyContent="flex-start">
+            <Text bold dimColor>Status</Text>
+          </Box>
+          <Box flexGrow={1} minWidth={0} justifyContent="flex-start">
+            <Text bold dimColor>Vulnerability</Text>
+          </Box>
+        </Box>
+
         <ScrollableList
           items={issues}
           cursor={cursor}
