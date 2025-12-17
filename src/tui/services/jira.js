@@ -97,6 +97,63 @@ export class JiraService {
     return jiraHost ? `${jiraHost}/browse/${issueKey}` : null;
   }
 
+  getProjectKey() {
+    return this.config.getJiraProjectKey();
+  }
+
+  async createIssues(projectKey, groupBy, issues) {
+    this.initialize();
+
+    try {
+      logger.info('Creating Jira issues', {
+        projectKey,
+        groupBy,
+        issueCount: issues.length,
+      });
+
+      // Group issues if needed
+      let grouped;
+      if (groupBy === 'type') {
+        grouped = issues.reduce((acc, issue) => {
+          const type = issue.IssueType || 'Unknown';
+          if (!acc[type]) acc[type] = [];
+          acc[type].push(issue);
+          return acc;
+        }, {});
+      } else if (groupBy === 'severity') {
+        grouped = issues.reduce((acc, issue) => {
+          const severity = issue.Severity || 'Unknown';
+          if (!acc[severity]) acc[severity] = [];
+          acc[severity].push(issue);
+          return acc;
+        }, {});
+      } else {
+        // No grouping - one Jira per issue
+        grouped = Object.fromEntries(issues.map((i, idx) => [`Issue ${idx + 1}`, [i]]));
+      }
+
+      const results = [];
+      for (const [groupName, groupIssues] of Object.entries(grouped)) {
+        const summary = `Security: ${groupName} (${groupIssues.length} issue${groupIssues.length > 1 ? 's' : ''})`;
+        const result = await this.createJiraIssue(
+          projectKey,
+          summary,
+          groupIssues,
+          this.config.getAppScanBaseUrl()
+        );
+        results.push(result);
+      }
+
+      logger.info('Jira issues created successfully', {
+        count: results.length,
+      });
+      return results;
+    } catch (error) {
+      logger.error('Failed to create Jira issues', error);
+      throw error;
+    }
+  }
+
   isConfigured() {
     return this.config.isJiraValid();
   }

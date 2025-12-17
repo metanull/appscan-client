@@ -275,6 +275,34 @@ export class AppScanService {
     }
   }
 
+  async updateIssueStatus(issueId, status, comment) {
+    await this.authenticate();
+
+    try {
+      // Get the application ID from the issue
+      const issue = await this.getIssue(issueId);
+      const appId = issue.ApplicationId;
+
+      logger.info('Updating issue status', { issueId, status, comment });
+
+      const updateData = {
+        Status: status,
+        Comment: comment || '',
+      };
+
+      const result = await this.updateIssue(issueId, appId, updateData);
+
+      logger.info('Issue status updated successfully', { issueId, status });
+      return result;
+    } catch (error) {
+      logger.error('Failed to update issue status', error, {
+        issueId,
+        status,
+      });
+      throw error;
+    }
+  }
+
   /**
    * Bulk update issues in chunks to avoid HTTP 414 errors
    * @param {Array} issueIds - Array of issue IDs to update
