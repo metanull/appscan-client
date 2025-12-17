@@ -58,6 +58,119 @@ export class AppScanService {
     return await this.service.getArticle(issueId);
   }
 
+  /**
+   * Get focused article URL for an issue based on ApiVulnName
+   * 
+   * This function:
+   * 1. Fetches the general article HTML
+   * 2. Parses it to find the specific link matching ApiVulnName
+   * 3. Returns the focused article URL, or falls back to the general URL
+   * 
+   * @param {Object} issue - The issue object containing IssueTypeId, Language, and ApiVulnName
+   * @returns {Promise<string>} The focused article URL or general article URL
+   */
+  async getFocusedArticleUrl(issue) {
+    const baseUrl = this.config.getBaseUrl();
+    
+    // Build general article URL
+    const articleParams = new URLSearchParams({
+      issuetype: issue.IssueTypeId,
+    });
+    
+    if (issue.Language) {
+      articleParams.append('language', issue.Language);
+    }
+    
+    const generalArticleUrl = `${baseUrl}/api/v4/Reports/Article/?${articleParams.toString()}`;
+    
+    // If no ApiVulnName, return general URL
+    if (!issue.ApiVulnName) {
+      return generalArticleUrl;
+    }
+    
+    try {
+      await this.authenticate();
+      
+      // Fetch the general article HTML
+      logger.info('Fetching article to find focused URL', {
+        issueTypeId: issue.IssueTypeId,
+        language: issue.Language,
+        apiVulnName: issue.ApiVulnName,
+      });
+      
+      const response = await this.service.api.v4.Reports_GetArticle({
+        issuetype: issue.IssueTypeId,
+        language: issue.Language,
+      });
+      
+      if (!response || typeof response !== 'string') {
+        logger.warn('Article response is not HTML string, using general URL');
+        return generalArticleUrl;
+      }
+      
+      // Parse HTML to find the link matching ApiVulnName
+      // Look for <div id="apiLinks"> and find the <a> tag with text matching ApiVulnName
+      const apiLinksMatch = response.match(/<div[^>]*id="apiLinks"[^>]*>([\s\S]*?)<\/div>/i);
+      
+      if (!apiLinksMatch) {
+        logger.warn('Could not find apiLinks div in article HTML, using general URL');
+        return generalArticleUrl;
+      }
+      
+      const apiLinksContent = apiLinksMatch[1];
+      
+      // Find all <a> tags with href attributes
+      const linkRegex = /<a[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi;
+      let match;
+      
+      while ((match = linkRegex.exec(apiLinksContent)) !== null) {
+        const href = match[1];
+        const linkText = match[2].replace(/<[^>]*>/g, '').trim(); // Strip any HTML tags and trim
+        
+        // Check if link text matches ApiVulnName exactly
+        if (linkText === issue.ApiVulnName) {
+          // Found the matching link - construct full URL
+          // href is relative like "?issuetype=...&api=..." but contains HTML entities
+          // Decode HTML entities using a temporary DOM element approach
+          const decodeHtmlEntities = (text) => {
+            const entities = {
+              '&amp;': '&',
+              '&lt;': '<',
+              '&gt;': '>',
+              '&quot;': '"',
+              '&#39;': "'",
+              '&apos;': "'",
+            };
+            return text.replace(/&[#\w]+;/g, (entity) => entities[entity] || entity);
+          };
+          
+          const decodedHref = decodeHtmlEntities(href);
+          const focusedUrl = `${baseUrl}/api/v4/Reports/Article/${decodedHref}`;
+          
+          logger.info('Found focused article URL', {
+            apiVulnName: issue.ApiVulnName,
+            focusedUrl,
+          });
+          
+          return focusedUrl;
+        }
+      }
+      
+      logger.warn('Could not find matching link for ApiVulnName in article, using general URL', {
+        apiVulnName: issue.ApiVulnName,
+      });
+      
+      return generalArticleUrl;
+      
+    } catch (error) {
+      logger.error('Error fetching focused article URL, falling back to general URL', {
+        error: error.message,
+        issueId: issue.Id,
+      });
+      return generalArticleUrl;
+    }
+  }
+
   async getIssueComments(issueId) {
     await this.authenticate();
     const response = await this.service.api.v4.Issues_GetIssueComments(

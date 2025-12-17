@@ -3,7 +3,7 @@
  * Displays clickable hyperlinks using ink-link
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
 import Link from 'ink-link';
 import { Modal } from './Modal.js';
@@ -11,12 +11,45 @@ import { Panel } from './Panel.js';
 import open from 'open';
 
 export const LinksModal = React.memo(
-  ({ issue, app, scan, config, onClose }) => {
+  ({ issue, app, scan, config, appScanService, onClose }) => {
     const [cursor, setCursor] = useState(0);
+    const [articleUrl, setArticleUrl] = useState(null);
+    const [loadingArticleUrl, setLoadingArticleUrl] = useState(false);
 
     if (!issue) {
       return null;
     }
+
+    // Fetch focused article URL on mount
+    useEffect(() => {
+      if (issue.IssueTypeId && appScanService) {
+        setLoadingArticleUrl(true);
+        appScanService
+          .getFocusedArticleUrl(issue)
+          .then((url) => {
+            setArticleUrl(url);
+          })
+          .catch((error) => {
+            // Fallback to general article URL
+            const baseUrl = config?.getBaseUrl
+              ? config.getBaseUrl()
+              : config?.baseUrl || 'https://cloud.appscan.com';
+            
+            const articleParams = new URLSearchParams({
+              issuetype: issue.IssueTypeId,
+            });
+            
+            if (issue.Language) {
+              articleParams.append('language', issue.Language);
+            }
+            
+            setArticleUrl(`${baseUrl}/api/v4/Reports/Article/?${articleParams.toString()}`);
+          })
+          .finally(() => {
+            setLoadingArticleUrl(false);
+          });
+      }
+    }, [issue.IssueTypeId, issue.Language, issue.ApiVulnName, appScanService, config]);
 
     // Generate links
     const links = [];
@@ -50,11 +83,11 @@ export const LinksModal = React.memo(
       });
     }
 
-    // AppScan Article link (if available) - use IssueTypeId not IssueType
-    if (issue.IssueTypeId) {
+    // AppScan Article link (if available) - dynamically loaded focused URL
+    if (articleUrl) {
       links.push({
-        label: '📚 AppScan Article',
-        url: `${baseUrl}/main/issuedetail/${issue.IssueTypeId}`,
+        label: loadingArticleUrl ? '📚 AppScan Article (loading...)' : '📚 AppScan Article',
+        url: articleUrl,
       });
     }
 

@@ -610,6 +610,7 @@ export const InkApp = ({ configPath }) => {
           app={selectedApp}
           scan={selectedScan}
           config={appScanService.getConfig()}
+          appScanService={appScanService}
           onClose={() => setActiveModal(null)}
         />
       )}
