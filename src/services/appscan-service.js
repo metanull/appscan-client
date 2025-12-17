@@ -214,6 +214,138 @@ export class AppScanService {
     }
   }
 
+  /**
+   * Get issue article as markdown
+   * Fetches the focused article HTML and converts it to markdown
+   * @param {Object} issue - The issue object containing IssueTypeId, Language, and ApiVulnName
+   * @returns {Promise<string>} Article content as markdown
+   */
+  async getIssueArticle(issue) {
+    await this.ensureAuthenticated();
+    try {
+      // Import turndown dynamically
+      const TurndownService = (await import('turndown')).default;
+
+      // Get the focused article URL
+      const focusedUrl = await this.getFocusedArticleUrl(issue);
+
+      // Fetch the HTML content from the URL
+      const response = await fetch(focusedUrl, {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const html = await response.text();
+
+      // Convert to markdown using turndown
+      const turndownService = new TurndownService({
+        headingStyle: 'atx',
+        hr: '---',
+        bulletListMarker: '-',
+        codeBlockStyle: 'fenced',
+      });
+
+      // Add custom rule to remove script elements
+      turndownService.addRule('removeScripts', {
+        filter: ['script', 'style'],
+        replacement: () => '',
+      });
+
+      const markdown = turndownService.turndown(html);
+      return markdown;
+    } catch (error) {
+      throw new Error(`Failed to get issue article: ${error.message}`);
+    }
+  }
+
+  /**
+   * Get focused article URL for an issue based on ApiVulnName
+   * @param {Object} issue - The issue object containing IssueTypeId, Language, and ApiVulnName
+   * @returns {Promise<string>} The focused article URL
+   */
+  async getFocusedArticleUrl(issue) {
+    const baseUrl = this.config.getBaseUrl();
+
+    // Build general article URL
+    const articleParams = new URLSearchParams({
+      issuetype: issue.IssueTypeId,
+    });
+
+    if (issue.Language) {
+      articleParams.append('language', issue.Language);
+    }
+
+    const generalArticleUrl = `${baseUrl}/api/v4/Reports/Article/?${articleParams.toString()}`;
+
+    // If no ApiVulnName, return general URL
+    if (!issue.ApiVulnName) {
+      return generalArticleUrl;
+    }
+
+    try {
+      await this.ensureAuthenticated();
+
+      // Fetch the general article HTML
+      const response = await this.api.v4.Reports_GetArticle({
+        issuetype: issue.IssueTypeId,
+        language: issue.Language,
+      });
+
+      if (!response || typeof response !== 'string') {
+        return generalArticleUrl;
+      }
+
+      // Parse HTML to find the link matching ApiVulnName
+      const apiLinksMatch = response.match(
+        /<div[^>]*id="apiLinks"[^>]*>([\s\S]*?)<\/div>/i
+      );
+
+      if (!apiLinksMatch) {
+        return generalArticleUrl;
+      }
+
+      const apiLinksContent = apiLinksMatch[1];
+      const linkRegex = /<a[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi;
+      let match;
+
+      while ((match = linkRegex.exec(apiLinksContent)) !== null) {
+        const href = match[1];
+        const linkText = match[2].replace(/<[^>]*>/g, '').trim();
+
+        if (linkText === issue.ApiVulnName) {
+          // Decode HTML entities
+          const decodeHtmlEntities = (text) => {
+            const entities = {
+              '&amp;': '&',
+              '&lt;': '<',
+              '&gt;': '>',
+              '&quot;': '"',
+              '&#39;': "'",
+              '&apos;': "'",
+            };
+            return text.replace(
+              /&[#\w]+;/g,
+              (entity) => entities[entity] || entity
+            );
+          };
+
+          const decodedHref = decodeHtmlEntities(href);
+          const focusedUrl = `${baseUrl}/api/v4/Reports/Article/${decodedHref}`;
+          return focusedUrl;
+        }
+      }
+
+      return generalArticleUrl;
+    } catch (error) {
+      return generalArticleUrl;
+    }
+  }
+
   async generateSecurityReport(type, id, options = {}) {
     await this.ensureAuthenticated();
     try {

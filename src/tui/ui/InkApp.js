@@ -341,10 +341,16 @@ export const InkApp = ({ configPath }) => {
     currentIssue?.Id,
     useCallback(
       async (id) => {
-        const article = await appScanService.getArticle(id);
-        return article;
+        // Find the full issue object
+        const issue = issues.find((i) => i.Id === id);
+        if (!issue) {
+          // Fallback to generic article HTML if issue not found
+          return await appScanService.getArticle(id);
+        }
+        // Get focused article as markdown
+        return await appScanService.getIssueArticle(issue);
       },
-      [appScanService]
+      [appScanService, issues]
     )
   );
 

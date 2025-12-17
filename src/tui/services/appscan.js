@@ -58,6 +58,11 @@ export class AppScanService {
     return await this.service.getArticle(issueId);
   }
 
+  async getIssueArticle(issue) {
+    await this.authenticate();
+    return await this.service.getIssueArticle(issue);
+  }
+
   /**
    * Get focused article URL for an issue based on ApiVulnName
    *
