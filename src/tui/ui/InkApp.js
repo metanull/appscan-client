@@ -78,20 +78,20 @@ const VulnRow = React.memo(({ issue, isSelected }) => {
 
   return (
     <Box>
-      <Box width={3}>
+      <Box width={2} justifyContent="flex-start">
         <Text color={isSelected ? 'cyan' : undefined}>
           {isSelected ? '▶' : ' '}
         </Text>
       </Box>
-      <Box width={12}>
+      <Box width={14} justifyContent="flex-start">
         <Text color={severityColor} bold={isSelected}>
           {severity}
         </Text>
       </Box>
-      <Box width={15}>
+      <Box width={16} justifyContent="flex-start">
         <Text color={isSelected ? 'cyan' : undefined}>{status}</Text>
       </Box>
-      <Box flexGrow={1}>
+      <Box flexGrow={1} minWidth={0} justifyContent="flex-start">
         <Text color={isSelected ? 'cyan' : undefined} wrap="truncate-end">
           {type}
         </Text>
