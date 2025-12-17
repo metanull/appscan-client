@@ -37,7 +37,7 @@ const ContextPane = React.memo(
     if (!app && !scan) return null;
 
     return (
-      <Panel title="Context [c to toggle]" borderColor="blue" width={40}>
+      <Panel title="Context [c to toggle]" borderColor="blue" width={60}>
         {app && (
           <Box flexDirection="column">
             <Text bold>App: </Text>
@@ -67,6 +67,7 @@ const VulnRow = React.memo(({ issue, isSelected, isMultiSelected }) => {
   const severity = issue.Severity || 'Unknown';
   const status = issue.Status || 'Unknown';
   const type = issue.IssueType || 'Unknown';
+  const jiraRef = issue.ExternalId || '';
 
   const severityColor =
     {
@@ -89,13 +90,18 @@ const VulnRow = React.memo(({ issue, isSelected, isMultiSelected }) => {
           {isMultiSelected ? '[✓]' : '[ ]'}
         </Text>
       </Box>
-      <Box width={12} justifyContent="flex-start">
+      <Box width={15} justifyContent="flex-start">
         <Text color={severityColor} bold={isSelected}>
           {severity}
         </Text>
       </Box>
       <Box width={14} justifyContent="flex-start">
         <Text color={isSelected ? 'cyan' : undefined}>{status}</Text>
+      </Box>
+      <Box width={15} justifyContent="flex-start">
+        <Text color={jiraRef ? 'green' : 'dimColor'} wrap="truncate-end">
+          {jiraRef || '-'}
+        </Text>
       </Box>
       <Box flexGrow={1} minWidth={0} justifyContent="flex-start">
         <Text color={isSelected ? 'cyan' : undefined} wrap="truncate-end">
@@ -197,7 +203,7 @@ const VulnListPanel = React.memo(
               Sel
             </Text>
           </Box>
-          <Box width={12} justifyContent="flex-start">
+          <Box width={15} justifyContent="flex-start">
             <Text bold dimColor>
               Severity
             </Text>
@@ -205,6 +211,11 @@ const VulnListPanel = React.memo(
           <Box width={14} justifyContent="flex-start">
             <Text bold dimColor>
               Status
+            </Text>
+          </Box>
+          <Box width={15} justifyContent="flex-start">
+            <Text bold dimColor>
+              Jira
             </Text>
           </Box>
           <Box flexGrow={1} minWidth={0} justifyContent="flex-start">
