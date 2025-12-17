@@ -24,7 +24,7 @@ export class JiraService {
     }
   }
 
-  async createJiraIssue(projectKey, summary, issues, baseUrl) {
+  async createJiraIssue(projectKey, summary, issues, baseUrl, appScanService) {
     this.initialize();
 
     try {
@@ -34,12 +34,13 @@ export class JiraService {
         issueCount: issues.length,
       });
 
+      // Enrich issues with article content and comments if appScanService is provided
+      if (appScanService) {
+        await this.enrichIssuesWithDetails(issues, appScanService);
+      }
+
       const builder = new JiraDescriptionBuilder(issues, baseUrl);
-      const description = builder
-        .addSummary(null, null)
-        .addIssuesByType()
-        .addIssueIds()
-        .build();
+      const description = builder.addIssuesByType().build();
 
       const jiraIssue = await this.service.client.issues.createIssue({
         fields: {
@@ -78,6 +79,103 @@ export class JiraService {
     }
   }
 
+  /**
+   * Enrich issues with article content and comments
+   * @private
+   */
+  async enrichIssuesWithDetails(issues, appScanService) {
+    // Group issues by type to fetch article only once per type
+    const issuesByType = {};
+    for (const issue of issues) {
+      const type = issue.IssueType || 'Unknown';
+      if (!issuesByType[type]) {
+        issuesByType[type] = [];
+      }
+      issuesByType[type].push(issue);
+    }
+
+    // Fetch article for first issue of each type
+    for (const [type, typeIssues] of Object.entries(issuesByType)) {
+      const firstIssue = typeIssues[0];
+      try {
+        // Fetch article HTML - the method returns markdown directly
+        const articleMarkdown =
+          await appScanService.getIssueArticle(firstIssue);
+        if (articleMarkdown) {
+          // Trim article to only include Cause and Fix recommendation sections
+          firstIssue.articleMarkdown =
+            this.extractRelevantArticleSections(articleMarkdown);
+        }
+      } catch (error) {
+        logger.warn(`Failed to fetch article for ${type}`, {
+          error: error.message,
+        });
+      }
+    }
+
+    // Fetch comments and article URLs for all issues
+    for (const issue of issues) {
+      try {
+        const comments = await appScanService.getIssueComments(issue.Id);
+        issue.comments = comments || [];
+      } catch (error) {
+        logger.warn(`Failed to fetch comments for issue ${issue.Id}`, {
+          error: error.message,
+        });
+        issue.comments = [];
+      }
+
+      try {
+        const articleUrl = await appScanService.getFocusedArticleUrl(issue);
+        issue.focusedArticleUrl = articleUrl;
+      } catch (error) {
+        logger.warn(`Failed to fetch article URL for issue ${issue.Id}`, {
+          error: error.message,
+        });
+      }
+    }
+  }
+
+  /**
+   * Extract only the Cause and Fix recommendation sections from article markdown
+   * @private
+   */
+  extractRelevantArticleSections(markdown) {
+    if (!markdown) return '';
+
+    const lines = markdown.split('\n');
+    const result = [];
+    let inRelevantSection = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const trimmedLine = line.trim();
+
+      // Check if this is a heading line
+      if (trimmedLine.startsWith('#')) {
+        // Extract heading text (remove # symbols and trim)
+        const headingText = trimmedLine.replace(/^#+\s*/, '').toLowerCase();
+
+        // Check if this is Cause or Fix recommendation
+        if (
+          headingText === 'cause' ||
+          headingText.includes('fix recommendation')
+        ) {
+          inRelevantSection = true;
+          result.push(line);
+        } else {
+          // We've hit a different heading (not Cause or Fix recommendation)
+          inRelevantSection = false;
+        }
+      } else if (inRelevantSection) {
+        // We're in a relevant section, keep the content
+        result.push(line);
+      }
+    }
+
+    return result.join('\n').trim();
+  }
+
   async getJiraIssue(issueKey) {
     this.initialize();
     return await this.service.client.issues.getIssue({
@@ -101,7 +199,7 @@ export class JiraService {
     return this.config.getJiraProjectKey();
   }
 
-  async createIssues(projectKey, groupBy, issues) {
+  async createIssues(projectKey, groupBy, issues, appScanService) {
     this.initialize();
 
     try {
@@ -141,7 +239,8 @@ export class JiraService {
           projectKey,
           summary,
           groupIssues,
-          this.config.getBaseUrl()
+          this.config.getBaseUrl(),
+          appScanService
         );
         results.push(result);
       }

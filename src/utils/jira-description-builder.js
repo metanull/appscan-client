@@ -1,5 +1,3 @@
-import TurndownService from 'turndown';
-
 /**
  * JiraDescriptionBuilder - Build Jira issue descriptions from vulnerabilities
  * Ensures descriptions stay under 32KB limit
@@ -13,22 +11,6 @@ export class JiraDescriptionBuilder {
   }
 
   /**
-   * Add summary section with counts
-   */
-  addSummary(scanName = null, appName = null) {
-    const stats = this.calculateStats();
-    let summary = '## Summary\n\n';
-
-    if (appName) summary += `**Application:** ${appName}\n`;
-    if (scanName) summary += `**Scan:** ${scanName}\n`;
-    summary += `**Total Vulnerabilities:** ${this.issues.length}\n`;
-    summary += `**Critical:** ${stats.Critical} | **High:** ${stats.High} | **Medium:** ${stats.Medium} | **Low:** ${stats.Low}\n\n`;
-
-    this.sections.push(summary);
-    return this;
-  }
-
-  /**
    * Add issues grouped by type with full details
    * Note: This method is synchronous but expects issues to have been enriched
    * with article content and comments before calling this method.
@@ -37,18 +19,14 @@ export class JiraDescriptionBuilder {
     const grouped = this.groupByType();
     let issuesSection = '';
 
-    for (const group of grouped) {
+    for (let groupIndex = 0; groupIndex < grouped.length; groupIndex++) {
+      const group = grouped[groupIndex];
+
       // Get highest severity for the group
       const highestSeverity = this.getHighestSeverity(group.issues);
-      
+
       // Header for this vulnerability type
       issuesSection += `# ${group.type} (${highestSeverity})\n\n`;
-
-      // Add article description from first issue if available
-      if (group.issues[0]?.articleMarkdown) {
-        issuesSection += '## Description\n\n';
-        issuesSection += '> ' + group.issues[0].articleMarkdown.split('\n').join('\n> ') + '\n\n';
-      }
 
       // Loop through each issue
       for (let i = 0; i < group.issues.length; i++) {
@@ -64,10 +42,9 @@ export class JiraDescriptionBuilder {
           issuesSection += `- [🔗 Source](${issue.SourceFileUri})\n`;
         }
 
-        // Remediation article URL
-        const articleUrl = this.buildArticleUrl(issue);
-        if (articleUrl) {
-          issuesSection += `- [🔗 Remediation](${articleUrl})\n`;
+        // Remediation article URL (use the actual focused URL)
+        if (issue.focusedArticleUrl) {
+          issuesSection += `- [🔗 Remediation](${issue.focusedArticleUrl})\n`;
         }
 
         issuesSection += '\n';
@@ -80,15 +57,25 @@ export class JiraDescriptionBuilder {
           issuesSection += '```\n\n';
         }
 
-        // First comment - NOT TRIMMED, as quote block
+        // First comment - NOT TRIMMED
         if (issue.comments && issue.comments.length > 0) {
           const firstComment = issue.comments[0];
           issuesSection += '### Comment\n\n';
-          issuesSection += '> ' + (firstComment.Comment || '').split('\n').join('\n> ') + '\n\n';
+          issuesSection += (firstComment.Comment || '') + '\n\n';
         }
       }
 
-      issuesSection += '\n';
+      // Add article description at the bottom of the type (after all issues)
+      if (group.issues[0]?.articleMarkdown) {
+        issuesSection += '---\n\n';
+        issuesSection += '## Remediation\n\n';
+        issuesSection += group.issues[0].articleMarkdown + '\n\n';
+      }
+
+      // Add separator between vulnerability types (except after the last one)
+      if (groupIndex < grouped.length - 1) {
+        issuesSection += '---\n\n';
+      }
     }
 
     this.sections.push(issuesSection);
@@ -143,28 +130,6 @@ export class JiraDescriptionBuilder {
     }
 
     return `${this.baseUrl}/api/v4/Reports/Article/?${params.toString()}`;
-  }
-
-  /**
-   * Add remediation section with HTML converted to Markdown
-   */
-  addRemediation(articleHtml) {
-    if (!articleHtml) return this;
-
-    const markdown = this.convertHtmlToMarkdown(articleHtml);
-    if (markdown) {
-      this.sections.push('## Remediation\n\n' + markdown + '\n\n');
-    }
-    return this;
-  }
-
-  /**
-   * Add AppScan issue IDs for traceability
-   */
-  addIssueIds() {
-    const ids = this.issues.map((i) => i.Id).join(', ');
-    this.sections.push(`## AppScan Issue IDs\n\n${ids}\n\n`);
-    return this;
   }
 
   /**
@@ -271,43 +236,5 @@ export class JiraDescriptionBuilder {
       return match ? match[1] : issue.SourceFileUri;
     }
     return 'Location not specified';
-  }
-
-  /**
-   * Format code context
-   * @private
-   */
-  formatContext(issue) {
-    if (!issue.Context) return null;
-
-    // Truncate context to 100 chars
-    const context = issue.Context.replace(/\n/g, ' ').trim();
-    if (context.length > 100) {
-      return '`' + context.substring(0, 100) + '...`';
-    }
-    return '`' + context + '`';
-  }
-
-  /**
-   * Convert HTML to Markdown
-   * @private
-   */
-  convertHtmlToMarkdown(html) {
-    const turndown = new TurndownService({
-      headingStyle: 'atx',
-      codeBlockStyle: 'fenced',
-    });
-
-    try {
-      const markdown = turndown.turndown(html);
-      // Truncate to reasonable size (5000 chars)
-      return markdown.length > 5000
-        ? markdown.substring(0, 5000) + '\n\n_[Truncated]_'
-        : markdown;
-    } catch (error) {
-      // Log error for debugging but don't fail the entire operation
-      console.warn('Failed to convert HTML to Markdown:', error.message);
-      return null;
-    }
   }
 }

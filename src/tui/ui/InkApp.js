@@ -477,6 +477,20 @@ export const InkApp = ({ configPath }) => {
     sortBy,
   ]);
 
+  // Get actual selected issues from IDs (use full issues list, not filtered)
+  const selectedIssues = useMemo(() => {
+    if (!issues || issues.length === 0) {
+      // No issues loaded yet
+      return currentIssue ? [currentIssue] : [];
+    }
+    if (selectedIssueIds.length === 0) {
+      // If nothing selected, use current issue if available
+      return currentIssue ? [currentIssue] : [];
+    }
+    // Filter issues to get only selected ones (from full list, not filtered list)
+    return issues.filter((issue) => selectedIssueIds.includes(issue.Id));
+  }, [selectedIssueIds, issues, currentIssue]);
+
   // Throttled cursor movement
   const pendingCursorMove = useRef(0);
   const flushTimeout = useRef(null);
@@ -862,12 +876,17 @@ export const InkApp = ({ configPath }) => {
           onClose={() => setActiveModal(null)}
         />
       )}
-      {activeModal === 'jira' && currentIssue && (
+      {activeModal === 'jira' && selectedIssues.length > 0 && (
         <CreateJiraModal
-          issues={[currentIssue]}
+          issues={selectedIssues}
           defaultProjectKey={jiraService.getProjectKey()}
           onCreate={async (projectKey, groupBy, issues) => {
-            await jiraService.createIssues(projectKey, groupBy, issues);
+            await jiraService.createIssues(
+              projectKey,
+              groupBy,
+              issues,
+              appScanService
+            );
             logger.info('Jira issue created');
             useStore.getState().clearSelection();
           }}
