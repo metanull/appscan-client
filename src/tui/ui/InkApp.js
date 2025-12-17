@@ -885,7 +885,9 @@ export const InkApp = ({ configPath }) => {
               projectKey,
               groupBy,
               issues,
-              appScanService
+              appScanService,
+              selectedApp,
+              selectedScan
             );
             logger.info('Jira issue created');
             useStore.getState().clearSelection();

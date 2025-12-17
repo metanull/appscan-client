@@ -3,11 +3,42 @@
  * Ensures descriptions stay under 32KB limit
  */
 export class JiraDescriptionBuilder {
-  constructor(issues, baseUrl = 'https://cloud.appscan.com') {
+  constructor(
+    issues,
+    baseUrl = 'https://cloud.appscan.com',
+    app = null,
+    scan = null
+  ) {
     this.issues = issues;
     this.baseUrl = baseUrl;
+    this.app = app;
+    this.scan = scan;
     this.sections = [];
     this.maxBytes = 30000; // Leave some buffer under 32KB
+  }
+
+  /**
+   * Add metadata section with application and scan information
+   */
+  addMetadata() {
+    let metadata = '';
+
+    if (this.app) {
+      const appUrl = `${this.baseUrl}/main/myapps/${this.app.Id}`;
+      metadata += `**Application:** [${this.app.Name}](${appUrl}) - ${this.app.Id}\n\n`;
+    }
+
+    if (this.app && this.scan) {
+      const scanUrl = `${this.baseUrl}/main/myapps/${this.app.Id}/scans/${this.scan.Id}`;
+      metadata += `**Scan:** [${this.scan.Name}](${scanUrl}) - ${this.scan.Id}\n\n`;
+    }
+
+    if (metadata) {
+      metadata += '---\n\n';
+      this.sections.push(metadata);
+    }
+
+    return this;
   }
 
   /**
@@ -28,6 +59,11 @@ export class JiraDescriptionBuilder {
       // Header for this vulnerability type
       issuesSection += `# ${group.type} (${highestSeverity})\n\n`;
 
+      // Add Remediation link once after the header (if available)
+      if (group.issues[0]?.focusedArticleUrl) {
+        issuesSection += `[🔗 Remediation](${group.issues[0].focusedArticleUrl})\n\n`;
+      }
+
       // Loop through each issue
       for (let i = 0; i < group.issues.length; i++) {
         const issue = group.issues[i];
@@ -42,9 +78,10 @@ export class JiraDescriptionBuilder {
           issuesSection += `- [🔗 Source](${issue.SourceFileUri})\n`;
         }
 
-        // Remediation article URL (use the actual focused URL)
-        if (issue.focusedArticleUrl) {
-          issuesSection += `- [🔗 Remediation](${issue.focusedArticleUrl})\n`;
+        // AppScan Issue link
+        if (this.app?.Id && issue.Id) {
+          const issueUrl = `${this.baseUrl}/main/myapps/${this.app.Id}/issues/${issue.Id}`;
+          issuesSection += `- [🔗 AppScan - ${issue.Id}](${issueUrl})\n`;
         }
 
         issuesSection += '\n';

@@ -24,7 +24,15 @@ export class JiraService {
     }
   }
 
-  async createJiraIssue(projectKey, summary, issues, baseUrl, appScanService) {
+  async createJiraIssue(
+    projectKey,
+    summary,
+    issues,
+    baseUrl,
+    appScanService,
+    app = null,
+    scan = null
+  ) {
     this.initialize();
 
     try {
@@ -39,18 +47,38 @@ export class JiraService {
         await this.enrichIssuesWithDetails(issues, appScanService);
       }
 
-      const builder = new JiraDescriptionBuilder(issues, baseUrl);
-      const description = builder.addIssuesByType().build();
+      const builder = new JiraDescriptionBuilder(issues, baseUrl, app, scan);
+      const description = builder.addMetadata().addIssuesByType().build();
 
       const jiraIssue = await this.service.client.issues.createIssue({
         fields: {
           project: { key: projectKey },
           summary: summary,
           description: this.service.convertToADF(description),
-          issuetype: { name: 'Bug' },
+          issuetype: { name: 'Story' },
           labels: ['appscan', 'security'],
         },
       });
+
+      // Update AppScan issues with Jira key
+      if (appScanService && app?.Id && jiraIssue.key) {
+        logger.info('Updating AppScan issues with Jira key', {
+          jiraKey: jiraIssue.key,
+          issueCount: issues.length,
+        });
+
+        try {
+          const issueIds = issues.map((issue) => issue.Id);
+          await appScanService.bulkUpdateIssues(issueIds, app.Id, {
+            ExternalId: jiraIssue.key,
+          });
+          logger.info('AppScan issues updated with Jira key successfully');
+        } catch (updateError) {
+          logger.warn('Failed to update AppScan issues with Jira key', {
+            error: updateError.message,
+          });
+        }
+      }
 
       // Audit the creation
       auditService.logJiraCreate(projectKey, summary, issues.length, {
@@ -199,7 +227,14 @@ export class JiraService {
     return this.config.getJiraProjectKey();
   }
 
-  async createIssues(projectKey, groupBy, issues, appScanService) {
+  async createIssues(
+    projectKey,
+    groupBy,
+    issues,
+    appScanService,
+    app = null,
+    scan = null
+  ) {
     this.initialize();
 
     try {
@@ -240,7 +275,9 @@ export class JiraService {
           summary,
           groupIssues,
           this.config.getBaseUrl(),
-          appScanService
+          appScanService,
+          app,
+          scan
         );
         results.push(result);
       }
