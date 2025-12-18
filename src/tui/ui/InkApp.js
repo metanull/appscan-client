@@ -12,6 +12,7 @@ import { Layout } from './components/Layout.js';
 import { Panel } from './components/Panel.js';
 import { ScrollableList } from './components/ScrollableList.js';
 import { DebugBar } from './components/DebugBar.js';
+import { KeyboardHint } from './components/KeyboardHint.js';
 import { AppSelectionModal } from './components/AppSelectionModal.js';
 import { ScanSelectionModal } from './components/ScanSelectionModal.js';
 import { IssueDetailsModal } from './components/IssueDetailsModal.js';
@@ -37,8 +38,11 @@ import open from 'open';
  * Context Pane - Shows selected app/scan info
  */
 const ContextPane = React.memo(
-  ({ app, scan, issuesCount, onToggle: _onToggle }) => {
+  ({ app, scan, issuesCount, shortcuts, onToggle: _onToggle }) => {
     if (!app && !scan) return null;
+
+    // Filter shortcuts that have hint: true
+    const hintShortcuts = shortcuts?.filter((s) => s.hint) || [];
 
     return (
       <Panel title="Context [c to toggle]" borderColor="blue" width={60}>
@@ -58,14 +62,30 @@ const ContextPane = React.memo(
             <Text dimColor>Type: {scan.Technology || 'N/A'}</Text>
           </Box>
         )}
-        <Box flexDirection="column" marginTop={2}>
-          <Text dimColor>
-            → Open <Text bold>Code</Text>
-          </Text>
-          <Text dimColor>
-            ← Open <Text bold>Vulnerability</Text>
-          </Text>
-        </Box>
+        {hintShortcuts.length > 0 && (
+          <Box flexDirection="column" marginTop={2}>
+            <Box
+              borderStyle="round"
+              borderColor="green"
+              paddingX={1}
+              paddingY={0}
+              flexDirection="column"
+            >
+              <Text bold color="green">
+                Hints
+              </Text>
+              <Box flexDirection="column" marginTop={1}>
+                {hintShortcuts.map((shortcut, index) => (
+                  <KeyboardHint
+                    key={index}
+                    keyString={shortcut.key}
+                    description={shortcut.description}
+                  />
+                ))}
+              </Box>
+            </Box>
+          </Box>
+        )}
       </Panel>
     );
   }
@@ -601,6 +621,7 @@ export const InkApp = ({ configPath }) => {
         description: 'Open Vulnerability',
         condition: () => !!currentIssue && !!selectedApp,
         group: 'Navigation',
+        hint: true,
       },
       {
         key: 'rightarrow',
@@ -614,6 +635,7 @@ export const InkApp = ({ configPath }) => {
         description: 'Open Code',
         condition: () => !!currentIssue && !!currentIssue.SourceFileUri,
         group: 'Navigation',
+        hint: true,
       },
 
       // Selection
@@ -779,6 +801,7 @@ export const InkApp = ({ configPath }) => {
         action: () => setActiveModal('help'),
         description: 'Help',
         group: 'General',
+        hint: true,
       },
       {
         key: 'q',
@@ -842,6 +865,7 @@ export const InkApp = ({ configPath }) => {
             app={selectedApp}
             scan={selectedScan}
             issuesCount={issues.length}
+            shortcuts={issueListShortcuts}
           />
         )}
 
