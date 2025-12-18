@@ -104,15 +104,13 @@ export const LinksModal = React.memo(
       });
     }
 
-    // Jira link if available - use jiraHost from config
-    if (issue.ExternalId) {
-      const jiraHost = config?.jiraHost || config?.jiraUrl;
-      if (jiraHost) {
-        links.push({
-          label: `🎫 Jira Issue (${issue.ExternalId})`,
-          url: `${jiraHost}/browse/${issue.ExternalId}`,
-        });
-      }
+    // Jira link if available - use service method
+    const jiraUrl = appScanService.getJiraUrl(issue);
+    if (jiraUrl) {
+      links.push({
+        label: `🎫 Jira Issue (${issue.ExternalId})`,
+        url: jiraUrl,
+      });
     }
 
     // CVE link if available

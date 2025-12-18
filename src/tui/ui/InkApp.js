@@ -637,6 +637,24 @@ export const InkApp = ({ configPath }) => {
         group: 'Navigation',
         hint: true,
       },
+      {
+        key: 'ctrl+rightarrow',
+        action: () => {
+          const jiraUrl = appScanService.getJiraUrl(currentIssue);
+          if (jiraUrl) {
+            open(jiraUrl).catch(() => {
+              // Silently fail if we can't open the link
+            });
+          }
+        },
+        description: 'Open Jira',
+        condition: () => {
+          const jiraUrl = appScanService.getJiraUrl(currentIssue);
+          return !!jiraUrl;
+        },
+        group: 'Navigation',
+        hint: true,
+      },
 
       // Selection
       {

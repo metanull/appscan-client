@@ -96,6 +96,24 @@ export class AppScanService {
   }
 
   /**
+   * Get the Jira URL for an issue (if it has an ExternalId)
+   * @param {Object} issue - Issue object containing ExternalId
+   * @returns {string|null} The full URL to the Jira issue, or null if not available
+   */
+  getJiraUrl(issue) {
+    if (!issue || !issue.ExternalId) {
+      return null;
+    }
+
+    const jiraHost = this.config.jiraHost;
+    if (!jiraHost) {
+      return null;
+    }
+
+    return `${jiraHost}/browse/${issue.ExternalId}`;
+  }
+
+  /**
    * Get focused article URL for an issue based on ApiVulnName
    *
    * This function:
