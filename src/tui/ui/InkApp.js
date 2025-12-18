@@ -927,7 +927,9 @@ export const InkApp = ({ configPath }) => {
             };
 
             // Use chunked update with configurable batch size from config
-            const chunkSize = appScanService.getConfig().getBulkUpdateChunkSize();
+            const chunkSize = appScanService
+              .getConfig()
+              .getBulkUpdateChunkSize();
             const results = await appScanService.bulkUpdateIssuesChunked(
               issueIds,
               appId,
@@ -935,18 +937,18 @@ export const InkApp = ({ configPath }) => {
               chunkSize,
               onProgress
             );
-            
+
             logger.info('Status updated', {
               count: selectedIssues.length,
               successful: results.successful,
               failed: results.failed,
             });
-            
+
             if (results.failed > 0) {
               logger.error('Some updates failed', { errors: results.errors });
               throw new Error(`${results.failed} issue(s) failed to update`);
             }
-            
+
             useStore.getState().clearSelection();
           }}
           onClose={() => setActiveModal(null)}

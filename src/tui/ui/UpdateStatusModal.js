@@ -179,14 +179,19 @@ export const UpdateStatusModal = ({
               <Text> Updating issues...</Text>
             </Box>
             <Text>
-              Progress: {progress.current} / {progress.total} ({
-                Math.round((progress.current / progress.total) * 100)
-              }%)
+              Progress: {progress.current} / {progress.total} (
+              {Math.round((progress.current / progress.total) * 100)}%)
             </Text>
             <Box marginTop={1}>
               <Text dimColor>
-                [{"█".repeat(Math.round((progress.current / progress.total) * 30))}
-                {"░".repeat(30 - Math.round((progress.current / progress.total) * 30))}]
+                [
+                {'█'.repeat(
+                  Math.round((progress.current / progress.total) * 30)
+                )}
+                {'░'.repeat(
+                  30 - Math.round((progress.current / progress.total) * 30)
+                )}
+                ]
               </Text>
             </Box>
             {updateError && (
