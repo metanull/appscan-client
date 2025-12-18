@@ -28,6 +28,7 @@ import { AppScanService } from '../services/appscan.js';
 import { JiraService } from '../services/jira.js';
 import { useCurrentIssue } from '../hooks/useCurrentIssue.js';
 import { useArticleCache } from '../hooks/useArticleCache.js';
+import { useCommentsCache } from '../hooks/useCommentsCache.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts.js';
 import logger from '../utils/logger.js';
@@ -273,65 +274,93 @@ VulnListPanel.displayName = 'VulnListPanel';
 /**
  * Details Preview Panel
  */
-const DetailsPreviewPanel = React.memo(({ issue, articleContent, loading }) => {
-  if (!issue) {
+const DetailsPreviewPanel = React.memo(
+  ({ issue, articleContent, loading, comments, commentsLoading }) => {
+    if (!issue) {
+      return (
+        <Panel title="Details" borderColor="magenta" width={80}>
+          <Text dimColor>Select an issue to view details</Text>
+        </Panel>
+      );
+    }
+
     return (
       <Panel title="Details" borderColor="magenta" width={80}>
-        <Text dimColor>Select an issue to view details</Text>
+        <Box flexDirection="column">
+          <Text>
+            <Text bold>Type:</Text> {issue.IssueType || 'N/A'}
+          </Text>
+          <Text>
+            <Text bold>Severity:</Text> {issue.Severity || 'N/A'}
+          </Text>
+          <Text>
+            <Text bold>Status:</Text> {issue.Status || 'N/A'}
+          </Text>
+          {issue.Location && (
+            <Text wrap="truncate">
+              <Text bold>Location:</Text> {issue.Location}
+            </Text>
+          )}
+          {issue.Context && (
+            <Box flexDirection="column" marginTop={1}>
+              <Text bold>Context:</Text>
+              <Box
+                borderStyle="single"
+                borderColor="gray"
+                paddingX={1}
+                marginTop={1}
+              >
+                <Text wrap="wrap" dimColor>
+                  {issue.Context.substring(0, 500)}
+                  {issue.Context.length > 500 ? '...' : ''}
+                </Text>
+              </Box>
+            </Box>
+          )}
+          {commentsLoading && (
+            <Box marginTop={1}>
+              <Box marginRight={1}>
+                <Spinner />
+              </Box>
+              <Text>Loading comments...</Text>
+            </Box>
+          )}
+          {!commentsLoading && comments && comments.length > 0 && (
+            <Box flexDirection="column" marginTop={1}>
+              <Text bold>Comments:</Text>
+              <Box
+                borderStyle="single"
+                borderColor="gray"
+                paddingX={1}
+                marginTop={1}
+                flexDirection="column"
+              >
+                {comments.map((comment, index) => (
+                  <Text key={index} dimColor>
+                    • {comment.Comment || comment.Text || 'No comment text'}
+                  </Text>
+                ))}
+              </Box>
+            </Box>
+          )}
+          {loading && (
+            <Box marginTop={1}>
+              <Box marginRight={1}>
+                <Spinner />
+              </Box>
+              <Text>Loading article...</Text>
+            </Box>
+          )}
+          {articleContent && !loading && (
+            <Box marginTop={1}>
+              <Text dimColor>Press Enter for full details</Text>
+            </Box>
+          )}
+        </Box>
       </Panel>
     );
   }
-
-  return (
-    <Panel title="Details" borderColor="magenta" width={80}>
-      <Box flexDirection="column">
-        <Text>
-          <Text bold>Type:</Text> {issue.IssueType || 'N/A'}
-        </Text>
-        <Text>
-          <Text bold>Severity:</Text> {issue.Severity || 'N/A'}
-        </Text>
-        <Text>
-          <Text bold>Status:</Text> {issue.Status || 'N/A'}
-        </Text>
-        {issue.Location && (
-          <Text wrap="truncate">
-            <Text bold>Location:</Text> {issue.Location}
-          </Text>
-        )}
-        {issue.Context && (
-          <Box flexDirection="column" marginTop={1}>
-            <Text bold>Context:</Text>
-            <Box
-              borderStyle="single"
-              borderColor="gray"
-              paddingX={1}
-              marginTop={1}
-            >
-              <Text wrap="wrap" dimColor>
-                {issue.Context.substring(0, 500)}
-                {issue.Context.length > 500 ? '...' : ''}
-              </Text>
-            </Box>
-          </Box>
-        )}
-        {loading && (
-          <Box marginTop={1}>
-            <Box marginRight={1}>
-              <Spinner />
-            </Box>
-            <Text>Loading article...</Text>
-          </Box>
-        )}
-        {articleContent && !loading && (
-          <Box marginTop={1}>
-            <Text dimColor>Press Enter for full details</Text>
-          </Box>
-        )}
-      </Box>
-    </Panel>
-  );
-});
+);
 DetailsPreviewPanel.displayName = 'DetailsPreviewPanel';
 
 /**
@@ -484,6 +513,18 @@ export const InkApp = ({ configPath }) => {
       [appScanService, issues]
     )
   );
+
+  // Get comments for current issue using hook
+  const { comments: issueComments, loading: commentsLoading } =
+    useCommentsCache(
+      currentIssue?.Id,
+      useCallback(
+        async (id) => {
+          return await appScanService.getIssueComments(id);
+        },
+        [appScanService]
+      )
+    );
 
   // Load issues when a scan is selected (runs when `selectedScan` changes)
   const lastLoadedScanRef = useRef(null);
@@ -905,6 +946,8 @@ export const InkApp = ({ configPath }) => {
           issue={currentIssue}
           articleContent={articleContent}
           loading={articleLoading}
+          comments={issueComments}
+          commentsLoading={commentsLoading}
         />
       </Box>
 
