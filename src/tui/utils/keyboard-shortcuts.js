@@ -193,7 +193,6 @@ export class KeyboardShortcutManager {
 
     // Debug: log ctrl key combinations when debug mode is enabled
     if (key.ctrl || key.meta || key.specialKey) {
-      console.log(`Keyboard input: input="${input}" specialKeys=${JSON.stringify(key)}`);
       logger.debug(`Keyboard input: input="${input}" specialKeys=${JSON.stringify(key)}`);
     }
 
