@@ -33,13 +33,108 @@ export class AppScanService {
   async listApplications() {
     await this.authenticate();
     const response = await this.service.listApplications();
-    return response.Items || response || [];
+    const apps = response.Items || response || [];
+
+    // Log sample app data for debugging
+    if (apps.length > 0) {
+      logger.debug('Sample application data', {
+        sample: apps[0],
+        keys: Object.keys(apps[0]),
+      });
+    }
+
+    return apps;
   }
 
   async listScans(appId) {
     await this.authenticate();
     const response = await this.service.listScans(appId);
-    return response.Items || response || [];
+    const scans = response.Items || response || [];
+
+    // Log sample scan data for debugging
+    if (scans.length > 0) {
+      logger.debug('Sample scan data', {
+        sample: scans[0],
+        keys: Object.keys(scans[0]),
+        latestExecution: scans[0].LatestExecution,
+      });
+    }
+
+    return scans;
+  }
+
+  /**
+   * Get active and total issue counts for an application
+   * Active = Open, InProgress, Reopened
+   * @param {Object} app - Application object
+   * @returns {{ active: number, total: number }} Issue counts
+   */
+  getAppIssueCounts(app) {
+    if (!app) {
+      return { active: 0, total: 0 };
+    }
+
+    // Active issues: Open + InProgress + Reopened (issues that need attention)
+    const active =
+      (Number(app.OpenIssues) || 0) +
+      (Number(app.IssuesInProgress) || 0) +
+      (Number(app.ReopenedIssues) || 0);
+
+    // Total issues
+    const total =
+      Number(app.IssueCountTotal) ||
+      Number(app.TotalIssues) ||
+      (Number(app.CriticalIssues) || 0) +
+        (Number(app.HighIssues) || 0) +
+        (Number(app.MediumIssues) || 0) +
+        (Number(app.LowIssues) || 0) +
+        (Number(app.InformationalIssues) || 0);
+
+    return { active, total };
+  }
+
+  /**
+   * Get severity breakdown for a scan
+   * @param {Object} scan - Scan object
+   * @returns {{ critical: number, high: number, medium: number, low: number, info: number, total: number }} Severity counts
+   */
+  getScanIssueCounts(scan) {
+    if (!scan) {
+      return { critical: 0, high: 0, medium: 0, low: 0, info: 0, total: 0 };
+    }
+
+    const execution = scan.LatestExecution || {};
+
+    const critical = Number(execution.NCriticalIssues) || 0;
+    const high = Number(execution.NHighIssues) || 0;
+    const medium = Number(execution.NMediumIssues) || 0;
+    const low = Number(execution.NLowIssues) || 0;
+    const info = Number(execution.NInfoIssues) || 0;
+
+    // Total issues from execution
+    const total =
+      Number(execution.NIssuesFound) || critical + high + medium + low + info;
+
+    return { critical, high, medium, low, info, total };
+  }
+
+  /**
+   * Get the number of scans for an application
+   * @param {Object} app - Application object
+   * @returns {number} Number of scans
+   */
+  getAppScanCount(app) {
+    if (!app) {
+      return 0;
+    }
+
+    // Check various fields that might contain scan count
+    return (
+      Number(app.ScanCount) ||
+      Number(app.NumberOfScans) ||
+      Number(app.TotalScans) ||
+      0
+    );
   }
 
   async listIssues(scanId) {
@@ -93,6 +188,24 @@ export class AppScanService {
   getScanUrl(appId, scanId) {
     const baseUrl = this.config.getBaseUrl();
     return `${baseUrl}/main/myapps/${appId}/scans/${scanId}`;
+  }
+
+  /**
+   * Get the Jira URL for an issue (if it has an ExternalId)
+   * @param {Object} issue - Issue object containing ExternalId
+   * @returns {string|null} The full URL to the Jira issue, or null if not available
+   */
+  getJiraUrl(issue) {
+    if (!issue || !issue.ExternalId) {
+      return null;
+    }
+
+    const jiraHost = this.config.jiraHost;
+    if (!jiraHost) {
+      return null;
+    }
+
+    return `${jiraHost}/browse/${issue.ExternalId}`;
   }
 
   /**

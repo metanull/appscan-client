@@ -14,7 +14,7 @@ import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 const SCAN_TYPES = ['SAST', 'DAST', 'SCA', 'IAST', 'IAC'];
 
 export const ScanSelectionModal = React.memo(
-  ({ scans, onSelect, onCancel, hideEmpty = false }) => {
+  ({ scans, onSelect, onCancel, hideEmpty = false, appScanService }) => {
     const [searchText, setSearchText] = useState('');
     const [cursor, setCursor] = useState(0);
     const [filterType, setFilterType] = useState(null); // null | 'SAST' | 'DAST' | etc.
@@ -27,14 +27,10 @@ export const ScanSelectionModal = React.memo(
       // Hide empty if requested
       if (hideEmpty) {
         filtered = filtered.filter((scan) => {
-          const issueCount =
-            (scan.LatestExecution?.NIssuesFound || 0) +
-            (Number(scan.CriticalIssues) || 0) +
-            (Number(scan.HighIssues) || 0) +
-            (Number(scan.MediumIssues) || 0) +
-            (Number(scan.LowIssues) || 0) +
-            (Number(scan.InformationalIssues) || 0);
-          return issueCount > 0;
+          const { total } = appScanService?.getScanIssueCounts(scan) || {
+            total: 0,
+          };
+          return total > 0;
         });
       }
 
@@ -58,7 +54,7 @@ export const ScanSelectionModal = React.memo(
       filtered.sort((a, b) => (a.Name || '').localeCompare(b.Name || ''));
 
       return filtered;
-    }, [scans, searchText, filterType, hideEmpty]);
+    }, [scans, searchText, filterType, hideEmpty, appScanService]);
 
     // Handle keyboard input
     useInput((input, key) => {
@@ -101,29 +97,57 @@ export const ScanSelectionModal = React.memo(
       );
     }, [filteredScans.length]);
 
-    const renderItem = useCallback((scan, isSelected) => {
-      const issueCount =
-        (scan.LatestExecution?.NIssuesFound || 0) +
-        (Number(scan.CriticalIssues) || 0) +
-        (Number(scan.HighIssues) || 0) +
-        (Number(scan.MediumIssues) || 0) +
-        (Number(scan.LowIssues) || 0) +
-        (Number(scan.InformationalIssues) || 0);
-      const tech = scan.Technology || 'Unknown';
+    const renderItem = useCallback(
+      (scan, isSelected) => {
+        const { critical, high, medium, low, info, total } =
+          appScanService?.getScanIssueCounts(scan) || {
+            critical: 0,
+            high: 0,
+            medium: 0,
+            low: 0,
+            info: 0,
+            total: 0,
+          };
+        const tech = scan.Technology || 'Unknown';
 
-      return (
-        <Box>
-          <Text color={isSelected ? 'cyan' : undefined} bold={isSelected}>
-            {isSelected ? '▶ ' : '  '}
-            {scan.Name || 'Unnamed Scan'}
-          </Text>
-          <Text dimColor>
-            {' '}
-            [{tech}] ({issueCount} issues)
-          </Text>
-        </Box>
-      );
-    }, []);
+        // Build array of non-zero severity counts with their labels and colors
+        const severities = [];
+        if (critical > 0)
+          severities.push({ count: critical, label: 'C', color: 'red' });
+        if (high > 0)
+          severities.push({ count: high, label: 'H', color: 'yellow' });
+        if (medium > 0)
+          severities.push({ count: medium, label: 'M', color: 'white' });
+        if (low > 0)
+          severities.push({ count: low, label: 'L', color: 'white' });
+        if (info > 0)
+          severities.push({ count: info, label: 'I', color: 'white' });
+
+        return (
+          <Box>
+            <Text color={isSelected ? 'cyan' : undefined} bold={isSelected}>
+              {isSelected ? '▶ ' : '  '}
+              {scan.Name || 'Unnamed Scan'}
+            </Text>
+            <Text dimColor> [{tech}] </Text>
+            {severities.length > 0 ? (
+              <>
+                {severities.map((sev, index) => (
+                  <React.Fragment key={index}>
+                    {index > 0 && <Text dimColor>, </Text>}
+                    <Text color={sev.color}>{sev.count}</Text>
+                    <Text dimColor> {sev.label}</Text>
+                  </React.Fragment>
+                ))}
+                <Text dimColor> </Text>
+              </>
+            ) : null}
+            <Text dimColor>({total})</Text>
+          </Box>
+        );
+      },
+      [appScanService]
+    );
 
     // Calculate available rows for the list
     // Modal takes 80% of height, then subtract chrome:

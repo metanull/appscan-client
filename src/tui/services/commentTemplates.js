@@ -4,14 +4,10 @@
  */
 
 import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { getCommentTemplatesPath } from '../../utils/config-paths.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Path to templates file (in the package root for source control)
-const TEMPLATES_FILE = path.join(__dirname, '../../../comment-templates.txt');
+// Path to templates file (uses config directory for installed packages)
+const TEMPLATES_FILE = getCommentTemplatesPath();
 
 /**
  * Parse templates file into structured data

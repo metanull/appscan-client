@@ -12,6 +12,7 @@ import { Layout } from './components/Layout.js';
 import { Panel } from './components/Panel.js';
 import { ScrollableList } from './components/ScrollableList.js';
 import { DebugBar } from './components/DebugBar.js';
+import { KeyboardHint } from './components/KeyboardHint.js';
 import { AppSelectionModal } from './components/AppSelectionModal.js';
 import { ScanSelectionModal } from './components/ScanSelectionModal.js';
 import { IssueDetailsModal } from './components/IssueDetailsModal.js';
@@ -27,6 +28,7 @@ import { AppScanService } from '../services/appscan.js';
 import { JiraService } from '../services/jira.js';
 import { useCurrentIssue } from '../hooks/useCurrentIssue.js';
 import { useArticleCache } from '../hooks/useArticleCache.js';
+import { useCommentsCache } from '../hooks/useCommentsCache.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts.js';
 import logger from '../utils/logger.js';
@@ -37,8 +39,11 @@ import open from 'open';
  * Context Pane - Shows selected app/scan info
  */
 const ContextPane = React.memo(
-  ({ app, scan, issuesCount, onToggle: _onToggle }) => {
+  ({ app, scan, issuesCount, shortcuts, onToggle: _onToggle }) => {
     if (!app && !scan) return null;
+
+    // Filter shortcuts that have hint: true
+    const hintShortcuts = shortcuts?.filter((s) => s.hint) || [];
 
     return (
       <Panel title="Context [c to toggle]" borderColor="blue" width={60}>
@@ -58,14 +63,30 @@ const ContextPane = React.memo(
             <Text dimColor>Type: {scan.Technology || 'N/A'}</Text>
           </Box>
         )}
-        <Box flexDirection="column" marginTop={2}>
-          <Text dimColor>
-            → Open <Text bold>Code</Text>
-          </Text>
-          <Text dimColor>
-            ← Open <Text bold>Vulnerability</Text>
-          </Text>
-        </Box>
+        {hintShortcuts.length > 0 && (
+          <Box flexDirection="column" marginTop={2}>
+            <Box
+              borderStyle="round"
+              borderColor="green"
+              paddingX={1}
+              paddingY={0}
+              flexDirection="column"
+            >
+              <Text bold color="green">
+                Hints
+              </Text>
+              <Box flexDirection="column" marginTop={1}>
+                {hintShortcuts.map((shortcut, index) => (
+                  <KeyboardHint
+                    key={index}
+                    keyString={shortcut.key}
+                    description={shortcut.description}
+                  />
+                ))}
+              </Box>
+            </Box>
+          </Box>
+        )}
       </Panel>
     );
   }
@@ -253,65 +274,93 @@ VulnListPanel.displayName = 'VulnListPanel';
 /**
  * Details Preview Panel
  */
-const DetailsPreviewPanel = React.memo(({ issue, articleContent, loading }) => {
-  if (!issue) {
+const DetailsPreviewPanel = React.memo(
+  ({ issue, articleContent, loading, comments, commentsLoading }) => {
+    if (!issue) {
+      return (
+        <Panel title="Details" borderColor="magenta" width={80}>
+          <Text dimColor>Select an issue to view details</Text>
+        </Panel>
+      );
+    }
+
     return (
       <Panel title="Details" borderColor="magenta" width={80}>
-        <Text dimColor>Select an issue to view details</Text>
+        <Box flexDirection="column">
+          <Text>
+            <Text bold>Type:</Text> {issue.IssueType || 'N/A'}
+          </Text>
+          <Text>
+            <Text bold>Severity:</Text> {issue.Severity || 'N/A'}
+          </Text>
+          <Text>
+            <Text bold>Status:</Text> {issue.Status || 'N/A'}
+          </Text>
+          {issue.Location && (
+            <Text wrap="truncate">
+              <Text bold>Location:</Text> {issue.Location}
+            </Text>
+          )}
+          {issue.Context && (
+            <Box flexDirection="column" marginTop={1}>
+              <Text bold>Context:</Text>
+              <Box
+                borderStyle="single"
+                borderColor="gray"
+                paddingX={1}
+                marginTop={1}
+              >
+                <Text wrap="wrap" dimColor>
+                  {issue.Context.substring(0, 500)}
+                  {issue.Context.length > 500 ? '...' : ''}
+                </Text>
+              </Box>
+            </Box>
+          )}
+          {commentsLoading && (
+            <Box marginTop={1}>
+              <Box marginRight={1}>
+                <Spinner />
+              </Box>
+              <Text>Loading comments...</Text>
+            </Box>
+          )}
+          {!commentsLoading && comments && comments.length > 0 && (
+            <Box flexDirection="column" marginTop={1}>
+              <Text bold>Comments:</Text>
+              <Box
+                borderStyle="single"
+                borderColor="gray"
+                paddingX={1}
+                marginTop={1}
+                flexDirection="column"
+              >
+                {comments.map((comment, index) => (
+                  <Text key={index} dimColor>
+                    • {comment.Comment || comment.Text || 'No comment text'}
+                  </Text>
+                ))}
+              </Box>
+            </Box>
+          )}
+          {loading && (
+            <Box marginTop={1}>
+              <Box marginRight={1}>
+                <Spinner />
+              </Box>
+              <Text>Loading article...</Text>
+            </Box>
+          )}
+          {articleContent && !loading && (
+            <Box marginTop={1}>
+              <Text dimColor>Press Enter for full details</Text>
+            </Box>
+          )}
+        </Box>
       </Panel>
     );
   }
-
-  return (
-    <Panel title="Details" borderColor="magenta" width={80}>
-      <Box flexDirection="column">
-        <Text>
-          <Text bold>Type:</Text> {issue.IssueType || 'N/A'}
-        </Text>
-        <Text>
-          <Text bold>Severity:</Text> {issue.Severity || 'N/A'}
-        </Text>
-        <Text>
-          <Text bold>Status:</Text> {issue.Status || 'N/A'}
-        </Text>
-        {issue.Location && (
-          <Text wrap="truncate">
-            <Text bold>Location:</Text> {issue.Location}
-          </Text>
-        )}
-        {issue.Context && (
-          <Box flexDirection="column" marginTop={1}>
-            <Text bold>Context:</Text>
-            <Box
-              borderStyle="single"
-              borderColor="gray"
-              paddingX={1}
-              marginTop={1}
-            >
-              <Text wrap="wrap" dimColor>
-                {issue.Context.substring(0, 500)}
-                {issue.Context.length > 500 ? '...' : ''}
-              </Text>
-            </Box>
-          </Box>
-        )}
-        {loading && (
-          <Box marginTop={1}>
-            <Box marginRight={1}>
-              <Spinner />
-            </Box>
-            <Text>Loading article...</Text>
-          </Box>
-        )}
-        {articleContent && !loading && (
-          <Box marginTop={1}>
-            <Text dimColor>Press Enter for full details</Text>
-          </Box>
-        )}
-      </Box>
-    </Panel>
-  );
-});
+);
 DetailsPreviewPanel.displayName = 'DetailsPreviewPanel';
 
 /**
@@ -465,6 +514,18 @@ export const InkApp = ({ configPath }) => {
     )
   );
 
+  // Get comments for current issue using hook
+  const { comments: issueComments, loading: commentsLoading } =
+    useCommentsCache(
+      currentIssue?.Id,
+      useCallback(
+        async (id) => {
+          return await appScanService.getIssueComments(id);
+        },
+        [appScanService]
+      )
+    );
+
   // Load issues when a scan is selected (runs when `selectedScan` changes)
   const lastLoadedScanRef = useRef(null);
   React.useEffect(() => {
@@ -601,6 +662,7 @@ export const InkApp = ({ configPath }) => {
         description: 'Open Vulnerability',
         condition: () => !!currentIssue && !!selectedApp,
         group: 'Navigation',
+        hint: true,
       },
       {
         key: 'rightarrow',
@@ -614,6 +676,43 @@ export const InkApp = ({ configPath }) => {
         description: 'Open Code',
         condition: () => !!currentIssue && !!currentIssue.SourceFileUri,
         group: 'Navigation',
+        hint: true,
+      },
+      {
+        key: 'ctrl+rightarrow',
+        action: () => {
+          const jiraUrl = appScanService.getJiraUrl(currentIssue);
+          if (jiraUrl) {
+            open(jiraUrl).catch(() => {
+              // Silently fail if we can't open the link
+            });
+          }
+        },
+        description: 'Open Jira',
+        condition: () => {
+          const jiraUrl = appScanService.getJiraUrl(currentIssue);
+          return !!jiraUrl;
+        },
+        group: 'Navigation',
+        hint: true,
+      },
+      {
+        key: 'ctrl+leftarrow',
+        action: () => {
+          if (selectedApp?.Id && selectedScan?.Id) {
+            const scanUrl = appScanService.getScanUrl(
+              selectedApp.Id,
+              selectedScan.Id
+            );
+            open(scanUrl).catch(() => {
+              // Silently fail if we can't open the link
+            });
+          }
+        },
+        description: 'Open Scan',
+        condition: () => !!selectedApp && !!selectedScan,
+        group: 'Navigation',
+        hint: true,
       },
 
       // Selection
@@ -779,6 +878,7 @@ export const InkApp = ({ configPath }) => {
         action: () => setActiveModal('help'),
         description: 'Help',
         group: 'General',
+        hint: true,
       },
       {
         key: 'q',
@@ -842,6 +942,7 @@ export const InkApp = ({ configPath }) => {
             app={selectedApp}
             scan={selectedScan}
             issuesCount={issues.length}
+            shortcuts={issueListShortcuts}
           />
         )}
 
@@ -863,6 +964,8 @@ export const InkApp = ({ configPath }) => {
           issue={currentIssue}
           articleContent={articleContent}
           loading={articleLoading}
+          comments={issueComments}
+          commentsLoading={commentsLoading}
         />
       </Box>
 
@@ -873,6 +976,7 @@ export const InkApp = ({ configPath }) => {
       {activeModal === 'app' && (
         <AppSelectionModal
           applications={applications}
+          appScanService={appScanService}
           onSelect={async (app) => {
             // Set selected app and load scans for it
             useStore.getState().setSelectedApp(app);
@@ -916,6 +1020,7 @@ export const InkApp = ({ configPath }) => {
       {activeModal === 'scan' && (
         <ScanSelectionModal
           scans={scans}
+          appScanService={appScanService}
           onSelect={(scan) => {
             useStore.getState().setSelectedScan(scan);
             setActiveModal(null);
