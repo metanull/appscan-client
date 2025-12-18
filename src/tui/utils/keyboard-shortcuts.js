@@ -191,9 +191,11 @@ export class KeyboardShortcutManager {
   handleInput(view, input, key) {
     const bindings = this.getShortcuts(view);
 
-    // Debug: log ctrl key combinations when debug mode is enabled
-    if (key.ctrl || key.meta || key.specialKey) {
-      logger.debug(`Keyboard input: input="${input}" specialKeys=${JSON.stringify(key)}`);
+    // Debug: log all keyboard input when special keys or modifiers are pressed
+    // This helps debug why shortcuts aren't being triggered
+    if (key.ctrl || key.meta || key.specialKey || input === undefined) {
+      const inputStr = input ? `"${input}"` : '[undefined]';
+      logger.debug(`Keyboard input: input=${inputStr} key=${JSON.stringify(key)}`);
     }
 
     for (const binding of bindings) {
