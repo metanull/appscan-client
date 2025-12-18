@@ -696,6 +696,24 @@ export const InkApp = ({ configPath }) => {
         group: 'Navigation',
         hint: true,
       },
+      {
+        key: 'ctrl+leftarrow',
+        action: () => {
+          if (selectedApp?.Id && selectedScan?.Id) {
+            const scanUrl = appScanService.getScanUrl(
+              selectedApp.Id,
+              selectedScan.Id
+            );
+            open(scanUrl).catch(() => {
+              // Silently fail if we can't open the link
+            });
+          }
+        },
+        description: 'Open Scan',
+        condition: () => !!selectedApp && !!selectedScan,
+        group: 'Navigation',
+        hint: true,
+      },
 
       // Selection
       {
