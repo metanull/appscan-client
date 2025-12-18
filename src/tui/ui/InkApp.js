@@ -912,17 +912,22 @@ export const InkApp = ({ configPath }) => {
           onClose={() => setActiveModal(null)}
         />
       )}
-      {activeModal === 'update' && currentIssue && (
+      {activeModal === 'update' && selectedIssues.length > 0 && (
         <UpdateStatusModal
-          issueCount={1}
-          issues={[currentIssue]}
+          issueCount={selectedIssues.length}
+          issues={selectedIssues}
           onUpdate={async (status, comment) => {
-            await appScanService.updateIssueStatus(
-              currentIssue.Id,
-              status,
-              comment
-            );
-            logger.info('Status updated');
+            // Get the app ID from first selected issue
+            const appId = selectedIssues[0].ApplicationId;
+            const issueIds = selectedIssues.map((issue) => issue.Id);
+
+            const updateData = {
+              Status: status,
+              Comment: comment || '',
+            };
+
+            await appScanService.bulkUpdateIssues(issueIds, appId, updateData);
+            logger.info('Status updated', { count: selectedIssues.length });
             useStore.getState().clearSelection();
             setActiveModal(null);
           }}
