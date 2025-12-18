@@ -31,6 +31,7 @@ import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts.js';
 import logger from '../utils/logger.js';
 import { getPackageInfo } from '../../utils/package-info.js';
+import open from 'open';
 
 /**
  * Context Pane - Shows selected app/scan info
@@ -57,6 +58,14 @@ const ContextPane = React.memo(
             <Text dimColor>Type: {scan.Technology || 'N/A'}</Text>
           </Box>
         )}
+        <Box flexDirection="column" marginTop={2}>
+          <Text dimColor>
+            → Open <Text bold>Code</Text>
+          </Text>
+          <Text dimColor>
+            ← Open <Text bold>Vulnerability</Text>
+          </Text>
+        </Box>
       </Panel>
     );
   }
@@ -247,14 +256,14 @@ VulnListPanel.displayName = 'VulnListPanel';
 const DetailsPreviewPanel = React.memo(({ issue, articleContent, loading }) => {
   if (!issue) {
     return (
-      <Panel title="Details" borderColor="magenta" width={40}>
+      <Panel title="Details" borderColor="magenta" width={80}>
         <Text dimColor>Select an issue to view details</Text>
       </Panel>
     );
   }
 
   return (
-    <Panel title="Details" borderColor="magenta" width={40}>
+    <Panel title="Details" borderColor="magenta" width={80}>
       <Box flexDirection="column">
         <Text>
           <Text bold>Type:</Text> {issue.IssueType || 'N/A'}
@@ -269,6 +278,22 @@ const DetailsPreviewPanel = React.memo(({ issue, articleContent, loading }) => {
           <Text wrap="truncate">
             <Text bold>Location:</Text> {issue.Location}
           </Text>
+        )}
+        {issue.Context && (
+          <Box flexDirection="column" marginTop={1}>
+            <Text bold>Context:</Text>
+            <Box
+              borderStyle="single"
+              borderColor="gray"
+              paddingX={1}
+              marginTop={1}
+            >
+              <Text wrap="wrap" dimColor>
+                {issue.Context.substring(0, 500)}
+                {issue.Context.length > 500 ? '...' : ''}
+              </Text>
+            </Box>
+          </Box>
         )}
         {loading && (
           <Box marginTop={1}>
@@ -558,6 +583,36 @@ export const InkApp = ({ configPath }) => {
         action: () => currentIssue && setActiveModal('details'),
         description: 'View',
         condition: () => !!currentIssue,
+        group: 'Navigation',
+      },
+      {
+        key: 'leftarrow',
+        action: () => {
+          if (currentIssue && selectedApp) {
+            const url = appScanService.getIssueUrl(
+              selectedApp.Id,
+              currentIssue.Id
+            );
+            open(url).catch(() => {
+              // Silently fail if we can't open the link
+            });
+          }
+        },
+        description: 'Open Vulnerability',
+        condition: () => !!currentIssue && !!selectedApp,
+        group: 'Navigation',
+      },
+      {
+        key: 'rightarrow',
+        action: () => {
+          if (currentIssue && currentIssue.SourceFileUri) {
+            open(currentIssue.SourceFileUri).catch(() => {
+              // Silently fail if we can't open the link
+            });
+          }
+        },
+        description: 'Open Code',
+        condition: () => !!currentIssue && !!currentIssue.SourceFileUri,
         group: 'Navigation',
       },
 
@@ -912,19 +967,49 @@ export const InkApp = ({ configPath }) => {
           onClose={() => setActiveModal(null)}
         />
       )}
-      {activeModal === 'update' && currentIssue && (
+      {activeModal === 'update' && selectedIssues.length > 0 && (
         <UpdateStatusModal
-          issueCount={1}
-          issues={[currentIssue]}
-          onUpdate={async (status, comment) => {
-            await appScanService.updateIssueStatus(
-              currentIssue.Id,
-              status,
-              comment
+          issueCount={selectedIssues.length}
+          issues={selectedIssues}
+          onUpdate={async (status, comment, onProgress) => {
+            // Get the app ID from first selected issue
+            const appId = selectedIssues[0].ApplicationId;
+            const issueIds = selectedIssues.map((issue) => issue.Id);
+
+            const updateData = {
+              Status: status,
+              Comment: comment || '',
+            };
+
+            // Use chunked update with configurable batch size from config
+            const chunkSize = appScanService
+              .getConfig()
+              .getBulkUpdateChunkSize();
+            const results = await appScanService.bulkUpdateIssuesChunked(
+              issueIds,
+              appId,
+              updateData,
+              chunkSize,
+              onProgress
             );
-            logger.info('Status updated');
+
+            logger.info('Status updated', {
+              count: selectedIssues.length,
+              successful: results.successful,
+              failed: results.failed,
+            });
+
+            if (results.failed > 0) {
+              logger.error('Some updates failed', { errors: results.errors });
+              throw new Error(`${results.failed} issue(s) failed to update`);
+            }
+
+            // Reload issues to reflect updated status and comment
+            const updatedIssues = await appScanService.listIssues(
+              selectedScan.Id
+            );
+            useStore.getState().setIssues(updatedIssues || []);
             useStore.getState().clearSelection();
-            setActiveModal(null);
           }}
           onClose={() => setActiveModal(null)}
         />

@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
 import TextInput from 'ink-text-input';
+import Spinner from 'ink-spinner';
 import {
   getTemplatesForType,
   saveTemplate,
@@ -29,11 +30,13 @@ export const UpdateStatusModal = ({
   onUpdate,
   onClose,
 }) => {
-  const [step, setStep] = useState('status'); // 'status' | 'template' | 'comment'
+  const [step, setStep] = useState('status'); // 'status' | 'template' | 'comment' | 'progress'
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [comment, setComment] = useState('');
   const [templates, setTemplates] = useState([]);
   const [issueTypes, setIssueTypes] = useState([]);
+  const [progress, setProgress] = useState({ current: 0, total: 0 });
+  const [updateError, setUpdateError] = useState(null);
 
   // Load templates when issues are available
   useEffect(() => {
@@ -84,7 +87,7 @@ export const UpdateStatusModal = ({
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!issueCount || issueCount === 0) {
       return; // Prevent submission if no issues selected
     }
@@ -100,8 +103,21 @@ export const UpdateStatusModal = ({
       saveTemplate(issueTypes[0], comment.trim());
     }
 
-    onUpdate(selectedStatus, comment || undefined);
-    onClose();
+    // Show progress step
+    setStep('progress');
+    setProgress({ current: 0, total: issueCount });
+
+    try {
+      await onUpdate(selectedStatus, comment || undefined, (current, total) => {
+        setProgress({ current, total });
+      });
+      // Success - close after a brief delay
+      setTimeout(() => {
+        onClose();
+      }, 500);
+    } catch (error) {
+      setUpdateError(error.message || 'Failed to update issues');
+    }
   };
 
   // Prepare template options
@@ -153,9 +169,43 @@ export const UpdateStatusModal = ({
           </Box>
         )}
 
-        <Box marginTop={1}>
-          <Text dimColor>Press ESC to cancel</Text>
-        </Box>
+        {step === 'progress' && (
+          <Box flexDirection="column" marginTop={1}>
+            <Box marginBottom={1}>
+              <Text color="green">
+                <Spinner type="dots" />
+              </Text>
+              <Text> Updating issues...</Text>
+            </Box>
+            <Text>
+              Progress: {progress.current} / {progress.total} (
+              {Math.round((progress.current / progress.total) * 100)}%)
+            </Text>
+            <Box marginTop={1}>
+              <Text dimColor>
+                [
+                {'█'.repeat(
+                  Math.round((progress.current / progress.total) * 30)
+                )}
+                {'░'.repeat(
+                  30 - Math.round((progress.current / progress.total) * 30)
+                )}
+                ]
+              </Text>
+            </Box>
+            {updateError && (
+              <Box marginTop={1}>
+                <Text color="red">Error: {updateError}</Text>
+              </Box>
+            )}
+          </Box>
+        )}
+
+        {step !== 'progress' && (
+          <Box marginTop={1}>
+            <Text dimColor>Press ESC to cancel</Text>
+          </Box>
+        )}
       </Panel>
     </Modal>
   );

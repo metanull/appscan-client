@@ -123,6 +123,26 @@ export const IssueDetailsModal = React.memo(
                 <Text wrap="wrap">{issue.Location || 'N/A'}</Text>
               </Box>
 
+              {issue.Context && (
+                <Box flexDirection="column" marginTop={1}>
+                  <Box width={15}>
+                    <Text bold color="cyan">
+                      Context:
+                    </Text>
+                  </Box>
+                  <Box
+                    borderStyle="single"
+                    borderColor="gray"
+                    paddingX={1}
+                    marginTop={1}
+                  >
+                    <Text wrap="wrap" dimColor>
+                      {issue.Context}
+                    </Text>
+                  </Box>
+                </Box>
+              )}
+
               {issue.ExternalId && (
                 <Box>
                   <Box width={15}>

@@ -62,16 +62,11 @@ export const LinksModal = React.memo(
     // Generate links
     const links = [];
 
-    // Get base URL from config (e.g., https://eu.cloud.appscan.com)
-    const baseUrl = config?.getBaseUrl
-      ? config.getBaseUrl()
-      : config?.baseUrl || 'https://cloud.appscan.com';
-
     // AppScan Application link
     if (app?.Id) {
       links.push({
         label: '🔗 AppScan Application',
-        url: `${baseUrl}/main/myapps/${app.Id}`,
+        url: appScanService.getApplicationUrl(app.Id),
       });
     }
 
@@ -79,7 +74,7 @@ export const LinksModal = React.memo(
     if (app?.Id && scan?.Id) {
       links.push({
         label: '🔗 AppScan Scan',
-        url: `${baseUrl}/main/myapps/${app.Id}/scans/${scan.Id}`,
+        url: appScanService.getScanUrl(app.Id, scan.Id),
       });
     }
 
@@ -87,7 +82,7 @@ export const LinksModal = React.memo(
     if (app?.Id && issue.Id) {
       links.push({
         label: '🔗 AppScan Issue',
-        url: `${baseUrl}/main/myapps/${app.Id}/issues/${issue.Id}`,
+        url: appScanService.getIssueUrl(app.Id, issue.Id),
       });
     }
 
