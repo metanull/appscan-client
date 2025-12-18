@@ -247,14 +247,14 @@ VulnListPanel.displayName = 'VulnListPanel';
 const DetailsPreviewPanel = React.memo(({ issue, articleContent, loading }) => {
   if (!issue) {
     return (
-      <Panel title="Details" borderColor="magenta" width={40}>
+      <Panel title="Details" borderColor="magenta" width={80}>
         <Text dimColor>Select an issue to view details</Text>
       </Panel>
     );
   }
 
   return (
-    <Panel title="Details" borderColor="magenta" width={40}>
+    <Panel title="Details" borderColor="magenta" width={80}>
       <Box flexDirection="column">
         <Text>
           <Text bold>Type:</Text> {issue.IssueType || 'N/A'}
@@ -269,6 +269,22 @@ const DetailsPreviewPanel = React.memo(({ issue, articleContent, loading }) => {
           <Text wrap="truncate">
             <Text bold>Location:</Text> {issue.Location}
           </Text>
+        )}
+        {issue.Context && (
+          <Box flexDirection="column" marginTop={1}>
+            <Text bold>Context:</Text>
+            <Box
+              borderStyle="single"
+              borderColor="gray"
+              paddingX={1}
+              marginTop={1}
+            >
+              <Text wrap="wrap" dimColor>
+                {issue.Context.substring(0, 500)}
+                {issue.Context.length > 500 ? '...' : ''}
+              </Text>
+            </Box>
+          </Box>
         )}
         {loading && (
           <Box marginTop={1}>
@@ -949,6 +965,11 @@ export const InkApp = ({ configPath }) => {
               throw new Error(`${results.failed} issue(s) failed to update`);
             }
 
+            // Reload issues to reflect updated status and comment
+            const updatedIssues = await appScanService.listIssues(
+              selectedScan.Id
+            );
+            useStore.getState().setIssues(updatedIssues || []);
             useStore.getState().clearSelection();
           }}
           onClose={() => setActiveModal(null)}
