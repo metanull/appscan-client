@@ -5,18 +5,10 @@
 
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { getLogsDir } from '../../utils/config-paths.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const LOG_DIR = path.resolve(process.cwd(), 'logs');
+const LOG_DIR = getLogsDir();
 const LOG_FILE = path.join(LOG_DIR, 'app.log');
-
-// Ensure log directory exists
-if (!fs.existsSync(LOG_DIR)) {
-  fs.mkdirSync(LOG_DIR, { recursive: true });
-}
 
 const LOG_LEVELS = {
   ERROR: 'ERROR',

@@ -8,12 +8,13 @@
 import { fileURLToPath } from 'url';
 import path from 'path';
 import dotenv from 'dotenv';
+import { getEnvPath } from './utils/config-paths.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
-dotenv.config();
+// Load environment variables from the correct location
+dotenv.config({ path: getEnvPath() });
 
 const args = process.argv.slice(2);
 

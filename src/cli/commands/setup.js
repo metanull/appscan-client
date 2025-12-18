@@ -1,11 +1,7 @@
 import { input, confirm, password } from '@inquirer/prompts';
 import chalk from 'chalk';
 import { writeFileSync, existsSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import { getEnvPath } from '../../utils/config-paths.js';
 
 export async function setup(options) {
   try {
@@ -15,7 +11,7 @@ export async function setup(options) {
     );
 
     // Check if .env already exists
-    const envPath = join(__dirname, '../../.env');
+    const envPath = getEnvPath();
     if (existsSync(envPath) && !options.force) {
       const overwrite = await confirm({
         message: '.env file already exists. Do you want to overwrite it?',
