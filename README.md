@@ -124,11 +124,26 @@ The TUI provides a 3-pane layout:
 
 ## Configuration
 
+### Configuration File Location
+
+When installed globally, the `.env` file and logs are stored in your user directory:
+
+**Windows:** `%USERPROFILE%\.appscan-client\.env`  
+**Linux/macOS:** `~/.appscan-client/.env`
+
+When running from source (development), the `.env` file is in the project root.
+
+Logs are stored in the `logs/` subdirectory:
+- **Windows:** `%USERPROFILE%\.appscan-client\logs\`
+- **Linux/macOS:** `~/.appscan-client/logs/`
+
 ### Interactive Setup (Recommended)
 
 ```bash
 appscan setup
 ```
+
+This wizard will automatically create the `.env` file in the correct location.
 
 ### Manual Configuration
 

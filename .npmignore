@@ -27,6 +27,7 @@ Thumbs.db
 
 # Build artifacts
 temp-swagger.json
+# Note: dist/ is NOT ignored - it must be published for the bin to work
 
 # Git
 .git/

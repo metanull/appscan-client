@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import fs from 'fs';
+import { getEnvPath } from './config-paths.js';
 
 // NOTE: dotenv is intentionally not executed at module import time to avoid
 // loading environment variables before the application has a chance to
@@ -11,7 +12,8 @@ export class Config {
     // Ensure environment variables are loaded when a Config instance is created
     try {
       process.env.DOTENV_CONFIG_QUIET = 'true';
-      dotenv.config();
+      // Load from the correct path (user's home directory for installed packages)
+      dotenv.config({ path: getEnvPath() });
     } catch {
       // ignore dotenv failures
     }

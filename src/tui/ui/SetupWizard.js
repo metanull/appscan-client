@@ -6,12 +6,8 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput, useApp } from 'ink';
 import TextInput from 'ink-text-input';
+import { getEnvPath } from '../../utils/config-paths.js';
 import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const STEPS = {
   WELCOME: 'welcome',
@@ -158,9 +154,8 @@ export const SetupWizard = ({ onComplete, onCancel }) => {
 
   const saveConfiguration = () => {
     try {
-      // Create .env file in the appscan-client root directory
-      // When running from ink-triage/, go up one level
-      const envPath = path.resolve(process.cwd(), '../.env');
+      // Get the correct .env path (user's home directory for installed package)
+      const envPath = getEnvPath();
       const envContent = `# AppScan API Configuration
 APPSCAN_API_KEY=${config.apiKey}
 APPSCAN_API_SECRET=${config.apiSecret}
