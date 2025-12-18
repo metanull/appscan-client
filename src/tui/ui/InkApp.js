@@ -916,7 +916,7 @@ export const InkApp = ({ configPath }) => {
         <UpdateStatusModal
           issueCount={selectedIssues.length}
           issues={selectedIssues}
-          onUpdate={async (status, comment) => {
+          onUpdate={async (status, comment, onProgress) => {
             // Get the app ID from first selected issue
             const appId = selectedIssues[0].ApplicationId;
             const issueIds = selectedIssues.map((issue) => issue.Id);
@@ -926,10 +926,28 @@ export const InkApp = ({ configPath }) => {
               Comment: comment || '',
             };
 
-            await appScanService.bulkUpdateIssues(issueIds, appId, updateData);
-            logger.info('Status updated', { count: selectedIssues.length });
+            // Use chunked update with configurable batch size from config
+            const chunkSize = appScanService.getConfig().getBulkUpdateChunkSize();
+            const results = await appScanService.bulkUpdateIssuesChunked(
+              issueIds,
+              appId,
+              updateData,
+              chunkSize,
+              onProgress
+            );
+            
+            logger.info('Status updated', {
+              count: selectedIssues.length,
+              successful: results.successful,
+              failed: results.failed,
+            });
+            
+            if (results.failed > 0) {
+              logger.error('Some updates failed', { errors: results.errors });
+              throw new Error(`${results.failed} issue(s) failed to update`);
+            }
+            
             useStore.getState().clearSelection();
-            setActiveModal(null);
           }}
           onClose={() => setActiveModal(null)}
         />

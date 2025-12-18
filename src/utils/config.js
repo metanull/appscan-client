@@ -22,6 +22,10 @@ export class Config {
     this.jiraEmail = process.env.JIRA_EMAIL || null;
     this.jiraApiToken = process.env.JIRA_API_TOKEN || null;
     this.jiraProjectKey = process.env.JIRA_PROJECT_KEY || null;
+    this.bulkUpdateChunkSize = parseInt(
+      process.env.BULK_UPDATE_CHUNK_SIZE || '10',
+      10
+    );
   }
 
   isValid() {
@@ -60,6 +64,10 @@ export class Config {
     return this.jiraProjectKey;
   }
 
+  getBulkUpdateChunkSize() {
+    return this.bulkUpdateChunkSize;
+  }
+
   static loadFromFile(filePath) {
     if (fs.existsSync(filePath)) {
       try {
@@ -73,6 +81,8 @@ export class Config {
         instance.jiraApiToken = config.jiraApiToken || instance.jiraApiToken;
         instance.jiraProjectKey =
           config.jiraProjectKey || instance.jiraProjectKey;
+        instance.bulkUpdateChunkSize =
+          config.bulkUpdateChunkSize || instance.bulkUpdateChunkSize;
         return instance;
       } catch (error) {
         throw new Error(`Failed to parse config file: ${error.message}`);
