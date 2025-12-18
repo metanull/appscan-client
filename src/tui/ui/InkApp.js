@@ -31,6 +31,7 @@ import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts.js';
 import logger from '../utils/logger.js';
 import { getPackageInfo } from '../../utils/package-info.js';
+import open from 'open';
 
 /**
  * Context Pane - Shows selected app/scan info
@@ -57,6 +58,10 @@ const ContextPane = React.memo(
             <Text dimColor>Type: {scan.Technology || 'N/A'}</Text>
           </Box>
         )}
+        <Box flexDirection="column" marginTop={2}>
+          <Text dimColor>→ Open <Text bold>Code</Text></Text>
+          <Text dimColor>← Open <Text bold>Vulnerability</Text></Text>
+        </Box>
       </Panel>
     );
   }
@@ -574,6 +579,34 @@ export const InkApp = ({ configPath }) => {
         action: () => currentIssue && setActiveModal('details'),
         description: 'View',
         condition: () => !!currentIssue,
+        group: 'Navigation',
+      },
+      {
+        key: 'leftarrow',
+        action: () => {
+          if (currentIssue && selectedApp) {
+            const baseUrl = appScanService.getConfig().getBaseUrl();
+            const url = `${baseUrl}/main/myapps/${selectedApp.Id}/issues/${currentIssue.Id}`;
+            open(url).catch(() => {
+              // Silently fail if we can't open the link
+            });
+          }
+        },
+        description: 'Open Vulnerability',
+        condition: () => !!currentIssue && !!selectedApp,
+        group: 'Navigation',
+      },
+      {
+        key: 'rightarrow',
+        action: () => {
+          if (currentIssue && currentIssue.SourceFileUri) {
+            open(currentIssue.SourceFileUri).catch(() => {
+              // Silently fail if we can't open the link
+            });
+          }
+        },
+        description: 'Open Code',
+        condition: () => !!currentIssue && !!currentIssue.SourceFileUri,
         group: 'Navigation',
       },
 
