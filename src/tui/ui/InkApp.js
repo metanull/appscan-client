@@ -59,8 +59,12 @@ const ContextPane = React.memo(
           </Box>
         )}
         <Box flexDirection="column" marginTop={2}>
-          <Text dimColor>→ Open <Text bold>Code</Text></Text>
-          <Text dimColor>← Open <Text bold>Vulnerability</Text></Text>
+          <Text dimColor>
+            → Open <Text bold>Code</Text>
+          </Text>
+          <Text dimColor>
+            ← Open <Text bold>Vulnerability</Text>
+          </Text>
         </Box>
       </Panel>
     );
@@ -585,8 +589,10 @@ export const InkApp = ({ configPath }) => {
         key: 'leftarrow',
         action: () => {
           if (currentIssue && selectedApp) {
-            const baseUrl = appScanService.getConfig().getBaseUrl();
-            const url = `${baseUrl}/main/myapps/${selectedApp.Id}/issues/${currentIssue.Id}`;
+            const url = appScanService.getIssueUrl(
+              selectedApp.Id,
+              currentIssue.Id
+            );
             open(url).catch(() => {
               // Silently fail if we can't open the link
             });

@@ -64,6 +64,38 @@ export class AppScanService {
   }
 
   /**
+   * Get the AppScan URL for a specific issue
+   * @param {string} appId - Application ID
+   * @param {string} issueId - Issue ID
+   * @returns {string} The full URL to the issue in AppScan
+   */
+  getIssueUrl(appId, issueId) {
+    const baseUrl = this.config.getBaseUrl();
+    return `${baseUrl}/main/myapps/${appId}/issues/${issueId}`;
+  }
+
+  /**
+   * Get the AppScan URL for a specific application
+   * @param {string} appId - Application ID
+   * @returns {string} The full URL to the application in AppScan
+   */
+  getApplicationUrl(appId) {
+    const baseUrl = this.config.getBaseUrl();
+    return `${baseUrl}/main/myapps/${appId}`;
+  }
+
+  /**
+   * Get the AppScan URL for a specific scan
+   * @param {string} appId - Application ID
+   * @param {string} scanId - Scan ID
+   * @returns {string} The full URL to the scan in AppScan
+   */
+  getScanUrl(appId, scanId) {
+    const baseUrl = this.config.getBaseUrl();
+    return `${baseUrl}/main/myapps/${appId}/scans/${scanId}`;
+  }
+
+  /**
    * Get focused article URL for an issue based on ApiVulnName
    *
    * This function:
