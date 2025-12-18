@@ -12,15 +12,11 @@
   },
   "scripts": {
     "build": "node build.js",
-    "start": "npm run build && node dist/index.js",
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
-    "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch",
-    "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "start": "node dist/index.js",
     "lint": "eslint src tests",
     "lint:fix": "eslint src tests --fix",
     "format": "prettier --write \"src/**/*.js\" \"tests/**/*.js\"",
-    "generate-api": "node scripts/generate-api-client.js",
-    "prepublishOnly": "npm run generate-api && npm test"
+    "generate-api": "node scripts/generate-api-client.js"
   },
   "keywords": [
     "appscan",
@@ -30,8 +26,8 @@
     "hcl",
     "ink"
   ],
-  "author": "metanull",
-  "license": "ISC",
+  "author": "Pascal (MetaNull) Havelange",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/metanull/appscan-client.git"

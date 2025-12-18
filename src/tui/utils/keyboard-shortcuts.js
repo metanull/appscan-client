@@ -189,6 +189,14 @@ export class KeyboardShortcutManager {
   handleInput(view, input, key) {
     const bindings = this.getShortcuts(view);
 
+    // Debug: log ctrl key combinations
+    const debugList = process.env.TUI_DEBUG_LIST === '1';
+    if (debugList && (key.ctrl || key.meta)) {
+      console.error(
+        `[DEBUG] Keyboard: input="${input}" ctrl=${key.ctrl} alt=${key.meta}`
+      );
+    }
+
     for (const binding of bindings) {
       const keyDef = parseKeyString(binding.key);
 

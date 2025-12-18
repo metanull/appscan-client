@@ -20,6 +20,8 @@ import { SearchModal } from './SearchModal.js';
 import { LinksModal } from './components/LinksModal.js';
 import { UpdateStatusModal } from './UpdateStatusModal.js';
 import { CreateJiraModal } from './CreateJiraModal.js';
+import { LinkJiraModal } from './LinkJiraModal.js';
+import { UnlinkJiraModal } from './UnlinkJiraModal.js';
 import { AppScanService } from '../services/appscan.js';
 import { JiraService } from '../services/jira.js';
 import { useCurrentIssue } from '../hooks/useCurrentIssue.js';
@@ -291,7 +293,7 @@ DetailsPreviewPanel.displayName = 'DetailsPreviewPanel';
  */
 const pkg = getPackageInfo();
 const StatusBar = React.memo(({ error, loading, message }) => {
-  const rightText = `${pkg.name || 'appscan-client'} ${pkg.version || 'v0.0.0'} • Pascal Havelange`;
+  const rightText = `${pkg.name || 'appscan-client'} ${pkg.version || 'v0.0.0'} • License ${pkg.license || 'MIT'} • ${pkg.author || 'Pascal (MetaNull) Havelange'}`;
   return (
     <Box
       borderStyle="single"
@@ -596,6 +598,22 @@ export const InkApp = ({ configPath }) => {
         condition: () => !!currentIssue,
         group: 'Actions',
       },
+      {
+        key: 'ctrl+k',
+        action: () => setActiveModal('link-jira'),
+        description: 'Link Jira',
+        condition: () => selectedIssueIds.length > 0,
+        group: 'Actions',
+      },
+      {
+        key: 'alt+k',
+        action: () => setActiveModal('unlink-jira'),
+        description: 'Unlink Jira',
+        condition: () =>
+          selectedIssueIds.length > 0 &&
+          selectedIssues.some((issue) => issue.ExternalId),
+        group: 'Actions',
+      },
 
       // Filtering
       {
@@ -708,6 +726,7 @@ export const InkApp = ({ configPath }) => {
       currentIssue,
       filteredIssues.length,
       selectedIssueIds.length,
+      selectedIssues,
       selectedApp,
       selectedScan,
       appScanService,
@@ -890,6 +909,64 @@ export const InkApp = ({ configPath }) => {
               selectedScan
             );
             logger.info('Jira issue created');
+            useStore.getState().clearSelection();
+          }}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'link-jira' && selectedIssues.length > 0 && (
+        <LinkJiraModal
+          issueCount={selectedIssues.length}
+          onLink={async (jiraKey) => {
+            // Get the app ID from first selected issue
+            const appId = selectedIssues[0].ApplicationId;
+            const issueIds = selectedIssues.map((issue) => issue.Id);
+
+            await appScanService.bulkUpdateIssues(
+              issueIds,
+              appId,
+              { ExternalId: jiraKey }
+            );
+            logger.info('Issues linked to Jira', {
+              issueCount: issueIds.length,
+              jiraKey,
+            });
+
+            // Reload issues to reflect updated ExternalId
+            const updatedIssues = await appScanService.listIssues(
+              selectedScan.Id
+            );
+            useStore.getState().setIssues(updatedIssues || []);
+            useStore.getState().clearSelection();
+          }}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'unlink-jira' && selectedIssues.length > 0 && (
+        <UnlinkJiraModal
+          issueCount={selectedIssues.length}
+          jiraKeys={selectedIssues
+            .map((issue) => issue.ExternalId)
+            .filter((id) => !!id)}
+          onUnlink={async () => {
+            // Get the app ID from first selected issue
+            const appId = selectedIssues[0].ApplicationId;
+            const issueIds = selectedIssues.map((issue) => issue.Id);
+
+            await appScanService.bulkUpdateIssues(
+              issueIds,
+              appId,
+              { ExternalId: '' }
+            );
+            logger.info('Issues unlinked from Jira', {
+              issueCount: issueIds.length,
+            });
+
+            // Reload issues to reflect updated ExternalId
+            const updatedIssues = await appScanService.listIssues(
+              selectedScan.Id
+            );
+            useStore.getState().setIssues(updatedIssues || []);
             useStore.getState().clearSelection();
           }}
           onClose={() => setActiveModal(null)}
