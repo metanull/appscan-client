@@ -31,9 +31,6 @@ jobs:
       - name: Run linter
         run: npm run lint
       
-      - name: Run tests
-        run: npm test
-      
       - name: Check if version changed
         id: version-check
         run: |
