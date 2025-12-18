@@ -3,6 +3,8 @@
  * Provides a clean API for defining shortcuts and auto-generating help text
  */
 
+import logger from './logger.js';
+
 /**
  * Keyboard shortcut definition
  * @typedef {Object} KeyBinding
@@ -189,12 +191,10 @@ export class KeyboardShortcutManager {
   handleInput(view, input, key) {
     const bindings = this.getShortcuts(view);
 
-    // Debug: log ctrl key combinations
-    const debugList = process.env.TUI_DEBUG_LIST === '1';
-    if (debugList && (key.ctrl || key.meta)) {
-      console.error(
-        `[DEBUG] Keyboard: input="${input}" ctrl=${key.ctrl} alt=${key.meta}`
-      );
+    // Debug: log ctrl key combinations when debug mode is enabled
+    if (key.ctrl || key.meta || key.specialKey) {
+      console.log(`Keyboard input: input="${input}" specialKeys=${JSON.stringify(key)}`);
+      logger.debug(`Keyboard input: input="${input}" specialKeys=${JSON.stringify(key)}`);
     }
 
     for (const binding of bindings) {

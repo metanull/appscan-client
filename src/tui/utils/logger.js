@@ -28,6 +28,15 @@ const LOG_LEVELS = {
 class Logger {
   constructor() {
     this.logLevel = process.env.LOG_LEVEL || 'INFO';
+    this.debugCallback = null; // Callback for debug UI
+  }
+
+  /**
+   * Register a callback to be called when logs are written
+   * Used by UI to display debug messages in real-time
+   */
+  setDebugCallback(callback) {
+    this.debugCallback = callback;
   }
 
   /**
@@ -41,7 +50,7 @@ class Logger {
   }
 
   /**
-   * Write to log file
+   * Write to log file and optionally to debug callback
    */
   _writeToFile(formattedMessage) {
     try {
@@ -49,6 +58,15 @@ class Logger {
     } catch (err) {
       // Fallback to console only if file write fails
       console.error('Failed to write to log file:', err.message);
+    }
+
+    // Call debug callback if registered (for UI debug bar)
+    if (this.debugCallback) {
+      try {
+        this.debugCallback(formattedMessage);
+      } catch {
+        // Silently fail if callback errors to avoid breaking logging
+      }
     }
   }
 
@@ -103,17 +121,27 @@ class Logger {
   }
 
   /**
-   * Log debug - only logged in debug mode
+   * Log debug - logged based on log level, but always calls debug callback
    */
   debug(message, context = {}) {
-    if (this._shouldLog(LOG_LEVELS.DEBUG)) {
-      const formattedMessage = this._format(LOG_LEVELS.DEBUG, message, context);
+    const formattedMessage = this._format(LOG_LEVELS.DEBUG, message, context);
 
+    // Always send to debug callback if registered (for UI debug bar)
+    if (this.debugCallback) {
+      try {
+        this.debugCallback(formattedMessage);
+      } catch (err) {
+        // Silently fail if callback errors to avoid breaking logging
+      }
+    }
+
+    // Only log to file/console if log level allows
+    if (this._shouldLog(LOG_LEVELS.DEBUG)) {
       console.debug(formattedMessage);
       this._writeToFile(formattedMessage);
-
-      return formattedMessage;
     }
+
+    return formattedMessage;
   }
 
   /**

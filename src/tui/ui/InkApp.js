@@ -11,6 +11,7 @@ import { filterIssues } from '../utils/issue-utils.js';
 import { Layout } from './components/Layout.js';
 import { Panel } from './components/Panel.js';
 import { ScrollableList } from './components/ScrollableList.js';
+import { DebugBar } from './components/DebugBar.js';
 import { AppSelectionModal } from './components/AppSelectionModal.js';
 import { ScanSelectionModal } from './components/ScanSelectionModal.js';
 import { IssueDetailsModal } from './components/IssueDetailsModal.js';
@@ -360,7 +361,16 @@ export const InkApp = ({ configPath }) => {
   // Local UI state
   const [showContextPane, setShowContextPane] = useState(true);
   const [activeModal, setActiveModal] = useState(null); // null | 'app' | 'scan' | 'filter' | 'search' | 'help' | etc.
+  const [debugMode, setDebugMode] = useState(false);
+  const [debugMessage, setDebugMessage] = useState('');
   const isInitialSetup = useRef(true); // Track if we're in initial setup phase
+
+  // Setup logger debug callback on mount
+  React.useEffect(() => {
+    logger.setDebugCallback((message) => {
+      setDebugMessage(message);
+    });
+  }, []);
 
   // Load applications on mount - runs once
   const hasLoadedApps = useRef(false);
@@ -721,6 +731,24 @@ export const InkApp = ({ configPath }) => {
         description: 'Quit',
         group: 'General',
       },
+      {
+        key: 'ctrl+d',
+        action: () => {
+          setDebugMode(true);
+          setDebugMessage('[DEBUG MODE ENABLED]');
+        },
+        description: 'Enable Debug',
+        group: 'Debug',
+      },
+      {
+        key: 'alt+d',
+        action: () => {
+          setDebugMode(false);
+          setDebugMessage('');
+        },
+        description: 'Disable Debug',
+        group: 'Debug',
+      },
     ],
     [
       currentIssue,
@@ -740,13 +768,19 @@ export const InkApp = ({ configPath }) => {
     enabled: !activeModal && view === 'issue-list',
   });
 
+  // Calculate content height accounting for status bar and optional debug bar
+  const statusBarHeight = 1;
+  const debugBarHeight = debugMode ? 1 : 0;
+  const contentHeight = height - statusBarHeight - debugBarHeight;
+
   // Main layout
   return (
     <Layout
       header={null}
       footer={<StatusBar error={error} loading={loading} message="Ready" />}
+      debugBar={<DebugBar message={debugMessage} visible={debugMode} />}
     >
-      <Box flexDirection="row" height={height - 2}>
+      <Box flexDirection="row" height={contentHeight}>
         {/* Context Pane */}
         {showContextPane && (
           <ContextPane
@@ -766,7 +800,7 @@ export const InkApp = ({ configPath }) => {
           filterIssueType={filterIssueType}
           filterJira={filterJira}
           searchText={searchText}
-          height={height - 2}
+          height={contentHeight}
         />
 
         {/* Details Preview */}
