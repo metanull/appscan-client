@@ -57,6 +57,14 @@ export function getLogsDir() {
 }
 
 /**
+ * Get the path to the comment templates file
+ * @returns {string} Full path to comment-templates.txt file
+ */
+export function getCommentTemplatesPath() {
+  return join(getConfigDir(), 'comment-templates.txt');
+}
+
+/**
  * Check if running from an installed package
  * @returns {boolean} True if running from installed package
  */
