@@ -29,7 +29,6 @@ export const UpdateStatusModal = ({
   issues = [],
   onUpdate,
   onClose,
-  onProgress,
 }) => {
   const [step, setStep] = useState('status'); // 'status' | 'template' | 'comment' | 'progress'
   const [selectedStatus, setSelectedStatus] = useState(null);
