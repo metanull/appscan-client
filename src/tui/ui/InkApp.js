@@ -956,11 +956,9 @@ export const InkApp = ({ configPath }) => {
             const appId = selectedIssues[0].ApplicationId;
             const issueIds = selectedIssues.map((issue) => issue.Id);
 
-            await appScanService.bulkUpdateIssues(
-              issueIds,
-              appId,
-              { ExternalId: jiraKey }
-            );
+            await appScanService.bulkUpdateIssues(issueIds, appId, {
+              ExternalId: jiraKey,
+            });
             logger.info('Issues linked to Jira', {
               issueCount: issueIds.length,
               jiraKey,
@@ -987,11 +985,9 @@ export const InkApp = ({ configPath }) => {
             const appId = selectedIssues[0].ApplicationId;
             const issueIds = selectedIssues.map((issue) => issue.Id);
 
-            await appScanService.bulkUpdateIssues(
-              issueIds,
-              appId,
-              { ExternalId: '' }
-            );
+            await appScanService.bulkUpdateIssues(issueIds, appId, {
+              ExternalId: '',
+            });
             logger.info('Issues unlinked from Jira', {
               issueCount: issueIds.length,
             });

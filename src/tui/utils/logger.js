@@ -130,7 +130,7 @@ class Logger {
     if (this.debugCallback) {
       try {
         this.debugCallback(formattedMessage);
-      } catch (err) {
+      } catch {
         // Silently fail if callback errors to avoid breaking logging
       }
     }

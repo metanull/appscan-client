@@ -195,7 +195,9 @@ export class KeyboardShortcutManager {
     // This helps debug why shortcuts aren't being triggered
     if (key.ctrl || key.meta || key.specialKey || input === undefined) {
       const inputStr = input ? `"${input}"` : '[undefined]';
-      logger.debug(`Keyboard input: input=${inputStr} key=${JSON.stringify(key)}`);
+      logger.debug(
+        `Keyboard input: input=${inputStr} key=${JSON.stringify(key)}`
+      );
     }
 
     for (const binding of bindings) {
