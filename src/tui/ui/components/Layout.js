@@ -1,13 +1,13 @@
 /**
  * Layout component
- * Full-screen container with header and footer slots
+ * Full-screen container with header, footer, and optional debug bar
  */
 
 import React from 'react';
 import { Box } from 'ink';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 
-export const Layout = React.memo(({ header, children, footer }) => {
+export const Layout = React.memo(({ header, children, footer, debugBar }) => {
   const { height } = useTerminalSize();
 
   return (
@@ -17,6 +17,7 @@ export const Layout = React.memo(({ header, children, footer }) => {
         {children}
       </Box>
       {footer && <Box flexShrink={0}>{footer}</Box>}
+      {debugBar}
     </Box>
   );
 });

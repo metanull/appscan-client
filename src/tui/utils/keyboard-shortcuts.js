@@ -3,6 +3,8 @@
  * Provides a clean API for defining shortcuts and auto-generating help text
  */
 
+import logger from './logger.js';
+
 /**
  * Keyboard shortcut definition
  * @typedef {Object} KeyBinding
@@ -188,6 +190,15 @@ export class KeyboardShortcutManager {
    */
   handleInput(view, input, key) {
     const bindings = this.getShortcuts(view);
+
+    // Debug: log all keyboard input when special keys or modifiers are pressed
+    // This helps debug why shortcuts aren't being triggered
+    if (key.ctrl || key.meta || key.specialKey || input === undefined) {
+      const inputStr = input ? `"${input}"` : '[undefined]';
+      logger.debug(
+        `Keyboard input: input=${inputStr} key=${JSON.stringify(key)}`
+      );
+    }
 
     for (const binding of bindings) {
       const keyDef = parseKeyString(binding.key);

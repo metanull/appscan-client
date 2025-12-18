@@ -11,6 +11,7 @@ import { filterIssues } from '../utils/issue-utils.js';
 import { Layout } from './components/Layout.js';
 import { Panel } from './components/Panel.js';
 import { ScrollableList } from './components/ScrollableList.js';
+import { DebugBar } from './components/DebugBar.js';
 import { AppSelectionModal } from './components/AppSelectionModal.js';
 import { ScanSelectionModal } from './components/ScanSelectionModal.js';
 import { IssueDetailsModal } from './components/IssueDetailsModal.js';
@@ -20,6 +21,8 @@ import { SearchModal } from './SearchModal.js';
 import { LinksModal } from './components/LinksModal.js';
 import { UpdateStatusModal } from './UpdateStatusModal.js';
 import { CreateJiraModal } from './CreateJiraModal.js';
+import { LinkJiraModal } from './LinkJiraModal.js';
+import { UnlinkJiraModal } from './UnlinkJiraModal.js';
 import { AppScanService } from '../services/appscan.js';
 import { JiraService } from '../services/jira.js';
 import { useCurrentIssue } from '../hooks/useCurrentIssue.js';
@@ -291,7 +294,7 @@ DetailsPreviewPanel.displayName = 'DetailsPreviewPanel';
  */
 const pkg = getPackageInfo();
 const StatusBar = React.memo(({ error, loading, message }) => {
-  const rightText = `${pkg.name || 'appscan-client'} ${pkg.version || 'v0.0.0'} • Pascal Havelange`;
+  const rightText = `${pkg.name || 'appscan-client'} ${pkg.version || 'v0.0.0'} • License ${pkg.license || 'MIT'} • ${pkg.author || 'Pascal (MetaNull) Havelange'}`;
   return (
     <Box
       borderStyle="single"
@@ -358,7 +361,16 @@ export const InkApp = ({ configPath }) => {
   // Local UI state
   const [showContextPane, setShowContextPane] = useState(true);
   const [activeModal, setActiveModal] = useState(null); // null | 'app' | 'scan' | 'filter' | 'search' | 'help' | etc.
+  const [debugMode, setDebugMode] = useState(false);
+  const [debugMessage, setDebugMessage] = useState('');
   const isInitialSetup = useRef(true); // Track if we're in initial setup phase
+
+  // Setup logger debug callback on mount
+  React.useEffect(() => {
+    logger.setDebugCallback((message) => {
+      setDebugMessage(message);
+    });
+  }, []);
 
   // Load applications on mount - runs once
   const hasLoadedApps = useRef(false);
@@ -596,6 +608,22 @@ export const InkApp = ({ configPath }) => {
         condition: () => !!currentIssue,
         group: 'Actions',
       },
+      {
+        key: 'ctrl+k',
+        action: () => setActiveModal('link-jira'),
+        description: 'Link Jira',
+        condition: () => selectedIssueIds.length > 0,
+        group: 'Actions',
+      },
+      {
+        key: 'alt+k',
+        action: () => setActiveModal('unlink-jira'),
+        description: 'Unlink Jira',
+        condition: () =>
+          selectedIssueIds.length > 0 &&
+          selectedIssues.some((issue) => issue.ExternalId),
+        group: 'Actions',
+      },
 
       // Filtering
       {
@@ -703,11 +731,30 @@ export const InkApp = ({ configPath }) => {
         description: 'Quit',
         group: 'General',
       },
+      {
+        key: 'ctrl+d',
+        action: () => {
+          setDebugMode(true);
+          setDebugMessage('[DEBUG MODE ENABLED]');
+        },
+        description: 'Enable Debug',
+        group: 'Debug',
+      },
+      {
+        key: 'alt+d',
+        action: () => {
+          setDebugMode(false);
+          setDebugMessage('');
+        },
+        description: 'Disable Debug',
+        group: 'Debug',
+      },
     ],
     [
       currentIssue,
       filteredIssues.length,
       selectedIssueIds.length,
+      selectedIssues,
       selectedApp,
       selectedScan,
       appScanService,
@@ -721,13 +768,19 @@ export const InkApp = ({ configPath }) => {
     enabled: !activeModal && view === 'issue-list',
   });
 
+  // Calculate content height accounting for status bar and optional debug bar
+  const statusBarHeight = 1;
+  const debugBarHeight = debugMode ? 1 : 0;
+  const contentHeight = height - statusBarHeight - debugBarHeight;
+
   // Main layout
   return (
     <Layout
       header={null}
       footer={<StatusBar error={error} loading={loading} message="Ready" />}
+      debugBar={<DebugBar message={debugMessage} visible={debugMode} />}
     >
-      <Box flexDirection="row" height={height - 2}>
+      <Box flexDirection="row" height={contentHeight}>
         {/* Context Pane */}
         {showContextPane && (
           <ContextPane
@@ -747,7 +800,7 @@ export const InkApp = ({ configPath }) => {
           filterIssueType={filterIssueType}
           filterJira={filterJira}
           searchText={searchText}
-          height={height - 2}
+          height={contentHeight}
         />
 
         {/* Details Preview */}
@@ -890,6 +943,60 @@ export const InkApp = ({ configPath }) => {
               selectedScan
             );
             logger.info('Jira issue created');
+            useStore.getState().clearSelection();
+          }}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'link-jira' && selectedIssues.length > 0 && (
+        <LinkJiraModal
+          issueCount={selectedIssues.length}
+          onLink={async (jiraKey) => {
+            // Get the app ID from first selected issue
+            const appId = selectedIssues[0].ApplicationId;
+            const issueIds = selectedIssues.map((issue) => issue.Id);
+
+            await appScanService.bulkUpdateIssues(issueIds, appId, {
+              ExternalId: jiraKey,
+            });
+            logger.info('Issues linked to Jira', {
+              issueCount: issueIds.length,
+              jiraKey,
+            });
+
+            // Reload issues to reflect updated ExternalId
+            const updatedIssues = await appScanService.listIssues(
+              selectedScan.Id
+            );
+            useStore.getState().setIssues(updatedIssues || []);
+            useStore.getState().clearSelection();
+          }}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'unlink-jira' && selectedIssues.length > 0 && (
+        <UnlinkJiraModal
+          issueCount={selectedIssues.length}
+          jiraKeys={selectedIssues
+            .map((issue) => issue.ExternalId)
+            .filter((id) => !!id)}
+          onUnlink={async () => {
+            // Get the app ID from first selected issue
+            const appId = selectedIssues[0].ApplicationId;
+            const issueIds = selectedIssues.map((issue) => issue.Id);
+
+            await appScanService.bulkUpdateIssues(issueIds, appId, {
+              ExternalId: '',
+            });
+            logger.info('Issues unlinked from Jira', {
+              issueCount: issueIds.length,
+            });
+
+            // Reload issues to reflect updated ExternalId
+            const updatedIssues = await appScanService.listIssues(
+              selectedScan.Id
+            );
+            useStore.getState().setIssues(updatedIssues || []);
             useStore.getState().clearSelection();
           }}
           onClose={() => setActiveModal(null)}
