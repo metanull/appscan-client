@@ -976,6 +976,7 @@ export const InkApp = ({ configPath }) => {
       {activeModal === 'app' && (
         <AppSelectionModal
           applications={applications}
+          appScanService={appScanService}
           onSelect={async (app) => {
             // Set selected app and load scans for it
             useStore.getState().setSelectedApp(app);
@@ -1019,6 +1020,7 @@ export const InkApp = ({ configPath }) => {
       {activeModal === 'scan' && (
         <ScanSelectionModal
           scans={scans}
+          appScanService={appScanService}
           onSelect={(scan) => {
             useStore.getState().setSelectedScan(scan);
             setActiveModal(null);

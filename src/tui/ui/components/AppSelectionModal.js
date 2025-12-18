@@ -11,21 +11,8 @@ import { Panel } from './Panel.js';
 import { ScrollableList } from './ScrollableList.js';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 
-function computeAppIssueCount(app) {
-  if (typeof app.IssueCountTotal === 'number') return app.IssueCountTotal;
-  const fields = [
-    'CriticalIssues',
-    'HighIssues',
-    'MediumIssues',
-    'LowIssues',
-    'InformationalIssues',
-    'IssuesInProgress',
-  ];
-  return fields.reduce((sum, f) => sum + (Number(app[f]) || 0), 0);
-}
-
 export const AppSelectionModal = React.memo(
-  ({ applications, onSelect, onCancel, hideEmpty = false }) => {
+  ({ applications, onSelect, onCancel, hideEmpty = false, appScanService }) => {
     const [searchText, setSearchText] = useState('');
     const [cursor, setCursor] = useState(0);
     const [sortBy, setSortBy] = useState('name'); // 'name' | 'issues'
@@ -35,11 +22,19 @@ export const AppSelectionModal = React.memo(
     const filteredApps = useMemo(() => {
       let filtered = [...applications];
 
-      // Hide empty if requested
+      // ALWAYS filter out applications with 0 scans
+      filtered = filtered.filter((app) => {
+        const scanCount = appScanService?.getAppScanCount(app) || 0;
+        return scanCount > 0;
+      });
+
+      // Hide empty if requested (0 issues)
       if (hideEmpty) {
         filtered = filtered.filter((app) => {
-          const issueCount = computeAppIssueCount(app);
-          return issueCount > 0;
+          const { total } = appScanService?.getAppIssueCounts(app) || {
+            total: 0,
+          };
+          return total > 0;
         });
       }
 
@@ -58,15 +53,15 @@ export const AppSelectionModal = React.memo(
         if (sortBy === 'name') {
           return (a.Name || '').localeCompare(b.Name || '');
         } else if (sortBy === 'issues') {
-          const aCount = a.IssueCountTotal || 0;
-          const bCount = b.IssueCountTotal || 0;
+          const aCount = appScanService?.getAppIssueCounts(a)?.total || 0;
+          const bCount = appScanService?.getAppIssueCounts(b)?.total || 0;
           return bCount - aCount; // Descending
         }
         return 0;
       });
 
       return filtered;
-    }, [applications, searchText, sortBy, hideEmpty]);
+    }, [applications, searchText, sortBy, hideEmpty, appScanService]);
 
     // Handle keyboard input
     useInput((input, key) => {
@@ -102,19 +97,27 @@ export const AppSelectionModal = React.memo(
       }
     });
 
-    const renderItem = useCallback((app, isSelected) => {
-      const issueCount = computeAppIssueCount(app);
+    const renderItem = useCallback(
+      (app, isSelected) => {
+        const { active, total } = appScanService?.getAppIssueCounts(app) || {
+          active: 0,
+          total: 0,
+        };
 
-      return (
-        <Box>
-          <Text color={isSelected ? 'cyan' : undefined} bold={isSelected}>
-            {isSelected ? '▶ ' : '  '}
-            {app.Name || 'Unnamed App'}
-          </Text>
-          <Text dimColor> ({issueCount} issues)</Text>
-        </Box>
-      );
-    }, []);
+        return (
+          <Box>
+            <Text color={isSelected ? 'cyan' : undefined} bold={isSelected}>
+              {isSelected ? '▶ ' : '  '}
+              {app.Name || 'Unnamed App'}
+            </Text>
+            <Text dimColor> (</Text>
+            <Text color={active > 0 ? 'red' : 'gray'}>{active}</Text>
+            <Text dimColor> / {total} issues)</Text>
+          </Box>
+        );
+      },
+      [appScanService]
+    );
 
     // Calculate available rows for the list
     // Modal takes 80% of height, then subtract chrome:
