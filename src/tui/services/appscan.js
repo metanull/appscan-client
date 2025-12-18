@@ -280,7 +280,7 @@ export class AppScanService {
 
     try {
       // Get the application ID from the issue
-      const issue = await this.getIssue(issueId);
+      const issue = await this.service.api.v4.Issues_GetIssue(issueId, {});
       const appId = issue.ApplicationId;
 
       logger.info('Updating issue status', { issueId, status, comment });
