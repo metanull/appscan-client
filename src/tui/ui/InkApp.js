@@ -191,7 +191,9 @@ const VulnListPanel = React.memo(
         assigned: 'Preset:Jira Assigned',
         unassigned: 'Preset:Jira Unassigned',
       };
-      activeFilters.push(presetLabels[filterPreset] || `Preset:${filterPreset}`);
+      activeFilters.push(
+        presetLabels[filterPreset] || `Preset:${filterPreset}`
+      );
     }
     if (filterStatus) activeFilters.push(`Status:${filterStatus}`);
     if (filterSeverity) activeFilters.push(`Severity:${filterSeverity}`);
@@ -818,7 +820,10 @@ export const InkApp = ({ configPath }) => {
           if (selectedScan?.Id) {
             try {
               store.setLoading(true);
-              const issueList = await appScanService.listIssues(selectedScan.Id, { statusActive: true });
+              const issueList = await appScanService.listIssues(
+                selectedScan.Id,
+                { statusActive: true }
+              );
               store.setIssues(issueList || []);
               store.setLoading(false);
             } catch (err) {
@@ -839,7 +844,10 @@ export const InkApp = ({ configPath }) => {
           if (selectedScan?.Id) {
             try {
               store.setLoading(true);
-              const issueList = await appScanService.listIssues(selectedScan.Id, { statusInactive: true });
+              const issueList = await appScanService.listIssues(
+                selectedScan.Id,
+                { statusInactive: true }
+              );
               store.setIssues(issueList || []);
               store.setLoading(false);
             } catch (err) {
@@ -860,7 +868,10 @@ export const InkApp = ({ configPath }) => {
           if (selectedScan?.Id) {
             try {
               store.setLoading(true);
-              const issueList = await appScanService.listIssues(selectedScan.Id, { statusPending: true });
+              const issueList = await appScanService.listIssues(
+                selectedScan.Id,
+                { statusPending: true }
+              );
               store.setIssues(issueList || []);
               store.setLoading(false);
             } catch (err) {
@@ -881,7 +892,10 @@ export const InkApp = ({ configPath }) => {
           if (selectedScan?.Id) {
             try {
               store.setLoading(true);
-              const issueList = await appScanService.listIssues(selectedScan.Id, { statusProcessed: true });
+              const issueList = await appScanService.listIssues(
+                selectedScan.Id,
+                { statusProcessed: true }
+              );
               store.setIssues(issueList || []);
               store.setLoading(false);
             } catch (err) {
@@ -903,7 +917,10 @@ export const InkApp = ({ configPath }) => {
           if (selectedScan?.Id) {
             try {
               store.setLoading(true);
-              const issueList = await appScanService.listIssues(selectedScan.Id, { jiraUnassigned: true });
+              const issueList = await appScanService.listIssues(
+                selectedScan.Id,
+                { jiraUnassigned: true }
+              );
               store.setIssues(issueList || []);
               store.setLoading(false);
             } catch (err) {
@@ -924,7 +941,10 @@ export const InkApp = ({ configPath }) => {
           if (selectedScan?.Id) {
             try {
               store.setLoading(true);
-              const issueList = await appScanService.listIssues(selectedScan.Id, { jiraAssigned: true });
+              const issueList = await appScanService.listIssues(
+                selectedScan.Id,
+                { jiraAssigned: true }
+              );
               store.setIssues(issueList || []);
               store.setLoading(false);
             } catch (err) {
@@ -946,7 +966,10 @@ export const InkApp = ({ configPath }) => {
           if (selectedScan?.Id) {
             try {
               store.setLoading(true);
-              const issueList = await appScanService.listIssues(selectedScan.Id, { severityLow: true });
+              const issueList = await appScanService.listIssues(
+                selectedScan.Id,
+                { severityLow: true }
+              );
               store.setIssues(issueList || []);
               store.setLoading(false);
             } catch (err) {
@@ -967,7 +990,10 @@ export const InkApp = ({ configPath }) => {
           if (selectedScan?.Id) {
             try {
               store.setLoading(true);
-              const issueList = await appScanService.listIssues(selectedScan.Id, { severityMedium: true });
+              const issueList = await appScanService.listIssues(
+                selectedScan.Id,
+                { severityMedium: true }
+              );
               store.setIssues(issueList || []);
               store.setLoading(false);
             } catch (err) {
@@ -988,7 +1014,10 @@ export const InkApp = ({ configPath }) => {
           if (selectedScan?.Id) {
             try {
               store.setLoading(true);
-              const issueList = await appScanService.listIssues(selectedScan.Id, { severityHigh: true });
+              const issueList = await appScanService.listIssues(
+                selectedScan.Id,
+                { severityHigh: true }
+              );
               store.setIssues(issueList || []);
               store.setLoading(false);
             } catch (err) {
@@ -1011,7 +1040,9 @@ export const InkApp = ({ configPath }) => {
             // Reload all issues
             try {
               store.setLoading(true);
-              const issueList = await appScanService.listIssues(selectedScan.Id);
+              const issueList = await appScanService.listIssues(
+                selectedScan.Id
+              );
               store.setIssues(issueList || []);
               store.setLoading(false);
             } catch (err) {

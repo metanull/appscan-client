@@ -35,7 +35,7 @@ export const useStore = create((set, get) => ({
   scanSearchText: null,
   scanFilterType: null, // 'SAST' | 'DAST' | etc.
   hideEmptyScans: true,
-  
+
   // Filter preset (for server-side filtering)
   filterPreset: null, // 'active' | 'inactive' | 'pending' | 'processed' | 'low' | 'medium' | 'high' | 'assigned' | 'unassigned' | null
 

@@ -199,7 +199,11 @@ export class AppScanService {
         // Don't use $filter, fetch all and filter client-side for backward compatibility
       }
 
-      const response = await this.api.v4.Issues_Get('Scan', scanId, queryParams);
+      const response = await this.api.v4.Issues_Get(
+        'Scan',
+        scanId,
+        queryParams
+      );
 
       // Legacy client-side filtering if excludeStatus is provided and no filter options
       if (
