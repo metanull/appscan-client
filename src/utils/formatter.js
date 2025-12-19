@@ -23,6 +23,41 @@ export class Formatter {
   }
 
   /**
+   * Convert issue Scanner string to Technology enum value
+   * Scanner values from issues are like "AppScan Static Analyzer", "AppScan Dynamic Analyzer"
+   * Technology values from scans are like "StaticAnalyzer", "DynamicAnalyzer"
+   */
+  static scannerToTechnology(scanner) {
+    if (!scanner) return null;
+
+    const scannerLower = scanner.toLowerCase();
+
+    if (scannerLower.includes('static')) return 'StaticAnalyzer';
+    if (scannerLower.includes('dynamic')) return 'DynamicAnalyzer';
+    if (scannerLower.includes('sca') || scannerLower.includes('open source'))
+      return 'ScaAnalyzer';
+    if (scannerLower.includes('iast')) return 'IASTAnalyzer';
+    if (scannerLower.includes('infrastructure'))
+      return 'InfrastructureAnalyzer';
+
+    return scanner; // fallback to original value
+  }
+
+  /**
+   * Get color for scan type (for terminal display)
+   */
+  static getScanTypeColor(technology) {
+    const map = {
+      StaticAnalyzer: 'green',
+      DynamicAnalyzer: 'magenta',
+      ScaAnalyzer: 'cyan',
+      IASTAnalyzer: 'yellow',
+      InfrastructureAnalyzer: 'blue',
+    };
+    return map[technology] || 'white';
+  }
+
+  /**
    * Map severity to numeric value for sorting
    */
   static severityToValue(severity) {

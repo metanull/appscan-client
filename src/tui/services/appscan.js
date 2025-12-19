@@ -137,9 +137,21 @@ export class AppScanService {
     );
   }
 
-  async listIssues(scanId, filterOptions = null) {
+  /**
+   * List issues for a scope (Application or Scan)
+   * @param {string} scopeId - Scope ID (Application ID or Scan ID)
+   * @param {Object} filterOptions - Filter options
+   * @param {string} scope - Scope type: 'Application' or 'Scan' (default: 'Scan')
+   * @returns {Promise<Array>} Issues array
+   */
+  async listIssues(scopeId, filterOptions = null, scope = 'Scan') {
     await this.authenticate();
-    const response = await this.service.listIssues(scanId, filterOptions);
+    const response = await this.service.listIssues(
+      scopeId,
+      filterOptions,
+      null,
+      scope
+    );
     return response.Items || [];
   }
 

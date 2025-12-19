@@ -33,6 +33,7 @@ import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts.js';
 import logger from '../utils/logger.js';
 import { getPackageInfo } from '../../utils/package-info.js';
+import { Formatter } from '../../utils/formatter.js';
 import open from 'open';
 
 /**
@@ -44,6 +45,9 @@ const ContextPane = React.memo(
 
     // Filter shortcuts that have hint: true
     const hintShortcuts = shortcuts?.filter((s) => s.hint) || [];
+
+    // Check if viewing all issues (application mode)
+    const isViewingAll = scan?._isViewAll || scan?.Id === '__VIEW_ALL__';
 
     return (
       <Panel title="Context [c to toggle]" borderColor="blue" width={60}>
@@ -58,12 +62,20 @@ const ContextPane = React.memo(
             </Text>
           </Box>
         )}
-        {scan && (
+        {scan && !isViewingAll && (
           <Box flexDirection="column" marginTop={1}>
             <Text bold>Scan: </Text>
             <Text wrap="truncate">{scan.Name || 'Unknown'}</Text>
             <Text dimColor>ID: {scan.Id || 'N/A'}</Text>
             <Text dimColor>Type: {scan.Technology || 'N/A'}</Text>
+          </Box>
+        )}
+        {isViewingAll && (
+          <Box flexDirection="column" marginTop={1}>
+            <Text bold color="green">
+              Mode:{' '}
+            </Text>
+            <Text color="green">Viewing all issues across all scans</Text>
           </Box>
         )}
         {hintShortcuts.length > 0 && (
@@ -295,7 +307,15 @@ VulnListPanel.displayName = 'VulnListPanel';
  * Details Preview Panel
  */
 const DetailsPreviewPanel = React.memo(
-  ({ issue, articleContent, loading, comments, commentsLoading }) => {
+  ({
+    issue,
+    app,
+    scan: _scan,
+    articleContent,
+    loading,
+    comments,
+    commentsLoading,
+  }) => {
     if (!issue) {
       return (
         <Panel title="Details" borderColor="magenta" width={80}>
@@ -323,6 +343,35 @@ const DetailsPreviewPanel = React.memo(
           {issue.Location && (
             <Text wrap="truncate">
               <Text bold>Location:</Text> {issue.Location}
+            </Text>
+          )}
+          {app && (
+            <Text wrap="truncate">
+              <Text bold>Application Name:</Text> {app.Name || 'N/A'}
+            </Text>
+          )}
+          {issue.ApplicationId && (
+            <Text wrap="truncate">
+              <Text bold>Application ID:</Text> {issue.ApplicationId}
+            </Text>
+          )}
+          {issue.ScanName && (
+            <Text wrap="truncate">
+              <Text bold>Scan Name:</Text> {issue.ScanName}
+            </Text>
+          )}
+          {issue.Scanner && (
+            <Text wrap="truncate">
+              <Text bold>Type of Scan:</Text>{' '}
+              <Text
+                color={Formatter.getScanTypeColor(
+                  Formatter.scannerToTechnology(issue.Scanner)
+                )}
+              >
+                {Formatter.normalizeScanType(
+                  Formatter.scannerToTechnology(issue.Scanner)
+                )}
+              </Text>
             </Text>
           )}
           {issue.ExternalId && (
@@ -567,7 +616,24 @@ export const InkApp = ({ configPath }) => {
     (async () => {
       try {
         useStore.getState().setLoading(true);
-        const issueList = await appScanService.listIssues(selectedScan.Id);
+
+        // Check if this is the "View all vulnerabilities" option
+        const isViewAll =
+          selectedScan._isViewAll || selectedScan.Id === '__VIEW_ALL__';
+
+        let issueList;
+        if (isViewAll && selectedApp?.Id) {
+          // Load all issues for the application (across all scans)
+          issueList = await appScanService.listIssues(
+            selectedApp.Id,
+            null,
+            'Application'
+          );
+        } else {
+          // Load issues for the specific scan
+          issueList = await appScanService.listIssues(selectedScan.Id);
+        }
+
         if (cancelled) return;
         useStore.getState().setIssues(issueList || []);
         useStore.getState().setView('issue-list');
@@ -575,6 +641,12 @@ export const InkApp = ({ configPath }) => {
         useStore.getState().setLoading(false);
       } catch (err) {
         if (cancelled) return;
+        logger.error('Failed to load issues', err, {
+          scanId: selectedScan?.Id,
+          appId: selectedApp?.Id,
+          isViewAll:
+            selectedScan?._isViewAll || selectedScan?.Id === '__VIEW_ALL__',
+        });
         useStore.getState().setError(err.message || 'Failed to load issues');
         useStore.getState().setLoading(false);
       }
@@ -583,7 +655,7 @@ export const InkApp = ({ configPath }) => {
     return () => {
       cancelled = true;
     };
-  }, [selectedScan, appScanService]);
+  }, [selectedScan, selectedApp, appScanService]);
 
   // Filtered issues - build from individual filter state
   const filteredIssues = useMemo(() => {
@@ -646,6 +718,114 @@ export const InkApp = ({ configPath }) => {
       flushTimeout.current = null;
     }, 16);
   }, [filteredIssuesLength]); // Only depend on data, not setter
+
+  // Helper: Get filter options for a preset
+  const getFilterOptionsForPreset = useCallback((presetName) => {
+    const presetMap = {
+      active: { statusActive: true },
+      inactive: { statusInactive: true },
+      pending: { statusPending: true },
+      processed: { statusProcessed: true },
+      unassigned: { jiraUnassigned: true },
+      assigned: { jiraAssigned: true },
+      low: { severityLow: true },
+      medium: { severityMedium: true },
+      high: { severityHigh: true },
+    };
+    return presetMap[presetName] || null;
+  }, []);
+
+  // Helper: Apply filter preset and fetch filtered issues
+  const applyFilterPreset = useCallback(
+    async (presetName) => {
+      if (!selectedScan?.Id) return;
+
+      const store = useStore.getState();
+      store.applyFilterPreset(presetName);
+
+      try {
+        store.setLoading(true);
+
+        const isViewAll =
+          selectedScan._isViewAll || selectedScan.Id === '__VIEW_ALL__';
+        const filterOptions = getFilterOptionsForPreset(presetName);
+
+        let issueList;
+        if (isViewAll && selectedApp?.Id) {
+          issueList = await appScanService.listIssues(
+            selectedApp.Id,
+            filterOptions,
+            'Application'
+          );
+        } else {
+          issueList = await appScanService.listIssues(
+            selectedScan.Id,
+            filterOptions
+          );
+        }
+
+        store.setIssues(issueList || []);
+        store.setLoading(false);
+      } catch (err) {
+        logger.error(`Failed to apply ${presetName} filter`, err, {
+          scanId: selectedScan?.Id,
+          appId: selectedApp?.Id,
+          isViewAll:
+            selectedScan?._isViewAll || selectedScan?.Id === '__VIEW_ALL__',
+        });
+        store.setError(err.message);
+        store.setLoading(false);
+      }
+    },
+    [selectedScan, selectedApp, appScanService, getFilterOptionsForPreset]
+  );
+
+  // Helper: Reload issues with current filters
+  const reloadIssues = useCallback(async () => {
+    if (!selectedScan?.Id) return;
+
+    const store = useStore.getState();
+
+    try {
+      store.setLoading(true);
+
+      const isViewAll =
+        selectedScan._isViewAll || selectedScan.Id === '__VIEW_ALL__';
+
+      // Check if there's an active filter preset
+      const currentPreset = store.filterPreset;
+      const filterOptions = currentPreset
+        ? getFilterOptionsForPreset(currentPreset)
+        : null;
+
+      let issueList;
+      if (isViewAll && selectedApp?.Id) {
+        issueList = await appScanService.listIssues(
+          selectedApp.Id,
+          filterOptions,
+          'Application'
+        );
+      } else {
+        issueList = await appScanService.listIssues(
+          selectedScan.Id,
+          filterOptions
+        );
+      }
+
+      store.setIssues(issueList || []);
+      store.setLoading(false);
+    } catch (err) {
+      logger.error('Failed to reload issues', err, {
+        scanId: selectedScan?.Id,
+        appId: selectedApp?.Id,
+        isViewAll:
+          selectedScan?._isViewAll || selectedScan?.Id === '__VIEW_ALL__',
+        currentPreset: useStore.getState().filterPreset,
+      });
+      store.setError(err.message);
+      store.setLoading(false);
+    }
+  }, [selectedScan, selectedApp, appScanService, getFilterOptionsForPreset]);
 
   // Define keyboard shortcuts for issue-list view
   const issueListShortcuts = useMemo(
@@ -826,96 +1006,28 @@ export const InkApp = ({ configPath }) => {
       // Filter Presets - Status
       {
         key: '1',
-        action: async () => {
-          const store = useStore.getState();
-          store.applyFilterPreset('active');
-          if (selectedScan?.Id) {
-            try {
-              store.setLoading(true);
-              const issueList = await appScanService.listIssues(
-                selectedScan.Id,
-                { statusActive: true }
-              );
-              store.setIssues(issueList || []);
-              store.setLoading(false);
-            } catch (err) {
-              store.setError(err.message);
-              store.setLoading(false);
-            }
-          }
-        },
+        action: () => applyFilterPreset('active'),
         description: 'Active Status',
         condition: () => !!selectedScan,
         group: 'Filter Presets',
       },
       {
         key: 'alt+1',
-        action: async () => {
-          const store = useStore.getState();
-          store.applyFilterPreset('inactive');
-          if (selectedScan?.Id) {
-            try {
-              store.setLoading(true);
-              const issueList = await appScanService.listIssues(
-                selectedScan.Id,
-                { statusInactive: true }
-              );
-              store.setIssues(issueList || []);
-              store.setLoading(false);
-            } catch (err) {
-              store.setError(err.message);
-              store.setLoading(false);
-            }
-          }
-        },
+        action: () => applyFilterPreset('inactive'),
         description: 'Inactive Status',
         condition: () => !!selectedScan,
         group: 'Filter Presets',
       },
       {
         key: '2',
-        action: async () => {
-          const store = useStore.getState();
-          store.applyFilterPreset('pending');
-          if (selectedScan?.Id) {
-            try {
-              store.setLoading(true);
-              const issueList = await appScanService.listIssues(
-                selectedScan.Id,
-                { statusPending: true }
-              );
-              store.setIssues(issueList || []);
-              store.setLoading(false);
-            } catch (err) {
-              store.setError(err.message);
-              store.setLoading(false);
-            }
-          }
-        },
+        action: () => applyFilterPreset('pending'),
         description: 'Pending Status',
         condition: () => !!selectedScan,
         group: 'Filter Presets',
       },
       {
         key: 'alt+2',
-        action: async () => {
-          const store = useStore.getState();
-          store.applyFilterPreset('processed');
-          if (selectedScan?.Id) {
-            try {
-              store.setLoading(true);
-              const issueList = await appScanService.listIssues(
-                selectedScan.Id,
-                { statusProcessed: true }
-              );
-              store.setIssues(issueList || []);
-              store.setLoading(false);
-            } catch (err) {
-              store.setError(err.message);
-              store.setLoading(false);
-            }
-          }
-        },
+        action: () => applyFilterPreset('processed'),
         description: 'Processed Status',
         condition: () => !!selectedScan,
         group: 'Filter Presets',
@@ -923,48 +1035,14 @@ export const InkApp = ({ configPath }) => {
       // Filter Presets - Jira
       {
         key: '3',
-        action: async () => {
-          const store = useStore.getState();
-          store.applyFilterPreset('unassigned');
-          if (selectedScan?.Id) {
-            try {
-              store.setLoading(true);
-              const issueList = await appScanService.listIssues(
-                selectedScan.Id,
-                { jiraUnassigned: true }
-              );
-              store.setIssues(issueList || []);
-              store.setLoading(false);
-            } catch (err) {
-              store.setError(err.message);
-              store.setLoading(false);
-            }
-          }
-        },
+        action: () => applyFilterPreset('unassigned'),
         description: 'Jira Unassigned',
         condition: () => !!selectedScan,
         group: 'Filter Presets',
       },
       {
         key: 'alt+3',
-        action: async () => {
-          const store = useStore.getState();
-          store.applyFilterPreset('assigned');
-          if (selectedScan?.Id) {
-            try {
-              store.setLoading(true);
-              const issueList = await appScanService.listIssues(
-                selectedScan.Id,
-                { jiraAssigned: true }
-              );
-              store.setIssues(issueList || []);
-              store.setLoading(false);
-            } catch (err) {
-              store.setError(err.message);
-              store.setLoading(false);
-            }
-          }
-        },
+        action: () => applyFilterPreset('assigned'),
         description: 'Jira Assigned',
         condition: () => !!selectedScan,
         group: 'Filter Presets',
@@ -972,72 +1050,21 @@ export const InkApp = ({ configPath }) => {
       // Filter Presets - Severity
       {
         key: '4',
-        action: async () => {
-          const store = useStore.getState();
-          store.applyFilterPreset('low');
-          if (selectedScan?.Id) {
-            try {
-              store.setLoading(true);
-              const issueList = await appScanService.listIssues(
-                selectedScan.Id,
-                { severityLow: true }
-              );
-              store.setIssues(issueList || []);
-              store.setLoading(false);
-            } catch (err) {
-              store.setError(err.message);
-              store.setLoading(false);
-            }
-          }
-        },
+        action: () => applyFilterPreset('low'),
         description: 'Low Severity',
         condition: () => !!selectedScan,
         group: 'Filter Presets',
       },
       {
         key: '5',
-        action: async () => {
-          const store = useStore.getState();
-          store.applyFilterPreset('medium');
-          if (selectedScan?.Id) {
-            try {
-              store.setLoading(true);
-              const issueList = await appScanService.listIssues(
-                selectedScan.Id,
-                { severityMedium: true }
-              );
-              store.setIssues(issueList || []);
-              store.setLoading(false);
-            } catch (err) {
-              store.setError(err.message);
-              store.setLoading(false);
-            }
-          }
-        },
+        action: () => applyFilterPreset('medium'),
         description: 'Medium Severity',
         condition: () => !!selectedScan,
         group: 'Filter Presets',
       },
       {
         key: '6',
-        action: async () => {
-          const store = useStore.getState();
-          store.applyFilterPreset('high');
-          if (selectedScan?.Id) {
-            try {
-              store.setLoading(true);
-              const issueList = await appScanService.listIssues(
-                selectedScan.Id,
-                { severityHigh: true }
-              );
-              store.setIssues(issueList || []);
-              store.setLoading(false);
-            } catch (err) {
-              store.setError(err.message);
-              store.setLoading(false);
-            }
-          }
-        },
+        action: () => applyFilterPreset('high'),
         description: 'High Severity',
         condition: () => !!selectedScan,
         group: 'Filter Presets',
@@ -1052,12 +1079,29 @@ export const InkApp = ({ configPath }) => {
             // Reload all issues
             try {
               store.setLoading(true);
-              const issueList = await appScanService.listIssues(
-                selectedScan.Id
-              );
+
+              // Check if viewing all issues (application mode)
+              const isViewAll =
+                selectedScan._isViewAll || selectedScan.Id === '__VIEW_ALL__';
+
+              let issueList;
+              if (isViewAll && selectedApp?.Id) {
+                issueList = await appScanService.listIssues(
+                  selectedApp.Id,
+                  null,
+                  'Application'
+                );
+              } else {
+                issueList = await appScanService.listIssues(selectedScan.Id);
+              }
+
               store.setIssues(issueList || []);
               store.setLoading(false);
             } catch (err) {
+              logger.error('Failed to clear filters and reload', err, {
+                scanId: selectedScan?.Id,
+                appId: selectedApp?.Id,
+              });
               store.setError(err.message);
               store.setLoading(false);
             }
@@ -1095,22 +1139,7 @@ export const InkApp = ({ configPath }) => {
       },
       {
         key: 'r',
-        action: async () => {
-          // Reload current scan's issues
-          if (selectedScan && selectedScan.Id) {
-            try {
-              useStore.getState().setLoading(true);
-              const issueList = await appScanService.listIssues(
-                selectedScan.Id
-              );
-              useStore.getState().setIssues(issueList || []);
-              useStore.getState().setLoading(false);
-            } catch (err) {
-              useStore.getState().setError(err.message);
-              useStore.getState().setLoading(false);
-            }
-          }
-        },
+        action: reloadIssues,
         description: 'Reload',
         condition: () => !!selectedScan,
         group: 'General',
@@ -1176,6 +1205,8 @@ export const InkApp = ({ configPath }) => {
       appScanService,
       exit,
       flushCursorMove,
+      applyFilterPreset,
+      reloadIssues,
     ]
   );
 
@@ -1224,6 +1255,8 @@ export const InkApp = ({ configPath }) => {
         {/* Details Preview */}
         <DetailsPreviewPanel
           issue={currentIssue}
+          app={selectedApp}
+          scan={selectedScan}
           articleContent={articleContent}
           loading={articleLoading}
           comments={issueComments}
@@ -1372,11 +1405,40 @@ export const InkApp = ({ configPath }) => {
             }
 
             // Reload issues to reflect updated status and comment
-            const updatedIssues = await appScanService.listIssues(
-              selectedScan.Id
-            );
-            useStore.getState().setIssues(updatedIssues || []);
-            useStore.getState().clearSelection();
+            try {
+              // Check if viewing all issues (application mode)
+              const isViewAll =
+                selectedScan._isViewAll || selectedScan.Id === '__VIEW_ALL__';
+
+              let updatedIssues;
+              if (isViewAll && selectedApp?.Id) {
+                // Reload all issues for the application
+                updatedIssues = await appScanService.listIssues(
+                  selectedApp.Id,
+                  null,
+                  'Application'
+                );
+              } else {
+                // Reload issues for the specific scan
+                updatedIssues = await appScanService.listIssues(
+                  selectedScan.Id
+                );
+              }
+
+              useStore.getState().setIssues(updatedIssues || []);
+              useStore.getState().clearSelection();
+            } catch (err) {
+              logger.error('Failed to reload issues after update', err, {
+                scanId: selectedScan?.Id,
+                appId: selectedApp?.Id,
+                isViewAll:
+                  selectedScan?._isViewAll ||
+                  selectedScan?.Id === '__VIEW_ALL__',
+              });
+              throw new Error(
+                `Updates succeeded but failed to reload: ${err.message}`
+              );
+            }
           }}
           onClose={() => setActiveModal(null)}
         />
@@ -1417,11 +1479,37 @@ export const InkApp = ({ configPath }) => {
             });
 
             // Reload issues to reflect updated ExternalId
-            const updatedIssues = await appScanService.listIssues(
-              selectedScan.Id
-            );
-            useStore.getState().setIssues(updatedIssues || []);
-            useStore.getState().clearSelection();
+            try {
+              // Check if viewing all issues (application mode)
+              const isViewAll =
+                selectedScan._isViewAll || selectedScan.Id === '__VIEW_ALL__';
+
+              let updatedIssues;
+              if (isViewAll && selectedApp?.Id) {
+                // Reload all issues for the application
+                updatedIssues = await appScanService.listIssues(
+                  selectedApp.Id,
+                  null,
+                  'Application'
+                );
+              } else {
+                // Reload issues for the specific scan
+                updatedIssues = await appScanService.listIssues(
+                  selectedScan.Id
+                );
+              }
+
+              useStore.getState().setIssues(updatedIssues || []);
+              useStore.getState().clearSelection();
+            } catch (err) {
+              logger.error('Failed to reload issues after linking', err, {
+                scanId: selectedScan?.Id,
+                appId: selectedApp?.Id,
+              });
+              throw new Error(
+                `Link succeeded but failed to reload: ${err.message}`
+              );
+            }
           }}
           onClose={() => setActiveModal(null)}
         />
@@ -1445,11 +1533,37 @@ export const InkApp = ({ configPath }) => {
             });
 
             // Reload issues to reflect updated ExternalId
-            const updatedIssues = await appScanService.listIssues(
-              selectedScan.Id
-            );
-            useStore.getState().setIssues(updatedIssues || []);
-            useStore.getState().clearSelection();
+            try {
+              // Check if viewing all issues (application mode)
+              const isViewAll =
+                selectedScan._isViewAll || selectedScan.Id === '__VIEW_ALL__';
+
+              let updatedIssues;
+              if (isViewAll && selectedApp?.Id) {
+                // Reload all issues for the application
+                updatedIssues = await appScanService.listIssues(
+                  selectedApp.Id,
+                  null,
+                  'Application'
+                );
+              } else {
+                // Reload issues for the specific scan
+                updatedIssues = await appScanService.listIssues(
+                  selectedScan.Id
+                );
+              }
+
+              useStore.getState().setIssues(updatedIssues || []);
+              useStore.getState().clearSelection();
+            } catch (err) {
+              logger.error('Failed to reload issues after unlinking', err, {
+                scanId: selectedScan?.Id,
+                appId: selectedApp?.Id,
+              });
+              throw new Error(
+                `Unlink succeeded but failed to reload: ${err.message}`
+              );
+            }
           }}
           onClose={() => setActiveModal(null)}
         />
@@ -1457,6 +1571,7 @@ export const InkApp = ({ configPath }) => {
       {activeModal === 'details' && currentIssue && (
         <IssueDetailsModal
           issue={currentIssue}
+          app={selectedApp}
           articleContent={articleContent}
           appScanService={appScanService}
           config={appScanService.getConfig()}
