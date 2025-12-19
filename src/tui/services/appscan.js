@@ -137,9 +137,9 @@ export class AppScanService {
     );
   }
 
-  async listIssues(scanId) {
+  async listIssues(scanId, filterOptions = null) {
     await this.authenticate();
-    const response = await this.service.api.v4.Issues_Get('Scan', scanId, {});
+    const response = await this.service.listIssues(scanId, filterOptions);
     return response.Items || [];
   }
 

@@ -159,6 +159,7 @@ const VulnListPanel = React.memo(
     filterIssueType,
     filterJira,
     searchText,
+    filterPreset,
     onCursorChange: _onCursorChange,
     height,
   }) => {
@@ -178,6 +179,20 @@ const VulnListPanel = React.memo(
 
     // Build filter display text
     const activeFilters = [];
+    if (filterPreset) {
+      const presetLabels = {
+        active: 'Preset:Active',
+        inactive: 'Preset:Inactive',
+        pending: 'Preset:Pending',
+        processed: 'Preset:Processed',
+        low: 'Preset:Low Severity',
+        medium: 'Preset:Medium Severity',
+        high: 'Preset:High Severity',
+        assigned: 'Preset:Jira Assigned',
+        unassigned: 'Preset:Jira Unassigned',
+      };
+      activeFilters.push(presetLabels[filterPreset] || `Preset:${filterPreset}`);
+    }
     if (filterStatus) activeFilters.push(`Status:${filterStatus}`);
     if (filterSeverity) activeFilters.push(`Severity:${filterSeverity}`);
     if (filterIssueType) activeFilters.push(`Type:${filterIssueType}`);
@@ -429,6 +444,7 @@ export const InkApp = ({ configPath }) => {
   const filterIssueType = useStore((state) => state.filterIssueType);
   const filterJira = useStore((state) => state.filterJira);
   const searchText = useStore((state) => state.searchText);
+  const filterPreset = useStore((state) => state.filterPreset);
   const sortBy = useStore((state) => state.sortBy);
   const selectedIssueIds = useStore((state) => state.selectedIssueIds);
 
@@ -793,19 +809,221 @@ export const InkApp = ({ configPath }) => {
         description: 'Search',
         group: 'Filtering',
       },
+      // Filter Presets - Status
+      {
+        key: '1',
+        action: async () => {
+          const store = useStore.getState();
+          store.applyFilterPreset('active');
+          if (selectedScan?.Id) {
+            try {
+              store.setLoading(true);
+              const issueList = await appScanService.listIssues(selectedScan.Id, { statusActive: true });
+              store.setIssues(issueList || []);
+              store.setLoading(false);
+            } catch (err) {
+              store.setError(err.message);
+              store.setLoading(false);
+            }
+          }
+        },
+        description: 'Active Status',
+        condition: () => !!selectedScan,
+        group: 'Filter Presets',
+      },
+      {
+        key: 'alt+1',
+        action: async () => {
+          const store = useStore.getState();
+          store.applyFilterPreset('inactive');
+          if (selectedScan?.Id) {
+            try {
+              store.setLoading(true);
+              const issueList = await appScanService.listIssues(selectedScan.Id, { statusInactive: true });
+              store.setIssues(issueList || []);
+              store.setLoading(false);
+            } catch (err) {
+              store.setError(err.message);
+              store.setLoading(false);
+            }
+          }
+        },
+        description: 'Inactive Status',
+        condition: () => !!selectedScan,
+        group: 'Filter Presets',
+      },
+      {
+        key: '2',
+        action: async () => {
+          const store = useStore.getState();
+          store.applyFilterPreset('pending');
+          if (selectedScan?.Id) {
+            try {
+              store.setLoading(true);
+              const issueList = await appScanService.listIssues(selectedScan.Id, { statusPending: true });
+              store.setIssues(issueList || []);
+              store.setLoading(false);
+            } catch (err) {
+              store.setError(err.message);
+              store.setLoading(false);
+            }
+          }
+        },
+        description: 'Pending Status',
+        condition: () => !!selectedScan,
+        group: 'Filter Presets',
+      },
+      {
+        key: 'alt+2',
+        action: async () => {
+          const store = useStore.getState();
+          store.applyFilterPreset('processed');
+          if (selectedScan?.Id) {
+            try {
+              store.setLoading(true);
+              const issueList = await appScanService.listIssues(selectedScan.Id, { statusProcessed: true });
+              store.setIssues(issueList || []);
+              store.setLoading(false);
+            } catch (err) {
+              store.setError(err.message);
+              store.setLoading(false);
+            }
+          }
+        },
+        description: 'Processed Status',
+        condition: () => !!selectedScan,
+        group: 'Filter Presets',
+      },
+      // Filter Presets - Jira
+      {
+        key: '3',
+        action: async () => {
+          const store = useStore.getState();
+          store.applyFilterPreset('unassigned');
+          if (selectedScan?.Id) {
+            try {
+              store.setLoading(true);
+              const issueList = await appScanService.listIssues(selectedScan.Id, { jiraUnassigned: true });
+              store.setIssues(issueList || []);
+              store.setLoading(false);
+            } catch (err) {
+              store.setError(err.message);
+              store.setLoading(false);
+            }
+          }
+        },
+        description: 'Jira Unassigned',
+        condition: () => !!selectedScan,
+        group: 'Filter Presets',
+      },
+      {
+        key: 'alt+3',
+        action: async () => {
+          const store = useStore.getState();
+          store.applyFilterPreset('assigned');
+          if (selectedScan?.Id) {
+            try {
+              store.setLoading(true);
+              const issueList = await appScanService.listIssues(selectedScan.Id, { jiraAssigned: true });
+              store.setIssues(issueList || []);
+              store.setLoading(false);
+            } catch (err) {
+              store.setError(err.message);
+              store.setLoading(false);
+            }
+          }
+        },
+        description: 'Jira Assigned',
+        condition: () => !!selectedScan,
+        group: 'Filter Presets',
+      },
+      // Filter Presets - Severity
+      {
+        key: '4',
+        action: async () => {
+          const store = useStore.getState();
+          store.applyFilterPreset('low');
+          if (selectedScan?.Id) {
+            try {
+              store.setLoading(true);
+              const issueList = await appScanService.listIssues(selectedScan.Id, { severityLow: true });
+              store.setIssues(issueList || []);
+              store.setLoading(false);
+            } catch (err) {
+              store.setError(err.message);
+              store.setLoading(false);
+            }
+          }
+        },
+        description: 'Low Severity',
+        condition: () => !!selectedScan,
+        group: 'Filter Presets',
+      },
+      {
+        key: '5',
+        action: async () => {
+          const store = useStore.getState();
+          store.applyFilterPreset('medium');
+          if (selectedScan?.Id) {
+            try {
+              store.setLoading(true);
+              const issueList = await appScanService.listIssues(selectedScan.Id, { severityMedium: true });
+              store.setIssues(issueList || []);
+              store.setLoading(false);
+            } catch (err) {
+              store.setError(err.message);
+              store.setLoading(false);
+            }
+          }
+        },
+        description: 'Medium Severity',
+        condition: () => !!selectedScan,
+        group: 'Filter Presets',
+      },
+      {
+        key: '6',
+        action: async () => {
+          const store = useStore.getState();
+          store.applyFilterPreset('high');
+          if (selectedScan?.Id) {
+            try {
+              store.setLoading(true);
+              const issueList = await appScanService.listIssues(selectedScan.Id, { severityHigh: true });
+              store.setIssues(issueList || []);
+              store.setLoading(false);
+            } catch (err) {
+              store.setError(err.message);
+              store.setLoading(false);
+            }
+          }
+        },
+        description: 'High Severity',
+        condition: () => !!selectedScan,
+        group: 'Filter Presets',
+      },
       {
         key: 'alt+f',
-        action: () => {
+        action: async () => {
           const store = useStore.getState();
-          const hasFilters = store.hasActiveFilters();
-          if (hasFilters) {
+          const hasFilters = store.hasActiveFilters() || store.filterPreset;
+          if (hasFilters && selectedScan?.Id) {
             store.clearFilters();
+            // Reload all issues
+            try {
+              store.setLoading(true);
+              const issueList = await appScanService.listIssues(selectedScan.Id);
+              store.setIssues(issueList || []);
+              store.setLoading(false);
+            } catch (err) {
+              store.setError(err.message);
+              store.setLoading(false);
+            }
           }
         },
         description: 'Clear Filters',
         condition: () => {
           const store = useStore.getState();
-          return store.hasActiveFilters();
+          return store.hasActiveFilters() || store.filterPreset;
         },
         group: 'Filtering',
       },
@@ -956,6 +1174,7 @@ export const InkApp = ({ configPath }) => {
           filterIssueType={filterIssueType}
           filterJira={filterJira}
           searchText={searchText}
+          filterPreset={filterPreset}
           height={contentHeight}
         />
 
