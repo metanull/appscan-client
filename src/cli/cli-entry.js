@@ -6,6 +6,7 @@ import { listApplications } from './commands/list-applications.js';
 import { listScans } from './commands/list-scans.js';
 import { listScanExecutions } from './commands/list-scan-executions.js';
 import { listIssues } from './commands/list-issues.js';
+import { listIssuesByApp } from './commands/list-issues-by-app.js';
 import { getIssueDetails } from './commands/get-issue-details.js';
 import { authBearer } from './commands/auth-bearer.js';
 import { generateReport } from './commands/generate-report.js';
@@ -172,6 +173,38 @@ Examples:
     'Force columns: sast, dast, sca, all (overrides auto-detection)'
   )
   .action(listIssues);
+
+program
+  .command('list-issues-by-app')
+  .alias('app-issues')
+  .description('List all issues for an application (across all scans)')
+  .argument('<appId>', 'Application ID')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .option(
+    '-g, --grouped',
+    'Sort issues by application, scan, issue type, and severity before printing'
+  )
+  .option('--active', 'Filter active issues (Open, Reopened, InProgress)')
+  .option('--inactive', 'Filter inactive issues (Noise, Passed, Fixed)')
+  .option('--pending', 'Filter pending issues (Open, Reopened)')
+  .option('--processed', 'Filter processed issues (InProgress, Fixed, Passed)')
+  .option('--low', 'Filter low severity issues (Low, Informational)')
+  .option('--medium', 'Filter medium severity issues')
+  .option('--high', 'Filter high severity issues (High, Critical)')
+  .option('--assigned', 'Filter issues with Jira link')
+  .option('--unassigned', 'Filter issues without Jira link')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan list-issues-by-app <appId>
+  $ appscan app-issues <appId> --json
+  $ appscan app-issues <appId> --grouped
+  $ appscan app-issues <appId> --active --high
+  $ appscan app-issues <appId> --pending --unassigned`
+  )
+  .action(listIssuesByApp);
 
 program
   .command('auth')

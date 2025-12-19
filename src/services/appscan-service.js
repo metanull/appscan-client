@@ -158,8 +158,8 @@ export class AppScanService {
   }
 
   /**
-   * List issues for a scan with optional filters
-   * @param {string} scanId - Scan ID
+   * List issues for a scope (Application, Scan, or ScanExecution) with optional filters
+   * @param {string} scopeId - Scope ID (Application ID, Scan ID, or ScanExecution ID)
    * @param {Object} filterOptions - Filter options
    * @param {boolean} filterOptions.statusActive - Active issues (Open, Reopened, InProgress)
    * @param {boolean} filterOptions.statusInactive - Inactive issues (Noise, Closed, Passed, Fixed)
@@ -173,9 +173,15 @@ export class AppScanService {
    * @param {Array<string>} filterOptions.statusFilter - Custom status filter array
    * @param {Array<string>} filterOptions.severityFilter - Custom severity filter array
    * @param {string} excludeStatus - Deprecated: Use filterOptions.statusFilter instead
+   * @param {string} scope - Scope type: 'Application', 'Scan', or 'ScanExecution' (default: 'Scan')
    * @returns {Promise<Object>} Issues response
    */
-  async listIssues(scanId, filterOptions = null, excludeStatus = null) {
+  async listIssues(
+    scopeId,
+    filterOptions = null,
+    excludeStatus = null,
+    scope = 'Scan'
+  ) {
     await this.ensureAuthenticated();
 
     // Handle backward compatibility: if filterOptions is a string, it's the old excludeStatus param
@@ -200,8 +206,8 @@ export class AppScanService {
       }
 
       const response = await this.api.v4.Issues_Get(
-        'Scan',
-        scanId,
+        scope,
+        scopeId,
         queryParams
       );
 
