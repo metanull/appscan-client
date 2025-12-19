@@ -12,21 +12,70 @@ export async function listIssues(scanId, options) {
     console.error(chalk.blue('Authenticating...'));
     await service.authenticate();
 
-    // Handle exclude-status option
-    const excludeStatus =
-      options.excludeStatus !== undefined ? options.excludeStatus : 'Noise';
+    // Build filter options object
+    const filterOptions = {};
+    let hasFilters = false;
 
-    if (excludeStatus) {
-      console.error(
-        chalk.blue(
-          `Fetching issues for scan ${scanId} (excluding status: ${excludeStatus})...`
-        )
-      );
-    } else {
-      console.error(chalk.blue(`Fetching issues for scan ${scanId}...`));
+    // Status filters (mutually exclusive)
+    if (options.active) {
+      filterOptions.statusActive = true;
+      hasFilters = true;
+    } else if (options.inactive) {
+      filterOptions.statusInactive = true;
+      hasFilters = true;
+    } else if (options.pending) {
+      filterOptions.statusPending = true;
+      hasFilters = true;
+    } else if (options.processed) {
+      filterOptions.statusProcessed = true;
+      hasFilters = true;
     }
 
-    const response = await service.listIssues(scanId, excludeStatus);
+    // Severity filters (mutually exclusive)
+    if (options.low) {
+      filterOptions.severityLow = true;
+      hasFilters = true;
+    } else if (options.medium) {
+      filterOptions.severityMedium = true;
+      hasFilters = true;
+    } else if (options.high) {
+      filterOptions.severityHigh = true;
+      hasFilters = true;
+    }
+
+    // Jira filters (mutually exclusive)
+    if (options.assigned) {
+      filterOptions.jiraAssigned = true;
+      hasFilters = true;
+    } else if (options.unassigned) {
+      filterOptions.jiraUnassigned = true;
+      hasFilters = true;
+    }
+
+    // Determine which approach to use
+    let response;
+    if (hasFilters) {
+      // Use new OData filter approach
+      console.error(
+        chalk.blue(`Fetching issues for scan ${scanId} with filters...`)
+      );
+      response = await service.listIssues(scanId, filterOptions);
+    } else {
+      // Use legacy exclude-status approach
+      const excludeStatus =
+        options.excludeStatus !== undefined ? options.excludeStatus : 'Noise';
+      if (excludeStatus) {
+        console.error(
+          chalk.blue(
+            `Fetching issues for scan ${scanId} (excluding status: ${excludeStatus})...`
+          )
+        );
+      } else {
+        console.error(chalk.blue(`Fetching issues for scan ${scanId}...`));
+      }
+      response = await service.listIssues(scanId, null, excludeStatus);
+    }
+
     const issues = response.Items || [];
     const groupedMode = options.grouped ?? false;
 

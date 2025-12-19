@@ -1,6 +1,78 @@
 import { Api, HttpClient } from '../generated/Api.js';
 import { Config } from '../utils/config.js';
 
+// Predefined filter combinations
+const FILTER_PRESETS = {
+  status: {
+    active: ['Open', 'Reopened', 'InProgress'],
+    inactive: ['Noise', 'Passed', 'Fixed'],
+    pending: ['Open', 'Reopened'],
+    processed: ['InProgress', 'Fixed', 'Passed'],
+  },
+  severity: {
+    low: ['Low', 'Informational'],
+    medium: ['Medium'],
+    high: ['High', 'Critical'],
+  },
+};
+
+/**
+ * Build OData filter string for multiple values with OR logic
+ * @param {string} field - Field name
+ * @param {Array<string>} values - Array of values
+ * @returns {string} OData filter string
+ */
+function buildOrFilter(field, values) {
+  if (!values || values.length === 0) return '';
+  if (values.length === 1) return `${field} eq '${values[0]}'`;
+  return `(${values.map((v) => `${field} eq '${v}'`).join(' or ')})`;
+}
+
+/**
+ * Build OData filter string from filter options
+ * @param {Object} options - Filter options
+ * @returns {string} OData $filter query string
+ */
+function buildODataFilter(options) {
+  const filters = [];
+
+  // Status filters (mutually exclusive)
+  if (options.statusActive) {
+    filters.push(buildOrFilter('Status', FILTER_PRESETS.status.active));
+  } else if (options.statusInactive) {
+    filters.push(buildOrFilter('Status', FILTER_PRESETS.status.inactive));
+  } else if (options.statusPending) {
+    filters.push(buildOrFilter('Status', FILTER_PRESETS.status.pending));
+  } else if (options.statusProcessed) {
+    filters.push(buildOrFilter('Status', FILTER_PRESETS.status.processed));
+  } else if (options.statusFilter) {
+    // Custom status filter
+    filters.push(buildOrFilter('Status', options.statusFilter));
+  }
+
+  // Severity filters (mutually exclusive)
+  if (options.severityLow) {
+    filters.push(buildOrFilter('Severity', FILTER_PRESETS.severity.low));
+  } else if (options.severityMedium) {
+    filters.push(buildOrFilter('Severity', FILTER_PRESETS.severity.medium));
+  } else if (options.severityHigh) {
+    filters.push(buildOrFilter('Severity', FILTER_PRESETS.severity.high));
+  } else if (options.severityFilter) {
+    // Custom severity filter
+    filters.push(buildOrFilter('Severity', options.severityFilter));
+  }
+
+  // Jira link filters (mutually exclusive)
+  if (options.jiraAssigned) {
+    filters.push('ExternalId ne null');
+  } else if (options.jiraUnassigned) {
+    filters.push('ExternalId eq null');
+  }
+
+  // Combine all filters with AND
+  return filters.length > 0 ? filters.join(' and ') : '';
+}
+
 export class AppScanService {
   constructor(config) {
     this.config = config || new Config();
@@ -85,13 +157,60 @@ export class AppScanService {
     }
   }
 
-  async listIssues(scanId, excludeStatus = 'Noise') {
+  /**
+   * List issues for a scan with optional filters
+   * @param {string} scanId - Scan ID
+   * @param {Object} filterOptions - Filter options
+   * @param {boolean} filterOptions.statusActive - Active issues (Open, Reopened, InProgress)
+   * @param {boolean} filterOptions.statusInactive - Inactive issues (Noise, Closed, Passed, Fixed)
+   * @param {boolean} filterOptions.statusPending - Pending issues (Open, Reopened)
+   * @param {boolean} filterOptions.statusProcessed - Processed issues (InProgress, Fixed, Passed)
+   * @param {boolean} filterOptions.severityLow - Low severity (Low, Informational)
+   * @param {boolean} filterOptions.severityMedium - Medium severity
+   * @param {boolean} filterOptions.severityHigh - High severity (High, Critical)
+   * @param {boolean} filterOptions.jiraAssigned - Issues with Jira link
+   * @param {boolean} filterOptions.jiraUnassigned - Issues without Jira link
+   * @param {Array<string>} filterOptions.statusFilter - Custom status filter array
+   * @param {Array<string>} filterOptions.severityFilter - Custom severity filter array
+   * @param {string} excludeStatus - Deprecated: Use filterOptions.statusFilter instead
+   * @returns {Promise<Object>} Issues response
+   */
+  async listIssues(scanId, filterOptions = null, excludeStatus = null) {
     await this.ensureAuthenticated();
-    try {
-      const response = await this.api.v4.Issues_Get('Scan', scanId, {});
 
-      // Filter issues by status if excludeStatus is provided
-      if (excludeStatus && response.Items) {
+    // Handle backward compatibility: if filterOptions is a string, it's the old excludeStatus param
+    if (typeof filterOptions === 'string') {
+      excludeStatus = filterOptions;
+      filterOptions = null;
+    }
+
+    try {
+      const queryParams = {};
+
+      // Build OData filter if options provided
+      if (filterOptions && typeof filterOptions === 'object') {
+        const odataFilter = buildODataFilter(filterOptions);
+        if (odataFilter) {
+          queryParams.$filter = odataFilter;
+        }
+      }
+      // Legacy: client-side filtering by excludeStatus
+      else if (excludeStatus) {
+        // Don't use $filter, fetch all and filter client-side for backward compatibility
+      }
+
+      const response = await this.api.v4.Issues_Get(
+        'Scan',
+        scanId,
+        queryParams
+      );
+
+      // Legacy client-side filtering if excludeStatus is provided and no filter options
+      if (
+        excludeStatus &&
+        (!filterOptions || typeof filterOptions !== 'object') &&
+        response.Items
+      ) {
         const statusesToExclude = excludeStatus
           .split(',')
           .map((s) => s.trim())

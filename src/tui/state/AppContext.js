@@ -36,6 +36,9 @@ export const useStore = create((set, get) => ({
   scanFilterType: null, // 'SAST' | 'DAST' | etc.
   hideEmptyScans: true,
 
+  // Filter preset (for server-side filtering)
+  filterPreset: null, // 'active' | 'inactive' | 'pending' | 'processed' | 'low' | 'medium' | 'high' | 'assigned' | 'unassigned' | null
+
   // UI state
   loading: false,
   error: null,
@@ -186,8 +189,20 @@ export const useStore = create((set, get) => ({
       filterIssueType: null,
       filterJira: null,
       searchText: null,
+      filterPreset: null,
       selectedIssueIds: [],
     }),
+
+  // Apply filter presets
+  applyFilterPreset: (preset) => {
+    set({
+      filterPreset: preset,
+      filterStatus: null,
+      filterSeverity: null,
+      filterJira: null,
+      selectedIssueIds: [],
+    });
+  },
 
   // Actions - UI
   setLoading: (loading) => set({ loading }),
