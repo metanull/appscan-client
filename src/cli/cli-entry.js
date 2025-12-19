@@ -147,6 +147,15 @@ program
     '-g, --grouped',
     'Sort issues by application, issue type, and severity before printing'
   )
+  .option('--active', 'Filter active issues (Open, Reopened, InProgress)')
+  .option('--inactive', 'Filter inactive issues (Noise, Passed, Fixed)')
+  .option('--pending', 'Filter pending issues (Open, Reopened)')
+  .option('--processed', 'Filter processed issues (InProgress, Fixed, Passed)')
+  .option('--low', 'Filter low severity issues (Low, Informational)')
+  .option('--medium', 'Filter medium severity issues')
+  .option('--high', 'Filter high severity issues (High, Critical)')
+  .option('--assigned', 'Filter issues with Jira link')
+  .option('--unassigned', 'Filter issues without Jira link')
   .addHelpText(
     'after',
     `
@@ -154,7 +163,9 @@ Examples:
   $ appscan list-issues <scanId>
   $ appscan issues <scanId> --json
   $ appscan issues <scanId> --exclude-status "Noise,Ignore"
-  $ appscan issues <scanId> --grouped`
+  $ appscan issues <scanId> --grouped
+  $ appscan issues <scanId> --active --high
+  $ appscan issues <scanId> --pending --unassigned`
   )
   .option(
     '--columns <type>',
