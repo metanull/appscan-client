@@ -49,8 +49,10 @@ const ContextPane = React.memo(
       <Panel title="Context [c to toggle]" borderColor="blue" width={60}>
         {app && (
           <Box flexDirection="column">
+            <Text> </Text>
             <Text bold>App: </Text>
             <Text wrap="truncate">{app.Name || 'Unknown'}</Text>
+            <Text dimColor>ID: {app.Id || 'N/A'}</Text>
             <Text dimColor>
               Issues: {issuesCount ?? app.IssueCountTotal ?? 0}
             </Text>
@@ -60,6 +62,7 @@ const ContextPane = React.memo(
           <Box flexDirection="column" marginTop={1}>
             <Text bold>Scan: </Text>
             <Text wrap="truncate">{scan.Name || 'Unknown'}</Text>
+            <Text dimColor>ID: {scan.Id || 'N/A'}</Text>
             <Text dimColor>Type: {scan.Technology || 'N/A'}</Text>
           </Box>
         )}
@@ -304,6 +307,10 @@ const DetailsPreviewPanel = React.memo(
     return (
       <Panel title="Details" borderColor="magenta" width={80}>
         <Box flexDirection="column">
+          <Text> </Text>
+          <Text>
+            <Text bold>Vulnerability ID:</Text> {issue.Id || 'N/A'}
+          </Text>
           <Text>
             <Text bold>Type:</Text> {issue.IssueType || 'N/A'}
           </Text>
@@ -316,6 +323,11 @@ const DetailsPreviewPanel = React.memo(
           {issue.Location && (
             <Text wrap="truncate">
               <Text bold>Location:</Text> {issue.Location}
+            </Text>
+          )}
+          {issue.ExternalId && (
+            <Text wrap="truncate">
+              <Text bold>Jira ID:</Text> {issue.ExternalId}
             </Text>
           )}
           {issue.Context && (
