@@ -1,7 +1,7 @@
 # Comment Templates for AppScan Triage
 # Format: [IssueType]|Comment text
 
-Authentication.Credentials.Unprotected|**Confirmed** Such information shall read from configuration/environment and not stored in the Source Control.
+Authentication.Credentials.Unprotected|**Confirmed** Such information shall read from configuration/environment and not stored in the Source Control or build artefact.
 SQL Injection|**Confirmed** [ASVS 1.2.4] Concatenating untrusted input into SQL or NoSQL queries allows injection attacks
 PathTraversal|**Confirmed** [ASVS 5.3.2] Using user-supplied filenames or paths directly when creating or accessing files can enable path traversal attacks
 Cleartext Transmission of Sensitive Information|**Confirmed** [ASVS 5.3.2] Requests and sensitive data (credentials, tokens, session cookies) can be intercepted, modified, or replayed if TLS is not enforced for external-facing services
@@ -16,9 +16,9 @@ SessionManagement.Timeout.Absolute|In compliance with CyberSecurity Policy, only
 Vulnerable Component|Report is outdated, a new scan is required to validate latest release of the software.
 Missing Secure Attribute in Encrypted Session (SSL) Cookie|In agreement with the vulnerabilities strategy - Focus on Critical and High Risk Vulnerabilities. Medium and Low risk vulnerabilities will be remediated later.
 API Security: Broken Object Level Authorization|**Suspected** [ASVS 8.2.2] Applications often expose object identifiers without enforcing that the requesting consumer is authorized to access that specific object
-Authentication.Credentials.Unprotected|False Positv
+Authentication.Credentials.Unprotected|False Positive
 Open Redirect|In agreement with the vulnerabilities strategy - Focus on Critical and High Risk Vulnerabilities. Medium and Low risk vulnerabilities will be remediated later.
-Authentication.Credentials.Unprotected|False Positive - Variable name; not a secret valu
+Authentication.Credentials.Unprotected|False Positive - Variable name; not a secret value
 Authentication.Credentials.Unprotected|False Positive - Badly interpreted javascript built assets
 Cross-Site Scripting|False Positive - Badly interpreted javascript built assets
 Reflected Cross Site Scripting|False Positive - Code originating from third party dependency. Mitigated by keeping library up to date.
@@ -32,4 +32,3 @@ Inappropriate Encoding for Output Context|False Positive
 Validation Required|False Positive - Data is validated externally or originates from developer controlled templates
 LDAP Injection|Data is validated externally or originates from developer controlled templates
 LDAP Injection|**Likely** [ASVS 1.2.1] When untrusted data is inserted into a context without correct context-specific encoding, an attacker can inject content that changes the document structure or executes code
-Authentication.Credentials.Unprotected|False Positive - Variable name; not a secret value
