@@ -128,7 +128,9 @@ function renderSeverityGroupedIssues(issues) {
     const severityIssues = grouped[severity] || [];
     if (severityIssues.length > 0) {
       const color = severityColors[severity] || 'white';
-      console.log(chalk[color].bold(`\n${severity} (${severityIssues.length}):`));
+      console.log(
+        chalk[color].bold(`\n${severity} (${severityIssues.length}):`)
+      );
       console.log(header);
       severityIssues.forEach((issue) => {
         console.log(formatListIssueRow(issue, color));

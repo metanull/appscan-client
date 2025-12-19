@@ -20,7 +20,7 @@ export const ScanSelectionModal = React.memo(
     const [filterType, setFilterType] = useState(null); // null | 'SAST' | 'DAST' | etc.
     const { height } = useTerminalSize();
 
-    // Filter and sort scans
+    // Filter and sort scans, with special "View All" option
     const filteredScans = useMemo(() => {
       let filtered = [...scans];
 
@@ -53,7 +53,16 @@ export const ScanSelectionModal = React.memo(
       // Sort by name
       filtered.sort((a, b) => (a.Name || '').localeCompare(b.Name || ''));
 
-      return filtered;
+      // Add "View all vulnerabilities" as the first option
+      // Use a special marker object to identify it
+      const viewAllOption = {
+        Id: '__VIEW_ALL__',
+        Name: '🔍 View all vulnerabilities (across all scans)',
+        Technology: 'All',
+        _isViewAll: true,
+      };
+
+      return [viewAllOption, ...filtered];
     }, [scans, searchText, filterType, hideEmpty, appScanService]);
 
     // Handle keyboard input
@@ -99,6 +108,18 @@ export const ScanSelectionModal = React.memo(
 
     const renderItem = useCallback(
       (scan, isSelected) => {
+        // Special rendering for "View all vulnerabilities" option
+        if (scan._isViewAll) {
+          return (
+            <Box>
+              <Text color={isSelected ? 'cyan' : 'green'} bold>
+                {isSelected ? '▶ ' : '  '}
+                {scan.Name}
+              </Text>
+            </Box>
+          );
+        }
+
         const { critical, high, medium, low, info, total } =
           appScanService?.getScanIssueCounts(scan) || {
             critical: 0,

@@ -9,9 +9,10 @@ import Link from 'ink-link';
 import { Modal } from './Modal.js';
 import { Panel } from './Panel.js';
 import { MarkdownBox } from './MarkdownBox.js';
+import { Formatter } from '../../../utils/formatter.js';
 
 export const IssueDetailsModal = React.memo(
-  ({ issue, articleContent, appScanService, _config, onClose }) => {
+  ({ issue, app, articleContent, appScanService, _config, onClose }) => {
     const [focusedArticleUrl, setFocusedArticleUrl] = useState(null);
     const [comments, setComments] = useState([]);
     const [loadingComments, setLoadingComments] = useState(false);
@@ -121,6 +122,57 @@ export const IssueDetailsModal = React.memo(
                   </Text>
                 </Box>
                 <Text wrap="wrap">{issue.Location || 'N/A'}</Text>
+              </Box>
+              <Box>
+                <Box width={15}>
+                  <Text bold color="cyan">
+                    App Name:
+                  </Text>
+                </Box>
+                <Text wrap="wrap">{app?.Name || 'N/A'}</Text>
+              </Box>
+              <Box>
+                <Box width={15}>
+                  <Text bold color="cyan">
+                    App ID:
+                  </Text>
+                </Box>
+                <Text wrap="wrap">{issue.ApplicationId || 'N/A'}</Text>
+              </Box>
+              <Box>
+                <Box width={15}>
+                  <Text bold color="cyan">
+                    Scan Name:
+                  </Text>
+                </Box>
+                <Text wrap="wrap">{issue.ScanName || 'N/A'}</Text>
+              </Box>
+              {issue.Scanner && (
+                <Box>
+                  <Box width={15}>
+                    <Text bold color="cyan">
+                      Type of Scan:
+                    </Text>
+                  </Box>
+                  <Text
+                    wrap="wrap"
+                    color={Formatter.getScanTypeColor(
+                      Formatter.scannerToTechnology(issue.Scanner)
+                    )}
+                  >
+                    {Formatter.normalizeScanType(
+                      Formatter.scannerToTechnology(issue.Scanner)
+                    )}
+                  </Text>
+                </Box>
+              )}
+              <Box>
+                <Box width={15}>
+                  <Text bold color="cyan">
+                    Vuln ID:
+                  </Text>
+                </Box>
+                <Text wrap="wrap">{issue.Id || 'N/A'}</Text>
               </Box>
 
               {issue.Context && (
