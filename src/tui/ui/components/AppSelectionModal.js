@@ -12,7 +12,14 @@ import { ScrollableList } from './ScrollableList.js';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 
 export const AppSelectionModal = React.memo(
-  ({ applications, onSelect, onCancel, hideEmpty = false, appScanService, selectedApp }) => {
+  ({
+    applications,
+    onSelect,
+    onCancel,
+    hideEmpty = false,
+    appScanService,
+    selectedApp,
+  }) => {
     const [searchText, setSearchText] = useState('');
     const [cursor, setCursor] = useState(0);
     const [sortBy, setSortBy] = useState('name'); // 'name' | 'issues'
@@ -66,7 +73,9 @@ export const AppSelectionModal = React.memo(
     // Auto-select the currently selected app when modal opens
     useEffect(() => {
       if (selectedApp) {
-        const index = filteredApps.findIndex((app) => app.Id === selectedApp.Id);
+        const index = filteredApps.findIndex(
+          (app) => app.Id === selectedApp.Id
+        );
         if (index !== -1) {
           setCursor(index);
         }

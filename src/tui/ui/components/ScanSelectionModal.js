@@ -14,7 +14,14 @@ import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 const SCAN_TYPES = ['SAST', 'DAST', 'SCA', 'IAST', 'IAC'];
 
 export const ScanSelectionModal = React.memo(
-  ({ scans, onSelect, onCancel, hideEmpty = false, appScanService, selectedScan }) => {
+  ({
+    scans,
+    onSelect,
+    onCancel,
+    hideEmpty = false,
+    appScanService,
+    selectedScan,
+  }) => {
     const [searchText, setSearchText] = useState('');
     const [cursor, setCursor] = useState(0);
     const [filterType, setFilterType] = useState(null); // null | 'SAST' | 'DAST' | etc.
@@ -68,7 +75,9 @@ export const ScanSelectionModal = React.memo(
     // Auto-select the currently selected scan when modal opens
     useEffect(() => {
       if (selectedScan) {
-        const index = filteredScans.findIndex((scan) => scan.Id === selectedScan.Id);
+        const index = filteredScans.findIndex(
+          (scan) => scan.Id === selectedScan.Id
+        );
         if (index !== -1) {
           setCursor(index);
         }
