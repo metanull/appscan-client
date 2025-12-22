@@ -379,7 +379,7 @@ const DetailsPreviewPanel = React.memo(
               <Text bold>Jira ID:</Text> {issue.ExternalId}
             </Text>
           )}
-          {issue.Context && (
+          {Formatter.getIssueContext(issue) && (
             <Box flexDirection="column" marginTop={1}>
               <Text bold>Context:</Text>
               <Box
@@ -389,8 +389,8 @@ const DetailsPreviewPanel = React.memo(
                 marginTop={1}
               >
                 <Text wrap="wrap" dimColor>
-                  {issue.Context.substring(0, 500)}
-                  {issue.Context.length > 500 ? '...' : ''}
+                  {Formatter.getIssueContext(issue).substring(0, 500)}
+                  {Formatter.getIssueContext(issue).length > 500 ? '...' : ''}
                 </Text>
               </Box>
             </Box>

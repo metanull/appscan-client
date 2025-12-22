@@ -1,3 +1,5 @@
+import { Formatter } from './formatter.js';
+
 /**
  * JiraDescriptionBuilder - Build Jira issue descriptions from vulnerabilities
  * Ensures descriptions stay under 32KB limit
@@ -87,10 +89,11 @@ export class JiraDescriptionBuilder {
         issuesSection += '\n';
 
         // Issue context - NOT TRIMMED
-        if (issue.Context) {
+        const contextToShow = Formatter.getIssueContext(issue);
+        if (contextToShow) {
           issuesSection += '### Issue\n\n';
           issuesSection += '```\n';
-          issuesSection += issue.Context + '\n';
+          issuesSection += contextToShow + '\n';
           issuesSection += '```\n\n';
         }
 
