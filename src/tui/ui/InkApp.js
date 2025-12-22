@@ -912,15 +912,10 @@ export const InkApp = ({ configPath }) => {
           // In "All Scans" mode, get the scan ID from the current issue
           const isViewingAll =
             selectedScan?._isViewAll || selectedScan?.Id === '__VIEW_ALL__';
-          const scanId = isViewingAll
-            ? currentIssue?.ScanId
-            : selectedScan?.Id;
+          const scanId = isViewingAll ? currentIssue?.ScanId : selectedScan?.Id;
 
           if (selectedApp?.Id && scanId) {
-            const scanUrl = appScanService.getScanUrl(
-              selectedApp.Id,
-              scanId
-            );
+            const scanUrl = appScanService.getScanUrl(selectedApp.Id, scanId);
             open(scanUrl).catch(() => {
               // Silently fail if we can't open the link
             });
