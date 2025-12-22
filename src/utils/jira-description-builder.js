@@ -1,4 +1,5 @@
 import { Formatter } from './formatter.js';
+import * as AppScanUrls from './appscan-urls.js';
 
 /**
  * JiraDescriptionBuilder - Build Jira issue descriptions from vulnerabilities
@@ -26,7 +27,7 @@ export class JiraDescriptionBuilder {
     let metadata = '';
 
     if (this.app) {
-      const appUrl = `${this.baseUrl}/main/myapps/${this.app.Id}`;
+      const appUrl = AppScanUrls.getApplicationUrl(this.baseUrl, this.app.Id);
       metadata += `**Application:** [${this.app.Name}](${appUrl}) - ${this.app.Id}\n\n`;
     }
 
@@ -38,7 +39,7 @@ export class JiraDescriptionBuilder {
 
     if (this.app && !isViewAllMode && this.scan) {
       // Single scan mode - show single scan link
-      const scanUrl = `${this.baseUrl}/main/myapps/${this.app.Id}/scans/${this.scan.Id}`;
+      const scanUrl = AppScanUrls.getScanUrl(this.baseUrl, this.app.Id, this.scan.Id);
       metadata += `**Scan:** [${this.scan.Name}](${scanUrl}) - ${this.scan.Id}\n\n`;
     } else if (this.app && isViewAllMode) {
       // All scan mode - show list of distinct scans from issues
@@ -46,7 +47,7 @@ export class JiraDescriptionBuilder {
       if (distinctScans.length > 0) {
         metadata += `**Scans:**\n`;
         for (const scanInfo of distinctScans) {
-          const scanUrl = `${this.baseUrl}/main/myapps/${this.app.Id}/scans/${scanInfo.scanId}`;
+          const scanUrl = AppScanUrls.getScanUrl(this.baseUrl, this.app.Id, scanInfo.scanId);
           metadata += `- [${scanInfo.scanName}](${scanUrl}) - ${scanInfo.scanId}\n`;
         }
         metadata += '\n';
@@ -119,7 +120,7 @@ export class JiraDescriptionBuilder {
 
         // AppScan Issue link
         if (this.app?.Id && issue.Id) {
-          const issueUrl = `${this.baseUrl}/main/myapps/${this.app.Id}/issues/${issue.Id}`;
+          const issueUrl = AppScanUrls.getIssueUrl(this.baseUrl, this.app.Id, issue.Id);
           issuesSection += `- [🔗 AppScan - ${issue.Id}](${issueUrl})\n`;
         }
 

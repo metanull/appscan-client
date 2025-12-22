@@ -3,6 +3,7 @@ import { confirm } from '@inquirer/prompts';
 import { AppScanService } from '../../services/appscan-service.js';
 import { JiraService } from '../../services/jira-service.js';
 import { Config } from '../../utils/config.js';
+import * as AppScanUrls from '../../utils/appscan-urls.js';
 import {
   groupIssuesByType,
   displayGroupedSummary,
@@ -127,7 +128,7 @@ async function createJiraIssueForVulnerabilities(
   console.log(
     chalk.cyan('View issue at:'),
     chalk.blue.underline(
-      jiraIssue.url || `${config.getJiraHost()}/browse/${jiraIssue.key}`
+      jiraIssue.url || AppScanUrls.getJiraUrl(config.getJiraHost(), jiraIssue.key)
     )
   );
 

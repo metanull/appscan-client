@@ -7,6 +7,7 @@ import { QueryBuilder } from '../../utils/query-builder.js';
 import { FilterParser } from '../../utils/filter-parser.js';
 import { Formatter } from '../../utils/formatter.js';
 import { JiraDescriptionBuilder } from '../../utils/jira-description-builder.js';
+import * as AppScanUrls from '../../utils/appscan-urls.js';
 import { select, checkbox, input } from '@inquirer/prompts';
 import {
   groupIssuesByType,
@@ -832,7 +833,7 @@ async function createJiraAction(options) {
       });
 
       const jiraKey = jiraIssue.key;
-      const jiraUrl = `${config.getJiraHost()}/browse/${jiraKey}`;
+      const jiraUrl = AppScanUrls.getJiraUrl(config.getJiraHost(), jiraKey);
 
       // Update AppScan issues with Jira link
       for (const issue of group.issues) {
@@ -905,7 +906,7 @@ async function findJiraAction(options) {
           key: jiraIssue.key,
           summary: jiraIssue.fields.summary,
           status: jiraIssue.fields.status.name,
-          url: `${config.getJiraHost()}/browse/${jiraIssue.key}`,
+          url: AppScanUrls.getJiraUrl(config.getJiraHost(), jiraIssue.key),
         });
       } catch (error) {
         // Jira issue not found or invalid key - this is not a fatal error
@@ -1357,7 +1358,7 @@ async function interactiveAction(options) {
               console.log(chalk.bold('Jira Key:'), selectedIssue.ExternalId);
               const jiraHost = config.getJiraHost();
               if (jiraHost) {
-                const jiraUrl = `${jiraHost}/browse/${selectedIssue.ExternalId}`;
+                const jiraUrl = AppScanUrls.getJiraUrl(jiraHost, selectedIssue.ExternalId);
                 console.log(
                   chalk.bold('Jira URL:'),
                   chalk.blue.underline(jiraUrl)
@@ -1590,7 +1591,7 @@ async function interactiveAction(options) {
               console.log(chalk.bold('Jira Key:'), selectedIssue.ExternalId);
               const jiraHost = config.getJiraHost();
               if (jiraHost) {
-                const jiraUrl = `${jiraHost}/browse/${selectedIssue.ExternalId}`;
+                const jiraUrl = AppScanUrls.getJiraUrl(jiraHost, selectedIssue.ExternalId);
                 console.log(
                   chalk.bold('Jira URL:'),
                   chalk.blue.underline(jiraUrl)

@@ -1,11 +1,12 @@
 /**
  * AppScan Service Wrapper
  * This wraps the parent package's AppScanService to provide a clean interface
- * for the Ink UI and adds audit logging for all write operations.
+ * for the Ink UI and adds audit logging for all read/write operations.
  */
 
 // Import from parent package
 import { AppScanService as ParentAppScanService } from '../../../src/services/appscan-service.js';
+import * as AppScanUrls from '../../../src/utils/appscan-urls.js';
 import { auditService } from '../utils/audit.js';
 import logger from '../utils/logger.js';
 import { Config } from '../../../src/utils/config.js';
@@ -177,8 +178,7 @@ export class AppScanService {
    * @returns {string} The full URL to the issue in AppScan
    */
   getIssueUrl(appId, issueId) {
-    const baseUrl = this.config.getBaseUrl();
-    return `${baseUrl}/main/myapps/${appId}/issues/${issueId}`;
+    return AppScanUrls.getIssueUrl(this.config.getBaseUrl(), appId, issueId);
   }
 
   /**
@@ -187,8 +187,7 @@ export class AppScanService {
    * @returns {string} The full URL to the application in AppScan
    */
   getApplicationUrl(appId) {
-    const baseUrl = this.config.getBaseUrl();
-    return `${baseUrl}/main/myapps/${appId}`;
+    return AppScanUrls.getApplicationUrl(this.config.getBaseUrl(), appId);
   }
 
   /**
@@ -198,8 +197,7 @@ export class AppScanService {
    * @returns {string} The full URL to the scan in AppScan
    */
   getScanUrl(appId, scanId) {
-    const baseUrl = this.config.getBaseUrl();
-    return `${baseUrl}/main/myapps/${appId}/scans/${scanId}`;
+    return AppScanUrls.getScanUrl(this.config.getBaseUrl(), appId, scanId);
   }
 
   /**
@@ -213,11 +211,7 @@ export class AppScanService {
     }
 
     const jiraHost = this.config.jiraHost;
-    if (!jiraHost) {
-      return null;
-    }
-
-    return `${jiraHost}/browse/${issue.ExternalId}`;
+    return AppScanUrls.getJiraUrl(jiraHost, issue.ExternalId);
   }
 
   /**
