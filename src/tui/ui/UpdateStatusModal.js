@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Box, Text, useInput } from 'ink';
+import { Box, Text } from 'ink';
 import SelectInput from 'ink-select-input';
 import TextInput from 'ink-text-input';
 import Spinner from 'ink-spinner';
@@ -52,12 +52,6 @@ export const UpdateStatusModal = ({
       }
     }
   }, [issues]);
-
-  useInput((input, key) => {
-    if (key.escape) {
-      onClose();
-    }
-  });
 
   const handleStatusSelect = (item) => {
     setSelectedStatus(item.value);

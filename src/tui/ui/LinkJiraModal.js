@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Box, Text, useInput } from 'ink';
+import { Box, Text } from 'ink';
 import TextInput from 'ink-text-input';
 import { Modal } from './components/Modal.js';
 import { Panel } from './components/Panel.js';
@@ -13,12 +13,6 @@ export const LinkJiraModal = ({ issueCount, onLink, onClose }) => {
   const [step, setStep] = useState('input'); // 'input' | 'linking' | 'success'
   const [jiraKey, setJiraKey] = useState('');
   const [error, setError] = useState(null);
-
-  useInput((input, key) => {
-    if (key.escape && step !== 'linking') {
-      onClose();
-    }
-  });
 
   const handleSubmit = async () => {
     if (!jiraKey || jiraKey.trim() === '') {

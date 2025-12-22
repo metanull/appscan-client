@@ -4,19 +4,13 @@
  */
 
 import React, { useState } from 'react';
-import { Box, Text, useInput } from 'ink';
+import { Box, Text } from 'ink';
 import TextInput from 'ink-text-input';
 import { Modal } from './components/Modal.js';
 import { Panel } from './components/Panel.js';
 
 export const SearchModal = ({ currentSearch, onSearch, onClose }) => {
   const [searchText, setSearchText] = useState(currentSearch || '');
-
-  useInput((input, key) => {
-    if (key.escape) {
-      onClose();
-    }
-  });
 
   const handleSubmit = () => {
     onSearch(searchText || null);
