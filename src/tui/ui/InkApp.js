@@ -925,10 +925,11 @@ export const InkApp = ({ configPath }) => {
         condition: () => {
           const isViewingAll =
             selectedScan?._isViewAll || selectedScan?.Id === '__VIEW_ALL__';
-          return (
-            !!selectedApp &&
-            (isViewingAll ? !!currentIssue?.ScanId : !!selectedScan)
-          );
+          if (!selectedApp) return false;
+          if (isViewingAll) {
+            return !!currentIssue && !!currentIssue.ScanId;
+          }
+          return !!selectedScan && !!selectedScan.Id;
         },
         group: 'Navigation',
         hint: true,

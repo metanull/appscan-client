@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { marked } from 'marked';
 import { markdownToADF } from '../utils/markdown-to-adf.js';
+import * as AppScanUrls from '../utils/appscan-urls.js';
 
 let Version3Client;
 
@@ -296,7 +297,7 @@ export class JiraService {
           key: issues[0].key,
           summary: issues[0].fields.summary,
           status: issues[0].fields.status.name,
-          url: `${this.config.jiraHost}/browse/${issues[0].key}`,
+          url: AppScanUrls.getJiraUrl(this.config.jiraHost, issues[0].key),
           created: issues[0].fields.created,
           updated: issues[0].fields.updated,
         };

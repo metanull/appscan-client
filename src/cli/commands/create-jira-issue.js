@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { AppScanService } from '../../services/appscan-service.js';
 import { JiraService } from '../../services/jira-service.js';
 import { Config } from '../../utils/config.js';
+import * as AppScanUrls from '../../utils/appscan-urls.js';
 
 const severityOrder = {
   Critical: 5,
@@ -176,7 +177,7 @@ export async function createJiraIssue(source, sourceId, options) {
 
       console.error(
         chalk.green(
-          `  ✓ Created Jira issue: ${jiraIssue.key} (${config.getJiraHost()}/browse/${jiraIssue.key})`
+          `  ✓ Created Jira issue: ${jiraIssue.key} (${AppScanUrls.getJiraUrl(config.getJiraHost(), jiraIssue.key)})`
         )
       );
     }

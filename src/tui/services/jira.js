@@ -7,6 +7,7 @@
 // Import from parent package
 import { JiraService as ParentJiraService } from '../../../src/services/jira-service.js';
 import { JiraDescriptionBuilder } from '../../../src/utils/jira-description-builder.js';
+import * as AppScanUrls from '../../../src/utils/appscan-urls.js';
 import { auditService } from '../utils/audit.js';
 import logger from '../utils/logger.js';
 
@@ -220,7 +221,7 @@ export class JiraService {
 
   getJiraUrl(issueKey) {
     const jiraHost = this.config.getJiraHost();
-    return jiraHost ? `${jiraHost}/browse/${issueKey}` : null;
+    return AppScanUrls.getJiraUrl(jiraHost, issueKey);
   }
 
   getProjectKey() {
