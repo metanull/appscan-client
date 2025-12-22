@@ -21,8 +21,8 @@ export function getConfigDir() {
   const moduleDir = dirname(fileURLToPath(import.meta.url));
   const isInstalled =
     Boolean(process.argv[1]) && process.argv[1].includes('node_modules')
-    ? true
-    : moduleDir.includes('node_modules');
+      ? true
+      : moduleDir.includes('node_modules');
 
   if (isInstalled) {
     // Global install - prefer user's home directory for config
