@@ -909,10 +909,17 @@ export const InkApp = ({ configPath }) => {
       {
         key: 'ctrl+leftarrow',
         action: () => {
-          if (selectedApp?.Id && selectedScan?.Id) {
+          // In "All Scans" mode, get the scan ID from the current issue
+          const isViewingAll =
+            selectedScan?._isViewAll || selectedScan?.Id === '__VIEW_ALL__';
+          const scanId = isViewingAll
+            ? currentIssue?.ScanId
+            : selectedScan?.Id;
+
+          if (selectedApp?.Id && scanId) {
             const scanUrl = appScanService.getScanUrl(
               selectedApp.Id,
-              selectedScan.Id
+              scanId
             );
             open(scanUrl).catch(() => {
               // Silently fail if we can't open the link
@@ -920,7 +927,14 @@ export const InkApp = ({ configPath }) => {
           }
         },
         description: 'Open Scan',
-        condition: () => !!selectedApp && !!selectedScan,
+        condition: () => {
+          const isViewingAll =
+            selectedScan?._isViewAll || selectedScan?.Id === '__VIEW_ALL__';
+          return (
+            !!selectedApp &&
+            (isViewingAll ? !!currentIssue?.ScanId : !!selectedScan)
+          );
+        },
         group: 'Navigation',
         hint: true,
       },
