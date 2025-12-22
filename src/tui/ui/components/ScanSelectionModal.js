@@ -3,7 +3,7 @@
  * Modal for selecting a scan with search, type filter, and sort options
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
 import { Modal } from './Modal.js';
@@ -14,7 +14,14 @@ import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 const SCAN_TYPES = ['SAST', 'DAST', 'SCA', 'IAST', 'IAC'];
 
 export const ScanSelectionModal = React.memo(
-  ({ scans, onSelect, onCancel, hideEmpty = false, appScanService }) => {
+  ({
+    scans,
+    onSelect,
+    onCancel,
+    hideEmpty = false,
+    appScanService,
+    selectedScan,
+  }) => {
     const [searchText, setSearchText] = useState('');
     const [cursor, setCursor] = useState(0);
     const [filterType, setFilterType] = useState(null); // null | 'SAST' | 'DAST' | etc.
@@ -65,8 +72,21 @@ export const ScanSelectionModal = React.memo(
       return [viewAllOption, ...filtered];
     }, [scans, searchText, filterType, hideEmpty, appScanService]);
 
+    // Auto-select the currently selected scan when modal opens
+    useEffect(() => {
+      if (selectedScan) {
+        const index = filteredScans.findIndex(
+          (scan) => scan.Id === selectedScan.Id
+        );
+        if (index !== -1) {
+          setCursor(index);
+        }
+      }
+    }, []); // Only run once on mount
+
     // Handle keyboard input
     useInput((input, key) => {
+      // Handle special keys first (before they can affect search)
       if (key.escape) {
         onCancel();
         return;
@@ -95,6 +115,24 @@ export const ScanSelectionModal = React.memo(
           nextIndex === SCAN_TYPES.length ? null : SCAN_TYPES[nextIndex]
         );
         setCursor(0);
+        return;
+      }
+
+      // Ignore special keys and modifier combinations that shouldn't trigger search
+      // Only process printable characters for search
+      if (
+        key.ctrl ||
+        key.meta ||
+        key.shift ||
+        key.tab ||
+        key.backspace ||
+        key.delete ||
+        key.pageUp ||
+        key.pageDown ||
+        key.home ||
+        key.end ||
+        !input // Empty input means it was a special key
+      ) {
         return;
       }
     });

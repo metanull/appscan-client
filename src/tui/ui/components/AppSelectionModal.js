@@ -3,7 +3,7 @@
  * Modal for selecting an application with search, sort, and filter options
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
 import { Modal } from './Modal.js';
@@ -12,7 +12,14 @@ import { ScrollableList } from './ScrollableList.js';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 
 export const AppSelectionModal = React.memo(
-  ({ applications, onSelect, onCancel, hideEmpty = false, appScanService }) => {
+  ({
+    applications,
+    onSelect,
+    onCancel,
+    hideEmpty = false,
+    appScanService,
+    selectedApp,
+  }) => {
     const [searchText, setSearchText] = useState('');
     const [cursor, setCursor] = useState(0);
     const [sortBy, setSortBy] = useState('name'); // 'name' | 'issues'
@@ -63,8 +70,21 @@ export const AppSelectionModal = React.memo(
       return filtered;
     }, [applications, searchText, sortBy, hideEmpty, appScanService]);
 
+    // Auto-select the currently selected app when modal opens
+    useEffect(() => {
+      if (selectedApp) {
+        const index = filteredApps.findIndex(
+          (app) => app.Id === selectedApp.Id
+        );
+        if (index !== -1) {
+          setCursor(index);
+        }
+      }
+    }, []); // Only run once on mount
+
     // Handle keyboard input
     useInput((input, key) => {
+      // Handle special keys first (before they can affect search)
       if (key.escape) {
         onCancel();
         return;
@@ -93,6 +113,24 @@ export const AppSelectionModal = React.memo(
 
       if (input === 'h') {
         // Toggle hide empty (not implemented in this simplified version)
+        return;
+      }
+
+      // Ignore special keys and modifier combinations that shouldn't trigger search
+      // Only process printable characters for search
+      if (
+        key.ctrl ||
+        key.meta ||
+        key.shift ||
+        key.tab ||
+        key.backspace ||
+        key.delete ||
+        key.pageUp ||
+        key.pageDown ||
+        key.home ||
+        key.end ||
+        !input // Empty input means it was a special key
+      ) {
         return;
       }
     });

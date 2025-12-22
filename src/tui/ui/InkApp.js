@@ -1282,6 +1282,7 @@ export const InkApp = ({ configPath }) => {
         <AppSelectionModal
           applications={applications}
           appScanService={appScanService}
+          selectedApp={selectedApp}
           onSelect={async (app) => {
             // Set selected app and load scans for it
             useStore.getState().setSelectedApp(app);
@@ -1326,8 +1327,23 @@ export const InkApp = ({ configPath }) => {
         <ScanSelectionModal
           scans={scans}
           appScanService={appScanService}
+          selectedScan={selectedScan}
           onSelect={(scan) => {
-            useStore.getState().setSelectedScan(scan);
+            // Force reload by clearing lastLoadedScanRef
+            // This ensures that even if the same scan is selected again, it will reload
+            lastLoadedScanRef.current = null;
+
+            // If selecting the same scan, temporarily clear it to force the effect to run
+            if (selectedScan && selectedScan.Id === scan.Id) {
+              useStore.getState().setSelectedScan(null);
+              // Use setTimeout to ensure the state update is processed
+              setTimeout(() => {
+                useStore.getState().setSelectedScan(scan);
+              }, 0);
+            } else {
+              useStore.getState().setSelectedScan(scan);
+            }
+
             setActiveModal(null);
             // Mark initial setup as complete once a scan is selected
             isInitialSetup.current = false;
