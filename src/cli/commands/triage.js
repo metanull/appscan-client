@@ -128,7 +128,8 @@ async function createJiraIssueForVulnerabilities(
   console.log(
     chalk.cyan('View issue at:'),
     chalk.blue.underline(
-      jiraIssue.url || AppScanUrls.getJiraUrl(config.getJiraHost(), jiraIssue.key)
+      jiraIssue.url ||
+        AppScanUrls.getJiraUrl(config.getJiraHost(), jiraIssue.key)
     )
   );
 

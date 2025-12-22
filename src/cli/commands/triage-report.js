@@ -1358,7 +1358,10 @@ async function interactiveAction(options) {
               console.log(chalk.bold('Jira Key:'), selectedIssue.ExternalId);
               const jiraHost = config.getJiraHost();
               if (jiraHost) {
-                const jiraUrl = AppScanUrls.getJiraUrl(jiraHost, selectedIssue.ExternalId);
+                const jiraUrl = AppScanUrls.getJiraUrl(
+                  jiraHost,
+                  selectedIssue.ExternalId
+                );
                 console.log(
                   chalk.bold('Jira URL:'),
                   chalk.blue.underline(jiraUrl)
@@ -1591,7 +1594,10 @@ async function interactiveAction(options) {
               console.log(chalk.bold('Jira Key:'), selectedIssue.ExternalId);
               const jiraHost = config.getJiraHost();
               if (jiraHost) {
-                const jiraUrl = AppScanUrls.getJiraUrl(jiraHost, selectedIssue.ExternalId);
+                const jiraUrl = AppScanUrls.getJiraUrl(
+                  jiraHost,
+                  selectedIssue.ExternalId
+                );
                 console.log(
                   chalk.bold('Jira URL:'),
                   chalk.blue.underline(jiraUrl)
