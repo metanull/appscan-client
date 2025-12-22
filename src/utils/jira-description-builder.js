@@ -30,9 +30,27 @@ export class JiraDescriptionBuilder {
       metadata += `**Application:** [${this.app.Name}](${appUrl}) - ${this.app.Id}\n\n`;
     }
 
-    if (this.app && this.scan) {
+    // Check if we're in "all scan" mode
+    const isViewAllMode =
+      !this.scan ||
+      this.scan.Id === '__VIEW_ALL__' ||
+      this.scan._isViewAll === true;
+
+    if (this.app && !isViewAllMode && this.scan) {
+      // Single scan mode - show single scan link
       const scanUrl = `${this.baseUrl}/main/myapps/${this.app.Id}/scans/${this.scan.Id}`;
       metadata += `**Scan:** [${this.scan.Name}](${scanUrl}) - ${this.scan.Id}\n\n`;
+    } else if (this.app && isViewAllMode) {
+      // All scan mode - show list of distinct scans from issues
+      const distinctScans = this.getDistinctScans();
+      if (distinctScans.length > 0) {
+        metadata += `**Scans:**\n`;
+        for (const scanInfo of distinctScans) {
+          const scanUrl = `${this.baseUrl}/main/myapps/${this.app.Id}/scans/${scanInfo.scanId}`;
+          metadata += `- [${scanInfo.scanName}](${scanUrl}) - ${scanInfo.scanId}\n`;
+        }
+        metadata += '\n';
+      }
     }
 
     if (metadata) {
@@ -41,6 +59,25 @@ export class JiraDescriptionBuilder {
     }
 
     return this;
+  }
+
+  /**
+   * Get distinct scans from issues
+   * @private
+   */
+  getDistinctScans() {
+    const scanMap = new Map();
+
+    for (const issue of this.issues) {
+      if (issue.ScanId && !scanMap.has(issue.ScanId)) {
+        scanMap.set(issue.ScanId, {
+          scanId: issue.ScanId,
+          scanName: issue.ScanName || issue.ScanId,
+        });
+      }
+    }
+
+    return Array.from(scanMap.values());
   }
 
   /**
