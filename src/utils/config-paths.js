@@ -4,8 +4,9 @@
  */
 
 import { homedir } from 'os';
-import { join } from 'path';
+import { join, dirname } from 'path';
 import { existsSync, mkdirSync } from 'fs';
+import { fileURLToPath } from 'url';
 
 /**
  * Get the configuration directory path
@@ -14,23 +15,34 @@ import { existsSync, mkdirSync } from 'fs';
  * @returns {string} Path to config directory
  */
 export function getConfigDir() {
-  // Check if we're running from installed package (node_modules)
-  const isInstalled = process.argv[1]?.includes('node_modules');
+  // Determine whether we're running from an installed package.
+  // Relying on `process.argv[1]` alone can be unreliable (npx, different shells,
+  // or packaged binaries). Also check the current module dirname.
+  const moduleDir = dirname(fileURLToPath(import.meta.url));
+  const isInstalled =
+    Boolean(process.argv[1]) && process.argv[1].includes('node_modules')
+    ? true
+    : moduleDir.includes('node_modules');
 
   if (isInstalled) {
-    // Global install - use user's home directory
+    // Global install - prefer user's home directory for config
     const configDir = join(homedir(), '.appscan-client');
 
-    // Ensure directory exists
-    if (!existsSync(configDir)) {
-      mkdirSync(configDir, { recursive: true });
+    // Ensure directory exists; log on failure to aid debugging
+    try {
+      if (!existsSync(configDir)) {
+        mkdirSync(configDir, { recursive: true });
+      }
+    } catch (err) {
+      // Intentionally use stderr so that interactive runs surface the problem
+      console.error(`Failed to create config dir ${configDir}: ${err.message}`);
     }
 
     return configDir;
-  } else {
-    // Development mode - use project root
-    return process.cwd();
   }
+
+  // Development mode - use project root
+  return process.cwd();
 }
 
 /**
