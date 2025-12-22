@@ -1007,9 +1007,9 @@ export const InkApp = ({ configPath }) => {
       // Filtering
       {
         key: 'f',
-        action: () => filteredIssues.length > 0 && setActiveModal('filter'),
+        action: () => issues.length > 0 && setActiveModal('filter'),
         description: 'Filter',
-        condition: () => filteredIssues.length > 0,
+        condition: () => issues.length > 0,
         group: 'Filtering',
       },
       {
