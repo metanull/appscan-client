@@ -379,7 +379,7 @@ const DetailsPreviewPanel = React.memo(
               <Text bold>Jira ID:</Text> {issue.ExternalId}
             </Text>
           )}
-          {issue.Context && (
+          {Formatter.getIssueContext(issue) && (
             <Box flexDirection="column" marginTop={1}>
               <Text bold>Context:</Text>
               <Box
@@ -389,8 +389,8 @@ const DetailsPreviewPanel = React.memo(
                 marginTop={1}
               >
                 <Text wrap="wrap" dimColor>
-                  {issue.Context.substring(0, 500)}
-                  {issue.Context.length > 500 ? '...' : ''}
+                  {Formatter.getIssueContext(issue).substring(0, 500)}
+                  {Formatter.getIssueContext(issue).length > 500 ? '...' : ''}
                 </Text>
               </Box>
             </Box>
@@ -909,18 +909,27 @@ export const InkApp = ({ configPath }) => {
       {
         key: 'ctrl+leftarrow',
         action: () => {
-          if (selectedApp?.Id && selectedScan?.Id) {
-            const scanUrl = appScanService.getScanUrl(
-              selectedApp.Id,
-              selectedScan.Id
-            );
+          // In "All Scans" mode, get the scan ID from the current issue
+          const isViewingAll =
+            selectedScan?._isViewAll || selectedScan?.Id === '__VIEW_ALL__';
+          const scanId = isViewingAll ? currentIssue?.ScanId : selectedScan?.Id;
+
+          if (selectedApp?.Id && scanId) {
+            const scanUrl = appScanService.getScanUrl(selectedApp.Id, scanId);
             open(scanUrl).catch(() => {
               // Silently fail if we can't open the link
             });
           }
         },
         description: 'Open Scan',
-        condition: () => !!selectedApp && !!selectedScan,
+        condition: () => {
+          const isViewingAll =
+            selectedScan?._isViewAll || selectedScan?.Id === '__VIEW_ALL__';
+          return (
+            !!selectedApp &&
+            (isViewingAll ? !!currentIssue?.ScanId : !!selectedScan)
+          );
+        },
         group: 'Navigation',
         hint: true,
       },

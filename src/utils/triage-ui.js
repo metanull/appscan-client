@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { select, checkbox, input, confirm } from '@inquirer/prompts';
 import sanitizeHtml from 'sanitize-html';
 import { convertToAbsoluteUrl, formatUrlForDisplay } from './url-converter.js';
+import { Formatter } from './formatter.js';
 
 /**
  * Severity colors and order for display
@@ -133,10 +134,11 @@ export function formatIssueDisplay(
       display += `\n    ${chalk.gray('API/URL:')} ${displayText}`;
     }
 
-    // Show code context if available
-    if (issue.Context) {
-      const contextPreview = issue.Context.substring(0, 80).replace(/\n/g, ' ');
-      display += `\n    ${chalk.gray('Context:')} ${chalk.white(contextPreview)}${issue.Context.length > 80 ? '...' : ''}`;
+    // Show code context if available (or SCA library info for dependency checks)
+    const contextToShow = Formatter.getIssueContext(issue);
+    if (contextToShow) {
+      const contextPreview = contextToShow.substring(0, 80).replace(/\n/g, ' ');
+      display += `\n    ${chalk.gray('Context:')} ${chalk.white(contextPreview)}${contextToShow.length > 80 ? '...' : ''}`;
     }
 
     // Add AppScan article link for remediation guidance
@@ -217,6 +219,12 @@ export function displayIssueDetails(
 
   if (issue.Cve) {
     console.log(chalk.cyan('CVE:'), issue.Cve);
+  }
+
+  // Show code context (or SCA library info for dependency checks)
+  const contextToShow = Formatter.getIssueContext(issue);
+  if (contextToShow) {
+    console.log(chalk.cyan('Context:'), chalk.white(contextToShow));
   }
 
   // Show snippet from article if available

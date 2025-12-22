@@ -88,6 +88,75 @@ export class Formatter {
   }
 
   /**
+   * Format SCA/dependency check issue details as context text
+   * Returns null if this is not an SCA issue
+   * Format: {ScaTechnology} library - {LibraryName} {LibraryVersion} - {CvePublishDate} [{Cve}]({DetailsUrl}) (CVSS {Cvss}/10)
+   * Example: JS library - marked 3.0.8 - 14/01/2022 [CVE-2022-21680](https://www.cve.org/CVERecord?id=CVE-2022-21680) (CVSS 7.5/10)
+   */
+  static formatScaContext(issue) {
+    // Check if this is an SCA/dependency check issue
+    if (!issue.ScaTechnology && !issue.LibraryName) {
+      return null;
+    }
+
+    let context = '';
+
+    // Technology and library info
+    if (issue.ScaTechnology) {
+      context += `${issue.ScaTechnology} library`;
+    } else {
+      context += 'Library';
+    }
+
+    if (issue.LibraryName) {
+      context += ` - ${issue.LibraryName}`;
+      if (issue.LibraryVersion) {
+        context += ` ${issue.LibraryVersion}`;
+      }
+    }
+
+    // CVE info
+    if (issue.CvePublishDate || issue.Cve) {
+      context += ' - ';
+
+      if (issue.CvePublishDate) {
+        const date = new Date(issue.CvePublishDate);
+        context += date.toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        });
+        context += ' ';
+      }
+
+      if (issue.Cve) {
+        if (issue.DetailsUrl) {
+          context += `[${issue.Cve}](${issue.DetailsUrl})`;
+        } else {
+          context += issue.Cve;
+        }
+      }
+
+      if (issue.Cvss) {
+        context += ` (CVSS ${issue.Cvss}/10)`;
+      }
+    }
+
+    return context || null;
+  }
+
+  /**
+   * Get context for an issue - returns actual Context or SCA-formatted context
+   * This is the preferred method to get displayable context
+   */
+  static getIssueContext(issue) {
+    if (issue.Context) {
+      return issue.Context;
+    }
+    return Formatter.formatScaContext(issue);
+  }
+
+  /**
    * Format application for JSON output
    */
   formatApplication(app) {

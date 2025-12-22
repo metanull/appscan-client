@@ -175,7 +175,7 @@ export const IssueDetailsModal = React.memo(
                 <Text wrap="wrap">{issue.Id || 'N/A'}</Text>
               </Box>
 
-              {issue.Context && (
+              {Formatter.getIssueContext(issue) && (
                 <Box flexDirection="column" marginTop={1}>
                   <Box width={15}>
                     <Text bold color="cyan">
@@ -189,7 +189,7 @@ export const IssueDetailsModal = React.memo(
                     marginTop={1}
                   >
                     <Text wrap="wrap" dimColor>
-                      {issue.Context}
+                      {Formatter.getIssueContext(issue)}
                     </Text>
                   </Box>
                 </Box>
