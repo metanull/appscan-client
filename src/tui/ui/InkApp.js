@@ -1441,18 +1441,25 @@ export const InkApp = ({ configPath }) => {
               const isViewAll =
                 selectedScan._isViewAll || selectedScan.Id === '__VIEW_ALL__';
 
+              // Check if there's an active filter preset and preserve it
+              const currentPreset = useStore.getState().filterPreset;
+              const filterOptions = currentPreset
+                ? getFilterOptionsForPreset(currentPreset)
+                : null;
+
               let updatedIssues;
               if (isViewAll && selectedApp?.Id) {
                 // Reload all issues for the application
                 updatedIssues = await appScanService.listIssues(
                   selectedApp.Id,
-                  null,
+                  filterOptions,
                   'Application'
                 );
               } else {
                 // Reload issues for the specific scan
                 updatedIssues = await appScanService.listIssues(
-                  selectedScan.Id
+                  selectedScan.Id,
+                  filterOptions
                 );
               }
 
@@ -1515,18 +1522,25 @@ export const InkApp = ({ configPath }) => {
               const isViewAll =
                 selectedScan._isViewAll || selectedScan.Id === '__VIEW_ALL__';
 
+              // Check if there's an active filter preset and preserve it
+              const currentPreset = useStore.getState().filterPreset;
+              const filterOptions = currentPreset
+                ? getFilterOptionsForPreset(currentPreset)
+                : null;
+
               let updatedIssues;
               if (isViewAll && selectedApp?.Id) {
                 // Reload all issues for the application
                 updatedIssues = await appScanService.listIssues(
                   selectedApp.Id,
-                  null,
+                  filterOptions,
                   'Application'
                 );
               } else {
                 // Reload issues for the specific scan
                 updatedIssues = await appScanService.listIssues(
-                  selectedScan.Id
+                  selectedScan.Id,
+                  filterOptions
                 );
               }
 
@@ -1569,18 +1583,25 @@ export const InkApp = ({ configPath }) => {
               const isViewAll =
                 selectedScan._isViewAll || selectedScan.Id === '__VIEW_ALL__';
 
+              // Check if there's an active filter preset and preserve it
+              const currentPreset = useStore.getState().filterPreset;
+              const filterOptions = currentPreset
+                ? getFilterOptionsForPreset(currentPreset)
+                : null;
+
               let updatedIssues;
               if (isViewAll && selectedApp?.Id) {
                 // Reload all issues for the application
                 updatedIssues = await appScanService.listIssues(
                   selectedApp.Id,
-                  null,
+                  filterOptions,
                   'Application'
                 );
               } else {
                 // Reload issues for the specific scan
                 updatedIssues = await appScanService.listIssues(
-                  selectedScan.Id
+                  selectedScan.Id,
+                  filterOptions
                 );
               }
 
@@ -1596,6 +1617,16 @@ export const InkApp = ({ configPath }) => {
               );
             }
           }}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'details' && currentIssue && (
+        <IssueDetailsModal
+          issue={currentIssue}
+          app={selectedApp}
+          articleContent={articleContent}
+          appScanService={appScanService}
+          config={appScanService.getConfig()}
           onClose={() => setActiveModal(null)}
         />
       )}
