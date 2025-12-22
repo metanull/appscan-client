@@ -938,9 +938,14 @@ export const InkApp = ({ configPath }) => {
       // Selection
       {
         key: 'space',
-        action: () =>
-          currentIssue &&
-          useStore.getState().toggleIssueSelection(currentIssue.Id),
+        action: () => {
+          if (currentIssue) {
+            useStore.getState().toggleIssueSelection(currentIssue.Id);
+            // Automatically move to next vulnerability after selection
+            pendingCursorMove.current += 1;
+            flushCursorMove();
+          }
+        },
         description: 'Select',
         condition: () => !!currentIssue,
         group: 'Selection',

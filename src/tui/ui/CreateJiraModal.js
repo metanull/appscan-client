@@ -28,12 +28,7 @@ export const CreateJiraModal = ({
   const [error, setError] = useState(null);
 
   useInput((input, key) => {
-    // Only intercept ESC (not 'b') when in project input step or when creating
     if (key.escape && step !== 'creating') {
-      onClose();
-    }
-    // Allow 'b' to go back only when NOT in text input step
-    if (input === 'b' && step !== 'creating' && step !== 'project') {
       onClose();
     }
   });

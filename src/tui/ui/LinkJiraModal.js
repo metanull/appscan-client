@@ -15,7 +15,6 @@ export const LinkJiraModal = ({ issueCount, onLink, onClose }) => {
   const [error, setError] = useState(null);
 
   useInput((input, key) => {
-    // Only intercept ESC when not linking
     if (key.escape && step !== 'linking') {
       onClose();
     }
