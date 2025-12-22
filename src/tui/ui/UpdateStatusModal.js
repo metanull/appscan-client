@@ -54,12 +54,7 @@ export const UpdateStatusModal = ({
   }, [issues]);
 
   useInput((input, key) => {
-    // Only intercept ESC when typing in comment field
     if (key.escape) {
-      onClose();
-    }
-    // Allow 'b' to go back only when NOT in comment input step
-    if (input === 'b' && step === 'status') {
       onClose();
     }
   });

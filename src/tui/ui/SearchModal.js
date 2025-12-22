@@ -13,7 +13,6 @@ export const SearchModal = ({ currentSearch, onSearch, onClose }) => {
   const [searchText, setSearchText] = useState(currentSearch || '');
 
   useInput((input, key) => {
-    // Only intercept ESC when typing - remove 'b' key interception
     if (key.escape) {
       onClose();
     }
