@@ -39,6 +39,9 @@ export const useStore = create((set, get) => ({
   // Filter preset (for server-side filtering)
   filterPreset: null, // 'active' | 'inactive' | 'pending' | 'processed' | 'low' | 'medium' | 'high' | 'assigned' | 'unassigned' | null
 
+  // API-level filtering (affects data fetched from server)
+  excludePassedNoise: true, // Exclude Passed and Noise issues from API response (default: true)
+
   // UI state
   loading: false,
   error: null,
@@ -203,6 +206,12 @@ export const useStore = create((set, get) => ({
       selectedIssueIds: [],
     });
   },
+
+  // API-level filtering actions
+  toggleExcludePassedNoise: () =>
+    set((state) => ({ excludePassedNoise: !state.excludePassedNoise })),
+
+  setExcludePassedNoise: (exclude) => set({ excludePassedNoise: exclude }),
 
   // Actions - UI
   setLoading: (loading) => set({ loading }),
