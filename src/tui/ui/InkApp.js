@@ -445,41 +445,46 @@ DetailsPreviewPanel.displayName = 'DetailsPreviewPanel';
  * Status Bar
  */
 const pkg = getPackageInfo();
-const StatusBar = React.memo(({ error, loading, message, excludePassedNoise }) => {
-  const rightText = `${pkg.name || 'appscan-client'} ${pkg.version || 'v0.0.0'} • License ${pkg.license || 'MIT'} • ${pkg.author || 'Pascal (MetaNull) Havelange'}`;
-  return (
-    <Box
-      borderStyle="single"
-      borderTop
-      paddingX={1}
-      justifyContent="space-between"
-      width="100%"
-    >
-      <Box>
-        {error && <Text color="red">Error: {error}</Text>}
-        {loading && !error && (
-          <Box>
-            <Box marginRight={1}>
-              <Spinner />
+const StatusBar = React.memo(
+  ({ error, loading, message, excludePassedNoise }) => {
+    const rightText = `${pkg.name || 'appscan-client'} ${pkg.version || 'v0.0.0'} • License ${pkg.license || 'MIT'} • ${pkg.author || 'Pascal (MetaNull) Havelange'}`;
+    return (
+      <Box
+        borderStyle="single"
+        borderTop
+        paddingX={1}
+        justifyContent="space-between"
+        width="100%"
+      >
+        <Box>
+          {error && <Text color="red">Error: {error}</Text>}
+          {loading && !error && (
+            <Box>
+              <Box marginRight={1}>
+                <Spinner />
+              </Box>
+              <Text>{message || 'Loading...'}</Text>
             </Box>
-            <Text>{message || 'Loading...'}</Text>
-          </Box>
-        )}
-        {!error && !loading && (
-          <Box>
-            <Text dimColor>? Help | CTRL+O App | CTRL+W Scan | q Quit</Text>
-            {excludePassedNoise && (
-              <Text color="yellow" dimColor> | [Passed/Noise Excluded]</Text>
-            )}
-          </Box>
-        )}
+          )}
+          {!error && !loading && (
+            <Box>
+              <Text dimColor>? Help | CTRL+O App | CTRL+W Scan | q Quit</Text>
+              {excludePassedNoise && (
+                <Text color="yellow" dimColor>
+                  {' '}
+                  | [Passed/Noise Excluded]
+                </Text>
+              )}
+            </Box>
+          )}
+        </Box>
+        <Box>
+          <Text dimColor>{rightText}</Text>
+        </Box>
       </Box>
-      <Box>
-        <Text dimColor>{rightText}</Text>
-      </Box>
-    </Box>
-  );
-});
+    );
+  }
+);
 StatusBar.displayName = 'StatusBar';
 
 /**
@@ -628,7 +633,9 @@ export const InkApp = ({ configPath }) => {
           selectedScan._isViewAll || selectedScan.Id === '__VIEW_ALL__';
 
         // Build filter options with excludePassedNoise
-        const filterOptions = excludePassedNoise ? { excludePassedNoise: true } : null;
+        const filterOptions = excludePassedNoise
+          ? { excludePassedNoise: true }
+          : null;
 
         let issueList;
         if (isViewAll && selectedApp?.Id) {
@@ -640,7 +647,10 @@ export const InkApp = ({ configPath }) => {
           );
         } else {
           // Load issues for the specific scan
-          issueList = await appScanService.listIssues(selectedScan.Id, filterOptions);
+          issueList = await appScanService.listIssues(
+            selectedScan.Id,
+            filterOptions
+          );
         }
 
         if (cancelled) return;
@@ -729,27 +739,30 @@ export const InkApp = ({ configPath }) => {
   }, [filteredIssuesLength]); // Only depend on data, not setter
 
   // Helper: Get filter options for a preset
-  const getFilterOptionsForPreset = useCallback((presetName, excludePassedNoise) => {
-    const presetMap = {
-      active: { statusActive: true },
-      inactive: { statusInactive: true },
-      pending: { statusPending: true },
-      processed: { statusProcessed: true },
-      unassigned: { jiraUnassigned: true },
-      assigned: { jiraAssigned: true },
-      low: { severityLow: true },
-      medium: { severityMedium: true },
-      high: { severityHigh: true },
-    };
-    const options = presetMap[presetName] || {};
-    
-    // Add Passed/Noise exclusion if enabled
-    if (excludePassedNoise) {
-      options.excludePassedNoise = true;
-    }
-    
-    return Object.keys(options).length > 0 ? options : null;
-  }, []);
+  const getFilterOptionsForPreset = useCallback(
+    (presetName, excludePassedNoise) => {
+      const presetMap = {
+        active: { statusActive: true },
+        inactive: { statusInactive: true },
+        pending: { statusPending: true },
+        processed: { statusProcessed: true },
+        unassigned: { jiraUnassigned: true },
+        assigned: { jiraAssigned: true },
+        low: { severityLow: true },
+        medium: { severityMedium: true },
+        high: { severityHigh: true },
+      };
+      const options = presetMap[presetName] || {};
+
+      // Add Passed/Noise exclusion if enabled
+      if (excludePassedNoise) {
+        options.excludePassedNoise = true;
+      }
+
+      return Object.keys(options).length > 0 ? options : null;
+    },
+    []
+  );
 
   // Helper: Apply filter preset and fetch filtered issues
   const applyFilterPreset = useCallback(
@@ -1510,9 +1523,13 @@ export const InkApp = ({ configPath }) => {
 
               // Check if there's an active filter preset and preserve it
               const currentPreset = useStore.getState().filterPreset;
-              const currentExcludePassedNoise = useStore.getState().excludePassedNoise;
+              const currentExcludePassedNoise =
+                useStore.getState().excludePassedNoise;
               const filterOptions = currentPreset
-                ? getFilterOptionsForPreset(currentPreset, currentExcludePassedNoise)
+                ? getFilterOptionsForPreset(
+                    currentPreset,
+                    currentExcludePassedNoise
+                  )
                 : currentExcludePassedNoise
                   ? { excludePassedNoise: true }
                   : null;
@@ -1594,9 +1611,13 @@ export const InkApp = ({ configPath }) => {
 
               // Check if there's an active filter preset and preserve it
               const currentPreset = useStore.getState().filterPreset;
-              const currentExcludePassedNoise = useStore.getState().excludePassedNoise;
+              const currentExcludePassedNoise =
+                useStore.getState().excludePassedNoise;
               const filterOptions = currentPreset
-                ? getFilterOptionsForPreset(currentPreset, currentExcludePassedNoise)
+                ? getFilterOptionsForPreset(
+                    currentPreset,
+                    currentExcludePassedNoise
+                  )
                 : currentExcludePassedNoise
                   ? { excludePassedNoise: true }
                   : null;
@@ -1658,9 +1679,13 @@ export const InkApp = ({ configPath }) => {
 
               // Check if there's an active filter preset and preserve it
               const currentPreset = useStore.getState().filterPreset;
-              const currentExcludePassedNoise = useStore.getState().excludePassedNoise;
+              const currentExcludePassedNoise =
+                useStore.getState().excludePassedNoise;
               const filterOptions = currentPreset
-                ? getFilterOptionsForPreset(currentPreset, currentExcludePassedNoise)
+                ? getFilterOptionsForPreset(
+                    currentPreset,
+                    currentExcludePassedNoise
+                  )
                 : currentExcludePassedNoise
                   ? { excludePassedNoise: true }
                   : null;
