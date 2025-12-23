@@ -39,6 +39,8 @@ export const AppSelectionModal = React.memo(
       if (hideEmpty) {
         filtered = filtered.filter((app) => {
           const { total } = appScanService?.getAppIssueCounts(app) || {
+            inProgress: 0,
+            active: 0,
             total: 0,
           };
           return total > 0;
@@ -60,9 +62,9 @@ export const AppSelectionModal = React.memo(
         if (sortBy === 'name') {
           return (a.Name || '').localeCompare(b.Name || '');
         } else if (sortBy === 'issues') {
-          const aCount = appScanService?.getAppIssueCounts(a)?.total || 0;
-          const bCount = appScanService?.getAppIssueCounts(b)?.total || 0;
-          return bCount - aCount; // Descending
+          const aCount = appScanService?.getAppIssueCounts(a)?.active || 0;
+          const bCount = appScanService?.getAppIssueCounts(b)?.active || 0;
+          return bCount - aCount; // Descending by active issues
         }
         return 0;
       });
@@ -137,10 +139,12 @@ export const AppSelectionModal = React.memo(
 
     const renderItem = useCallback(
       (app, isSelected) => {
-        const { active, total } = appScanService?.getAppIssueCounts(app) || {
-          active: 0,
-          total: 0,
-        };
+        const { inProgress, active, total } =
+          appScanService?.getAppIssueCounts(app) || {
+            inProgress: 0,
+            active: 0,
+            total: 0,
+          };
 
         return (
           <Box>
@@ -149,8 +153,12 @@ export const AppSelectionModal = React.memo(
               {app.Name || 'Unnamed App'}
             </Text>
             <Text dimColor> (</Text>
-            <Text color={active > 0 ? 'red' : 'gray'}>{active}</Text>
-            <Text dimColor> / {total} issues)</Text>
+            <Text color={inProgress > 0 ? 'green' : 'gray'}>{inProgress}</Text>
+            <Text dimColor> | </Text>
+            <Text color={active > inProgress ? 'red' : 'gray'}>{active}</Text>
+            <Text dimColor> | </Text>
+            <Text color="gray">{total}</Text>
+            <Text dimColor>)</Text>
           </Box>
         );
       },

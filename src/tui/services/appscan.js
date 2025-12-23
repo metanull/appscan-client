@@ -65,33 +65,21 @@ export class AppScanService {
   }
 
   /**
-   * Get active and total issue counts for an application
-   * Active = Open, InProgress, Reopened
+   * Get issue counts for an application
    * @param {Object} app - Application object
-   * @returns {{ active: number, total: number }} Issue counts
+   * @returns {{ inProgress: number, active: number, total: number }} Issue counts
    */
   getAppIssueCounts(app) {
     if (!app) {
-      return { active: 0, total: 0 };
+      return { inProgress: 0, active: 0, total: 0 };
     }
 
-    // Active issues: Open + InProgress + Reopened (issues that need attention)
-    const active =
-      (Number(app.OpenIssues) || 0) +
-      (Number(app.IssuesInProgress) || 0) +
-      (Number(app.ReopenedIssues) || 0);
+    // Read counters directly from API response
+    const inProgress = Number(app.IssuesInProgress) || 0;
+    const active = Number(app.OpenIssues) || 0;
+    const total = Number(app.TotalIssues) || 0;
 
-    // Total issues
-    const total =
-      Number(app.IssueCountTotal) ||
-      Number(app.TotalIssues) ||
-      (Number(app.CriticalIssues) || 0) +
-        (Number(app.HighIssues) || 0) +
-        (Number(app.MediumIssues) || 0) +
-        (Number(app.LowIssues) || 0) +
-        (Number(app.InformationalIssues) || 0);
-
-    return { active, total };
+    return { inProgress, active, total };
   }
 
   /**
