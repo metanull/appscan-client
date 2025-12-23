@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Box, Text } from 'ink';
+import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
 import TextInput from 'ink-text-input';
 import { Modal } from './components/Modal.js';
@@ -26,6 +26,12 @@ export const CreateJiraModal = ({
   const [projectKey, setProjectKey] = useState(defaultProjectKey || '');
   const [groupBy, setGroupBy] = useState('type');
   const [error, setError] = useState(null);
+
+  useInput((input, key) => {
+    if (key.escape && step !== 'creating') {
+      onClose();
+    }
+  });
 
   const handleProjectSubmit = () => {
     if (!projectKey || projectKey.trim() === '') {
