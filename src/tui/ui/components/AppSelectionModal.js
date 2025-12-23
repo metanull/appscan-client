@@ -92,6 +92,11 @@ export const AppSelectionModal = React.memo(
         return;
       }
 
+      if (key.return && filteredApps[cursor]) {
+        onSelect(filteredApps[cursor]);
+        return;
+      }
+
       if (key.upArrow) {
         setCursor((prev) => Math.max(0, prev - 1));
         return;
@@ -102,37 +107,8 @@ export const AppSelectionModal = React.memo(
         return;
       }
 
-      if (key.return && filteredApps[cursor]) {
-        onSelect(filteredApps[cursor]);
-        return;
-      }
-
-      if (input === 's') {
-        // Toggle sort
+      if (key.leftArrow || key.rightArrow) {
         setSortBy((prev) => (prev === 'name' ? 'issues' : 'name'));
-        return;
-      }
-
-      if (input === 'h') {
-        // Toggle hide empty (not implemented in this simplified version)
-        return;
-      }
-
-      // Ignore special keys and modifier combinations that shouldn't trigger search
-      // Only process printable characters for search
-      if (
-        key.ctrl ||
-        key.meta ||
-        key.shift ||
-        key.tab ||
-        key.backspace ||
-        key.delete ||
-        key.pageUp ||
-        key.pageDown ||
-        key.home ||
-        key.end ||
-        !input // Empty input means it was a special key
-      ) {
         return;
       }
     });
