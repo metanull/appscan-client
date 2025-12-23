@@ -82,7 +82,7 @@ export const ScanSelectionModal = React.memo(
           setCursor(index);
         }
       }
-    }, []); // Only run once on mount
+    }, [selectedScan, filteredScans]); // Run when selectedScan or filteredScans changes
 
     // Handle keyboard input
     useInput((input, key) => {

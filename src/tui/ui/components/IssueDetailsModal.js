@@ -16,7 +16,7 @@ export const IssueDetailsModal = React.memo(
     const [focusedArticleUrl, setFocusedArticleUrl] = useState(null);
     const [comments, setComments] = useState([]);
     const [loadingComments, setLoadingComments] = useState(false);
-    const [viewMode, setViewMode] = useState('comments'); // 'comments' | 'article'
+    const [viewMode, setViewMode] = useState('article'); // 'comments' | 'article'
 
     // Fetch focused article URL
     useEffect(() => {

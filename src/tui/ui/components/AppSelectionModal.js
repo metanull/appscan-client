@@ -39,6 +39,8 @@ export const AppSelectionModal = React.memo(
       if (hideEmpty) {
         filtered = filtered.filter((app) => {
           const { total } = appScanService?.getAppIssueCounts(app) || {
+            inProgress: 0,
+            active: 0,
             total: 0,
           };
           return total > 0;
@@ -60,9 +62,9 @@ export const AppSelectionModal = React.memo(
         if (sortBy === 'name') {
           return (a.Name || '').localeCompare(b.Name || '');
         } else if (sortBy === 'issues') {
-          const aCount = appScanService?.getAppIssueCounts(a)?.total || 0;
-          const bCount = appScanService?.getAppIssueCounts(b)?.total || 0;
-          return bCount - aCount; // Descending
+          const aCount = appScanService?.getAppIssueCounts(a)?.active || 0;
+          const bCount = appScanService?.getAppIssueCounts(b)?.active || 0;
+          return bCount - aCount; // Descending by active issues
         }
         return 0;
       });
@@ -80,13 +82,18 @@ export const AppSelectionModal = React.memo(
           setCursor(index);
         }
       }
-    }, []); // Only run once on mount
+    }, [selectedApp, filteredApps]); // Run when selectedApp or filteredApps changes
 
     // Handle keyboard input
     useInput((input, key) => {
       // Handle special keys first (before they can affect search)
       if (key.escape) {
         onCancel();
+        return;
+      }
+
+      if (key.return && filteredApps[cursor]) {
+        onSelect(filteredApps[cursor]);
         return;
       }
 
@@ -100,44 +107,18 @@ export const AppSelectionModal = React.memo(
         return;
       }
 
-      if (key.return && filteredApps[cursor]) {
-        onSelect(filteredApps[cursor]);
-        return;
-      }
-
-      if (input === 's') {
-        // Toggle sort
+      if (key.leftArrow || key.rightArrow) {
         setSortBy((prev) => (prev === 'name' ? 'issues' : 'name'));
-        return;
-      }
-
-      if (input === 'h') {
-        // Toggle hide empty (not implemented in this simplified version)
-        return;
-      }
-
-      // Ignore special keys and modifier combinations that shouldn't trigger search
-      // Only process printable characters for search
-      if (
-        key.ctrl ||
-        key.meta ||
-        key.shift ||
-        key.tab ||
-        key.backspace ||
-        key.delete ||
-        key.pageUp ||
-        key.pageDown ||
-        key.home ||
-        key.end ||
-        !input // Empty input means it was a special key
-      ) {
         return;
       }
     });
 
     const renderItem = useCallback(
       (app, isSelected) => {
-        const { active, total } = appScanService?.getAppIssueCounts(app) || {
+        const { inProgress, active, total } = appScanService?.getAppIssueCounts(
+          app
+        ) || {
+          inProgress: 0,
           active: 0,
           total: 0,
         };
@@ -149,8 +130,12 @@ export const AppSelectionModal = React.memo(
               {app.Name || 'Unnamed App'}
             </Text>
             <Text dimColor> (</Text>
-            <Text color={active > 0 ? 'red' : 'gray'}>{active}</Text>
-            <Text dimColor> / {total} issues)</Text>
+            <Text color={inProgress > 0 ? 'green' : 'gray'}>{inProgress}</Text>
+            <Text dimColor> | </Text>
+            <Text color={active > inProgress ? 'red' : 'gray'}>{active}</Text>
+            <Text dimColor> | </Text>
+            <Text color="gray">{total}</Text>
+            <Text dimColor>)</Text>
           </Box>
         );
       },
