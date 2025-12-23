@@ -80,7 +80,7 @@ export const AppSelectionModal = React.memo(
           setCursor(index);
         }
       }
-    }, []); // Only run once on mount
+    }, [selectedApp, filteredApps]); // Run when selectedApp or filteredApps changes
 
     // Handle keyboard input
     useInput((input, key) => {
