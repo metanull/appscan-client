@@ -78,7 +78,6 @@ export class AppScanService {
     this.config = config || new Config();
     this.api = null;
     this.token = null;
-    this.isReauthenticating = false; // Prevent multiple simultaneous re-auth attempts
   }
 
   async authenticate() {
@@ -124,10 +123,12 @@ export class AppScanService {
 
   async listApplications() {
     await this.ensureAuthenticated();
-    return this.withAuthRetry(
-      async () => await this.api.v4.Apps_Get({}),
-      'Failed to list applications'
-    );
+    try {
+      const response = await this.api.v4.Apps_Get({});
+      return response;
+    } catch (error) {
+      throw new Error(`Failed to list applications: ${error.message}`);
+    }
   }
 
   async listScans(appId) {
@@ -138,18 +139,22 @@ export class AppScanService {
     if (appId) {
       query.$filter = `AppId eq ${appId}`;
     }
-    return this.withAuthRetry(
-      async () => await this.api.v4.Scans_Get(query),
-      'Failed to list scans'
-    );
+    try {
+      const response = await this.api.v4.Scans_Get(query);
+      return response;
+    } catch (error) {
+      throw new Error(`Failed to list scans: ${error.message}`);
+    }
   }
 
   async listScanExecutions(scanId) {
     await this.ensureAuthenticated();
-    return this.withAuthRetry(
-      async () => await this.api.v4.Scans_GetExecutions(scanId, {}),
-      'Failed to list scan executions'
-    );
+    try {
+      const response = await this.api.v4.Scans_GetExecutions(scanId, {});
+      return response;
+    } catch (error) {
+      throw new Error(`Failed to list scan executions: ${error.message}`);
+    }
   }
 
   /**
@@ -185,7 +190,7 @@ export class AppScanService {
       filterOptions = null;
     }
 
-    return this.withAuthRetry(async () => {
+    try {
       const queryParams = {};
 
       // Build OData filter if options provided
@@ -228,15 +233,19 @@ export class AppScanService {
       }
 
       return response;
-    }, 'Failed to list issues');
+    } catch (error) {
+      throw new Error(`Failed to list issues: ${error.message}`);
+    }
   }
 
   async getApplicationDetails(appId) {
     await this.ensureAuthenticated();
-    return this.withAuthRetry(
-      async () => await this.api.v4.Apps_Get({ Id: appId }),
-      'Failed to get application details'
-    );
+    try {
+      const response = await this.api.v4.Apps_Get({ Id: appId });
+      return response;
+    } catch (error) {
+      throw new Error(`Failed to get application details: ${error.message}`);
+    }
   }
 
   async getScanDetails(scanId) {
@@ -628,46 +637,6 @@ export class AppScanService {
   async ensureAuthenticated() {
     if (!this.token) {
       await this.authenticate();
-    }
-  }
-
-  /**
-   * Wraps API calls with automatic retry on 401 (authentication expired)
-   * @param {Function} apiCall - The API call function to execute
-   * @param {string} errorContext - Context for error messages
-   * @returns {Promise<any>} The API response
-   */
-  async withAuthRetry(apiCall, errorContext) {
-    try {
-      return await apiCall();
-    } catch (error) {
-      // Check if it's a 401 error (authentication expired)
-      const is401 =
-        error.response?.status === 401 ||
-        error.statusCode === 401 ||
-        error.message?.includes('401') ||
-        error.message?.toLowerCase().includes('unauthorized');
-
-      if (is401 && !this.isReauthenticating) {
-        // Authentication expired - try to re-authenticate once
-        try {
-          this.isReauthenticating = true;
-          this.token = null; // Clear expired token
-          await this.authenticate();
-          this.isReauthenticating = false;
-
-          // Retry the API call with new token
-          return await apiCall();
-        } catch (reauthError) {
-          this.isReauthenticating = false;
-          throw new Error(
-            `${errorContext}: Authentication failed after retry - ${reauthError.message}`
-          );
-        }
-      }
-
-      // Not a 401 or already retried, throw original error
-      throw new Error(`${errorContext}: ${error.message}`);
     }
   }
 
