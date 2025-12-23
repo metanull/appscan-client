@@ -445,7 +445,7 @@ DetailsPreviewPanel.displayName = 'DetailsPreviewPanel';
  * Status Bar
  */
 const pkg = getPackageInfo();
-const StatusBar = React.memo(({ error, loading, message }) => {
+const StatusBar = React.memo(({ error, loading, message, excludePassedNoise }) => {
   const rightText = `${pkg.name || 'appscan-client'} ${pkg.version || 'v0.0.0'} • License ${pkg.license || 'MIT'} • ${pkg.author || 'Pascal (MetaNull) Havelange'}`;
   return (
     <Box
@@ -466,7 +466,12 @@ const StatusBar = React.memo(({ error, loading, message }) => {
           </Box>
         )}
         {!error && !loading && (
-          <Text dimColor>? Help | CTRL+O App | CTRL+W Scan | q Quit</Text>
+          <Box>
+            <Text dimColor>? Help | CTRL+O App | CTRL+W Scan | q Quit</Text>
+            {excludePassedNoise && (
+              <Text color="yellow" dimColor> | [Passed/Noise Excluded]</Text>
+            )}
+          </Box>
         )}
       </Box>
       <Box>
@@ -510,6 +515,7 @@ export const InkApp = ({ configPath }) => {
   const filterPreset = useStore((state) => state.filterPreset);
   const sortBy = useStore((state) => state.sortBy);
   const selectedIssueIds = useStore((state) => state.selectedIssueIds);
+  const excludePassedNoise = useStore((state) => state.excludePassedNoise);
 
   // Local UI state
   const [showContextPane, setShowContextPane] = useState(true);
@@ -621,17 +627,20 @@ export const InkApp = ({ configPath }) => {
         const isViewAll =
           selectedScan._isViewAll || selectedScan.Id === '__VIEW_ALL__';
 
+        // Build filter options with excludePassedNoise
+        const filterOptions = excludePassedNoise ? { excludePassedNoise: true } : null;
+
         let issueList;
         if (isViewAll && selectedApp?.Id) {
           // Load all issues for the application (across all scans)
           issueList = await appScanService.listIssues(
             selectedApp.Id,
-            null,
+            filterOptions,
             'Application'
           );
         } else {
           // Load issues for the specific scan
-          issueList = await appScanService.listIssues(selectedScan.Id);
+          issueList = await appScanService.listIssues(selectedScan.Id, filterOptions);
         }
 
         if (cancelled) return;
@@ -655,7 +664,7 @@ export const InkApp = ({ configPath }) => {
     return () => {
       cancelled = true;
     };
-  }, [selectedScan, selectedApp, appScanService]);
+  }, [selectedScan, selectedApp, appScanService, excludePassedNoise]);
 
   // Filtered issues - build from individual filter state
   const filteredIssues = useMemo(() => {
@@ -720,7 +729,7 @@ export const InkApp = ({ configPath }) => {
   }, [filteredIssuesLength]); // Only depend on data, not setter
 
   // Helper: Get filter options for a preset
-  const getFilterOptionsForPreset = useCallback((presetName) => {
+  const getFilterOptionsForPreset = useCallback((presetName, excludePassedNoise) => {
     const presetMap = {
       active: { statusActive: true },
       inactive: { statusInactive: true },
@@ -732,7 +741,14 @@ export const InkApp = ({ configPath }) => {
       medium: { severityMedium: true },
       high: { severityHigh: true },
     };
-    return presetMap[presetName] || null;
+    const options = presetMap[presetName] || {};
+    
+    // Add Passed/Noise exclusion if enabled
+    if (excludePassedNoise) {
+      options.excludePassedNoise = true;
+    }
+    
+    return Object.keys(options).length > 0 ? options : null;
   }, []);
 
   // Helper: Apply filter preset and fetch filtered issues
@@ -748,7 +764,10 @@ export const InkApp = ({ configPath }) => {
 
         const isViewAll =
           selectedScan._isViewAll || selectedScan.Id === '__VIEW_ALL__';
-        const filterOptions = getFilterOptionsForPreset(presetName);
+        const filterOptions = getFilterOptionsForPreset(
+          presetName,
+          store.excludePassedNoise
+        );
 
         let issueList;
         if (isViewAll && selectedApp?.Id) {
@@ -795,8 +814,10 @@ export const InkApp = ({ configPath }) => {
       // Check if there's an active filter preset
       const currentPreset = store.filterPreset;
       const filterOptions = currentPreset
-        ? getFilterOptionsForPreset(currentPreset)
-        : null;
+        ? getFilterOptionsForPreset(currentPreset, store.excludePassedNoise)
+        : store.excludePassedNoise
+          ? { excludePassedNoise: true }
+          : null;
 
       let issueList;
       if (isViewAll && selectedApp?.Id) {
@@ -1091,7 +1112,7 @@ export const InkApp = ({ configPath }) => {
           const hasFilters = store.hasActiveFilters() || store.filterPreset;
           if (hasFilters && selectedScan?.Id) {
             store.clearFilters();
-            // Reload all issues
+            // Reload all issues with current excludePassedNoise setting
             try {
               store.setLoading(true);
 
@@ -1099,15 +1120,23 @@ export const InkApp = ({ configPath }) => {
               const isViewAll =
                 selectedScan._isViewAll || selectedScan.Id === '__VIEW_ALL__';
 
+              // Build filter options with excludePassedNoise if enabled
+              const filterOptions = store.excludePassedNoise
+                ? { excludePassedNoise: true }
+                : null;
+
               let issueList;
               if (isViewAll && selectedApp?.Id) {
                 issueList = await appScanService.listIssues(
                   selectedApp.Id,
-                  null,
+                  filterOptions,
                   'Application'
                 );
               } else {
-                issueList = await appScanService.listIssues(selectedScan.Id);
+                issueList = await appScanService.listIssues(
+                  selectedScan.Id,
+                  filterOptions
+                );
               }
 
               store.setIssues(issueList || []);
@@ -1128,6 +1157,36 @@ export const InkApp = ({ configPath }) => {
           return store.hasActiveFilters() || store.filterPreset;
         },
         group: 'Filtering',
+      },
+      {
+        key: 'x',
+        action: async () => {
+          const store = useStore.getState();
+          if (!store.excludePassedNoise) {
+            // Enable exclusion
+            store.setExcludePassedNoise(true);
+            await reloadIssues();
+          }
+        },
+        description: 'Exclude Noise/Passed',
+        condition: () => !!selectedScan && !excludePassedNoise,
+        group: 'Filtering',
+        hint: true,
+      },
+      {
+        key: 'alt+x',
+        action: async () => {
+          const store = useStore.getState();
+          if (store.excludePassedNoise) {
+            // Disable exclusion
+            store.setExcludePassedNoise(false);
+            await reloadIssues();
+          }
+        },
+        description: 'Include All',
+        condition: () => !!selectedScan && excludePassedNoise,
+        group: 'Filtering',
+        hint: true,
       },
 
       // Sorting
@@ -1222,6 +1281,7 @@ export const InkApp = ({ configPath }) => {
       flushCursorMove,
       applyFilterPreset,
       reloadIssues,
+      excludePassedNoise,
     ]
   );
 
@@ -1239,7 +1299,14 @@ export const InkApp = ({ configPath }) => {
   return (
     <Layout
       header={null}
-      footer={<StatusBar error={error} loading={loading} message="Ready" />}
+      footer={
+        <StatusBar
+          error={error}
+          loading={loading}
+          message="Ready"
+          excludePassedNoise={excludePassedNoise}
+        />
+      }
       debugBar={<DebugBar message={debugMessage} visible={debugMode} />}
     >
       <Box flexDirection="row" height={contentHeight}>
@@ -1443,9 +1510,12 @@ export const InkApp = ({ configPath }) => {
 
               // Check if there's an active filter preset and preserve it
               const currentPreset = useStore.getState().filterPreset;
+              const currentExcludePassedNoise = useStore.getState().excludePassedNoise;
               const filterOptions = currentPreset
-                ? getFilterOptionsForPreset(currentPreset)
-                : null;
+                ? getFilterOptionsForPreset(currentPreset, currentExcludePassedNoise)
+                : currentExcludePassedNoise
+                  ? { excludePassedNoise: true }
+                  : null;
 
               let updatedIssues;
               if (isViewAll && selectedApp?.Id) {
@@ -1524,9 +1594,12 @@ export const InkApp = ({ configPath }) => {
 
               // Check if there's an active filter preset and preserve it
               const currentPreset = useStore.getState().filterPreset;
+              const currentExcludePassedNoise = useStore.getState().excludePassedNoise;
               const filterOptions = currentPreset
-                ? getFilterOptionsForPreset(currentPreset)
-                : null;
+                ? getFilterOptionsForPreset(currentPreset, currentExcludePassedNoise)
+                : currentExcludePassedNoise
+                  ? { excludePassedNoise: true }
+                  : null;
 
               let updatedIssues;
               if (isViewAll && selectedApp?.Id) {
@@ -1585,9 +1658,12 @@ export const InkApp = ({ configPath }) => {
 
               // Check if there's an active filter preset and preserve it
               const currentPreset = useStore.getState().filterPreset;
+              const currentExcludePassedNoise = useStore.getState().excludePassedNoise;
               const filterOptions = currentPreset
-                ? getFilterOptionsForPreset(currentPreset)
-                : null;
+                ? getFilterOptionsForPreset(currentPreset, currentExcludePassedNoise)
+                : currentExcludePassedNoise
+                  ? { excludePassedNoise: true }
+                  : null;
 
               let updatedIssues;
               if (isViewAll && selectedApp?.Id) {

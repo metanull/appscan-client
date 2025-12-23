@@ -69,6 +69,11 @@ function buildODataFilter(options) {
     filters.push('ExternalId eq null');
   }
 
+  // Exclude Passed and Noise statuses
+  if (options.excludePassedNoise) {
+    filters.push("(Status ne 'Passed' and Status ne 'Noise')");
+  }
+
   // Combine all filters with AND
   return filters.length > 0 ? filters.join(' and ') : '';
 }
