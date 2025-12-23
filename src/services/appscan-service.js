@@ -185,53 +185,50 @@ export class AppScanService {
       filterOptions = null;
     }
 
-    return this.withAuthRetry(
-      async () => {
-        const queryParams = {};
+    return this.withAuthRetry(async () => {
+      const queryParams = {};
 
-        // Build OData filter if options provided
-        if (filterOptions && typeof filterOptions === 'object') {
-          const odataFilter = buildODataFilter(filterOptions);
-          if (odataFilter) {
-            queryParams.$filter = odataFilter;
+      // Build OData filter if options provided
+      if (filterOptions && typeof filterOptions === 'object') {
+        const odataFilter = buildODataFilter(filterOptions);
+        if (odataFilter) {
+          queryParams.$filter = odataFilter;
+        }
+      }
+      // Legacy: client-side filtering by excludeStatus
+      else if (excludeStatus) {
+        // Don't use $filter, fetch all and filter client-side for backward compatibility
+      }
+
+      const response = await this.api.v4.Issues_Get(
+        scope,
+        scopeId,
+        queryParams
+      );
+
+      // Legacy client-side filtering if excludeStatus is provided and no filter options
+      if (
+        excludeStatus &&
+        (!filterOptions || typeof filterOptions !== 'object') &&
+        response.Items
+      ) {
+        const statusesToExclude = excludeStatus
+          .split(',')
+          .map((s) => s.trim())
+          .filter((s) => s);
+        if (statusesToExclude.length > 0) {
+          response.Items = response.Items.filter(
+            (issue) => !statusesToExclude.includes(issue.Status)
+          );
+          // Update count if present
+          if (response.Count !== undefined) {
+            response.Count = response.Items.length;
           }
         }
-        // Legacy: client-side filtering by excludeStatus
-        else if (excludeStatus) {
-          // Don't use $filter, fetch all and filter client-side for backward compatibility
-        }
+      }
 
-        const response = await this.api.v4.Issues_Get(
-          scope,
-          scopeId,
-          queryParams
-        );
-
-        // Legacy client-side filtering if excludeStatus is provided and no filter options
-        if (
-          excludeStatus &&
-          (!filterOptions || typeof filterOptions !== 'object') &&
-          response.Items
-        ) {
-          const statusesToExclude = excludeStatus
-            .split(',')
-            .map((s) => s.trim())
-            .filter((s) => s);
-          if (statusesToExclude.length > 0) {
-            response.Items = response.Items.filter(
-              (issue) => !statusesToExclude.includes(issue.Status)
-            );
-            // Update count if present
-            if (response.Count !== undefined) {
-              response.Count = response.Items.length;
-            }
-          }
-        }
-
-        return response;
-      },
-      'Failed to list issues'
-    );
+      return response;
+    }, 'Failed to list issues');
   }
 
   async getApplicationDetails(appId) {
@@ -645,8 +642,8 @@ export class AppScanService {
       return await apiCall();
     } catch (error) {
       // Check if it's a 401 error (authentication expired)
-      const is401 = 
-        error.response?.status === 401 || 
+      const is401 =
+        error.response?.status === 401 ||
         error.statusCode === 401 ||
         error.message?.includes('401') ||
         error.message?.toLowerCase().includes('unauthorized');
@@ -658,15 +655,17 @@ export class AppScanService {
           this.token = null; // Clear expired token
           await this.authenticate();
           this.isReauthenticating = false;
-          
+
           // Retry the API call with new token
           return await apiCall();
         } catch (reauthError) {
           this.isReauthenticating = false;
-          throw new Error(`${errorContext}: Authentication failed after retry - ${reauthError.message}`);
+          throw new Error(
+            `${errorContext}: Authentication failed after retry - ${reauthError.message}`
+          );
         }
       }
-      
+
       // Not a 401 or already retried, throw original error
       throw new Error(`${errorContext}: ${error.message}`);
     }
