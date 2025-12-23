@@ -74,7 +74,7 @@ export const LinksModal = React.memo(
     // In "All Scans" mode, get the scan ID from the current issue
     const isViewingAll = scan?._isViewAll || scan?.Id === '__VIEW_ALL__';
     const scanId = isViewingAll ? issue?.ScanId : scan?.Id;
-    
+
     if (app?.Id && scanId) {
       links.push({
         label: '🔗 AppScan Scan',

@@ -115,12 +115,13 @@ export const AppSelectionModal = React.memo(
 
     const renderItem = useCallback(
       (app, isSelected) => {
-        const { inProgress, active, total } =
-          appScanService?.getAppIssueCounts(app) || {
-            inProgress: 0,
-            active: 0,
-            total: 0,
-          };
+        const { inProgress, active, total } = appScanService?.getAppIssueCounts(
+          app
+        ) || {
+          inProgress: 0,
+          active: 0,
+          total: 0,
+        };
 
         return (
           <Box>
