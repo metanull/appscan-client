@@ -71,10 +71,14 @@ export const LinksModal = React.memo(
     }
 
     // AppScan Scan link
-    if (app?.Id && scan?.Id) {
+    // In "All Scans" mode, get the scan ID from the current issue
+    const isViewingAll = scan?._isViewAll || scan?.Id === '__VIEW_ALL__';
+    const scanId = isViewingAll ? issue?.ScanId : scan?.Id;
+    
+    if (app?.Id && scanId) {
       links.push({
         label: '🔗 AppScan Scan',
-        url: appScanService.getScanUrl(app.Id, scan.Id),
+        url: appScanService.getScanUrl(app.Id, scanId),
       });
     }
 
