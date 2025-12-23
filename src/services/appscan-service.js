@@ -78,6 +78,7 @@ export class AppScanService {
     this.config = config || new Config();
     this.api = null;
     this.token = null;
+    this.isReauthenticating = false; // Prevent multiple simultaneous re-auth attempts
   }
 
   async authenticate() {
@@ -123,12 +124,10 @@ export class AppScanService {
 
   async listApplications() {
     await this.ensureAuthenticated();
-    try {
-      const response = await this.api.v4.Apps_Get({});
-      return response;
-    } catch (error) {
-      throw new Error(`Failed to list applications: ${error.message}`);
-    }
+    return this.withAuthRetry(
+      async () => await this.api.v4.Apps_Get({}),
+      'Failed to list applications'
+    );
   }
 
   async listScans(appId) {
@@ -139,22 +138,18 @@ export class AppScanService {
     if (appId) {
       query.$filter = `AppId eq ${appId}`;
     }
-    try {
-      const response = await this.api.v4.Scans_Get(query);
-      return response;
-    } catch (error) {
-      throw new Error(`Failed to list scans: ${error.message}`);
-    }
+    return this.withAuthRetry(
+      async () => await this.api.v4.Scans_Get(query),
+      'Failed to list scans'
+    );
   }
 
   async listScanExecutions(scanId) {
     await this.ensureAuthenticated();
-    try {
-      const response = await this.api.v4.Scans_GetExecutions(scanId, {});
-      return response;
-    } catch (error) {
-      throw new Error(`Failed to list scan executions: ${error.message}`);
-    }
+    return this.withAuthRetry(
+      async () => await this.api.v4.Scans_GetExecutions(scanId, {}),
+      'Failed to list scan executions'
+    );
   }
 
   /**
@@ -190,62 +185,61 @@ export class AppScanService {
       filterOptions = null;
     }
 
-    try {
-      const queryParams = {};
+    return this.withAuthRetry(
+      async () => {
+        const queryParams = {};
 
-      // Build OData filter if options provided
-      if (filterOptions && typeof filterOptions === 'object') {
-        const odataFilter = buildODataFilter(filterOptions);
-        if (odataFilter) {
-          queryParams.$filter = odataFilter;
-        }
-      }
-      // Legacy: client-side filtering by excludeStatus
-      else if (excludeStatus) {
-        // Don't use $filter, fetch all and filter client-side for backward compatibility
-      }
-
-      const response = await this.api.v4.Issues_Get(
-        scope,
-        scopeId,
-        queryParams
-      );
-
-      // Legacy client-side filtering if excludeStatus is provided and no filter options
-      if (
-        excludeStatus &&
-        (!filterOptions || typeof filterOptions !== 'object') &&
-        response.Items
-      ) {
-        const statusesToExclude = excludeStatus
-          .split(',')
-          .map((s) => s.trim())
-          .filter((s) => s);
-        if (statusesToExclude.length > 0) {
-          response.Items = response.Items.filter(
-            (issue) => !statusesToExclude.includes(issue.Status)
-          );
-          // Update count if present
-          if (response.Count !== undefined) {
-            response.Count = response.Items.length;
+        // Build OData filter if options provided
+        if (filterOptions && typeof filterOptions === 'object') {
+          const odataFilter = buildODataFilter(filterOptions);
+          if (odataFilter) {
+            queryParams.$filter = odataFilter;
           }
         }
-      }
+        // Legacy: client-side filtering by excludeStatus
+        else if (excludeStatus) {
+          // Don't use $filter, fetch all and filter client-side for backward compatibility
+        }
 
-      return response;
-    } catch (error) {
-      throw new Error(`Failed to list issues: ${error.message}`);
-    }
+        const response = await this.api.v4.Issues_Get(
+          scope,
+          scopeId,
+          queryParams
+        );
+
+        // Legacy client-side filtering if excludeStatus is provided and no filter options
+        if (
+          excludeStatus &&
+          (!filterOptions || typeof filterOptions !== 'object') &&
+          response.Items
+        ) {
+          const statusesToExclude = excludeStatus
+            .split(',')
+            .map((s) => s.trim())
+            .filter((s) => s);
+          if (statusesToExclude.length > 0) {
+            response.Items = response.Items.filter(
+              (issue) => !statusesToExclude.includes(issue.Status)
+            );
+            // Update count if present
+            if (response.Count !== undefined) {
+              response.Count = response.Items.length;
+            }
+          }
+        }
+
+        return response;
+      },
+      'Failed to list issues'
+    );
   }
 
   async getApplicationDetails(appId) {
     await this.ensureAuthenticated();
-    try {
-      const response = await this.api.v4.Apps_Get({ Id: appId });
-      return response;
-    } catch (error) {
-      throw new Error(`Failed to get application details: ${error.message}`);
-    }
+    return this.withAuthRetry(
+      async () => await this.api.v4.Apps_Get({ Id: appId }),
+      'Failed to get application details'
+    );
   }
 
   async getScanDetails(scanId) {
@@ -637,6 +631,44 @@ export class AppScanService {
   async ensureAuthenticated() {
     if (!this.token) {
       await this.authenticate();
+    }
+  }
+
+  /**
+   * Wraps API calls with automatic retry on 401 (authentication expired)
+   * @param {Function} apiCall - The API call function to execute
+   * @param {string} errorContext - Context for error messages
+   * @returns {Promise<any>} The API response
+   */
+  async withAuthRetry(apiCall, errorContext) {
+    try {
+      return await apiCall();
+    } catch (error) {
+      // Check if it's a 401 error (authentication expired)
+      const is401 = 
+        error.response?.status === 401 || 
+        error.statusCode === 401 ||
+        error.message?.includes('401') ||
+        error.message?.toLowerCase().includes('unauthorized');
+
+      if (is401 && !this.isReauthenticating) {
+        // Authentication expired - try to re-authenticate once
+        try {
+          this.isReauthenticating = true;
+          this.token = null; // Clear expired token
+          await this.authenticate();
+          this.isReauthenticating = false;
+          
+          // Retry the API call with new token
+          return await apiCall();
+        } catch (reauthError) {
+          this.isReauthenticating = false;
+          throw new Error(`${errorContext}: Authentication failed after retry - ${reauthError.message}`);
+        }
+      }
+      
+      // Not a 401 or already retried, throw original error
+      throw new Error(`${errorContext}: ${error.message}`);
     }
   }
 
