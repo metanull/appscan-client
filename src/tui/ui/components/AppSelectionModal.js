@@ -21,9 +21,19 @@ export const AppSelectionModal = React.memo(
     selectedApp,
   }) => {
     const [searchText, setSearchText] = useState('');
+    const [debouncedSearchText, setDebouncedSearchText] = useState('');
     const [cursor, setCursor] = useState(0);
     const [sortBy, setSortBy] = useState('name'); // 'name' | 'issues'
     const { height } = useTerminalSize();
+
+    // Debounce search text to avoid filtering on every keystroke
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setDebouncedSearchText(searchText);
+      }, 200); // 200ms delay
+
+      return () => clearTimeout(timer);
+    }, [searchText]);
 
     // Filter and sort applications
     const filteredApps = useMemo(() => {
@@ -48,8 +58,8 @@ export const AppSelectionModal = React.memo(
       }
 
       // Search filter
-      if (searchText) {
-        const search = searchText.toLowerCase();
+      if (debouncedSearchText) {
+        const search = debouncedSearchText.toLowerCase();
         filtered = filtered.filter(
           (app) =>
             app.Name?.toLowerCase().includes(search) ||
@@ -70,7 +80,7 @@ export const AppSelectionModal = React.memo(
       });
 
       return filtered;
-    }, [applications, searchText, sortBy, hideEmpty, appScanService]);
+    }, [applications, debouncedSearchText, sortBy, hideEmpty, appScanService]);
 
     // Auto-select the currently selected app when modal opens
     useEffect(() => {

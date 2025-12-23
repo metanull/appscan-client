@@ -23,9 +23,19 @@ export const ScanSelectionModal = React.memo(
     selectedScan,
   }) => {
     const [searchText, setSearchText] = useState('');
+    const [debouncedSearchText, setDebouncedSearchText] = useState('');
     const [cursor, setCursor] = useState(0);
     const [filterType, setFilterType] = useState(null); // null | 'SAST' | 'DAST' | etc.
     const { height } = useTerminalSize();
+
+    // Debounce search text to avoid filtering on every keystroke
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setDebouncedSearchText(searchText);
+      }, 200); // 200ms delay
+
+      return () => clearTimeout(timer);
+    }, [searchText]);
 
     // Filter and sort scans, with special "View All" option
     const filteredScans = useMemo(() => {
@@ -50,8 +60,8 @@ export const ScanSelectionModal = React.memo(
       }
 
       // Search filter
-      if (searchText) {
-        const search = searchText.toLowerCase();
+      if (debouncedSearchText) {
+        const search = debouncedSearchText.toLowerCase();
         filtered = filtered.filter((scan) =>
           scan.Name?.toLowerCase().includes(search)
         );
@@ -70,7 +80,7 @@ export const ScanSelectionModal = React.memo(
       };
 
       return [viewAllOption, ...filtered];
-    }, [scans, searchText, filterType, hideEmpty, appScanService]);
+    }, [scans, debouncedSearchText, filterType, hideEmpty, appScanService]);
 
     // Auto-select the currently selected scan when modal opens
     useEffect(() => {
