@@ -55,7 +55,10 @@ export async function launchTUI(options = {}) {
             process.exit(0);
           },
         })
-      )
+      ),
+      {
+        incrementalRendering: true,
+      }
     );
 
     await waitUntilExit();
@@ -70,7 +73,10 @@ export async function launchTUI(options = {}) {
           null,
           React.createElement(InkApp, { configPath: options.config })
         )
-      )
+      ),
+      {
+        incrementalRendering: true,
+      }
     );
   }
 }
