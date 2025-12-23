@@ -16,7 +16,7 @@ const GROUP_OPTIONS = [
   { label: 'None (one issue per vulnerability)', value: 'none' },
 ];
 
-export const CreateJiraModal = ({
+export const CreateJiraModal = React.memo(({
   issues,
   defaultProjectKey,
   onCreate,
@@ -122,6 +122,8 @@ export const CreateJiraModal = ({
       </Panel>
     </Modal>
   );
-};
+});
+
+CreateJiraModal.displayName = 'CreateJiraModal';
 
 export default CreateJiraModal;

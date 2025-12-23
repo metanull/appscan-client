@@ -24,7 +24,7 @@ const STATUS_OPTIONS = [
   { label: 'Fixed', value: 'Fixed' },
 ];
 
-export const UpdateStatusModal = ({
+export const UpdateStatusModal = React.memo(({
   issueCount,
   issues = [],
   onUpdate,
@@ -204,6 +204,8 @@ export const UpdateStatusModal = ({
       </Panel>
     </Modal>
   );
-};
+});
+
+UpdateStatusModal.displayName = 'UpdateStatusModal';
 
 export default UpdateStatusModal;

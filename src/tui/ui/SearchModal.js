@@ -9,7 +9,7 @@ import TextInput from 'ink-text-input';
 import { Modal } from './components/Modal.js';
 import { Panel } from './components/Panel.js';
 
-export const SearchModal = ({ currentSearch, onSearch, onClose }) => {
+export const SearchModal = React.memo(({ currentSearch, onSearch, onClose }) => {
   const [searchText, setSearchText] = useState(currentSearch || '');
 
   useInput((input, key) => {
@@ -46,6 +46,8 @@ export const SearchModal = ({ currentSearch, onSearch, onClose }) => {
       </Panel>
     </Modal>
   );
-};
+});
+
+SearchModal.displayName = 'SearchModal';
 
 export default SearchModal;

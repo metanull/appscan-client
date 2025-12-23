@@ -14,7 +14,7 @@ const CONFIRM_OPTIONS = [
   { label: 'No, cancel', value: 'cancel' },
 ];
 
-export const UnlinkJiraModal = ({
+export const UnlinkJiraModal = React.memo(({
   issueCount,
   jiraKeys,
   onUnlink,
@@ -98,6 +98,8 @@ export const UnlinkJiraModal = ({
       </Panel>
     </Modal>
   );
-};
+});
+
+UnlinkJiraModal.displayName = 'UnlinkJiraModal';
 
 export default UnlinkJiraModal;
