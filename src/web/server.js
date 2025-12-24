@@ -12,6 +12,7 @@ import { getEnvPath } from '../utils/config-paths.js';
 import { AppScanService } from '../services/appscan-service.js';
 import { JiraService } from '../services/jira-service.js';
 import logger from '../tui/utils/logger.js';
+import rateLimit from 'express-rate-limit';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -212,8 +213,16 @@ export async function startWebServer(options = {}) {
 
   app.use('/api', apiRouter);
 
+  // Rate limit for SPA fallback route to protect filesystem access
+  const spaFallbackLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 1000, // limit each IP to 1000 SPA fallback requests per windowMs
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
+
   // Serve index.html for all other routes (SPA fallback)
-  app.get('*', (_req, res) => {
+  app.get('*', spaFallbackLimiter, (_req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
   });
 
