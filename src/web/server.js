@@ -7,6 +7,7 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { existsSync } from 'fs';
 import dotenv from 'dotenv';
 import { getEnvPath } from '../utils/config-paths.js';
 import { AppScanService } from '../services/appscan-service.js';
@@ -33,9 +34,26 @@ export async function startWebServer(options = {}) {
   app.use(cors());
   app.use(express.json());
 
-  // Serve static files from dist/web in production
-  const distPath = path.join(__dirname, '../../dist/web');
-  app.use(express.static(distPath));
+  // Serve static files from dist/web
+  // When bundled, dist/index.js is at project root, so web files are at ./web relative to dist/
+  // When running from source (src/web/server.js), web files are at ../../dist/web
+  let webPath;
+
+  // Try common locations
+  const bundledPath = path.resolve(path.dirname(__filename), 'web'); // For bundled: dist/web
+  const sourcePath = path.resolve(__dirname, '../../dist/web'); // For source: src/web -> dist/web
+
+  if (existsSync(path.join(bundledPath, 'index.html'))) {
+    webPath = bundledPath;
+  } else if (existsSync(path.join(sourcePath, 'index.html'))) {
+    webPath = sourcePath;
+  } else {
+    // Fallback: assume we're running from project root
+    webPath = path.resolve(process.cwd(), 'dist/web');
+  }
+
+  logger.info('Web UI path:', webPath);
+  app.use(express.static(webPath));
 
   // API Routes
   const apiRouter = express.Router();
@@ -223,7 +241,7 @@ export async function startWebServer(options = {}) {
 
   // Serve index.html for all other routes (SPA fallback)
   app.get('*', spaFallbackLimiter, (_req, res) => {
-    res.sendFile(path.join(distPath, 'index.html'));
+    res.sendFile(path.join(webPath, 'index.html'));
   });
 
   // Start server
