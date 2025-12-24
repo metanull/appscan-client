@@ -6,17 +6,12 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import { existsSync } from 'fs';
 import dotenv from 'dotenv';
-import { getEnvPath } from '../utils/config-paths.js';
+import { getEnvPath, getWebUIPath } from '../utils/config-paths.js';
 import { AppScanService } from '../services/appscan-service.js';
 import { JiraService } from '../services/jira-service.js';
 import logger from '../tui/utils/logger.js';
 import rateLimit from 'express-rate-limit';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Load environment variables
 dotenv.config({ path: getEnvPath() });
@@ -35,23 +30,8 @@ export async function startWebServer(options = {}) {
   app.use(express.json());
 
   // Serve static files from dist/web
-  // When bundled, dist/index.js is at project root, so web files are at ./web relative to dist/
-  // When running from source (src/web/server.js), web files are at ../../dist/web
-  let webPath;
-
-  // Try common locations
-  const bundledPath = path.resolve(path.dirname(__filename), 'web'); // For bundled: dist/web
-  const sourcePath = path.resolve(__dirname, '../../dist/web'); // For source: src/web -> dist/web
-
-  if (existsSync(path.join(bundledPath, 'index.html'))) {
-    webPath = bundledPath;
-  } else if (existsSync(path.join(sourcePath, 'index.html'))) {
-    webPath = sourcePath;
-  } else {
-    // Fallback: assume we're running from project root
-    webPath = path.resolve(process.cwd(), 'dist/web');
-  }
-
+  // Use the same path resolution mechanism as config-paths.js for consistency
+  const webPath = getWebUIPath();
   logger.info('Web UI path:', webPath);
   app.use(express.static(webPath));
 
