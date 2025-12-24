@@ -23,6 +23,7 @@ import { setup } from './commands/setup.js';
 import { connectionCheck } from './commands/connection-check.js';
 import { triage } from './commands/triage.js';
 import triageReportCommand from './commands/triage-report.js';
+import { startWebServer } from '../web/server.js';
 
 const packageJson = getPackageInfo();
 
@@ -536,6 +537,21 @@ Examples:
   $ appscan jira scan <scanId> --min-severity 4 --labels "security,critical"`
   )
   .action(createJiraIssue);
+
+program
+  .command('web')
+  .description('Start the web UI server')
+  .option('-p, --port <port>', 'Port to listen on', '3000')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan web
+  $ appscan web --port 8080`
+  )
+  .action(async (options) => {
+    await startWebServer({ port: parseInt(options.port, 10) });
+  });
 
 export function runCLI(argv = process.argv) {
   program.parse(argv);
