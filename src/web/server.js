@@ -47,7 +47,8 @@ export async function startWebServer(options = {}) {
   apiRouter.get('/applications', async (_req, res) => {
     try {
       const service = new AppScanService();
-      const apps = await service.getApplications();
+      const response = await service.listApplications();
+      const apps = response.Items || response || [];
       res.json(apps);
     } catch (error) {
       logger.error('Error fetching applications:', error);
@@ -59,7 +60,8 @@ export async function startWebServer(options = {}) {
   apiRouter.get('/applications/:appId/scans', async (req, res) => {
     try {
       const service = new AppScanService();
-      const scans = await service.getScans(req.params.appId);
+      const response = await service.listScans(req.params.appId);
+      const scans = response.Items || response || [];
       res.json(scans);
     } catch (error) {
       logger.error('Error fetching scans:', error);
@@ -72,10 +74,14 @@ export async function startWebServer(options = {}) {
     try {
       const service = new AppScanService();
       const excludeStatus = req.query.excludeStatus || 'Noise,Passed';
-      const issues = await service.getIssues(
+      const excludeArray = excludeStatus.split(',').filter(Boolean);
+      const response = await service.listIssues(
         req.params.scanId,
-        excludeStatus.split(',').filter(Boolean)
+        null,
+        excludeArray,
+        'Scan'
       );
+      const issues = response.Items || response || [];
       res.json(issues);
     } catch (error) {
       logger.error('Error fetching issues:', error);
@@ -88,10 +94,14 @@ export async function startWebServer(options = {}) {
     try {
       const service = new AppScanService();
       const excludeStatus = req.query.excludeStatus || 'Noise,Passed';
-      const issues = await service.getAllIssuesForApp(
+      const excludeArray = excludeStatus.split(',').filter(Boolean);
+      const response = await service.listIssues(
         req.params.appId,
-        excludeStatus.split(',').filter(Boolean)
+        null,
+        excludeArray,
+        'Application'
       );
+      const issues = response.Items || response || [];
       res.json(issues);
     } catch (error) {
       logger.error('Error fetching issues:', error);
@@ -115,7 +125,17 @@ export async function startWebServer(options = {}) {
   apiRouter.get('/issues/:issueId/article', async (req, res) => {
     try {
       const service = new AppScanService();
-      const article = await service.getIssueArticleMarkdown(req.params.issueId);
+      // First get the issue to have all required fields
+      const issue = await service.api.v4.Issues_GetIssue(
+        req.params.issueId,
+        {}
+      );
+      if (!issue) {
+        return res.status(404).json({ error: 'Issue not found' });
+      }
+
+      // Get article as markdown
+      const article = await service.getIssueArticle(issue);
       res.json({ content: article });
     } catch (error) {
       logger.error('Error fetching article:', error);
@@ -127,7 +147,12 @@ export async function startWebServer(options = {}) {
   apiRouter.get('/issues/:issueId/comments', async (req, res) => {
     try {
       const service = new AppScanService();
-      const comments = await service.getIssueComments(req.params.issueId);
+      await service.ensureAuthenticated();
+      const response = await service.api.v4.Issues_GetIssueComments(
+        req.params.issueId,
+        {}
+      );
+      const comments = response.Items || response || [];
       res.json(comments);
     } catch (error) {
       logger.error('Error fetching comments:', error);
@@ -140,8 +165,8 @@ export async function startWebServer(options = {}) {
     try {
       const service = new AppScanService();
       const { status, comment, externalId } = req.body;
-      await service.updateIssueStatus(
-        req.params.issueId,
+      await service.bulkUpdateIssues(
+        [req.params.issueId],
         status,
         comment,
         externalId
@@ -158,7 +183,7 @@ export async function startWebServer(options = {}) {
     try {
       const service = new AppScanService();
       const { issueIds, status, comment } = req.body;
-      await service.bulkUpdateIssueStatus(issueIds, status, comment);
+      await service.bulkUpdateIssues(issueIds, status, comment);
       res.json({ success: true });
     } catch (error) {
       logger.error('Error bulk updating issues:', error);
@@ -189,7 +214,7 @@ export async function startWebServer(options = {}) {
     try {
       const service = new AppScanService();
       const { jiraKey } = req.body;
-      await service.updateIssueStatus(req.params.issueId, null, null, jiraKey);
+      await service.bulkUpdateIssues([req.params.issueId], null, null, jiraKey);
       res.json({ success: true });
     } catch (error) {
       logger.error('Error linking Jira issue:', error);
@@ -201,7 +226,7 @@ export async function startWebServer(options = {}) {
   apiRouter.delete('/issues/:issueId/jira/link', async (req, res) => {
     try {
       const service = new AppScanService();
-      await service.updateIssueStatus(req.params.issueId, null, null, '');
+      await service.bulkUpdateIssues([req.params.issueId], null, null, '');
       res.json({ success: true });
     } catch (error) {
       logger.error('Error unlinking Jira issue:', error);
