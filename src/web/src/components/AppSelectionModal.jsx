@@ -215,8 +215,7 @@ const AppSelectionModal = () => {
                     <span>
                       <span
                         style={{
-                          color:
-                            active > inProgress ? '#f48771' : '#858585',
+                          color: active > inProgress ? '#f48771' : '#858585',
                         }}
                       >
                         {active}

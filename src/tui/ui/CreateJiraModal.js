@@ -14,7 +14,10 @@ import {
   saveParentEpic,
   getLastUsedEpic,
 } from '../services/parentEpicCache.js';
-import { createAVSComment, parseAVSFromComments } from '../../utils/asvs-utils.js';
+import {
+  createAVSComment,
+  parseAVSFromComments,
+} from '../../utils/asvs-utils.js';
 
 const GROUP_OPTIONS = [
   { label: 'Type (recommended)', value: 'type' },
@@ -23,7 +26,15 @@ const GROUP_OPTIONS = [
 ];
 
 export const CreateJiraModal = React.memo(
-  ({ issues, defaultProjectKey, appName, onCreate, onSaveAvsComment, appScanService, onClose }) => {
+  ({
+    issues,
+    defaultProjectKey,
+    appName,
+    onCreate,
+    onSaveAvsComment,
+    appScanService,
+    onClose,
+  }) => {
     const [step, setStep] = useState('project');
     const [projectKey, setProjectKey] = useState(defaultProjectKey || '');
     const [groupBy, setGroupBy] = useState('type');
@@ -54,7 +65,7 @@ export const CreateJiraModal = React.memo(
             try {
               const comments = await appScanService.getIssueComments(issue.Id);
               return { ...issue, comments };
-            } catch (err) {
+            } catch {
               return { ...issue, comments: [] };
             }
           })
@@ -183,7 +194,13 @@ export const CreateJiraModal = React.memo(
       setStep('creating');
 
       try {
-        await onCreate(projectKey, groupBy, issues, parentEpic.trim() || null, appName);
+        await onCreate(
+          projectKey,
+          groupBy,
+          issues,
+          parentEpic.trim() || null,
+          appName
+        );
         setStep('success');
         setTimeout(() => {
           onClose();
@@ -205,18 +222,25 @@ export const CreateJiraModal = React.memo(
     const epicOptions = [
       { label: '🆕 No parent epic', value: 'none' },
       ...(recentEpics.length > 0
-        ? recentEpics.slice().reverse().slice(0, 5).map((epic) => ({
-            label: `📌 ${epic}`,
-            value: epic,
-          }))
+        ? recentEpics
+            .slice()
+            .reverse()
+            .slice(0, 5)
+            .map((epic) => ({
+              label: `📌 ${epic}`,
+              value: epic,
+            }))
         : []),
       { label: '✏️  Enter custom epic...', value: 'custom' },
     ];
 
     const currentType = issueTypes[currentTypeIndex];
-    const currentTypeAVS = currentType ? parseAVSFromComments(
-      issuesWithComments.find((i) => i.IssueType === currentType)?.comments || []
-    ) : null;
+    const currentTypeAVS = currentType
+      ? parseAVSFromComments(
+          issuesWithComments.find((i) => i.IssueType === currentType)
+            ?.comments || []
+        )
+      : null;
 
     // Format ASVS label: "asvs1.2.3" => "ASVS 1.2.3"
     const formatAvsLabel = (label) => {
@@ -228,7 +252,10 @@ export const CreateJiraModal = React.memo(
 
     const avsOptions = currentTypeAVS
       ? [
-          { label: `✓ Use existing: ${formatAvsLabel(currentTypeAVS.label)}`, value: 'keep' },
+          {
+            label: `✓ Use existing: ${formatAvsLabel(currentTypeAVS.label)}`,
+            value: 'keep',
+          },
           { label: '🔄 Replace with new ASVS...', value: 'replace' },
           { label: '🗑️  Remove ASVS', value: 'remove' },
         ]
@@ -280,7 +307,10 @@ export const CreateJiraModal = React.memo(
           {step === 'asvs' && currentType && (
             <Box flexDirection="column" marginTop={1}>
               <Text>
-                ASVS for: <Text bold color="cyan">{currentType}</Text>
+                ASVS for:{' '}
+                <Text bold color="cyan">
+                  {currentType}
+                </Text>
               </Text>
               {currentTypeAVS && (
                 <Box marginTop={1}>
@@ -296,22 +326,36 @@ export const CreateJiraModal = React.memo(
 
           {step === 'avsLabel' && (
             <Box flexDirection="column" marginTop={1}>
-              <Text>Type: <Text bold>{currentType}</Text></Text>
+              <Text>
+                Type: <Text bold>{currentType}</Text>
+              </Text>
               <Text marginTop={1}>Enter ASVS label (e.g., asvs1.2.3):</Text>
               <Box marginTop={1}>
                 <Text color="cyan">&gt; </Text>
-                <TextInput value={avsLabel} onChange={setAvsLabel} onSubmit={handleAvsLabelSubmit} placeholder="asvs1.2.3" />
+                <TextInput
+                  value={avsLabel}
+                  onChange={setAvsLabel}
+                  onSubmit={handleAvsLabelSubmit}
+                  placeholder="asvs1.2.3"
+                />
               </Box>
             </Box>
           )}
 
           {step === 'avsUrl' && (
             <Box flexDirection="column" marginTop={1}>
-              <Text>Label: <Text color="cyan">{avsLabel}</Text></Text>
+              <Text>
+                Label: <Text color="cyan">{avsLabel}</Text>
+              </Text>
               <Text marginTop={1}>Enter Confluence URL:</Text>
               <Box marginTop={1}>
                 <Text color="cyan">&gt; </Text>
-                <TextInput value={avsUrl} onChange={setAvsUrl} onSubmit={handleAvsUrlSubmit} placeholder="https://..." />
+                <TextInput
+                  value={avsUrl}
+                  onChange={setAvsUrl}
+                  onSubmit={handleAvsUrlSubmit}
+                  placeholder="https://..."
+                />
               </Box>
             </Box>
           )}
@@ -328,9 +372,16 @@ export const CreateJiraModal = React.memo(
               <Text>Enter epic key (or leave empty):</Text>
               <Box marginTop={1}>
                 <Text color="cyan">&gt; </Text>
-                <TextInput value={parentEpic} onChange={setParentEpic} onSubmit={handleEpicSubmit} placeholder="SEC-123" />
+                <TextInput
+                  value={parentEpic}
+                  onChange={setParentEpic}
+                  onSubmit={handleEpicSubmit}
+                  placeholder="SEC-123"
+                />
               </Box>
-              <Text dimColor marginTop={1}>Press Enter to continue</Text>
+              <Text dimColor marginTop={1}>
+                Press Enter to continue
+              </Text>
             </Box>
           )}
 

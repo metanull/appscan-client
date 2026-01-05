@@ -217,7 +217,7 @@ export const IssueDetailsModal = React.memo(
                       </Text>
                     </Box>
                     <Text wrap="wrap">
-                      {avsInfo.label} - 
+                      {avsInfo.label} -
                       <Link url={avsInfo.url}>
                         <Text color="blue" underline>
                           {avsInfo.url}

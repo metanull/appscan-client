@@ -113,9 +113,12 @@ const DetailsPreview = () => {
           <div style={{ fontSize: '12px', lineHeight: '1.6' }}>
             <ReactMarkdown
               components={{
-                a: ({ node, href, ...props }) => {
-                  const baseUrl = process.env.APPSCAN_BASE_URL || 'https://cloud.appscan.com';
-                  const absoluteHref = href?.startsWith('http') ? href : `${baseUrl}${href}`;
+                a: ({ node: _node, href, ...props }) => {
+                  const baseUrl =
+                    process.env.APPSCAN_BASE_URL || 'https://cloud.appscan.com';
+                  const absoluteHref = href?.startsWith('http')
+                    ? href
+                    : `${baseUrl}${href}`;
                   return (
                     <a
                       {...props}
@@ -129,7 +132,7 @@ const DetailsPreview = () => {
                     />
                   );
                 },
-                code: ({ node, inline, ...props }) => (
+                code: ({ node: _node, inline, ...props }) => (
                   <code
                     {...props}
                     style={{
@@ -143,7 +146,7 @@ const DetailsPreview = () => {
                     }}
                   />
                 ),
-                pre: ({ node, ...props }) => (
+                pre: ({ node: _node, ...props }) => (
                   <pre
                     {...props}
                     style={{
@@ -155,7 +158,7 @@ const DetailsPreview = () => {
                     }}
                   />
                 ),
-                h1: ({ node, ...props }) => (
+                h1: ({ node: _node, ...props }) => (
                   <h1
                     {...props}
                     style={{
@@ -166,7 +169,7 @@ const DetailsPreview = () => {
                     }}
                   />
                 ),
-                h2: ({ node, ...props }) => (
+                h2: ({ node: _node, ...props }) => (
                   <h2
                     {...props}
                     style={{
@@ -177,7 +180,7 @@ const DetailsPreview = () => {
                     }}
                   />
                 ),
-                h3: ({ node, ...props }) => (
+                h3: ({ node: _node, ...props }) => (
                   <h3
                     {...props}
                     style={{
@@ -188,19 +191,19 @@ const DetailsPreview = () => {
                     }}
                   />
                 ),
-                strong: ({ node, ...props }) => (
+                strong: ({ node: _node, ...props }) => (
                   <strong {...props} style={{ color: '#dcdcaa' }} />
                 ),
-                em: ({ node, ...props }) => (
+                em: ({ node: _node, ...props }) => (
                   <em {...props} style={{ color: '#c586c0' }} />
                 ),
-                ul: ({ node, ...props }) => (
+                ul: ({ node: _node, ...props }) => (
                   <ul
                     {...props}
                     style={{ paddingLeft: '16px', margin: '6px 0' }}
                   />
                 ),
-                ol: ({ node, ...props }) => (
+                ol: ({ node: _node, ...props }) => (
                   <ol
                     {...props}
                     style={{ paddingLeft: '16px', margin: '6px 0' }}

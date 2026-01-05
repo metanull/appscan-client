@@ -187,7 +187,7 @@ export async function startWebServer(options = {}) {
     apiHandler(async (req, res, { getAppScanService }) => {
       const service = getAppScanService();
       await service.ensureAuthenticated();
-      
+
       // First get the issue to have all required fields
       const issue = await service.api.v4.Issues_GetIssue(
         req.params.issueId,

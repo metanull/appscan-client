@@ -77,7 +77,9 @@ export class JiraService {
         fields.parent = { key: parentEpic };
       }
 
-      const jiraIssue = await this.service.client.issues.createIssue({ fields });
+      const jiraIssue = await this.service.client.issues.createIssue({
+        fields,
+      });
 
       // Update AppScan issues with Jira key
       if (appScanService && app?.Id && jiraIssue.key) {

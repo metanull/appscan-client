@@ -4,7 +4,6 @@ import { apiClient } from './api/client';
 import Layout from './components/Layout';
 import ContextPane from './components/ContextPane';
 import IssueList from './components/IssueList';
-import DetailsPreview from './components/DetailsPreview';
 import AppSelectionModal from './components/AppSelectionModal';
 import ScanSelectionModal from './components/ScanSelectionModal';
 import IssueDetailsModal from './components/IssueDetailsModal';
@@ -47,7 +46,7 @@ function App() {
       try {
         useWebStore.getState().setLoading(true);
         useWebStore.getState().setError(null);
-        
+
         const response = await apiClient.getApplications();
         useWebStore.getState().setApplications(response);
       } catch (err) {
@@ -70,7 +69,7 @@ function App() {
       try {
         useWebStore.getState().setLoading(true);
         useWebStore.getState().setError(null);
-        
+
         const scans = await apiClient.getScans(selectedApp.Id);
         useWebStore.getState().setScans(scans);
       } catch (err) {
@@ -210,13 +209,13 @@ function App() {
             <AppSelectionModal />
           </div>
         )}
-        
+
         {view === 'scan-selection' && (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             <ScanSelectionModal />
           </div>
         )}
-        
+
         {view === 'issue-list' && (
           <>
             <IssueList />
@@ -269,7 +268,9 @@ function App() {
                   animation: 'spin 1s linear infinite',
                 }}
               />
-              <div style={{ fontSize: '16px', color: '#007acc' }}>Loading...</div>
+              <div style={{ fontSize: '16px', color: '#007acc' }}>
+                Loading...
+              </div>
               <style>
                 {`
                   @keyframes spin {
