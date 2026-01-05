@@ -41,9 +41,9 @@ const DetailsPreview = () => {
   return (
     <div
       style={{
-        width: '400px',
-        minWidth: '400px',
-        padding: '12px',
+        width: '600px',
+        minWidth: '600px',
+        padding: '16px',
         overflowY: 'auto',
         backgroundColor: '#252525',
         borderLeft: '1px solid #3e3e3e',
@@ -113,17 +113,22 @@ const DetailsPreview = () => {
           <div style={{ fontSize: '12px', lineHeight: '1.6' }}>
             <ReactMarkdown
               components={{
-                a: ({ node, ...props }) => (
-                  <a
-                    {...props}
-                    style={{
-                      color: '#4fc1ff',
-                      textDecoration: 'underline',
-                    }}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  />
-                ),
+                a: ({ node, href, ...props }) => {
+                  const baseUrl = process.env.APPSCAN_BASE_URL || 'https://cloud.appscan.com';
+                  const absoluteHref = href?.startsWith('http') ? href : `${baseUrl}${href}`;
+                  return (
+                    <a
+                      {...props}
+                      href={absoluteHref}
+                      style={{
+                        color: '#4fc1ff',
+                        textDecoration: 'underline',
+                      }}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+                  );
+                },
                 code: ({ node, inline, ...props }) => (
                   <code
                     {...props}

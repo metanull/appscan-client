@@ -46,6 +46,9 @@ function App() {
     const loadApplications = async () => {
       try {
         useWebStore.getState().setLoading(true);
+        useWebStore.getState().setError(null);
+        
+        // Show progress
         const apps = await apiClient.getApplications();
         useWebStore.getState().setApplications(apps);
       } catch (err) {
@@ -67,6 +70,8 @@ function App() {
 
       try {
         useWebStore.getState().setLoading(true);
+        useWebStore.getState().setError(null);
+        
         const scans = await apiClient.getScans(selectedApp.Id);
         useWebStore.getState().setScans(scans);
       } catch (err) {
@@ -201,16 +206,36 @@ function App() {
       <Layout>
         {showContextPane && view === 'issue-list' && <ContextPane />}
 
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-          {view === 'app-selection' && <AppSelectionModal />}
-          {view === 'scan-selection' && <ScanSelectionModal />}
-          {view === 'issue-list' && (
-            <>
-              <IssueList />
-              {selectedIssue && <DetailsPreview />}
-            </>
-          )}
-        </div>
+        {view === 'app-selection' && (
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <AppSelectionModal />
+          </div>
+        )}
+        
+        {view === 'scan-selection' && (
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <ScanSelectionModal />
+          </div>
+        )}
+        
+        {view === 'issue-list' && (
+          <>
+            <IssueList />
+            {showIssueDetailsModal && selectedIssue && (
+              <div
+                style={{
+                  width: '700px',
+                  minWidth: '700px',
+                  borderLeft: '2px solid #007acc',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <IssueDetailsModal isPermanentPane={true} />
+              </div>
+            )}
+          </>
+        )}
 
         {loading && (
           <div
@@ -223,11 +248,38 @@ function App() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              background: 'rgba(0,0,0,0.5)',
+              background: 'rgba(0,0,0,0.7)',
               zIndex: 9999,
             }}
           >
-            <div style={{ fontSize: '24px', color: '#00ff00' }}>Loading...</div>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '16px',
+              }}
+            >
+              <div
+                style={{
+                  width: '50px',
+                  height: '50px',
+                  border: '4px solid #3e3e3e',
+                  borderTop: '4px solid #007acc',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite',
+                }}
+              />
+              <div style={{ fontSize: '16px', color: '#007acc' }}>Loading...</div>
+              <style>
+                {`
+                  @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                  }
+                `}
+              </style>
+            </div>
           </div>
         )}
 
@@ -256,7 +308,6 @@ function App() {
         {showCreateJiraModal && <CreateJiraModal />}
         {showLinkJiraModal && <LinkJiraModal />}
         {showUnlinkJiraModal && <UnlinkJiraModal />}
-        {showIssueDetailsModal && <IssueDetailsModal />}
       </Layout>
     </ErrorBoundary>
   );

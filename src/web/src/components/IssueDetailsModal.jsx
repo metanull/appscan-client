@@ -4,7 +4,7 @@ import { useWebStore } from '../store/webStore';
 import { apiClient } from '../api/client';
 import ReactMarkdown from 'react-markdown';
 
-const IssueDetailsModal = () => {
+const IssueDetailsModal = ({ isPermanentPane = false }) => {
   const selectedIssue = useWebStore((state) => state.selectedIssue);
   const [details, setDetails] = useState(null);
   const [article, setArticle] = useState('');
@@ -44,20 +44,25 @@ const IssueDetailsModal = () => {
 
   if (!selectedIssue) return null;
 
-  return (
-    <Modal
-      title={`Issue Details - ${selectedIssue.IssueType}`}
-      onClose={handleClose}
-      width="800px"
-    >
-      {loading ? (
-        <div style={{ textAlign: 'center', padding: '40px', color: '#858585' }}>
-          Loading...
-        </div>
-      ) : (
-        <div>
-          <div style={{ marginBottom: '20px' }}>
-            <div
+  const content = loading ? (
+    <div style={{ textAlign: 'center', padding: '40px', color: '#858585' }}>
+      <div style={{ marginBottom: '16px' }}>Loading details...</div>
+      <div
+        style={{
+          width: '40px',
+          height: '40px',
+          border: '3px solid #3e3e3e',
+          borderTop: '3px solid #007acc',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite',
+          margin: '0 auto',
+        }}
+      />
+    </div>
+  ) : (
+    <div>
+      <div style={{ marginBottom: '20px' }}>
+        <div
               style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
@@ -192,17 +197,22 @@ const IssueDetailsModal = () => {
               >
                 <ReactMarkdown
                   components={{
-                    a: ({ node, ...props }) => (
-                      <a
-                        {...props}
-                        style={{
-                          color: '#4fc1ff',
-                          textDecoration: 'underline',
-                        }}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      />
-                    ),
+                    a: ({ node, href, ...props }) => {
+                      const baseUrl = process.env.APPSCAN_BASE_URL || 'https://cloud.appscan.com';
+                      const absoluteHref = href?.startsWith('http') ? href : `${baseUrl}${href}`;
+                      return (
+                        <a
+                          {...props}
+                          href={absoluteHref}
+                          style={{
+                            color: '#4fc1ff',
+                            textDecoration: 'underline',
+                          }}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        />
+                      );
+                    },
                     code: ({ node, inline, ...props }) => (
                       <code
                         {...props}
@@ -325,7 +335,60 @@ const IssueDetailsModal = () => {
             </div>
           )}
         </div>
-      )}
+      );
+
+  if (isPermanentPane) {
+    return (
+      <div
+        style={{
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundColor: '#252525',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            padding: '16px',
+            borderBottom: '1px solid #3e3e3e',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <h3 style={{ margin: 0, color: '#007acc', fontSize: '16px' }}>
+            {selectedIssue.IssueType}
+          </h3>
+          <button
+            onClick={handleClose}
+            style={{
+              backgroundColor: 'transparent',
+              border: 'none',
+              color: '#858585',
+              cursor: 'pointer',
+              fontSize: '20px',
+              padding: '0 8px',
+            }}
+            title="Close Details"
+          >
+            ×
+          </button>
+        </div>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
+          {content}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Modal
+      title={`Issue Details - ${selectedIssue.IssueType}`}
+      onClose={handleClose}
+      width="800px"
+    >
+      {content}
     </Modal>
   );
 };

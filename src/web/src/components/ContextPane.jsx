@@ -17,12 +17,34 @@ const ContextPane = () => {
         padding: '12px',
         overflowY: 'auto',
         backgroundColor: '#252525',
+        position: 'relative',
       }}
     >
       <div
-        style={{ marginBottom: '16px', color: '#007acc', fontWeight: 'bold' }}
+        style={{
+          marginBottom: '16px',
+          color: '#007acc',
+          fontWeight: 'bold',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
       >
-        Context [c to toggle]
+        <span>Context</span>
+        <button
+          onClick={() => useWebStore.getState().toggleContextPane()}
+          style={{
+            backgroundColor: 'transparent',
+            border: 'none',
+            color: '#007acc',
+            cursor: 'pointer',
+            fontSize: '16px',
+            padding: '4px',
+          }}
+          title="Hide Context Pane"
+        >
+          &#xab;&#xab;
+        </button>
       </div>
 
       {selectedApp && (
@@ -59,39 +81,6 @@ const ContextPane = () => {
           </div>
         </div>
       )}
-
-      <div
-        style={{
-          marginTop: '24px',
-          padding: '12px',
-          border: '1px solid #4ec9b0',
-          borderRadius: '4px',
-        }}
-      >
-        <div
-          style={{
-            fontWeight: 'bold',
-            color: '#4ec9b0',
-            marginBottom: '8px',
-          }}
-        >
-          Hints
-        </div>
-        <div style={{ fontSize: '12px' }}>
-          <div style={{ marginBottom: '4px' }}>
-            <span style={{ color: '#ce9178' }}>[Space]</span> Toggle selection
-          </div>
-          <div style={{ marginBottom: '4px' }}>
-            <span style={{ color: '#ce9178' }}>[Enter]</span> View details
-          </div>
-          <div style={{ marginBottom: '4px' }}>
-            <span style={{ color: '#ce9178' }}>[u]</span> Update status
-          </div>
-          <div style={{ marginBottom: '4px' }}>
-            <span style={{ color: '#ce9178' }}>[j]</span> Create Jira
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
