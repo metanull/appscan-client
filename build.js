@@ -18,7 +18,6 @@ await esbuild.build({
   },
   external: [
     'ink',
-    'react',
     'ink-text-input',
     'ink-select-input',
     'ink-spinner',
@@ -40,7 +39,6 @@ await esbuild.build({
   // Don't bundle node_modules
   packages: 'external',
   jsx: 'automatic',
-  jsxImportSource: 'react',
   banner: {
     js: 'import { createRequire } from "module"; const require = createRequire(import.meta.url);'
   },

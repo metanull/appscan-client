@@ -1,6 +1,6 @@
 # appscan-client
 
-A Node.js command-line interface (CLI), Terminal User Interface (TUI), and Web UI tool for interacting with the HCL AppScan Cloud API.
+A Node.js command-line interface (CLI) and Terminal User Interface (TUI) tool for interacting with the HCL AppScan Cloud API.
 
 ## Features
 
@@ -14,12 +14,6 @@ A Node.js command-line interface (CLI), Terminal User Interface (TUI), and Web U
   - Modal-based workflow for all operations
   - Cached article loading for instant access
   - Multi-select and bulk operations
-- 🌐 **Web UI** - React-based web interface mirroring TUI layout and features
-  - Modern browser-based interface with 3-pane layout
-  - All TUI features available in the browser
-  - Responsive design with keyboard shortcuts
-  - Same filtering, search, and bulk operations
-  - RESTful API backend for easy integration
 - 📋 List applications, scans, scan executions, and security issues
 - 📊 Generate reports in Markdown and HTML formats
 - ⚙️ Flexible configuration via environment variables or config files
@@ -92,8 +86,6 @@ appscan connection-check
 
 ### 3. Start Triaging Vulnerabilities
 
-#### Option A: Terminal UI (TUI)
-
 Launch the modern terminal UI:
 
 ```bash
@@ -107,23 +99,7 @@ The TUI provides a 3-pane layout:
 - **Vulnerability List** (center) - Filterable list of issues
 - **Details Preview** (right) - Quick preview of selected issue
 
-#### Option B: Web UI
-
-Launch the web interface:
-
-```bash
-appscan web
-# or specify a custom port
-appscan web --port 8080
-```
-
-The Web UI will start at `http://localhost:3000` (or your specified port) and provides:
-- **Same 3-pane layout** as the TUI
-- **Browser-based interface** accessible from any modern browser
-- **All TUI features** including filtering, search, bulk operations, Jira integration
-- **Keyboard shortcuts** work the same way in the browser
-
-#### Keyboard Shortcuts (TUI & Web UI)
+#### Keyboard Shortcuts (TUI)
 
 | Key | Action |
 |-----|--------|
