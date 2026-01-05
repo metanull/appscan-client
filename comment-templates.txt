@@ -43,3 +43,11 @@ Open Source Component|In compliance with CyberSecurity Policy, only CRITICAL+HIG
 Reflected Cross Site Scripting|**Confirmed** [ASVS 5.1.3] Verify that all input (HTML form fields, REST requests, URL parameters, HTTP headers, cookies, batch files, RSS feeds, etc) is validated using positive validation (whitelisting).
 AppDOS|In compliance with CyberSecurity Policy, only CRITICAL+HIGH risk are currently in scope
 Validation Required|In compliance with CyberSecurity Policy, only CRITICAL+HIGH risk are currently in scope
+Reflected Cross Site Scripting|**Confirmed** [ASVS 1.2.1] When untrusted data is inserted into a context (HTML element, attribute, CSS, HTTP header, XML) without correct context-specific encoding, an attacker can inject content that changes the document structure or executes code
+Cross-Site Scripting|**Confirmed** [ASVS 1.2.1] When untrusted data is inserted into a context (HTML element, attribute, CSS, HTTP header, XML) without correct context-specific encoding, an attacker can inject content that changes the document structure or executes code
+Injection|False Positive
+Info|False Positive
+Insertion of Sensitive Information into Log File|Confirmed
+Cross-Site Scripting|In compliance with CyberSecurity Policy, only CRITICAL+HIGH risk are currently in scope
+Reflected Cross Site Scripting|False Positive
+Cross-Site Scripting|False Positive

@@ -214,6 +214,8 @@ export class AppScanService {
       // Legacy client-side filtering if excludeStatus is provided and no filter options
       if (
         excludeStatus &&
+        typeof excludeStatus === 'string' &&
+        excludeStatus.trim().length > 0 &&
         (!filterOptions || typeof filterOptions !== 'object') &&
         response.Items
       ) {

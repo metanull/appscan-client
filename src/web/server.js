@@ -68,7 +68,7 @@ function parseExcludeStatus(excludeStatus) {
   if (Array.isArray(excludeStatus)) {
     return excludeStatus;
   }
-  if (typeof excludeStatus === 'string') {
+  if (typeof excludeStatus === 'string' && excludeStatus.trim().length > 0) {
     return excludeStatus.split(',').filter(Boolean);
   }
   return [];
@@ -186,6 +186,8 @@ export async function startWebServer(options = {}) {
     '/issues/:issueId/article',
     apiHandler(async (req, res, { getAppScanService }) => {
       const service = getAppScanService();
+      await service.ensureAuthenticated();
+      
       // First get the issue to have all required fields
       const issue = await service.api.v4.Issues_GetIssue(
         req.params.issueId,

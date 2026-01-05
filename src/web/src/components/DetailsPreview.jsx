@@ -111,7 +111,100 @@ const DetailsPreview = () => {
           <div style={{ color: '#858585' }}>Loading...</div>
         ) : (
           <div style={{ fontSize: '12px', lineHeight: '1.6' }}>
-            <ReactMarkdown>{article || 'No article available'}</ReactMarkdown>
+            <ReactMarkdown
+              components={{
+                a: ({ node, ...props }) => (
+                  <a
+                    {...props}
+                    style={{
+                      color: '#4fc1ff',
+                      textDecoration: 'underline',
+                    }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                ),
+                code: ({ node, inline, ...props }) => (
+                  <code
+                    {...props}
+                    style={{
+                      backgroundColor: '#1e1e1e',
+                      color: '#ce9178',
+                      padding: inline ? '2px 4px' : '8px',
+                      borderRadius: '4px',
+                      display: inline ? 'inline' : 'block',
+                      fontFamily: 'Consolas, monospace',
+                      fontSize: '11px',
+                    }}
+                  />
+                ),
+                pre: ({ node, ...props }) => (
+                  <pre
+                    {...props}
+                    style={{
+                      backgroundColor: '#1e1e1e',
+                      padding: '8px',
+                      borderRadius: '4px',
+                      overflow: 'auto',
+                      margin: '6px 0',
+                    }}
+                  />
+                ),
+                h1: ({ node, ...props }) => (
+                  <h1
+                    {...props}
+                    style={{
+                      color: '#4ec9b0',
+                      fontSize: '14px',
+                      marginTop: '12px',
+                      marginBottom: '6px',
+                    }}
+                  />
+                ),
+                h2: ({ node, ...props }) => (
+                  <h2
+                    {...props}
+                    style={{
+                      color: '#4ec9b0',
+                      fontSize: '13px',
+                      marginTop: '10px',
+                      marginBottom: '4px',
+                    }}
+                  />
+                ),
+                h3: ({ node, ...props }) => (
+                  <h3
+                    {...props}
+                    style={{
+                      color: '#4ec9b0',
+                      fontSize: '12px',
+                      marginTop: '8px',
+                      marginBottom: '3px',
+                    }}
+                  />
+                ),
+                strong: ({ node, ...props }) => (
+                  <strong {...props} style={{ color: '#dcdcaa' }} />
+                ),
+                em: ({ node, ...props }) => (
+                  <em {...props} style={{ color: '#c586c0' }} />
+                ),
+                ul: ({ node, ...props }) => (
+                  <ul
+                    {...props}
+                    style={{ paddingLeft: '16px', margin: '6px 0' }}
+                  />
+                ),
+                ol: ({ node, ...props }) => (
+                  <ol
+                    {...props}
+                    style={{ paddingLeft: '16px', margin: '6px 0' }}
+                  />
+                ),
+              }}
+            >
+              {article || 'No article available'}
+            </ReactMarkdown>
           </div>
         )}
       </div>
