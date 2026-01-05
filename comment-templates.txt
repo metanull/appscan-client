@@ -32,3 +32,14 @@ Inappropriate Encoding for Output Context|False Positive
 Validation Required|False Positive - Data is validated externally or originates from developer controlled templates
 LDAP Injection|Data is validated externally or originates from developer controlled templates
 LDAP Injection|**Likely** [ASVS 1.2.1] When untrusted data is inserted into a context without correct context-specific encoding, an attacker can inject content that changes the document structure or executes code
+Missing Encryption of Sensitive Data|In compliance with CyberSecurity Policy, only CRITICAL+HIGH risk are currently in scope
+SQL Injection|False positive
+Open Source Component|**Confirmed** [ASVS 15.2.1] Outdated/Vulnerable dependecy
+Authentication.Credentials.Unprotected|**Confirmed** [ASVS 13.2.1] Such information shall read from configuration/environment and not stored in the Source Control or build artefact.
+Active Debug Code|Debug output enabled in production configuration
+Cryptography.InsecureAlgorithm|False Positive
+SQL Injection|Unable to backtrack to the code. Closing...
+Open Source Component|In compliance with CyberSecurity Policy, only CRITICAL+HIGH risk are currently in scope
+Reflected Cross Site Scripting|**Confirmed** [ASVS 5.1.3] Verify that all input (HTML form fields, REST requests, URL parameters, HTTP headers, cookies, batch files, RSS feeds, etc) is validated using positive validation (whitelisting).
+AppDOS|In compliance with CyberSecurity Policy, only CRITICAL+HIGH risk are currently in scope
+Validation Required|In compliance with CyberSecurity Policy, only CRITICAL+HIGH risk are currently in scope

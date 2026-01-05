@@ -687,15 +687,6 @@ appscan-client/
 # Start the CLI
 npm start
 
-# Run tests
-npm test
-
-# Run tests in watch mode
-npm test:watch
-
-# Generate test coverage
-npm test:coverage
-
 # Lint code
 npm run lint
 
@@ -714,19 +705,6 @@ npm run generate-api
 1. Create a new command file in `src/commands/`
 2. Import and register the command in `src/index.js`
 3. Add tests in `tests/`
-
-## Testing
-
-```bash
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm test:watch
-
-# Generate coverage report
-npm test:coverage
-```
 
 ## API Documentation
 
@@ -785,7 +763,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-ISC
+MIT
 
 ## Support
 
