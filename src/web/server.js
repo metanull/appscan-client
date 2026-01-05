@@ -17,6 +17,64 @@ import rateLimit from 'express-rate-limit';
 dotenv.config({ path: getEnvPath() });
 
 /**
+ * Middleware to handle API calls with unified error handling and service management
+ * @param {Function} handler - Async handler function that receives (req, res, services)
+ * @returns {Function} Express middleware
+ */
+function apiHandler(handler) {
+  return async (req, res) => {
+    const services = {
+      appscan: null,
+      jira: null,
+    };
+
+    try {
+      // Initialize services lazily only when needed
+      const getAppScanService = () => {
+        if (!services.appscan) {
+          services.appscan = new AppScanService();
+        }
+        return services.appscan;
+      };
+
+      const getJiraService = () => {
+        if (!services.jira) {
+          services.jira = new JiraService();
+        }
+        return services.jira;
+      };
+
+      // Execute the handler with service getters
+      await handler(req, res, { getAppScanService, getJiraService });
+    } catch (error) {
+      logger.error(`API Error [${req.method} ${req.path}]:`, error);
+
+      // Send appropriate error response
+      const statusCode = error.statusCode || 500;
+      res.status(statusCode).json({
+        error: error.message || 'Internal server error',
+        path: req.path,
+      });
+    }
+  };
+}
+
+/**
+ * Parse and normalize excludeStatus parameter
+ * @param {string|string[]} excludeStatus - Status values to exclude
+ * @returns {string[]} Array of status values
+ */
+function parseExcludeStatus(excludeStatus) {
+  if (Array.isArray(excludeStatus)) {
+    return excludeStatus;
+  }
+  if (typeof excludeStatus === 'string') {
+    return excludeStatus.split(',').filter(Boolean);
+  }
+  return [];
+}
+
+/**
  * Start the web server
  * @param {Object} options - Server options
  * @param {number} options.port - Port to listen on
@@ -35,51 +93,55 @@ export async function startWebServer(options = {}) {
   logger.info('Web UI path:', webPath);
   app.use(express.static(webPath));
 
+  // API rate limiting - apply to all API routes
+  const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 1000, // limit each IP to 1000 requests per windowMs
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many requests, please try again later.' },
+  });
+
   // API Routes
   const apiRouter = express.Router();
 
-  // Health check
+  // Apply rate limiting to all API routes
+  apiRouter.use(apiLimiter);
+
+  // Health check (no authentication required)
   apiRouter.get('/health', (_req, res) => {
     res.json({ status: 'ok' });
   });
 
   // Get applications
-  apiRouter.get('/applications', async (_req, res) => {
-    try {
-      const service = new AppScanService();
+  apiRouter.get(
+    '/applications',
+    apiHandler(async (_req, res, { getAppScanService }) => {
+      const service = getAppScanService();
       const response = await service.listApplications();
       const apps = response.Items || response || [];
       res.json(apps);
-    } catch (error) {
-      logger.error('Error fetching applications:', error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+    })
+  );
 
   // Get scans for an application
-  apiRouter.get('/applications/:appId/scans', async (req, res) => {
-    try {
-      const service = new AppScanService();
+  apiRouter.get(
+    '/applications/:appId/scans',
+    apiHandler(async (req, res, { getAppScanService }) => {
+      const service = getAppScanService();
       const response = await service.listScans(req.params.appId);
       const scans = response.Items || response || [];
       res.json(scans);
-    } catch (error) {
-      logger.error('Error fetching scans:', error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+    })
+  );
 
   // Get issues for a scan
-  apiRouter.get('/scans/:scanId/issues', async (req, res) => {
-    try {
-      const service = new AppScanService();
+  apiRouter.get(
+    '/scans/:scanId/issues',
+    apiHandler(async (req, res, { getAppScanService }) => {
+      const service = getAppScanService();
       const excludeStatus = req.query.excludeStatus || 'Noise,Passed';
-      // Handle both string and array formats
-      const excludeArray = Array.isArray(excludeStatus)
-        ? excludeStatus
-        : typeof excludeStatus === 'string'
-          ? excludeStatus.split(',').filter(Boolean)
-          : [];
+      const excludeArray = parseExcludeStatus(excludeStatus);
       const response = await service.listIssues(
         req.params.scanId,
         null,
@@ -88,23 +150,16 @@ export async function startWebServer(options = {}) {
       );
       const issues = response.Items || response || [];
       res.json(issues);
-    } catch (error) {
-      logger.error('Error fetching issues:', error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+    })
+  );
 
   // Get all issues for an application
-  apiRouter.get('/applications/:appId/issues', async (req, res) => {
-    try {
-      const service = new AppScanService();
+  apiRouter.get(
+    '/applications/:appId/issues',
+    apiHandler(async (req, res, { getAppScanService }) => {
+      const service = getAppScanService();
       const excludeStatus = req.query.excludeStatus || 'Noise,Passed';
-      // Handle both string and array formats
-      const excludeArray = Array.isArray(excludeStatus)
-        ? excludeStatus
-        : typeof excludeStatus === 'string'
-          ? excludeStatus.split(',').filter(Boolean)
-          : [];
+      const excludeArray = parseExcludeStatus(excludeStatus);
       const response = await service.listIssues(
         req.params.appId,
         null,
@@ -113,50 +168,46 @@ export async function startWebServer(options = {}) {
       );
       const issues = response.Items || response || [];
       res.json(issues);
-    } catch (error) {
-      logger.error('Error fetching issues:', error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+    })
+  );
 
   // Get issue details
-  apiRouter.get('/issues/:issueId/details', async (req, res) => {
-    try {
-      const service = new AppScanService();
+  apiRouter.get(
+    '/issues/:issueId/details',
+    apiHandler(async (req, res, { getAppScanService }) => {
+      const service = getAppScanService();
       const details = await service.getIssueDetails(req.params.issueId);
       res.json(details);
-    } catch (error) {
-      logger.error('Error fetching issue details:', error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+    })
+  );
 
   // Get issue article
-  apiRouter.get('/issues/:issueId/article', async (req, res) => {
-    try {
-      const service = new AppScanService();
+  apiRouter.get(
+    '/issues/:issueId/article',
+    apiHandler(async (req, res, { getAppScanService }) => {
+      const service = getAppScanService();
       // First get the issue to have all required fields
       const issue = await service.api.v4.Issues_GetIssue(
         req.params.issueId,
         {}
       );
       if (!issue) {
-        return res.status(404).json({ error: 'Issue not found' });
+        const error = new Error('Issue not found');
+        error.statusCode = 404;
+        throw error;
       }
 
       // Get article as markdown
       const article = await service.getIssueArticle(issue);
       res.json({ content: article });
-    } catch (error) {
-      logger.error('Error fetching article:', error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+    })
+  );
 
   // Get issue comments
-  apiRouter.get('/issues/:issueId/comments', async (req, res) => {
-    try {
-      const service = new AppScanService();
+  apiRouter.get(
+    '/issues/:issueId/comments',
+    apiHandler(async (req, res, { getAppScanService }) => {
+      const service = getAppScanService();
       await service.ensureAuthenticated();
       const response = await service.api.v4.Issues_GetIssueComments(
         req.params.issueId,
@@ -164,16 +215,14 @@ export async function startWebServer(options = {}) {
       );
       const comments = response.Items || response || [];
       res.json(comments);
-    } catch (error) {
-      logger.error('Error fetching comments:', error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+    })
+  );
 
   // Update issue status
-  apiRouter.put('/issues/:issueId/status', async (req, res) => {
-    try {
-      const service = new AppScanService();
+  apiRouter.put(
+    '/issues/:issueId/status',
+    apiHandler(async (req, res, { getAppScanService }) => {
+      const service = getAppScanService();
       const { status, comment, externalId } = req.body;
       await service.bulkUpdateIssues(
         [req.params.issueId],
@@ -182,29 +231,25 @@ export async function startWebServer(options = {}) {
         externalId
       );
       res.json({ success: true });
-    } catch (error) {
-      logger.error('Error updating issue status:', error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+    })
+  );
 
   // Bulk update issue statuses
-  apiRouter.put('/issues/bulk/status', async (req, res) => {
-    try {
-      const service = new AppScanService();
+  apiRouter.put(
+    '/issues/bulk/status',
+    apiHandler(async (req, res, { getAppScanService }) => {
+      const service = getAppScanService();
       const { issueIds, status, comment } = req.body;
       await service.bulkUpdateIssues(issueIds, status, comment);
       res.json({ success: true });
-    } catch (error) {
-      logger.error('Error bulk updating issues:', error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+    })
+  );
 
   // Create Jira issue
-  apiRouter.post('/jira/issue', async (req, res) => {
-    try {
-      const jiraService = new JiraService();
+  apiRouter.post(
+    '/jira/issue',
+    apiHandler(async (req, res, { getJiraService }) => {
+      const jiraService = getJiraService();
       const { issues, projectKey, issueType, labels } = req.body;
       const result = await jiraService.createIssue(
         issues,
@@ -213,36 +258,29 @@ export async function startWebServer(options = {}) {
         labels
       );
       res.json(result);
-    } catch (error) {
-      logger.error('Error creating Jira issue:', error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+    })
+  );
 
   // Link Jira issue
-  apiRouter.put('/issues/:issueId/jira/link', async (req, res) => {
-    try {
-      const service = new AppScanService();
+  apiRouter.put(
+    '/issues/:issueId/jira/link',
+    apiHandler(async (req, res, { getAppScanService }) => {
+      const service = getAppScanService();
       const { jiraKey } = req.body;
       await service.bulkUpdateIssues([req.params.issueId], null, null, jiraKey);
       res.json({ success: true });
-    } catch (error) {
-      logger.error('Error linking Jira issue:', error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+    })
+  );
 
   // Unlink Jira issue
-  apiRouter.delete('/issues/:issueId/jira/link', async (req, res) => {
-    try {
-      const service = new AppScanService();
+  apiRouter.delete(
+    '/issues/:issueId/jira/link',
+    apiHandler(async (req, res, { getAppScanService }) => {
+      const service = getAppScanService();
       await service.bulkUpdateIssues([req.params.issueId], null, null, '');
       res.json({ success: true });
-    } catch (error) {
-      logger.error('Error unlinking Jira issue:', error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+    })
+  );
 
   app.use('/api', apiRouter);
 
