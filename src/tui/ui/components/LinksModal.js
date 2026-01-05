@@ -9,16 +9,33 @@ import Link from 'ink-link';
 import { Modal } from './Modal.js';
 import { Panel } from './Panel.js';
 import open from 'open';
+import { parseAVSFromComments } from '../../../utils/asvs-utils.js';
 
 export const LinksModal = React.memo(
   ({ issue, app, scan, config, appScanService, onClose }) => {
     const [cursor, setCursor] = useState(0);
     const [articleUrl, setArticleUrl] = useState(null);
     const [loadingArticleUrl, setLoadingArticleUrl] = useState(false);
+    const [comments, setComments] = useState([]);
 
     if (!issue) {
       return null;
     }
+
+    // Fetch comments to parse ASVS
+    useEffect(() => {
+      if (issue && issue.Id && appScanService) {
+        appScanService
+          .getIssueComments(issue.Id)
+          .then((commentsList) => {
+            setComments(commentsList || []);
+          })
+          .catch((err) => {
+            console.error('Failed to load comments:', err);
+            setComments([]);
+          });
+      }
+    }, [issue?.Id, appScanService]);
 
     // Fetch focused article URL on mount
     useEffect(() => {
@@ -114,6 +131,15 @@ export const LinksModal = React.memo(
       links.push({
         label: `🎫 Jira Issue (${issue.ExternalId})`,
         url: jiraUrl,
+      });
+    }
+
+    // ASVS link if available
+    const avsInfo = parseAVSFromComments(comments);
+    if (avsInfo) {
+      links.push({
+        label: `📚 ASVS ${avsInfo.label}`,
+        url: avsInfo.url,
       });
     }
 

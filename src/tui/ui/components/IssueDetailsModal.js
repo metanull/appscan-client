@@ -10,6 +10,7 @@ import { Modal } from './Modal.js';
 import { Panel } from './Panel.js';
 import { MarkdownBox } from './MarkdownBox.js';
 import { Formatter } from '../../../utils/formatter.js';
+import { parseAVSFromComments } from '../../../utils/asvs-utils.js';
 
 export const IssueDetailsModal = React.memo(
   ({ issue, app, articleContent, appScanService, _config, onClose }) => {
@@ -205,6 +206,27 @@ export const IssueDetailsModal = React.memo(
                   <Text wrap="wrap">{issue.ExternalId}</Text>
                 </Box>
               )}
+
+              {(() => {
+                const avsInfo = parseAVSFromComments(comments);
+                return avsInfo ? (
+                  <Box>
+                    <Box width={15}>
+                      <Text bold color="cyan">
+                        ASVS:
+                      </Text>
+                    </Box>
+                    <Text wrap="wrap">
+                      {avsInfo.label} - 
+                      <Link url={avsInfo.url}>
+                        <Text color="blue" underline>
+                          {avsInfo.url}
+                        </Text>
+                      </Link>
+                    </Text>
+                  </Box>
+                ) : null;
+              })()}
 
               <Text> </Text>
 

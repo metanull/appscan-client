@@ -1572,14 +1572,24 @@ export const InkApp = ({ configPath }) => {
         <CreateJiraModal
           issues={selectedIssues}
           defaultProjectKey={jiraService.getProjectKey()}
-          onCreate={async (projectKey, groupBy, issues) => {
+          appName={selectedApp?.Name}
+          appScanService={appScanService}
+          onSaveAvsComment={async (issueId, comment) => {
+            const issue = selectedIssues.find((i) => i.Id === issueId);
+            if (issue) {
+              await appScanService.updateIssue(issueId, issue.ApplicationId, { Comment: comment });
+            }
+          }}
+          onCreate={async (projectKey, groupBy, issues, parentEpic, appName) => {
             await jiraService.createIssues(
               projectKey,
               groupBy,
               issues,
               appScanService,
               selectedApp,
-              selectedScan
+              selectedScan,
+              parentEpic,
+              appName
             );
             logger.info('Jira issue created');
             useStore.getState().clearSelection();
