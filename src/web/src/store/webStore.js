@@ -56,7 +56,7 @@ export const useWebStore = create((set, get) => ({
   showCreateJiraModal: false,
   showLinkJiraModal: false,
   showUnlinkJiraModal: false,
-  showIssueDetailsModal: false,
+  showIssueDetailsModal: true, // Default to true so details pane shows automatically
 
   // List navigation
   listCursor: 0,

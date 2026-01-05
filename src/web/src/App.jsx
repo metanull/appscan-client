@@ -48,9 +48,8 @@ function App() {
         useWebStore.getState().setLoading(true);
         useWebStore.getState().setError(null);
         
-        // Show progress
-        const apps = await apiClient.getApplications();
-        useWebStore.getState().setApplications(apps);
+        const response = await apiClient.getApplications();
+        useWebStore.getState().setApplications(response);
       } catch (err) {
         useWebStore.getState().setError(err.message);
       } finally {
