@@ -33,11 +33,15 @@ const LinksModal = () => {
       .getIssueArticle(selectedIssue.Id)
       .then(() => {
         // Article exists, construct URL
-        setArticleUrl(`${baseUrl}/api/v4/Reports/Article/?${params.toString()}`);
+        setArticleUrl(
+          `${baseUrl}/api/v4/Reports/Article/?${params.toString()}`
+        );
       })
       .catch(() => {
         // Fallback to general article
-        setArticleUrl(`${baseUrl}/api/v4/Reports/Article/?${params.toString()}`);
+        setArticleUrl(
+          `${baseUrl}/api/v4/Reports/Article/?${params.toString()}`
+        );
       })
       .finally(() => {
         setLoading(false);
@@ -125,10 +129,14 @@ const LinksModal = () => {
         </div>
       ) : (
         <div>
-          <div style={{ marginBottom: '16px', color: '#858585', fontSize: '14px' }}>
+          <div
+            style={{ marginBottom: '16px', color: '#858585', fontSize: '14px' }}
+          >
             Click a link to open in a new tab:
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
+          >
             {links.map((link, index) => (
               <div
                 key={index}
@@ -148,9 +156,13 @@ const LinksModal = () => {
                   e.currentTarget.style.backgroundColor = '#252525';
                   e.currentTarget.style.borderColor = '#3e3e3e';
                 }}
-                onClick={() => window.open(link.url, '_blank', 'noopener,noreferrer')}
+                onClick={() =>
+                  window.open(link.url, '_blank', 'noopener,noreferrer')
+                }
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+                >
                   <span style={{ fontSize: '20px' }}>{link.icon}</span>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>

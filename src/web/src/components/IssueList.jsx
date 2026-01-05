@@ -5,7 +5,7 @@ import { filterIssues, sortIssues } from '../utils/filters';
 const IssueList = () => {
   const issues = useWebStore((state) => state.issues);
   const selectedApp = useWebStore((state) => state.selectedApp);
-  const selectedScan = useWebStore((state) => state.selectedScan);
+  const _selectedScan = useWebStore((state) => state.selectedScan);
   const selectedIssue = useWebStore((state) => state.selectedIssue);
   const selectedIssueIds = useWebStore((state) => state.selectedIssueIds);
   const filterStatus = useWebStore((state) => state.filterStatus);
@@ -89,12 +89,14 @@ const IssueList = () => {
         <span style={{ fontWeight: 'bold', marginRight: 'auto' }}>
           Vulnerabilities ({filteredAndSorted.length} / {issues.length})
           {selectedIssueIds.length > 0 && (
-            <span style={{ marginLeft: '8px', color: '#858585', fontSize: '12px' }}>
+            <span
+              style={{ marginLeft: '8px', color: '#858585', fontSize: '12px' }}
+            >
               ({selectedIssueIds.length} selected)
             </span>
           )}
         </span>
-        
+
         <button
           onClick={() => useWebStore.getState().setView('app-selection')}
           style={{
@@ -110,7 +112,7 @@ const IssueList = () => {
         >
           📁 App
         </button>
-        
+
         <button
           onClick={() => useWebStore.getState().setView('scan-selection')}
           style={{
@@ -126,7 +128,7 @@ const IssueList = () => {
         >
           🔍 Scan
         </button>
-        
+
         <button
           onClick={() => useWebStore.getState().setShowFilterModal(true)}
           style={{
@@ -142,7 +144,7 @@ const IssueList = () => {
         >
           🔧 Filter
         </button>
-        
+
         <button
           onClick={() => useWebStore.getState().setShowSearchModal(true)}
           style={{
@@ -158,13 +160,14 @@ const IssueList = () => {
         >
           🔎 Search
         </button>
-        
+
         <button
           onClick={() => useWebStore.getState().setShowUpdateStatusModal(true)}
           disabled={selectedIssueIds.length === 0}
           style={{
             padding: '4px 12px',
-            backgroundColor: selectedIssueIds.length > 0 ? '#0e639c' : '#3e3e3e',
+            backgroundColor:
+              selectedIssueIds.length > 0 ? '#0e639c' : '#3e3e3e',
             color: selectedIssueIds.length > 0 ? '#fff' : '#858585',
             border: 'none',
             borderRadius: '3px',
@@ -175,13 +178,14 @@ const IssueList = () => {
         >
           ✏️ Update
         </button>
-        
+
         <button
           onClick={() => useWebStore.getState().setShowCreateJiraModal(true)}
           disabled={selectedIssueIds.length === 0}
           style={{
             padding: '4px 12px',
-            backgroundColor: selectedIssueIds.length > 0 ? '#0e639c' : '#3e3e3e',
+            backgroundColor:
+              selectedIssueIds.length > 0 ? '#0e639c' : '#3e3e3e',
             color: selectedIssueIds.length > 0 ? '#fff' : '#858585',
             border: 'none',
             borderRadius: '3px',
@@ -192,7 +196,7 @@ const IssueList = () => {
         >
           🎫 Jira
         </button>
-        
+
         {selectedIssue && (
           <button
             onClick={() => useWebStore.getState().setShowLinksModal(true)}
@@ -210,7 +214,7 @@ const IssueList = () => {
             🔗 Links
           </button>
         )}
-        
+
         <button
           onClick={() => useWebStore.getState().toggleContextPane()}
           style={{
@@ -226,7 +230,7 @@ const IssueList = () => {
         >
           📄 Context
         </button>
-        
+
         <button
           onClick={() => useWebStore.getState().setShowHelpModal(true)}
           style={{
@@ -371,7 +375,9 @@ const IssueList = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      const baseUrl = process.env.APPSCAN_BASE_URL || 'https://cloud.appscan.com';
+                      const baseUrl =
+                        process.env.APPSCAN_BASE_URL ||
+                        'https://cloud.appscan.com';
                       window.open(
                         `${baseUrl}/main/myapps/${selectedApp?.Id}/issues/${issue.Id}`,
                         '_blank'
@@ -439,8 +445,6 @@ const IssueList = () => {
           })
         )}
       </div>
-
-
     </div>
   );
 };

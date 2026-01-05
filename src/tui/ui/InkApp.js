@@ -1577,10 +1577,18 @@ export const InkApp = ({ configPath }) => {
           onSaveAvsComment={async (issueId, comment) => {
             const issue = selectedIssues.find((i) => i.Id === issueId);
             if (issue) {
-              await appScanService.updateIssue(issueId, issue.ApplicationId, { Comment: comment });
+              await appScanService.updateIssue(issueId, issue.ApplicationId, {
+                Comment: comment,
+              });
             }
           }}
-          onCreate={async (projectKey, groupBy, issues, parentEpic, appName) => {
+          onCreate={async (
+            projectKey,
+            groupBy,
+            issues,
+            parentEpic,
+            appName
+          ) => {
             await jiraService.createIssues(
               projectKey,
               groupBy,
