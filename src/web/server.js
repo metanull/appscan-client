@@ -74,7 +74,12 @@ export async function startWebServer(options = {}) {
     try {
       const service = new AppScanService();
       const excludeStatus = req.query.excludeStatus || 'Noise,Passed';
-      const excludeArray = excludeStatus.split(',').filter(Boolean);
+      // Handle both string and array formats
+      const excludeArray = Array.isArray(excludeStatus)
+        ? excludeStatus
+        : typeof excludeStatus === 'string'
+          ? excludeStatus.split(',').filter(Boolean)
+          : [];
       const response = await service.listIssues(
         req.params.scanId,
         null,
@@ -94,7 +99,12 @@ export async function startWebServer(options = {}) {
     try {
       const service = new AppScanService();
       const excludeStatus = req.query.excludeStatus || 'Noise,Passed';
-      const excludeArray = excludeStatus.split(',').filter(Boolean);
+      // Handle both string and array formats
+      const excludeArray = Array.isArray(excludeStatus)
+        ? excludeStatus
+        : typeof excludeStatus === 'string'
+          ? excludeStatus.split(',').filter(Boolean)
+          : [];
       const response = await service.listIssues(
         req.params.appId,
         null,
