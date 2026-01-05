@@ -1,5 +1,6 @@
 import { Formatter } from './formatter.js';
 import * as AppScanUrls from './appscan-urls.js';
+import { parseAVSFromComments } from './asvs-utils.js';
 
 /**
  * JiraDescriptionBuilder - Build Jira issue descriptions from vulnerabilities
@@ -110,6 +111,12 @@ export class JiraDescriptionBuilder {
       // Add Remediation link once after the header (if available)
       if (group.issues[0]?.focusedArticleUrl) {
         issuesSection += `[🔗 Remediation](${group.issues[0].focusedArticleUrl})\n\n`;
+      }
+
+      // Add ASVS Control link if available
+      const avsInfo = parseAVSFromComments(group.issues[0]?.comments || []);
+      if (avsInfo) {
+        issuesSection += `[📚 ASVS ${avsInfo.label}](${avsInfo.url})\n\n`;
       }
 
       // Loop through each issue

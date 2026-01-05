@@ -10,6 +10,7 @@ import { JiraDescriptionBuilder } from '../../../src/utils/jira-description-buil
 import * as AppScanUrls from '../../../src/utils/appscan-urls.js';
 import { auditService } from '../utils/audit.js';
 import logger from '../utils/logger.js';
+import { parseAVSFromComments } from '../../utils/asvs-utils.js';
 
 export class JiraService {
   constructor(config) {
@@ -32,7 +33,8 @@ export class JiraService {
     baseUrl,
     appScanService,
     app = null,
-    scan = null
+    scan = null,
+    parentEpic = null
   ) {
     this.initialize();
 
@@ -41,6 +43,7 @@ export class JiraService {
         projectKey,
         summary,
         issueCount: issues.length,
+        parentEpic,
       });
 
       // Enrich issues with article content and comments if appScanService is provided
@@ -51,15 +54,30 @@ export class JiraService {
       const builder = new JiraDescriptionBuilder(issues, baseUrl, app, scan);
       const description = builder.addMetadata().addIssuesByType().build();
 
-      const jiraIssue = await this.service.client.issues.createIssue({
-        fields: {
-          project: { key: projectKey },
-          summary: summary,
-          description: this.service.convertToADF(description),
-          issuetype: { name: 'Story' },
-          labels: ['appscan', 'security'],
-        },
-      });
+      // Collect ASVS labels from issues
+      const avsLabels = [];
+      for (const issue of issues) {
+        const avsInfo = parseAVSFromComments(issue.comments || []);
+        if (avsInfo && avsInfo.label) {
+          avsLabels.push(avsInfo.label.toLowerCase());
+        }
+      }
+
+      const fields = {
+        project: { key: projectKey },
+        summary: summary,
+        description: this.service.convertToADF(description),
+        issuetype: { name: 'Story' },
+        labels: ['appscan', 'security', ...avsLabels],
+        assignee: null,
+      };
+
+      // Add parent epic if provided
+      if (parentEpic) {
+        fields.parent = { key: parentEpic };
+      }
+
+      const jiraIssue = await this.service.client.issues.createIssue({ fields });
 
       // Update AppScan issues with Jira key
       if (appScanService && app?.Id && jiraIssue.key) {
@@ -234,7 +252,9 @@ export class JiraService {
     issues,
     appScanService,
     app = null,
-    scan = null
+    scan = null,
+    parentEpic = null,
+    appName = null
   ) {
     this.initialize();
 
@@ -243,6 +263,8 @@ export class JiraService {
         projectKey,
         groupBy,
         issueCount: issues.length,
+        parentEpic,
+        appName,
       });
 
       // Group issues if needed
@@ -270,7 +292,8 @@ export class JiraService {
 
       const results = [];
       for (const [groupName, groupIssues] of Object.entries(grouped)) {
-        const summary = `Security: ${groupName} (${groupIssues.length} issue${groupIssues.length > 1 ? 's' : ''})`;
+        const prefix = appName || 'Security';
+        const summary = `${prefix}: ${groupName} (${groupIssues.length} issue${groupIssues.length > 1 ? 's' : ''})`;
         const result = await this.createJiraIssue(
           projectKey,
           summary,
@@ -278,7 +301,8 @@ export class JiraService {
           this.config.getBaseUrl(),
           appScanService,
           app,
-          scan
+          scan,
+          parentEpic
         );
         results.push(result);
       }
