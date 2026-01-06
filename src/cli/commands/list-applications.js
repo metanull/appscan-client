@@ -1,5 +1,8 @@
 import chalk from 'chalk';
-import { initializeAppScanService, handleCommandError } from '../../utils/cli-common.js';
+import {
+  initializeAppScanService,
+  handleCommandError,
+} from '../../utils/cli-common.js';
 
 export async function listApplications(options) {
   try {

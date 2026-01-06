@@ -1,6 +1,13 @@
 import chalk from 'chalk';
-import { initializeAppScanService, handleCommandError } from '../../utils/cli-common.js';
-import { buildFilterOptions, severityOrder, severityColors } from '../../utils/filter-builder.js';
+import {
+  initializeAppScanService,
+  handleCommandError,
+} from '../../utils/cli-common.js';
+import {
+  buildFilterOptions,
+  severityOrder,
+  severityColors,
+} from '../../utils/filter-builder.js';
 
 export async function listIssues(scanId, options) {
   try {

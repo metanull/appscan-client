@@ -77,7 +77,10 @@ export function parseCommaSeparated(value) {
   if (!value || value === '""' || value === "''") {
     return [];
   }
-  return value.split(',').map((v) => v.trim()).filter(Boolean);
+  return value
+    .split(',')
+    .map((v) => v.trim())
+    .filter(Boolean);
 }
 
 /**
@@ -89,7 +92,7 @@ export function parseCommaSeparated(value) {
  */
 export function extractShortPath(url) {
   if (!url) return 'N/A';
-  
+
   // Try to extract from query parameter
   const pathMatch = url.match(/[?&]path=([^&]+)/);
   if (pathMatch) {
@@ -97,7 +100,7 @@ export function extractShortPath(url) {
     const parts = path.replace(/^\//, '').split('/');
     return parts.length > 3 ? parts.slice(-3).join('/') : parts.join('/');
   }
-  
+
   // Fallback to URL path
   const parts = url.split('/').filter((p) => p && !p.startsWith('?'));
   return parts.length > 3 ? parts.slice(-3).join('/') : parts.join('/');

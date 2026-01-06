@@ -83,27 +83,27 @@ export const severityColors = {
  */
 export function getFilterDescription(filterResult) {
   const { filterOptions, hasFilters } = filterResult;
-  
+
   if (!hasFilters) {
     return '';
   }
 
   const filters = [];
-  
+
   // Status filters
   if (filterOptions.statusActive) filters.push('Active');
   if (filterOptions.statusInactive) filters.push('Inactive');
   if (filterOptions.statusPending) filters.push('Pending');
   if (filterOptions.statusProcessed) filters.push('Processed');
-  
+
   // Severity filters
   if (filterOptions.severityLow) filters.push('Low');
   if (filterOptions.severityMedium) filters.push('Medium');
   if (filterOptions.severityHigh) filters.push('High');
-  
+
   // Jira filters
   if (filterOptions.jiraAssigned) filters.push('With Jira');
   if (filterOptions.jiraUnassigned) filters.push('Without Jira');
-  
+
   return filters.length > 0 ? ` (${filters.join(', ')})` : '';
 }

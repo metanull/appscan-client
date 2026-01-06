@@ -1,6 +1,23 @@
 # appscan-client
 
-Command-line tool for interacting with HCL AppScan Cloud API. Provides both CLI commands for automation and an interactive Terminal UI (TUI) for vulnerability triage.
+Command-line tool for interacting with HCL AppScan Cloud API. Facilitates vulnerability triage and Jira issue creation from AppScan security scans.
+It provides CLI commands for automation and an interactive Terminal UI (TUI) for vulnerability triage.
+
+## Overview
+
+This tool streamlines the security vulnerability triage workflow by providing:
+
+- **CLI mode** - Individual commands for automation and scripting
+- **TUI mode** - Interactive terminal UI for efficient manual triage
+
+Distributed as an npm package with binaries for global installation. Designed for Windows 10/11 with PowerShell, but works on any platform with Node.js.
+
+**Key capabilities:**
+- Browse applications, scans, and vulnerabilities from AppScan Cloud
+- Filter and search issues by severity, status, and type
+- Bulk update vulnerability status with comments
+- Create and link Jira issues with detailed remediation documentation
+- Generate reports in multiple formats (Markdown, HTML, PDF)
 
 ## Installation
 
@@ -221,11 +238,10 @@ appscan list-applications --json 2>/dev/null | jq '.[] | select(.RiskRating=="Hi
 7. Filter "InProgress" WITHOUT Jira reference
 8. Select all → Create Jira issues (grouped by type)
 9. Open created Jira Stories:
-   - Adjust title (add app name, severity)
-   - Link to related stories
-   - Set assignee and epic
-   - Add labels (e.g., `asvs1.2.3`)
-   - Add Confluence link if ASVS-related
+   - Adjust title, description and properties
+   - Review assignee and parent epic
+   - Add Jira labels
+   - Add Jira and Confluence links (related stories and pages)
 
 ## Development
 
