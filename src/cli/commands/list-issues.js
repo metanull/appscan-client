@@ -1,56 +1,20 @@
 import chalk from 'chalk';
-import { AppScanService } from '../../services/appscan-service.js';
-import { Config } from '../../utils/config.js';
+import {
+  initializeAppScanService,
+  handleCommandError,
+} from '../../utils/cli-common.js';
+import {
+  buildFilterOptions,
+  severityOrder,
+  severityColors,
+} from '../../utils/filter-builder.js';
 
 export async function listIssues(scanId, options) {
   try {
-    const config = options.config
-      ? Config.loadFromFile(options.config)
-      : new Config();
-    const service = new AppScanService(config);
+    const { service } = await initializeAppScanService(options.config);
 
-    console.error(chalk.blue('Authenticating...'));
-    await service.authenticate();
-
-    // Build filter options object
-    const filterOptions = {};
-    let hasFilters = false;
-
-    // Status filters (mutually exclusive)
-    if (options.active) {
-      filterOptions.statusActive = true;
-      hasFilters = true;
-    } else if (options.inactive) {
-      filterOptions.statusInactive = true;
-      hasFilters = true;
-    } else if (options.pending) {
-      filterOptions.statusPending = true;
-      hasFilters = true;
-    } else if (options.processed) {
-      filterOptions.statusProcessed = true;
-      hasFilters = true;
-    }
-
-    // Severity filters (mutually exclusive)
-    if (options.low) {
-      filterOptions.severityLow = true;
-      hasFilters = true;
-    } else if (options.medium) {
-      filterOptions.severityMedium = true;
-      hasFilters = true;
-    } else if (options.high) {
-      filterOptions.severityHigh = true;
-      hasFilters = true;
-    }
-
-    // Jira filters (mutually exclusive)
-    if (options.assigned) {
-      filterOptions.jiraAssigned = true;
-      hasFilters = true;
-    } else if (options.unassigned) {
-      filterOptions.jiraUnassigned = true;
-      hasFilters = true;
-    }
+    // Build filter options using shared utility
+    const { filterOptions, hasFilters } = buildFilterOptions(options);
 
     // Determine which approach to use
     let response;
@@ -91,27 +55,9 @@ export async function listIssues(scanId, options) {
       }
     }
   } catch (error) {
-    console.error(chalk.red(`Error: ${error.message}`));
-    process.exit(1);
+    handleCommandError(error, 'Failed to list issues');
   }
 }
-
-const severityOrder = {
-  Critical: 5,
-  High: 4,
-  Medium: 3,
-  Low: 2,
-  Informational: 1,
-  Unknown: 0,
-};
-
-const severityColors = {
-  Critical: 'redBright',
-  High: 'red',
-  Medium: 'yellow',
-  Low: 'blue',
-  Informational: 'gray',
-};
 
 const severityLevels = [
   'Critical',

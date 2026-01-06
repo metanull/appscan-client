@@ -1,6 +1,6 @@
 {
   "name": "@metanull/appscan-client",
-  "version": "3.1.1",
+  "version": "4.0.0",
   "description": "Utility to work with HCL AppScan Cloud API",
   "main": "src/index.js",
   "type": "module",
@@ -11,14 +11,12 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "build": "node build.js && npm run build:web",
-    "build:web": "cd src/web && vite build",
+    "build": "node build.js",
     "prepublishOnly": "npm run build",
     "start": "node dist/index.js",
-    "web": "node dist/index.js web",
     "lint": "eslint src tests",
     "lint:fix": "eslint src tests --fix",
-    "format": "prettier --write \"src/**/*.{js,jsx,css}\" \"tests/**/*.js\"",
+    "format": "prettier --write \"src/**/*.{js,jsx}\" \"tests/**/*.js\"",
     "generate-api": "node scripts/generate-api-client.js"
   },
   "files": [
@@ -31,7 +29,6 @@
     "security",
     "cli",
     "tui",
-    "web",
     "hcl",
     "ink"
   ],
@@ -54,9 +51,7 @@
     "chalk": "^5.6.2",
     "cli-markdown": "^3.5.1",
     "commander": "^14.0.2",
-    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "express": "^4.21.2",
     "ink": "^6.5.1",
     "ink-link": "^5.0.0",
     "ink-select-input": "^6.0.0",
@@ -67,20 +62,14 @@
     "meow": "^14.0.0",
     "node-html-parser": "^7.0.1",
     "open": "^11.0.0",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "react-markdown": "^9.0.2",
     "sanitize-html": "^2.17.0",
     "turndown": "^7.2.0",
-    "zustand": "^5.0.2",
-    "express-rate-limit": "^8.2.1"
+    "zustand": "^5.0.2"
   },
   "optionalDependencies": {
     "jira.js": "^5.2.2"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
-    "cross-env": "^10.1.0",
     "esbuild": "^0.27.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
@@ -88,7 +77,6 @@
     "eslint-plugin-react": "^7.37.5",
     "jest": "^30.2.0",
     "prettier": "^3.7.4",
-    "swagger-typescript-api": "^13.2.16",
-    "vite": "^6.0.7"
+    "swagger-typescript-api": "^13.2.16"
   }
 }

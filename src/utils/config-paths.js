@@ -83,35 +83,3 @@ export function getCommentTemplatesPath() {
 export function isInstalledPackage() {
   return process.argv[1]?.includes('node_modules');
 }
-
-/**
- * Get the path to the web UI static files
- * Uses the same detection mechanism as getConfigDir to ensure consistent behavior
- * @returns {string} Full path to web UI directory
- */
-export function getWebUIPath() {
-  const moduleDir = dirname(fileURLToPath(import.meta.url));
-  const isInstalled =
-    Boolean(process.argv[1]) && process.argv[1].includes('node_modules')
-      ? true
-      : moduleDir.includes('node_modules');
-
-  if (isInstalled) {
-    // When installed as a package, the bundled code is at node_modules/@metanull/appscan-client/dist/index.js
-    // and web files are at node_modules/@metanull/appscan-client/dist/web
-    // Walk up from the module directory to find dist/web
-    let dir = moduleDir;
-    while (true) {
-      const candidate = join(dir, 'dist', 'web');
-      if (existsSync(join(candidate, 'index.html'))) {
-        return candidate;
-      }
-      const parent = dirname(dir);
-      if (parent === dir) break; // reached filesystem root
-      dir = parent;
-    }
-  }
-
-  // Development mode - web files are at project_root/dist/web
-  return join(process.cwd(), 'dist', 'web');
-}

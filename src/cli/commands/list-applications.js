@@ -1,16 +1,12 @@
 import chalk from 'chalk';
-import { AppScanService } from '../../services/appscan-service.js';
-import { Config } from '../../utils/config.js';
+import {
+  initializeAppScanService,
+  handleCommandError,
+} from '../../utils/cli-common.js';
 
 export async function listApplications(options) {
   try {
-    const config = options.config
-      ? Config.loadFromFile(options.config)
-      : new Config();
-    const service = new AppScanService(config);
-
-    console.error(chalk.blue('Authenticating...'));
-    await service.authenticate();
+    const { service } = await initializeAppScanService(options.config);
 
     console.error(chalk.blue('Fetching applications...'));
     const response = await service.listApplications();
@@ -33,8 +29,7 @@ export async function listApplications(options) {
       });
     }
   } catch (error) {
-    console.error(chalk.red(`Error: ${error.message}`));
-    process.exit(1);
+    handleCommandError(error, 'Failed to list applications');
   }
 }
 
