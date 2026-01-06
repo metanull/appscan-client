@@ -4,6 +4,7 @@ import { AppScanService } from '../../services/appscan-service.js';
 import { JiraService } from '../../services/jira-service.js';
 import { Config } from '../../utils/config.js';
 import * as AppScanUrls from '../../utils/appscan-urls.js';
+import { extractShortPath } from '../../utils/cli-common.js';
 import {
   groupIssuesByType,
   displayGroupedSummary,
@@ -51,19 +52,6 @@ async function createJiraIssueForVulnerabilities(
   description += `## Issues\n\n`;
 
   const jiraGroups = groupIssuesByType(mediumOrHigher);
-
-  // Helper to extract short path for display
-  const extractShortPath = (url) => {
-    if (!url) return 'N/A';
-    const pathMatch = url.match(/[?&]path=([^&]+)/);
-    if (pathMatch) {
-      const path = decodeURIComponent(pathMatch[1]);
-      const parts = path.replace(/^\//, '').split('/');
-      return parts.length > 3 ? parts.slice(-3).join('/') : parts.join('/');
-    }
-    const parts = url.split('/').filter((p) => p && !p.startsWith('?'));
-    return parts.length > 3 ? parts.slice(-3).join('/') : parts.join('/');
-  };
 
   for (const group of jiraGroups) {
     description += `### ${group.type} (${group.severity}) - ${group.issues.length} issue(s)\n\n`;
