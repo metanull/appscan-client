@@ -1,3 +1,9 @@
+[![CodeQL](https://github.com/metanull/appscan-client/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/metanull/appscan-client/actions/workflows/github-code-scanning/codeql)
+[![Create Release](https://github.com/metanull/appscan-client/actions/workflows/release.yml/badge.svg)](https://github.com/metanull/appscan-client/actions/workflows/release.yml)
+[![Publish Package to GitHub Packages](https://github.com/metanull/appscan-client/actions/workflows/publish.yml/badge.svg)](https://github.com/metanull/appscan-client/actions/workflows/publish.yml)
+
+---
+
 # appscan-client
 
 Command-line tool for interacting with HCL AppScan Cloud API. Facilitates vulnerability triage and Jira issue creation from AppScan security scans.
