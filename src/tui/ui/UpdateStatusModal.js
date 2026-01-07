@@ -145,9 +145,7 @@ export const UpdateStatusModal = React.memo(
             <Box flexDirection="column" marginTop={1}>
               <Text>Select new status:</Text>
               {issues.length > 0 && (
-                <Text dimColor>
-                  Current: {issues[0].Status || 'Unknown'}
-                </Text>
+                <Text dimColor>Current: {issues[0].Status || 'Unknown'}</Text>
               )}
               <SelectInput
                 items={STATUS_OPTIONS}

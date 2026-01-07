@@ -144,9 +144,7 @@ export const UpdateSeverityModal = React.memo(
             <Box flexDirection="column" marginTop={1}>
               <Text>Select new severity:</Text>
               {issues.length > 0 && (
-                <Text dimColor>
-                  Current: {issues[0].Severity || 'Unknown'}
-                </Text>
+                <Text dimColor>Current: {issues[0].Severity || 'Unknown'}</Text>
               )}
               <SelectInput
                 items={SEVERITY_OPTIONS}
