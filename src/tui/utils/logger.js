@@ -55,7 +55,7 @@ class Logger {
   _writeToFile(formattedMessage) {
     try {
       fs.appendFileSync(LOG_FILE, formattedMessage + '\n', 'utf8');
-    } catch (err) {
+    } catch {
       // Silently fail if file write fails to avoid interfering with TUI
       // The error is not logged to console to prevent disrupting Ink rendering
     }

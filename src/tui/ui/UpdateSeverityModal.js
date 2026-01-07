@@ -24,7 +24,7 @@ const SEVERITY_OPTIONS = [
 ];
 
 export const UpdateSeverityModal = React.memo(
-  ({ issueCount, issues = [], onUpdate, onClose }) => {
+  ({ issueCount, issues = [], onUpdate, onClose, onRequestTextInput }) => {
     // Calculate initial index from first issue's severity
     const getInitialIndex = () => {
       if (issues && issues.length > 0) {
@@ -79,9 +79,24 @@ export const UpdateSeverityModal = React.memo(
 
     const handleTemplateSelect = (item) => {
       if (item.value === 'custom') {
-        // User wants to type custom message
-        setComment('');
-        setStep('comment');
+        // User wants to type custom message - request text input page
+        if (onRequestTextInput) {
+          onRequestTextInput({
+            title: '⚠️  Update Severity - Add Comment',
+            subtitle: `Updating ${issueCount} issue(s) to: ${selectedSeverity}`,
+            borderColor: 'yellow',
+            placeholder: 'Enter comment...',
+            initialValue: comment,
+            onSubmit: (value) => {
+              setComment(value);
+              setStep('comment');
+            },
+            onComplete: (value) => {
+              // Submit immediately after text input
+              handleSubmitWithComment(value || '');
+            },
+          });
+        }
       } else {
         // Use selected template
         setComment(item.value);
@@ -90,19 +105,23 @@ export const UpdateSeverityModal = React.memo(
     };
 
     const handleSubmit = async () => {
+      await handleSubmitWithComment(comment || '');
+    };
+
+    const handleSubmitWithComment = async (commentText) => {
       if (!issueCount || issueCount === 0) {
         return; // Prevent submission if no issues selected
       }
 
       // Save custom comment as template if it's not empty and not already a template
       if (
-        comment &&
-        comment.trim() !== '' &&
-        !templates.includes(comment) &&
+        commentText &&
+        commentText.trim() !== '' &&
+        !templates.includes(commentText) &&
         issueTypes.length > 0
       ) {
         // Save to first issue type
-        saveTemplate(issueTypes[0], comment.trim());
+        saveTemplate(issueTypes[0], commentText.trim());
       }
 
       // Show progress step
@@ -112,7 +131,7 @@ export const UpdateSeverityModal = React.memo(
       try {
         await onUpdate(
           selectedSeverity,
-          comment || undefined,
+          commentText || undefined,
           (current, total) => {
             setProgress({ current, total });
           }

@@ -22,6 +22,7 @@ import { SearchModal } from './SearchModal.js';
 import { LinksModal } from './components/LinksModal.js';
 import { UpdateStatusModal } from './UpdateStatusModal.js';
 import { UpdateSeverityModal } from './UpdateSeverityModal.js';
+import { TextInputPage } from './TextInputPage.js';
 import { CreateJiraModal } from './CreateJiraModal.js';
 import { LinkJiraModal } from './LinkJiraModal.js';
 import { UnlinkJiraModal } from './UnlinkJiraModal.js';
@@ -507,6 +508,15 @@ export const InkApp = ({ configPath }) => {
   const applications = useStore((state) => state.applications);
   const scans = useStore((state) => state.scans);
   const listCursor = useStore((state) => state.listCursor);
+
+  // Local UI state
+  const [showContextPane, setShowContextPane] = useState(true);
+  const [activeModal, setActiveModal] = useState(null); // null | 'app' | 'scan' | 'filter' | 'search' | 'help' | etc.
+  const [textInputConfig, setTextInputConfig] = useState(null); // Config for text input page
+  const [debugMode, setDebugMode] = useState(false);
+  const [debugMessage, setDebugMessage] = useState('');
+  const isInitialSetup = useRef(true); // Track if we're in initial setup phase
+
   const loading = useStore((state) => state.loading);
   const error = useStore((state) => state.error);
   const view = useStore((state) => state.view);
@@ -522,13 +532,6 @@ export const InkApp = ({ configPath }) => {
   const sortBy = useStore((state) => state.sortBy);
   const selectedIssueIds = useStore((state) => state.selectedIssueIds);
   const excludePassedNoise = useStore((state) => state.excludePassedNoise);
-
-  // Local UI state
-  const [showContextPane, setShowContextPane] = useState(true);
-  const [activeModal, setActiveModal] = useState(null); // null | 'app' | 'scan' | 'filter' | 'search' | 'help' | etc.
-  const [debugMode, setDebugMode] = useState(false);
-  const [debugMessage, setDebugMessage] = useState('');
-  const isInitialSetup = useRef(true); // Track if we're in initial setup phase
 
   // Setup logger debug callback on mount
   React.useEffect(() => {
@@ -1316,6 +1319,21 @@ export const InkApp = ({ configPath }) => {
   const debugBarHeight = debugMode ? 1 : 0;
   const contentHeight = height - statusBarHeight - debugBarHeight;
 
+  // If text input page is active, render ONLY that (no Layout, no other components)
+  if (textInputConfig) {
+    return (
+      <TextInputPage
+        title={textInputConfig.title}
+        subtitle={textInputConfig.subtitle}
+        borderColor={textInputConfig.borderColor}
+        placeholder={textInputConfig.placeholder}
+        initialValue={textInputConfig.initialValue}
+        onSubmit={textInputConfig.onComplete}
+        onCancel={textInputConfig.onCancel}
+      />
+    );
+  }
+
   // Main layout
   return (
     <Layout
@@ -1490,6 +1508,20 @@ export const InkApp = ({ configPath }) => {
         <UpdateStatusModal
           issueCount={selectedIssues.length}
           issues={selectedIssues}
+          onRequestTextInput={(config) => {
+            setTextInputConfig({
+              ...config,
+              onComplete: (value) => {
+                // Return to modal and trigger submit
+                setTextInputConfig(null);
+                config.onComplete(value);
+              },
+              onCancel: () => {
+                // Return to modal
+                setTextInputConfig(null);
+              },
+            });
+          }}
           onUpdate={async (status, comment, onProgress) => {
             // Get the app ID from first selected issue
             const appId = selectedIssues[0].ApplicationId;
@@ -1580,6 +1612,20 @@ export const InkApp = ({ configPath }) => {
         <UpdateSeverityModal
           issueCount={selectedIssues.length}
           issues={selectedIssues}
+          onRequestTextInput={(config) => {
+            setTextInputConfig({
+              ...config,
+              onComplete: (value) => {
+                // Return to modal and trigger submit
+                setTextInputConfig(null);
+                config.onComplete(value);
+              },
+              onCancel: () => {
+                // Return to modal
+                setTextInputConfig(null);
+              },
+            });
+          }}
           onUpdate={async (severity, comment, onProgress) => {
             // Get the app ID from first selected issue
             const appId = selectedIssues[0].ApplicationId;
