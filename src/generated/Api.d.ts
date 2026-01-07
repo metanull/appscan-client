@@ -3139,6 +3139,7 @@ export interface UpdateIssue {
    */
   ExternalId?: string | null;
   Status?: UpdateIssueStatusEnum;
+  Severity?: UpdateIssueSeverityEnum;
   /**
    * @minLength 0
    * @maxLength 2048
@@ -5532,6 +5533,14 @@ export declare enum UpdateIssueStatusEnum {
   Fixed = "Fixed",
   New = "New",
 }
+export declare enum UpdateIssueSeverityEnum {
+  Undetermined = "Undetermined",
+  Informational = "Informational",
+  Low = "Low",
+  Medium = "Medium",
+  High = "High",
+  Critical = "Critical",
+}
 export declare enum UpdateIssuesByIdStatusEnum {
   Open = "Open",
   InProgress = "InProgress",
@@ -6597,7 +6606,7 @@ export declare class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags CustomFields
-     * @name ApiV4CustomFields
+     * @name CustomFieldsCreate
      * @summary Adds a new custom field for the organization.
      * @request POST:/api/v4/CustomFields
      * @secure
@@ -6608,7 +6617,7 @@ export declare class Api<SecurityDataType extends unknown> {
      * @response `409` `ErrorMessage` Conflict
      * @response `500` `ErrorMessage` Internal Server Error
      */
-    "/api/v4/CustomFields": (
+    CustomFields_Create: (
       data: CustomFieldRequestModel,
       params?: RequestParams,
     ) => Promise<AxiosResponse<CustomFieldResponseModel>>;
@@ -6616,25 +6625,23 @@ export declare class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags CustomFields
-     * @name ApiV4CustomFields2
+     * @name CustomFieldsGetAll
      * @summary Get all custom fields for a specific organization
      * @request GET:/api/v4/CustomFields
-     * @originalName /api/v4/CustomFields
-     * @duplicate
      * @secure
      * @response `200` `void` Returns the list of custom fields
      * @response `401` `void` Unauthorized
      * @response `404` `ErrorMessage` Organization not found or no custom fields defined
      * @response `500` `ErrorMessage` Internal Server Error
      */
-    "/api/v4/CustomFields2": (
+    CustomFields_GetAll: (
       params?: RequestParams,
     ) => Promise<AxiosResponse<void>>;
     /**
      * No description
      *
      * @tags CustomFields
-     * @name ApiV4CustomFieldsId
+     * @name CustomFieldsUpdate
      * @summary Updates either the `HelpText` or `Name` of a custom field identified by `Id`.
      * @request PUT:/api/v4/CustomFields/{id}
      * @secure
@@ -6644,7 +6651,7 @@ export declare class Api<SecurityDataType extends unknown> {
      * @response `409` `ErrorMessage` Conflict
      * @response `500` `ErrorMessage` Internal Server Error
      */
-    "/api/v4/CustomFields/{id}": (
+    CustomFields_Update: (
       id: string,
       data: UpdateCustomFieldModel,
       params?: RequestParams,
@@ -6653,18 +6660,16 @@ export declare class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags CustomFields
-     * @name ApiV4CustomFieldsId2
+     * @name CustomFieldsDelete
      * @summary Deletes a custom field from the organization by its Id.
      * @request DELETE:/api/v4/CustomFields/{id}
-     * @originalName /api/v4/CustomFields/{id}
-     * @duplicate
      * @secure
      * @response `200` `void` Custom field deleted successfully.
      * @response `401` `void` Unauthorized
      * @response `404` `ErrorMessage` Organization or custom field not found.
      * @response `500` `ErrorMessage` Internal Server Error.
      */
-    "/api/v4/CustomFields/{id}2": (
+    CustomFields_Delete: (
       id: string,
       params?: RequestParams,
     ) => Promise<AxiosResponse<void>>;
