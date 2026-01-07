@@ -23,7 +23,7 @@ import { getEnvPath } from '../utils/config-paths.js';
 export async function launchTUI(options = {}) {
   // Enable TUI mode FIRST to disable console output
   logger.setTuiMode(true);
-  
+
   // Load .env file from correct location (user home for installed packages)
   const envPath = getEnvPath();
   if (fs.existsSync(envPath)) {

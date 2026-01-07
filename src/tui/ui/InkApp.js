@@ -470,7 +470,9 @@ const StatusBar = React.memo(
           )}
           {!error && !loading && (
             <Box>
-              <Text dimColor>? Help | CTRL+O App | CTRL+W Scan | q Quit</Text>
+              <Text dimColor>
+                ? Help | CTRL+O App | CTRL+W Scan | CTRL+Q Quit
+              </Text>
               {excludePassedNoise && (
                 <Text color="yellow" dimColor>
                   {' '}
@@ -635,6 +637,7 @@ export const InkApp = ({ configPath }) => {
     (async () => {
       try {
         useStore.getState().setLoading(true);
+        setLoadingMessage(`Loading issues for ${selectedScan.Name}...`);
 
         // Check if this is the "View all vulnerabilities" option
         const isViewAll =
@@ -1260,12 +1263,6 @@ export const InkApp = ({ configPath }) => {
         hint: true,
       },
       {
-        key: 'q',
-        action: () => exit(),
-        description: 'Quit',
-        group: 'General',
-      },
-      {
         key: 'ctrl+d',
         action: () => {
           setDebugMode(true);
@@ -1316,8 +1313,14 @@ export const InkApp = ({ configPath }) => {
         condition: () => !!selectedApp,
         group: 'General',
       },
+      {
+        key: 'ctrl+q',
+        action: () => exit(),
+        description: 'Quit',
+        group: 'General',
+      },
     ],
-    [selectedApp]
+    [selectedApp, exit]
   );
 
   // Register general shortcuts (always enabled)
