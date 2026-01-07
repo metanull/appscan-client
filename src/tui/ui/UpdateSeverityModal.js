@@ -1,6 +1,6 @@
 /**
- * UpdateStatusModal Component
- * Modal for updating issue status (single or bulk)
+ * UpdateSeverityModal Component
+ * Modal for updating issue severity (single or bulk)
  */
 
 import React, { useState, useEffect } from 'react';
@@ -15,31 +15,30 @@ import {
 import { Modal } from './components/Modal.js';
 import { Panel } from './components/Panel.js';
 
-const STATUS_OPTIONS = [
-  { label: 'Open', value: 'Open' },
-  { label: 'In Progress', value: 'InProgress' },
-  { label: 'Reopened', value: 'Reopened' },
-  { label: 'Noise (False Positive)', value: 'Noise' },
-  { label: 'Passed (Risk Accepted)', value: 'Passed' },
-  { label: 'Fixed', value: 'Fixed' },
+const SEVERITY_OPTIONS = [
+  { label: 'Informational', value: 'Informational' },
+  { label: 'Low', value: 'Low' },
+  { label: 'Medium', value: 'Medium' },
+  { label: 'High', value: 'High' },
+  { label: 'Critical', value: 'Critical' },
 ];
 
-export const UpdateStatusModal = React.memo(
+export const UpdateSeverityModal = React.memo(
   ({ issueCount, issues = [], onUpdate, onClose, onRequestTextInput }) => {
-    // Calculate initial index from first issue's status
+    // Calculate initial index from first issue's severity
     const getInitialIndex = () => {
       if (issues && issues.length > 0) {
-        const firstIssueStatus = issues[0].Status;
-        const index = STATUS_OPTIONS.findIndex(
-          (opt) => opt.value === firstIssueStatus
+        const firstIssueSeverity = issues[0].Severity;
+        const index = SEVERITY_OPTIONS.findIndex(
+          (opt) => opt.value === firstIssueSeverity
         );
         return index !== -1 ? index : 0;
       }
       return 0;
     };
 
-    const [step, setStep] = useState('status'); // 'status' | 'template' | 'comment' | 'progress'
-    const [selectedStatus, setSelectedStatus] = useState(null);
+    const [step, setStep] = useState('severity'); // 'severity' | 'template' | 'comment' | 'progress'
+    const [selectedSeverity, setSelectedSeverity] = useState(null);
     const [comment, setComment] = useState('');
     const [templates, setTemplates] = useState([]);
     const [issueTypes, setIssueTypes] = useState([]);
@@ -67,8 +66,8 @@ export const UpdateStatusModal = React.memo(
       }
     });
 
-    const handleStatusSelect = (item) => {
-      setSelectedStatus(item.value);
+    const handleSeveritySelect = (item) => {
+      setSelectedSeverity(item.value);
 
       // If we have templates, show template selection; otherwise go straight to comment
       if (templates.length > 0) {
@@ -83,9 +82,9 @@ export const UpdateStatusModal = React.memo(
         // User wants to type custom message - request text input page
         if (onRequestTextInput) {
           onRequestTextInput({
-            title: '📝 Update Status - Add Comment',
-            subtitle: `Updating ${issueCount} issue(s) to: ${selectedStatus}`,
-            borderColor: 'green',
+            title: '⚠️  Update Severity - Add Comment',
+            subtitle: `Updating ${issueCount} issue(s) to: ${selectedSeverity}`,
+            borderColor: 'yellow',
             placeholder: 'Enter comment...',
             initialValue: comment,
             onSubmit: (value) => {
@@ -131,7 +130,7 @@ export const UpdateStatusModal = React.memo(
 
       try {
         await onUpdate(
-          selectedStatus,
+          selectedSeverity,
           commentText || undefined,
           (current, total) => {
             setProgress({ current, total });
@@ -157,19 +156,19 @@ export const UpdateStatusModal = React.memo(
 
     return (
       <Modal width={60} height={60}>
-        <Panel title="📝 Update Status" borderColor="green">
+        <Panel title="⚠️  Update Severity" borderColor="yellow">
           <Text marginTop={1}>Updating {issueCount} issue(s)</Text>
 
-          {step === 'status' && (
+          {step === 'severity' && (
             <Box flexDirection="column" marginTop={1}>
-              <Text>Select new status:</Text>
+              <Text>Select new severity:</Text>
               {issues.length > 0 && (
-                <Text dimColor>Current: {issues[0].Status || 'Unknown'}</Text>
+                <Text dimColor>Current: {issues[0].Severity || 'Unknown'}</Text>
               )}
               <SelectInput
-                items={STATUS_OPTIONS}
+                items={SEVERITY_OPTIONS}
                 initialIndex={getInitialIndex()}
-                onSelect={handleStatusSelect}
+                onSelect={handleSeveritySelect}
               />
             </Box>
           )}
@@ -245,6 +244,6 @@ export const UpdateStatusModal = React.memo(
   }
 );
 
-UpdateStatusModal.displayName = 'UpdateStatusModal';
+UpdateSeverityModal.displayName = 'UpdateSeverityModal';
 
-export default UpdateStatusModal;
+export default UpdateSeverityModal;

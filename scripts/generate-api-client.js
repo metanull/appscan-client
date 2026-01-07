@@ -11,18 +11,22 @@ const __dirname = path.dirname(__filename);
 
 const OUTPUT_DIR = path.resolve(__dirname, '../src/generated');
 const SWAGGER_URL = 'https://eu.cloud.appscan.com/swagger/v4/swagger.json';
+const PATCHED_SWAGGER_PATH = path.resolve(__dirname, '../doc/appscan-swagger-v4-patched.json');
 const TEMP_SWAGGER_PATH = path.resolve(__dirname, '../temp-swagger.json');
+
+// Parse command line arguments
+const args = process.argv.slice(2);
+const shouldDownload = args.includes('--download');
 
 // Ensure output directory exists
 if (!fs.existsSync(OUTPUT_DIR)) {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 }
 
-console.log('Downloading swagger.json from HCL AppScan Cloud...');
-
-// Download swagger.json
+// Download swagger.json from API
 const downloadSwagger = () => {
   return new Promise((resolve, reject) => {
+    console.log('Downloading swagger.json from HCL AppScan Cloud...');
     https.get(SWAGGER_URL, (response) => {
       if (response.statusCode !== 200) {
         reject(new Error(`Failed to download swagger.json: HTTP ${response.statusCode}`));
@@ -48,13 +52,29 @@ const downloadSwagger = () => {
   });
 };
 
+// Determine which swagger file to use
+const getSwaggerPath = async () => {
+  if (shouldDownload) {
+    await downloadSwagger();
+    return TEMP_SWAGGER_PATH;
+  } else {
+    if (!fs.existsSync(PATCHED_SWAGGER_PATH)) {
+      console.error('Error: Patched swagger file not found:', PATCHED_SWAGGER_PATH);
+      console.error('Please run with --download to fetch the original, or ensure the patched file exists.');
+      process.exit(1);
+    }
+    console.log('Using local patched swagger file:', PATCHED_SWAGGER_PATH);
+    return PATCHED_SWAGGER_PATH;
+  }
+};
+
 console.log('Generating API client from swagger.json...');
 
-downloadSwagger()
-  .then(() => generateApi({
+getSwaggerPath()
+  .then((swaggerPath) => generateApi({
     name: 'appscan-api.js',
     output: OUTPUT_DIR,
-    input: TEMP_SWAGGER_PATH,
+    input: swaggerPath,
   httpClientType: 'axios',
   generateClient: true,
   generateRouteTypes: false,
@@ -77,17 +97,15 @@ downloadSwagger()
   },
 })
   .then(({ files }) => {
-    console.log('API client generated successfully!');
-    console.log('Generated files:');
-    files.forEach((file) => {
-      console.log(`  - ${file.name}`);
-    });
+    console.log('\n✅ API client generated successfully!');
     
-    // Clean up temporary swagger file
-    if (fs.existsSync(TEMP_SWAGGER_PATH)) {
+    // Clean up temporary swagger file if it was downloaded
+    if (shouldDownload && fs.existsSync(TEMP_SWAGGER_PATH)) {
       fs.unlinkSync(TEMP_SWAGGER_PATH);
       console.log('Temporary swagger.json removed.');
     }
+    
+    console.log('\n💡 Tip: Use --download flag to fetch latest swagger from API instead of using local patched version.');
   })
   .catch((error) => {
     console.error('Error generating API client:', error);

@@ -100,7 +100,7 @@ appscan triage
 - `Space` - Toggle selection
 - `Ctrl+A` - Select all
 - `a` - Change application
-- `s` - Change scan
+- `s` - Update severity
 - `f` - Filter issues
 - `/` - Search
 - `u` - Update status
@@ -283,5 +283,11 @@ MIT
 ## Links
 
 - [GitHub Repository](https://github.com/metanull/appscan-client)
-- [HCL AppScan Cloud](https://cloud.appscan.com)
-- [API Documentation](https://cloud.appscan.com/swagger/ui/index)
+- [HCL AppScan Cloud](https://eu.cloud.appscan.com)
+- [HCL AppScan Rest API Documentation](https://help.hcl-software.com/appscan/ASoC/appseccloud_rest_apis.html)
+- [HCL AppScan Rest API Reference (OpenApi/Swagger)](https://eu.cloud.appscan.com/swagger/ui/index)
+- [Azure DevOps Rest APIs (1)](https://docs.microsoft.com/en-us/rest/api/vsts/?view=vsts-rest-4.1)
+- [Azure DevOps REST APIs (2)](https://learn.microsoft.com/en-us/rest/api/azure/devops/?view=azure-devops-rest-7.2&viewFallbackFrom=vsts-rest-4.1)
+- [Azure DevOps Rest API - client npm package](https://www.npmjs.com/package/azure-devops-node-api)
+- [Azure DevOps Rest API - client npm package - APIs definitions](https://github.com/microsoft/azure-devops-node-api/tree/master/api)
+- [Azure DevOps Rest API - client npm package - sample usage](https://github.com/Microsoft/azure-devops-node-api/tree/a90acbea84261f8d099bd2019088b907f40bb926/samples)

@@ -1,6 +1,6 @@
 {
   "name": "@metanull/appscan-client",
-  "version": "4.0.2",
+  "version": "4.1.0",
   "description": "Utility to work with HCL AppScan Cloud API",
   "main": "src/index.js",
   "type": "module",
@@ -17,7 +17,8 @@
     "lint": "eslint src tests",
     "lint:fix": "eslint src tests --fix",
     "format": "prettier --write \"src/**/*.{js,jsx}\" \"tests/**/*.js\"",
-    "generate-api": "node scripts/generate-api-client.js"
+    "generate-api": "node scripts/generate-api-client.js",
+    "generate-api:download": "node scripts/generate-api-client.js --download"
   },
   "files": [
     "dist",

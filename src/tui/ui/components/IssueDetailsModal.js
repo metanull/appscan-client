@@ -11,6 +11,7 @@ import { Panel } from './Panel.js';
 import { MarkdownBox } from './MarkdownBox.js';
 import { Formatter } from '../../../utils/formatter.js';
 import { parseAVSFromComments } from '../../../utils/asvs-utils.js';
+import logger from '../../utils/logger.js';
 
 export const IssueDetailsModal = React.memo(
   ({ issue, app, articleContent, appScanService, _config, onClose }) => {
@@ -42,7 +43,7 @@ export const IssueDetailsModal = React.memo(
             setLoadingComments(false);
           })
           .catch((err) => {
-            console.error('Failed to load comments:', err);
+            logger.error('Failed to load comments', err);
             setComments([]);
             setLoadingComments(false);
           });

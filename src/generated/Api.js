@@ -2964,6 +2964,15 @@ export var UpdateIssueStatusEnum;
   UpdateIssueStatusEnum['Fixed'] = 'Fixed';
   UpdateIssueStatusEnum['New'] = 'New';
 })(UpdateIssueStatusEnum || (UpdateIssueStatusEnum = {}));
+export var UpdateIssueSeverityEnum;
+(function (UpdateIssueSeverityEnum) {
+  UpdateIssueSeverityEnum['Undetermined'] = 'Undetermined';
+  UpdateIssueSeverityEnum['Informational'] = 'Informational';
+  UpdateIssueSeverityEnum['Low'] = 'Low';
+  UpdateIssueSeverityEnum['Medium'] = 'Medium';
+  UpdateIssueSeverityEnum['High'] = 'High';
+  UpdateIssueSeverityEnum['Critical'] = 'Critical';
+})(UpdateIssueSeverityEnum || (UpdateIssueSeverityEnum = {}));
 export var UpdateIssuesByIdStatusEnum;
 (function (UpdateIssuesByIdStatusEnum) {
   UpdateIssuesByIdStatusEnum['Open'] = 'Open';
@@ -4181,7 +4190,7 @@ export class Api {
      * No description
      *
      * @tags CustomFields
-     * @name ApiV4CustomFields
+     * @name CustomFieldsCreate
      * @summary Adds a new custom field for the organization.
      * @request POST:/api/v4/CustomFields
      * @secure
@@ -4192,7 +4201,7 @@ export class Api {
      * @response `409` `ErrorMessage` Conflict
      * @response `500` `ErrorMessage` Internal Server Error
      */
-    '/api/v4/CustomFields': (data, params = {}) =>
+    CustomFields_Create: (data, params = {}) =>
       this.http.request({
         path: `/api/v4/CustomFields`,
         method: 'POST',
@@ -4206,18 +4215,16 @@ export class Api {
      * No description
      *
      * @tags CustomFields
-     * @name ApiV4CustomFields2
+     * @name CustomFieldsGetAll
      * @summary Get all custom fields for a specific organization
      * @request GET:/api/v4/CustomFields
-     * @originalName /api/v4/CustomFields
-     * @duplicate
      * @secure
      * @response `200` `void` Returns the list of custom fields
      * @response `401` `void` Unauthorized
      * @response `404` `ErrorMessage` Organization not found or no custom fields defined
      * @response `500` `ErrorMessage` Internal Server Error
      */
-    '/api/v4/CustomFields2': (params = {}) =>
+    CustomFields_GetAll: (params = {}) =>
       this.http.request({
         path: `/api/v4/CustomFields`,
         method: 'GET',
@@ -4228,7 +4235,7 @@ export class Api {
      * No description
      *
      * @tags CustomFields
-     * @name ApiV4CustomFieldsId
+     * @name CustomFieldsUpdate
      * @summary Updates either the `HelpText` or `Name` of a custom field identified by `Id`.
      * @request PUT:/api/v4/CustomFields/{id}
      * @secure
@@ -4238,7 +4245,7 @@ export class Api {
      * @response `409` `ErrorMessage` Conflict
      * @response `500` `ErrorMessage` Internal Server Error
      */
-    '/api/v4/CustomFields/{id}': (id, data, params = {}) =>
+    CustomFields_Update: (id, data, params = {}) =>
       this.http.request({
         path: `/api/v4/CustomFields/${id}`,
         method: 'PUT',
@@ -4251,18 +4258,16 @@ export class Api {
      * No description
      *
      * @tags CustomFields
-     * @name ApiV4CustomFieldsId2
+     * @name CustomFieldsDelete
      * @summary Deletes a custom field from the organization by its Id.
      * @request DELETE:/api/v4/CustomFields/{id}
-     * @originalName /api/v4/CustomFields/{id}
-     * @duplicate
      * @secure
      * @response `200` `void` Custom field deleted successfully.
      * @response `401` `void` Unauthorized
      * @response `404` `ErrorMessage` Organization or custom field not found.
      * @response `500` `ErrorMessage` Internal Server Error.
      */
-    '/api/v4/CustomFields/{id}2': (id, params = {}) =>
+    CustomFields_Delete: (id, params = {}) =>
       this.http.request({
         path: `/api/v4/CustomFields/${id}`,
         method: 'DELETE',

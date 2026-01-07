@@ -63,6 +63,8 @@ export async function launchTUI(options = {}) {
 
     await waitUntilExit();
   } else {
+    // Enable TUI mode to disable console output
+    logger.setTuiMode(true);
     logger.info('Starting Ink TUI application');
     render(
       React.createElement(

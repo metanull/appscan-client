@@ -21,6 +21,14 @@ class Logger {
   constructor() {
     this.logLevel = process.env.LOG_LEVEL || 'INFO';
     this.debugCallback = null; // Callback for debug UI
+    this.tuiMode = false; // Set to true when running in TUI to disable console output
+  }
+
+  /**
+   * Enable TUI mode - disables console output to prevent interfering with Ink rendering
+   */
+  setTuiMode(enabled) {
+    this.tuiMode = enabled;
   }
 
   /**
@@ -47,9 +55,9 @@ class Logger {
   _writeToFile(formattedMessage) {
     try {
       fs.appendFileSync(LOG_FILE, formattedMessage + '\n', 'utf8');
-    } catch (err) {
-      // Fallback to console only if file write fails
-      console.error('Failed to write to log file:', err.message);
+    } catch {
+      // Silently fail if file write fails to avoid interfering with TUI
+      // The error is not logged to console to prevent disrupting Ink rendering
     }
 
     // Call debug callback if registered (for UI debug bar)
@@ -80,7 +88,10 @@ class Logger {
       errorDetails
     );
 
-    console.error(formattedMessage);
+    // Only write to console if not in TUI mode
+    if (!this.tuiMode) {
+      console.error(formattedMessage);
+    }
     this._writeToFile(formattedMessage);
 
     return formattedMessage;
@@ -92,7 +103,10 @@ class Logger {
   warn(message, context = {}) {
     const formattedMessage = this._format(LOG_LEVELS.WARN, message, context);
 
-    console.warn(formattedMessage);
+    // Only write to console if not in TUI mode
+    if (!this.tuiMode) {
+      console.warn(formattedMessage);
+    }
     this._writeToFile(formattedMessage);
 
     return formattedMessage;
@@ -105,7 +119,10 @@ class Logger {
     if (this._shouldLog(LOG_LEVELS.INFO)) {
       const formattedMessage = this._format(LOG_LEVELS.INFO, message, context);
 
-      console.log(formattedMessage);
+      // Only write to console if not in TUI mode
+      if (!this.tuiMode) {
+        console.log(formattedMessage);
+      }
       this._writeToFile(formattedMessage);
 
       return formattedMessage;
@@ -129,7 +146,10 @@ class Logger {
 
     // Only log to file/console if log level allows
     if (this._shouldLog(LOG_LEVELS.DEBUG)) {
-      console.debug(formattedMessage);
+      // Only write to console if not in TUI mode
+      if (!this.tuiMode) {
+        console.debug(formattedMessage);
+      }
       this._writeToFile(formattedMessage);
     }
 
