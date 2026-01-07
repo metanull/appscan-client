@@ -6,6 +6,7 @@
 import fs from 'fs';
 import path from 'path';
 import { getLogsDir } from '../../utils/config-paths.js';
+import logger from './logger.js';
 
 const LOG_DIR = getLogsDir();
 const AUDIT_FILE = path.join(LOG_DIR, 'audit.log');
@@ -36,7 +37,7 @@ class AuditService {
     try {
       fs.appendFileSync(AUDIT_FILE, formattedEntry + '\n', 'utf8');
     } catch (err) {
-      console.error('Failed to write to audit log:', err.message);
+      logger.error('Failed to write to audit log', err);
     }
 
     return entry;
@@ -147,8 +148,8 @@ class AuditService {
           }
         })
         .filter(Boolean);
-    } catch {
-      console.error('Failed to read audit log');
+    } catch (err) {
+      logger.error('Failed to read audit log', err);
       return [];
     }
   }
@@ -160,8 +161,8 @@ class AuditService {
     try {
       fs.writeFileSync(AUDIT_FILE, '', 'utf8');
       this.log('AUDIT_CLEARED', {}, { success: true });
-    } catch {
-      console.error('Failed to clear audit log');
+    } catch (err) {
+      logger.error('Failed to clear audit log', err);
     }
   }
 }

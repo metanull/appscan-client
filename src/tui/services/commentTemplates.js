@@ -5,6 +5,7 @@
 
 import fs from 'fs';
 import { getCommentTemplatesPath } from '../../utils/config-paths.js';
+import logger from '../utils/logger.js';
 
 // Path to templates file (uses config directory for installed packages)
 const TEMPLATES_FILE = getCommentTemplatesPath();
@@ -57,7 +58,7 @@ export function loadTemplates() {
       templates.get(issueType).push(comment);
     }
   } catch (error) {
-    console.error('Error loading templates:', error);
+    logger.error('Error loading templates', error);
   }
 
   return templates;
@@ -87,7 +88,7 @@ export function saveTemplate(issueType, comment) {
     const newLine = `${issueType}|${comment}\n`;
     fs.appendFileSync(TEMPLATES_FILE, newLine, 'utf8');
   } catch (error) {
-    console.error('Error saving template:', error);
+    logger.error('Error saving template', error);
   }
 }
 

@@ -10,6 +10,7 @@ import { Modal } from './Modal.js';
 import { Panel } from './Panel.js';
 import open from 'open';
 import { parseAVSFromComments } from '../../../utils/asvs-utils.js';
+import logger from '../../utils/logger.js';
 
 export const LinksModal = React.memo(
   ({ issue, app, scan, config, appScanService, onClose }) => {
@@ -31,7 +32,7 @@ export const LinksModal = React.memo(
             setComments(commentsList || []);
           })
           .catch((err) => {
-            console.error('Failed to load comments:', err);
+            logger.error('Failed to load comments', err);
             setComments([]);
           });
       }

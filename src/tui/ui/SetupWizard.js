@@ -8,6 +8,7 @@ import { Box, Text, useInput, useApp } from 'ink';
 import TextInput from 'ink-text-input';
 import { getEnvPath } from '../../utils/config-paths.js';
 import fs from 'fs';
+import logger from '../utils/logger.js';
 
 const STEPS = {
   WELCOME: 'welcome',
@@ -174,7 +175,7 @@ ${config.confluenceUrl ? `CONFLUENCE_OWASP_ASVS_URL=${config.confluenceUrl}` : '
       fs.writeFileSync(envPath, envContent, 'utf8');
       setStep(STEPS.COMPLETE);
     } catch (error) {
-      console.error('Failed to save configuration:', error.message);
+      logger.error('Failed to save configuration', error);
       exit();
     }
   };
