@@ -1,17 +1,15 @@
 /**
- * AppSelectionModal
- * Modal for selecting an application with search, sort, and filter options
+ * AppSelectionWindow
+ * Standalone window for selecting an application with search, sort, and filter options
  */
 
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
-import { Modal } from './Modal.js';
-import { Panel } from './Panel.js';
 import { ScrollableList } from './ScrollableList.js';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 
-export const AppSelectionModal = React.memo(
+export const AppSelectionWindow = React.memo(
   ({
     applications,
     onSelect,
@@ -153,53 +151,63 @@ export const AppSelectionModal = React.memo(
     );
 
     // Calculate available rows for the list
-    // Modal takes 80% of height, then subtract chrome:
-    // - Modal padding (2 lines)
-    // - Panel border (2 lines)
-    // - Panel title (1 line)
-    // - Search box (3 lines: label + input + margin)
-    // - Controls hint (1 line + margin = 2 lines)
-    // - Footer (1 line + margin = 2 lines)
-    // Total chrome: ~13 lines
-    const modalHeight = Math.floor(height * 0.8);
-    const chromeLines = 13;
-    const availableRows = modalHeight - chromeLines;
-    const visibleRows = Math.max(1, availableRows);
+    const availableRows = Math.max(10, height - 15); // Full screen minus chrome
 
     return (
-      <Modal width={70} height={80}>
-        <Panel title="Select Application" borderColor="cyan">
-          <Box flexDirection="column" gap={1}>
-            {/* Search box */}
-            <Box flexDirection="column" marginBottom={1}>
-              <Text dimColor>Search: </Text>
-              <TextInput
-                value={searchText}
-                onChange={setSearchText}
-                placeholder="Type to search..."
-              />
-            </Box>
+      <Box
+        width="100%"
+        height="100%"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Box
+          flexDirection="column"
+          width="70%"
+          borderStyle="double"
+          borderColor="cyan"
+          paddingX={2}
+          paddingY={1}
+        >
+          <Text bold color="cyan">
+            Select Application
+          </Text>
 
-            {/* List */}
-            <ScrollableList
-              items={filteredApps}
-              cursor={cursor}
-              renderItem={renderItem}
-              visibleRows={visibleRows}
-              emptyMessage="No applications found"
+          {/* Search box */}
+          <Box flexDirection="column" marginTop={1} marginBottom={1}>
+            <Text dimColor>Search: </Text>
+            <TextInput
+              value={searchText}
+              onChange={setSearchText}
+              placeholder="Type to search..."
             />
-
-            {/* Footer */}
-            <Box marginTop={1}>
-              <Text dimColor>
-                {filteredApps.length} of {applications.length} applications
-              </Text>
-            </Box>
           </Box>
-        </Panel>
-      </Modal>
+
+          {/* List */}
+          <ScrollableList
+            items={filteredApps}
+            cursor={cursor}
+            renderItem={renderItem}
+            visibleRows={availableRows}
+            emptyMessage="No applications found"
+          />
+
+          {/* Footer */}
+          <Box marginTop={1}>
+            <Text dimColor>
+              {filteredApps.length} of {applications.length} applications
+            </Text>
+          </Box>
+
+          <Box marginTop={1}>
+            <Text dimColor>
+              ↑↓: Navigate | ←→: Sort | Enter: Select | ESC: Cancel
+            </Text>
+          </Box>
+        </Box>
+      </Box>
     );
   }
 );
 
-AppSelectionModal.displayName = 'AppSelectionModal';
+AppSelectionWindow.displayName = 'AppSelectionWindow';

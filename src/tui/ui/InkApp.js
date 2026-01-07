@@ -13,8 +13,8 @@ import { Panel } from './components/Panel.js';
 import { ScrollableList } from './components/ScrollableList.js';
 import { DebugBar } from './components/DebugBar.js';
 import { KeyboardHint } from './components/KeyboardHint.js';
-import { AppSelectionModal } from './components/AppSelectionModal.js';
-import { ScanSelectionModal } from './components/ScanSelectionModal.js';
+import { AppSelectionWindow } from './components/AppSelectionWindow.js';
+import { ScanSelectionWindow } from './components/ScanSelectionWindow.js';
 import { IssueDetailsModal } from './components/IssueDetailsModal.js';
 import { HelpModal } from './components/HelpModal.js';
 import { FilterModal } from './FilterModal.js';
@@ -470,7 +470,9 @@ const StatusBar = React.memo(
           )}
           {!error && !loading && (
             <Box>
-              <Text dimColor>? Help | CTRL+O App | CTRL+W Scan | q Quit</Text>
+              <Text dimColor>
+                ? Help | CTRL+O App | CTRL+W Scan | CTRL+Q Quit
+              </Text>
               {excludePassedNoise && (
                 <Text color="yellow" dimColor>
                   {' '}
@@ -513,9 +515,13 @@ export const InkApp = ({ configPath }) => {
   const [showContextPane, setShowContextPane] = useState(true);
   const [activeModal, setActiveModal] = useState(null); // null | 'app' | 'scan' | 'filter' | 'search' | 'help' | etc.
   const [textInputConfig, setTextInputConfig] = useState(null); // Config for text input page
+  const [standaloneWindow, setStandaloneWindow] = useState(null); // 'app' | 'scan' | null - for standalone window rendering
   const [debugMode, setDebugMode] = useState(false);
   const [debugMessage, setDebugMessage] = useState('');
+  const [loadingMessage, setLoadingMessage] = useState('Ready'); // Custom loading message
   const isInitialSetup = useRef(true); // Track if we're in initial setup phase
+  const pendingAppLoad = useRef(null); // Track pending app load
+  const pendingScanLoad = useRef(null); // Track pending scan load
 
   const loading = useStore((state) => state.loading);
   const error = useStore((state) => state.error);
@@ -585,7 +591,7 @@ export const InkApp = ({ configPath }) => {
       !hasOpenedAppModal.current
     ) {
       hasOpenedAppModal.current = true;
-      setActiveModal('app');
+      setStandaloneWindow('app');
     }
   }, [applications.length, view]); // Only depend on data, not activeModal
 
@@ -631,6 +637,7 @@ export const InkApp = ({ configPath }) => {
     (async () => {
       try {
         useStore.getState().setLoading(true);
+        setLoadingMessage(`Loading issues for ${selectedScan.Name}...`);
 
         // Check if this is the "View all vulnerabilities" option
         const isViewAll =
@@ -1243,19 +1250,6 @@ export const InkApp = ({ configPath }) => {
         group: 'General',
       },
       {
-        key: 'ctrl+o',
-        action: () => setActiveModal('app'),
-        description: 'App',
-        group: 'General',
-      },
-      {
-        key: 'ctrl+w',
-        action: () => selectedApp && setActiveModal('scan'),
-        description: 'Scan',
-        condition: () => !!selectedApp,
-        group: 'General',
-      },
-      {
         key: 'h',
         action: () => setActiveModal('help'),
         description: 'Help',
@@ -1267,12 +1261,6 @@ export const InkApp = ({ configPath }) => {
         description: 'Help',
         group: 'General',
         hint: true,
-      },
-      {
-        key: 'q',
-        action: () => exit(),
-        description: 'Quit',
-        group: 'General',
       },
       {
         key: 'ctrl+d',
@@ -1309,15 +1297,200 @@ export const InkApp = ({ configPath }) => {
     ]
   );
 
-  // Register and handle keyboard shortcuts
+  // General shortcuts that are always available
+  const generalShortcuts = useMemo(
+    () => [
+      {
+        key: 'ctrl+o',
+        action: () => setStandaloneWindow('app'),
+        description: 'App',
+        group: 'General',
+      },
+      {
+        key: 'ctrl+w',
+        action: () => selectedApp && setStandaloneWindow('scan'),
+        description: 'Scan',
+        condition: () => !!selectedApp,
+        group: 'General',
+      },
+      {
+        key: 'ctrl+q',
+        action: () => exit(),
+        description: 'Quit',
+        group: 'General',
+      },
+    ],
+    [selectedApp, exit]
+  );
+
+  // Register general shortcuts (always enabled)
+  useKeyboardShortcuts('general', generalShortcuts, {
+    enabled: !activeModal && !standaloneWindow && !textInputConfig,
+  });
+
+  // Register issue-list shortcuts
   useKeyboardShortcuts('issue-list', issueListShortcuts, {
-    enabled: !activeModal && view === 'issue-list',
+    enabled: !activeModal && !standaloneWindow && view === 'issue-list',
   });
 
   // Calculate content height accounting for status bar and optional debug bar
   const statusBarHeight = 1;
   const debugBarHeight = debugMode ? 1 : 0;
   const contentHeight = height - statusBarHeight - debugBarHeight;
+
+  // If standalone window is active, render ONLY that (no Layout, no other components)
+  if (standaloneWindow === 'app') {
+    return (
+      <AppSelectionWindow
+        applications={applications}
+        onSelect={async (app) => {
+          // Cancel any pending app or scan loads
+          if (pendingAppLoad.current) {
+            pendingAppLoad.current.cancelled = true;
+          }
+          if (pendingScanLoad.current) {
+            pendingScanLoad.current.cancelled = true;
+          }
+
+          // Create new cancellation tracker
+          const loadTracker = { cancelled: false };
+          pendingAppLoad.current = loadTracker;
+
+          // Close window immediately for visual feedback
+          setStandaloneWindow(null);
+
+          useStore.getState().setSelectedApp(app);
+          useStore.getState().setIssues([]); // Clear issues immediately
+          useStore.getState().setView('issue-list'); // Show empty list with loading state
+          useStore.getState().setLoading(true);
+          setLoadingMessage(`Loading scans for ${app.Name}...`);
+
+          try {
+            const scanList = await appScanService.listScans(app.Id);
+
+            // Check if this load was cancelled
+            if (loadTracker.cancelled) {
+              return;
+            }
+
+            useStore.getState().setScans(scanList || []);
+            // Auto-open scan selection
+            if (scanList && scanList.length > 0) {
+              setStandaloneWindow('scan');
+            }
+          } catch (err) {
+            if (loadTracker.cancelled) {
+              return;
+            }
+            logger.error('Failed to load scans', err);
+            useStore
+              .getState()
+              .setError(`Failed to load scans: ${err.message}`);
+          } finally {
+            if (!loadTracker.cancelled) {
+              useStore.getState().setLoading(false);
+            }
+            isInitialSetup.current = false;
+            if (pendingAppLoad.current === loadTracker) {
+              pendingAppLoad.current = null;
+            }
+          }
+        }}
+        onCancel={() => {
+          if (isInitialSetup.current) {
+            logger.info('User cancelled application selection');
+            exit();
+          } else {
+            setStandaloneWindow(null);
+          }
+        }}
+        hideEmpty={false}
+        appScanService={appScanService}
+        selectedApp={selectedApp}
+      />
+    );
+  }
+
+  if (standaloneWindow === 'scan') {
+    return (
+      <ScanSelectionWindow
+        scans={scans}
+        onSelect={async (scan) => {
+          // Cancel any pending app or scan loads
+          if (pendingAppLoad.current) {
+            pendingAppLoad.current.cancelled = true;
+          }
+          if (pendingScanLoad.current) {
+            pendingScanLoad.current.cancelled = true;
+          }
+
+          // Create new cancellation tracker
+          const loadTracker = { cancelled: false };
+          pendingScanLoad.current = loadTracker;
+
+          // Close window immediately for visual feedback
+          setStandaloneWindow(null);
+
+          useStore.getState().setSelectedScan(scan);
+          useStore.getState().setIssues([]); // Clear issues immediately
+          useStore.getState().setView('issue-list'); // Show empty list with loading state
+          useStore.getState().setLoading(true);
+          setLoadingMessage(`Loading issues for ${scan.Name}...`);
+
+          try {
+            const isViewAll = scan._isViewAll || scan.Id === '__VIEW_ALL__';
+
+            // Build filter options respecting excludePassedNoise setting
+            const currentExcludePassedNoise =
+              useStore.getState().excludePassedNoise;
+            const filterOptions = currentExcludePassedNoise
+              ? { excludePassedNoise: true }
+              : null;
+
+            let issueList;
+            if (isViewAll) {
+              issueList = await appScanService.listIssues(
+                selectedApp.Id,
+                filterOptions,
+                'Application'
+              );
+            } else {
+              issueList = await appScanService.listIssues(
+                scan.Id,
+                filterOptions
+              );
+            }
+
+            // Check if this load was cancelled
+            if (loadTracker.cancelled) {
+              return;
+            }
+
+            useStore.getState().setIssues(issueList || []);
+          } catch (err) {
+            if (loadTracker.cancelled) {
+              return;
+            }
+            logger.error('Failed to load issues', err);
+            useStore
+              .getState()
+              .setError(`Failed to load issues: ${err.message}`);
+          } finally {
+            if (!loadTracker.cancelled) {
+              useStore.getState().setLoading(false);
+            }
+            if (pendingScanLoad.current === loadTracker) {
+              pendingScanLoad.current = null;
+            }
+          }
+        }}
+        onCancel={() => setStandaloneWindow(null)}
+        hideEmpty={false}
+        appScanService={appScanService}
+        selectedScan={selectedScan}
+      />
+    );
+  }
 
   // If text input page is active, render ONLY that (no Layout, no other components)
   if (textInputConfig) {
@@ -1342,7 +1515,7 @@ export const InkApp = ({ configPath }) => {
         <StatusBar
           error={error}
           loading={loading}
-          message="Ready"
+          message={loading ? loadingMessage : 'Ready'}
           excludePassedNoise={excludePassedNoise}
         />
       }
@@ -1388,88 +1561,6 @@ export const InkApp = ({ configPath }) => {
       {/* Modals */}
       {activeModal === 'help' && (
         <HelpModal view={view} onClose={() => setActiveModal(null)} />
-      )}
-      {activeModal === 'app' && (
-        <AppSelectionModal
-          applications={applications}
-          appScanService={appScanService}
-          selectedApp={selectedApp}
-          onSelect={async (app) => {
-            // Set selected app and load scans for it
-            useStore.getState().setSelectedApp(app);
-            setActiveModal(null);
-            try {
-              useStore.getState().setLoading(true);
-              logger.info('Loading scans for application', {
-                appId: app.Id,
-                appName: app.Name,
-              });
-              const scanList = await appScanService.listScans(app.Id);
-              useStore.getState().setScans(scanList);
-              // Auto-open scan modal if there are scans
-              if (scanList && scanList.length > 0) {
-                setActiveModal('scan');
-                // Log a sample scan to inspect fields
-                logger.debug('Sample scan fields', {
-                  sample: scanList[0],
-                  keys: Object.keys(scanList[0] || {}).slice(0, 20),
-                });
-              }
-              useStore.getState().setLoading(false);
-            } catch (err) {
-              logger.error('Failed to load scans', err);
-              useStore.getState().setError(err.message);
-              useStore.getState().setLoading(false);
-            }
-          }}
-          onCancel={() => {
-            if (isInitialSetup.current) {
-              // During initial setup, exit the app
-              logger.info('User cancelled application selection');
-              exit();
-            } else {
-              // After initial setup, just close the modal
-              setActiveModal(null);
-            }
-          }}
-        />
-      )}
-      {activeModal === 'scan' && (
-        <ScanSelectionModal
-          scans={scans}
-          appScanService={appScanService}
-          selectedScan={selectedScan}
-          onSelect={(scan) => {
-            // Force reload by clearing lastLoadedScanRef
-            // This ensures that even if the same scan is selected again, it will reload
-            lastLoadedScanRef.current = null;
-
-            // If selecting the same scan, temporarily clear it to force the effect to run
-            if (selectedScan && selectedScan.Id === scan.Id) {
-              useStore.getState().setSelectedScan(null);
-              // Use setTimeout to ensure the state update is processed
-              setTimeout(() => {
-                useStore.getState().setSelectedScan(scan);
-              }, 0);
-            } else {
-              useStore.getState().setSelectedScan(scan);
-            }
-
-            setActiveModal(null);
-            // Mark initial setup as complete once a scan is selected
-            isInitialSetup.current = false;
-          }}
-          onCancel={() => {
-            if (isInitialSetup.current) {
-              // During initial setup, exit the app
-              logger.info('User cancelled scan selection');
-              exit();
-            } else {
-              // After initial setup, just close the modal
-              setActiveModal(null);
-            }
-          }}
-        />
       )}
       {activeModal === 'filter' && (
         <FilterModal

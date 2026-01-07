@@ -21,6 +21,9 @@ import { getEnvPath } from '../utils/config-paths.js';
  * @param {boolean} options.setup - Force setup wizard
  */
 export async function launchTUI(options = {}) {
+  // Enable TUI mode FIRST to disable console output
+  logger.setTuiMode(true);
+
   // Load .env file from correct location (user home for installed packages)
   const envPath = getEnvPath();
   if (fs.existsSync(envPath)) {
@@ -63,8 +66,6 @@ export async function launchTUI(options = {}) {
 
     await waitUntilExit();
   } else {
-    // Enable TUI mode to disable console output
-    logger.setTuiMode(true);
     logger.info('Starting Ink TUI application');
     render(
       React.createElement(
