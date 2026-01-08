@@ -6,7 +6,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
-import TextInput from 'ink-text-input';
 import Spinner from 'ink-spinner';
 import {
   getTemplatesForType,
@@ -37,9 +36,8 @@ export const UpdateSeverityModal = React.memo(
       return 0;
     };
 
-    const [step, setStep] = useState('severity'); // 'severity' | 'template' | 'comment' | 'progress'
+    const [step, setStep] = useState('severity'); // 'severity' | 'template' | 'progress'
     const [selectedSeverity, setSelectedSeverity] = useState(null);
-    const [comment, setComment] = useState('');
     const [templates, setTemplates] = useState([]);
     const [issueTypes, setIssueTypes] = useState([]);
     const [progress, setProgress] = useState({ current: 0, total: 0 });
@@ -69,11 +67,25 @@ export const UpdateSeverityModal = React.memo(
     const handleSeveritySelect = (item) => {
       setSelectedSeverity(item.value);
 
-      // If we have templates, show template selection; otherwise go straight to comment
+      // If we have templates, show template selection; otherwise request text input directly
       if (templates.length > 0) {
         setStep('template');
+      } else if (onRequestTextInput) {
+        // No templates - go directly to text input page
+        onRequestTextInput({
+          title: '⚠️  Update Severity - Add Comment',
+          subtitle: `Updating ${issueCount} issue(s) to: ${item.value}`,
+          borderColor: 'yellow',
+          placeholder: 'Enter comment (optional)...',
+          initialValue: '',
+          onComplete: (value) => {
+            // Submit immediately after text input
+            handleSubmitWithComment(value || '');
+          },
+        });
       } else {
-        setStep('comment');
+        // Fallback: submit without comment
+        handleSubmitWithComment('');
       }
     };
 
@@ -86,11 +98,7 @@ export const UpdateSeverityModal = React.memo(
             subtitle: `Updating ${issueCount} issue(s) to: ${selectedSeverity}`,
             borderColor: 'yellow',
             placeholder: 'Enter comment...',
-            initialValue: comment,
-            onSubmit: (value) => {
-              setComment(value);
-              setStep('comment');
-            },
+            initialValue: '',
             onComplete: (value) => {
               // Submit immediately after text input
               handleSubmitWithComment(value || '');
@@ -98,14 +106,9 @@ export const UpdateSeverityModal = React.memo(
           });
         }
       } else {
-        // Use selected template
-        setComment(item.value);
-        setStep('comment');
+        // Use selected template and submit immediately
+        handleSubmitWithComment(item.value);
       }
-    };
-
-    const handleSubmit = async () => {
-      await handleSubmitWithComment(comment || '');
     };
 
     const handleSubmitWithComment = async (commentText) => {
@@ -183,21 +186,6 @@ export const UpdateSeverityModal = React.memo(
                 items={templateOptions}
                 onSelect={handleTemplateSelect}
               />
-            </Box>
-          )}
-
-          {step === 'comment' && (
-            <Box flexDirection="column" marginTop={1}>
-              <Text>Add comment (optional, press Enter to submit):</Text>
-              <Box marginTop={1}>
-                <Text color="cyan">&gt; </Text>
-                <TextInput
-                  value={comment}
-                  onChange={setComment}
-                  onSubmit={handleSubmit}
-                  placeholder="Enter comment..."
-                />
-              </Box>
             </Box>
           )}
 
