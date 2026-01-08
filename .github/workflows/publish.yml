@@ -55,12 +55,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-      - name: Make package Public
-        if: steps.version-check.outputs.skip != 'true'
-        run: npm access set status=public @metanull/appscan-client
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
       - name: Skip publish notification
         if: steps.version-check.outputs.skip == 'true'
         run: echo "Package version unchanged. Skipping publish."
