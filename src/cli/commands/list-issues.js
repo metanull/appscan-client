@@ -8,9 +8,11 @@ import {
   severityOrder,
   severityColors,
 } from '../../utils/filter-builder.js';
+import cliOutput from '../../utils/cli-output.js';
 
 export async function listIssues(scanId, options) {
   try {
+    cliOutput.setJsonMode(options.json);
     const { service } = await initializeAppScanService(options.config);
 
     // Build filter options using shared utility
@@ -20,22 +22,18 @@ export async function listIssues(scanId, options) {
     let response;
     if (hasFilters) {
       // Use new OData filter approach
-      console.error(
-        chalk.blue(`Fetching issues for scan ${scanId} with filters...`)
-      );
+      cliOutput.status(`Fetching issues for scan ${scanId} with filters...`);
       response = await service.listIssues(scanId, filterOptions);
     } else {
       // Use legacy exclude-status approach
       const excludeStatus =
         options.excludeStatus !== undefined ? options.excludeStatus : 'Noise';
       if (excludeStatus) {
-        console.error(
-          chalk.blue(
-            `Fetching issues for scan ${scanId} (excluding status: ${excludeStatus})...`
-          )
+        cliOutput.status(
+          `Fetching issues for scan ${scanId} (excluding status: ${excludeStatus})...`
         );
       } else {
-        console.error(chalk.blue(`Fetching issues for scan ${scanId}...`));
+        cliOutput.status(`Fetching issues for scan ${scanId}...`);
       }
       response = await service.listIssues(scanId, null, excludeStatus);
     }
@@ -44,9 +42,9 @@ export async function listIssues(scanId, options) {
     const groupedMode = options.grouped ?? false;
 
     if (options.json) {
-      console.log(JSON.stringify(issues, null, 2));
+      cliOutput.json(issues);
     } else {
-      console.error(chalk.green(`\nFound ${issues.length} issue(s):\n`));
+      cliOutput.success(`\nFound ${issues.length} issue(s):\n`);
 
       if (groupedMode) {
         renderGroupedIssues(issues);

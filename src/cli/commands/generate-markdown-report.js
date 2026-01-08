@@ -1,6 +1,7 @@
 import { AppScanService } from '../../services/appscan-service.js';
 import { Config } from '../../utils/config.js';
 import TurndownService from 'turndown';
+import cliOutput from '../../utils/cli-output.js';
 
 export async function generateMarkdownReport(type, id, options) {
   try {
@@ -15,8 +16,8 @@ export async function generateMarkdownReport(type, id, options) {
       );
     }
 
-    console.log(`Generating HTML report for ${type}: ${id}...`);
-    console.log('This may take a few minutes...\n');
+    cliOutput.status(`Generating HTML report for ${type}: ${id}...`);
+    cliOutput.status('This may take a few minutes...\n');
 
     // Build OData filter for Status = 'Open' if requested
     let odataFilter = options.odataFilter || '';
@@ -49,8 +50,10 @@ export async function generateMarkdownReport(type, id, options) {
       reportOptions
     );
 
-    console.log(`\nReport generated successfully (ID: ${result.reportId})`);
-    console.log('Converting HTML to Markdown...\n');
+    cliOutput.success(
+      `HTML report generated successfully (ID: ${result.reportId})`
+    );
+    cliOutput.status('Converting to Markdown...\n');
 
     // Convert HTML to Markdown
     const turndownService = new TurndownService({

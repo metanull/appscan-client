@@ -6,7 +6,7 @@
 
 import React, { useMemo } from 'react';
 import { Box, Text } from 'ink';
-import logger from '../../utils/logger.js';
+import logger from '../../../utils/logger.js';
 
 export const ScrollableList = React.memo(
   ({

@@ -11,7 +11,7 @@ import { InkApp } from './ui/InkApp.js';
 import { SetupWizard } from './ui/SetupWizard.js';
 import { KeyboardProvider } from './utils/KeyboardManager.js';
 import { ErrorBoundary } from './ui/components/ErrorBoundary.js';
-import logger from './utils/logger.js';
+import logger from '../utils/logger.js';
 import { getEnvPath } from '../utils/config-paths.js';
 
 /**

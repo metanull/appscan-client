@@ -5,7 +5,7 @@
 
 import fs from 'fs';
 import { getCommentTemplatesPath } from '../../utils/config-paths.js';
-import logger from '../utils/logger.js';
+import logger from '../../utils/logger.js';
 
 // Path to templates file (uses config directory for installed packages)
 const TEMPLATES_FILE = getCommentTemplatesPath();

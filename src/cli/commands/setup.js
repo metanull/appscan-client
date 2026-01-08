@@ -162,7 +162,7 @@ ${confluenceBaseUrl ? `CONFLUENCE_OWASP_ASVS_URL=${confluenceBaseUrl}` : '# CONF
     );
     console.log(
       chalk.white('  2. Run'),
-      chalk.yellow('appscan triage'),
+      chalk.yellow('appscan'),
       chalk.white('to start triaging vulnerabilities\n')
     );
   } catch (error) {

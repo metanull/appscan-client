@@ -5,7 +5,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { getLogsDir } from '../../utils/config-paths.js';
+import { getLogsDir } from './config-paths.js';
 
 const LOG_DIR = getLogsDir();
 const LOG_FILE = path.join(LOG_DIR, 'app.log');

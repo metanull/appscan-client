@@ -1,26 +1,28 @@
 import chalk from 'chalk';
 import { AppScanService } from '../../services/appscan-service.js';
 import { Config } from '../../utils/config.js';
+import cliOutput from '../../utils/cli-output.js';
 
 export async function getIssueComments(issueId, options) {
   try {
+    cliOutput.setJsonMode(options.json);
     const config = options.config
       ? Config.loadFromFile(options.config)
       : new Config();
     const service = new AppScanService(config);
 
-    console.error(chalk.blue('Authenticating...'));
+    cliOutput.status('Authenticating...');
     await service.authenticate();
 
-    console.error(chalk.blue(`Fetching comments for issue ${issueId}...`));
+    cliOutput.status(`Fetching comments for issue ${issueId}...`);
 
     const response = await service.api.v4.Issues_GetIssueComments(issueId, {});
     const comments = response.Items || [];
 
     if (options.json) {
-      console.log(JSON.stringify(comments, null, 2));
+      cliOutput.json(comments);
     } else {
-      console.error(chalk.green(`\nFound ${comments.length} comment(s):\n`));
+      cliOutput.success(`\nFound ${comments.length} comment(s):\n`);
 
       if (comments.length === 0) {
         console.log('No comments found for this issue.');

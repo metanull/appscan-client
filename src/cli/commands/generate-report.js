@@ -1,29 +1,10 @@
-import chalk from 'chalk';
 import { AppScanService } from '../../services/appscan-service.js';
 import { Config } from '../../utils/config.js';
 import { MarkdownReportGenerator } from '../../reports/markdown-report.js';
 import { HtmlReportGenerator } from '../../reports/html-report.js';
 import fs from 'fs';
 import path from 'path';
-
-// Simple single-line status helper to reduce verbosity
-function writeStatus(msg) {
-  try {
-    // write to stderr and keep on same line
-    process.stderr.write(`\r${msg}`);
-  } catch {
-    // fallback
-    console.error(msg);
-  }
-}
-
-function clearStatusLine() {
-  try {
-    process.stderr.write('\r\x1b[K');
-  } catch {
-    // Ignore errors
-  }
-}
+import cliOutput from '../../utils/cli-output.js';
 
 export async function generateReport(type, id, options) {
   try {
@@ -32,9 +13,9 @@ export async function generateReport(type, id, options) {
       : new Config();
     const service = new AppScanService(config);
 
-    writeStatus('Authenticating...');
+    cliOutput.status('Authenticating...');
     await service.authenticate();
-    writeStatus('Authenticated');
+    cliOutput.status('Authenticated');
 
     let report = '';
     const format = options.format || 'markdown';
@@ -43,7 +24,7 @@ export async function generateReport(type, id, options) {
 
     switch (type) {
       case 'applications': {
-        console.error(chalk.blue('Fetching applications...'));
+        cliOutput.status('Fetching applications...');
         const response = await service.listApplications();
         const applications = response.Items || [];
         report =
@@ -53,7 +34,7 @@ export async function generateReport(type, id, options) {
         break;
       }
       case 'scans': {
-        writeStatus(`Fetching scans for application ${id}...`);
+        cliOutput.status(`Fetching scans for application ${id}...`);
         const response = await service.listScans(id);
         const scans = response.Items || [];
         const appDetailsResponse = await service.getApplicationDetails(id);
@@ -70,11 +51,11 @@ export async function generateReport(type, id, options) {
         const excludeStatus =
           options.excludeStatus !== undefined ? options.excludeStatus : 'Noise';
         if (excludeStatus) {
-          writeStatus(
+          cliOutput.status(
             `Fetching issues for scan ${id} (excluding status: ${excludeStatus})...`
           );
         } else {
-          writeStatus(`Fetching issues for scan ${id}...`);
+          cliOutput.status(`Fetching issues for scan ${id}...`);
         }
 
         const response = await service.listIssues(id, excludeStatus);
@@ -91,8 +72,7 @@ export async function generateReport(type, id, options) {
 
         // If no issues remain after applying filters, do not generate a report file.
         if ((issues || []).length === 0) {
-          clearStatusLine();
-          console.warn(
+          cliOutput.warning(
             `Warning: no issues found for scan ${id} with current filters` +
               (excludeStatus ? ` (excluded status: ${excludeStatus})` : '') +
               (options.minSeverity
@@ -141,7 +121,7 @@ export async function generateReport(type, id, options) {
         break;
       }
       case 'executions': {
-        writeStatus(`Fetching executions for scan ${id}...`);
+        cliOutput.status(`Fetching executions for scan ${id}...`);
         const response = await service.listScanExecutions(id);
         const executions = response.Items || [];
         const scanDetailsResponse = await service.getScanDetails(id);
@@ -164,17 +144,15 @@ export async function generateReport(type, id, options) {
         );
     }
 
-    // Clear transient status line before printing final results
-    clearStatusLine();
     if (options.output) {
       const outputPath = path.resolve(options.output);
       fs.writeFileSync(outputPath, report, 'utf-8');
-      console.error(chalk.green(`Report saved to: ${outputPath}`));
+      cliOutput.success(`Report saved to: ${outputPath}`);
     } else {
-      console.log(report);
+      cliOutput.result(report);
     }
   } catch (error) {
-    console.error(chalk.red(`Error: ${error.message}`));
+    cliOutput.error(`Error: ${error.message}`);
     process.exit(1);
   }
 }

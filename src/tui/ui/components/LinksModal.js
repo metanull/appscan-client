@@ -10,7 +10,7 @@ import { Modal } from './Modal.js';
 import { Panel } from './Panel.js';
 import open from 'open';
 import { parseAVSFromComments } from '../../../utils/asvs-utils.js';
-import logger from '../../utils/logger.js';
+import logger from '../../../utils/logger.js';
 
 export const LinksModal = React.memo(
   ({ issue, app, scan, config, appScanService, onClose }) => {

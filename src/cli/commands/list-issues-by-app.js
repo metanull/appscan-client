@@ -8,19 +8,19 @@ import {
   severityOrder,
   severityColors,
 } from '../../utils/filter-builder.js';
+import cliOutput from '../../utils/cli-output.js';
 
 export async function listIssuesByApp(appId, options) {
   try {
+    cliOutput.setJsonMode(options.json);
     const { service } = await initializeAppScanService(options.config);
 
     // Build filter options using shared utility
     const { filterOptions, hasFilters } = buildFilterOptions(options);
 
     // Fetch issues using Application scope
-    console.error(
-      chalk.blue(
-        `Fetching issues for application ${appId}${hasFilters ? ' with filters' : ''}...`
-      )
+    cliOutput.status(
+      `Fetching issues for application ${appId}${hasFilters ? ' with filters' : ''}...`
     );
 
     const response = await service.listIssues(
@@ -34,9 +34,9 @@ export async function listIssuesByApp(appId, options) {
     const groupedMode = options.grouped ?? false;
 
     if (options.json) {
-      console.log(JSON.stringify(issues, null, 2));
+      cliOutput.json(issues);
     } else {
-      console.error(chalk.green(`\nFound ${issues.length} issue(s):\n`));
+      cliOutput.success(`\nFound ${issues.length} issue(s):\n`);
 
       if (groupedMode) {
         renderGroupedIssues(issues);

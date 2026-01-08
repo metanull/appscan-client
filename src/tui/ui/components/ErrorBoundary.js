@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { Box, Text } from 'ink';
-import logger from '../../utils/logger.js';
+import logger from '../../../utils/logger.js';
 
 export class ErrorBoundary extends React.Component {
   constructor(props) {

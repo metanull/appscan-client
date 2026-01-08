@@ -1,9 +1,11 @@
 import { AppScanService } from '../../services/appscan-service.js';
 import { Config } from '../../utils/config.js';
 import fs from 'fs';
+import cliOutput from '../../utils/cli-output.js';
 
 export async function generateAndDownloadReport(type, id, options) {
   try {
+    cliOutput.setJsonMode(options.json);
     const config = new Config(options.config);
     const service = new AppScanService(config);
 
@@ -24,7 +26,7 @@ export async function generateAndDownloadReport(type, id, options) {
       );
     }
 
-    console.log(`Generating ${format} report for ${type}: ${id}...`);
+    cliOutput.status(`Generating ${format} report for ${type}: ${id}...`);
 
     // Build OData filter for Status = 'Open' if requested
     let odataFilter = options.odataFilter || '';
@@ -57,7 +59,7 @@ export async function generateAndDownloadReport(type, id, options) {
       reportOptions
     );
 
-    console.log(`Report generated successfully (ID: ${result.reportId})`);
+    cliOutput.success(`Report generated successfully (ID: ${result.reportId})`);
 
     // Determine file extension based on format
     const extensions = {
@@ -73,23 +75,17 @@ export async function generateAndDownloadReport(type, id, options) {
     const outputPath =
       options.output || `report-${result.reportId}.${extension}`;
     fs.writeFileSync(outputPath, result.content);
-    console.log(`Report saved to: ${outputPath}`);
+    cliOutput.success(`Report saved to: ${outputPath}`);
 
     if (options.json) {
-      console.log(
-        JSON.stringify(
-          {
-            reportId: result.reportId,
-            status: result.report.Status,
-            outputPath,
-          },
-          null,
-          2
-        )
-      );
+      cliOutput.json({
+        reportId: result.reportId,
+        status: result.report.Status,
+        outputPath,
+      });
     }
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    cliOutput.error(`Error: ${error.message}`);
     process.exit(1);
   }
 }

@@ -12,7 +12,7 @@ import React, {
   useRef,
 } from 'react';
 import { useInput } from 'ink';
-import logger from './logger.js';
+import logger from '../../utils/logger.js';
 
 // Keyboard modes
 export const KeyboardMode = {

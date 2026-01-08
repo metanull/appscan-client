@@ -1,29 +1,12 @@
-import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import { AppScanService } from '../../services/appscan-service.js';
 import { Config } from '../../utils/config.js';
 import { MarkdownReportGenerator } from '../../reports/markdown-report.js';
 import { HtmlReportGenerator } from '../../reports/html-report.js';
+import cliOutput from '../../utils/cli-output.js';
 
 const DEFAULT_OUTPUT_DIR = './reports';
-
-// Simple single-line status helper to reduce verbosity
-function writeStatus(msg) {
-  try {
-    process.stderr.write(`\r${msg}`);
-  } catch {
-    console.error(msg);
-  }
-}
-
-function clearStatusLine() {
-  try {
-    process.stderr.write('\r\x1b[K');
-  } catch {
-    // Ignore errors
-  }
-}
 
 function normalizeTechnologyFilter(value) {
   if (!value) {
@@ -178,9 +161,8 @@ export async function generateAllReports(options) {
       const fileName = `${sanitizeFileName(prefix)}-${timestamp}.${format === 'html' ? 'html' : 'md'}`;
       const outputPath = path.join(outDir, fileName);
 
-      clearStatusLine();
       fs.writeFileSync(outputPath, reportContent, 'utf-8');
-      console.error(chalk.green(`Report saved: ${outputPath}`));
+      cliOutput.success(`Report saved: ${outputPath}`);
       reportCount += 1;
 
       reportIndex.push({
@@ -209,11 +191,10 @@ export async function generateAllReports(options) {
     });
     const indexPath = path.join(outDir, 'index.md');
     fs.writeFileSync(indexPath, indexContent, 'utf-8');
-    console.error(chalk.green(`Index created: ${indexPath}`));
+    cliOutput.success(`Index created: ${indexPath}`);
   }
 
-  clearStatusLine();
-  console.error(chalk.green(`Generated ${reportCount} report(s) in ${outDir}`));
+  cliOutput.success(`Generated ${reportCount} report(s) in ${outDir}`);
 }
 
 export default generateAllReports;

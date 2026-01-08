@@ -3,18 +3,20 @@ import {
   initializeAppScanService,
   handleCommandError,
 } from '../../utils/cli-common.js';
+import cliOutput from '../../utils/cli-output.js';
 
 export async function listScans(appId, options) {
   try {
+    cliOutput.setJsonMode(options.json);
     const { service } = await initializeAppScanService(options.config);
 
     const target = appId ? `application ${appId}` : 'all applications';
-    console.error(chalk.blue(`Fetching scans for ${target}...`));
+    cliOutput.status(`Fetching scans for ${target}...`);
     const response = await service.listScans(appId);
     const scans = response.Items || [];
 
     if (options.json) {
-      console.log(JSON.stringify(scans, null, 2));
+      cliOutput.json(scans);
     } else {
       console.error(chalk.green(`\nFound ${scans.length} scan(s):\n`));
       scans.forEach((scan, index) => {
