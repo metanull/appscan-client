@@ -37,9 +37,8 @@ export async function generateReport(type, id, options) {
         cliOutput.status(`Fetching scans for application ${id}...`);
         const response = await service.listScans(id);
         const scans = response.Items || [];
-        const appDetailsResponse = await service.getApplicationDetails(id);
-        const appName =
-          appDetailsResponse.Items?.[0]?.Name || 'Unknown Application';
+        const appDetails = await service.getApplicationDetails(id);
+        const appName = appDetails?.Name || 'Unknown Application';
         report =
           format === 'html'
             ? await htmlGenerator.generateScansReport(scans, appName)

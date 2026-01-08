@@ -127,12 +127,49 @@ export class AppScanService {
     }
   }
 
+  /**
+   * Transform CustomFields array to a simple key-value object
+   * @private
+   * @param {Object} app - Application object with CustomFields array
+   * @returns {Object} Application with transformed customFields
+   */
+  _transformCustomFields(app) {
+    if (app.CustomFields && Array.isArray(app.CustomFields)) {
+      // Create simplified key-value object
+      const customFieldsMap = {};
+      app.CustomFields.forEach((cf) => {
+        // Convert empty strings to null
+        customFieldsMap[cf.Name] =
+          cf.Value && cf.Value.trim() ? cf.Value : null;
+      });
+
+      app.customFields = customFieldsMap;
+      // Keep original structure as _customFieldsRaw for potential update operations
+      app._customFieldsRaw = app.CustomFields;
+      delete app.CustomFields;
+    }
+    return app;
+  }
+
+  /**
+   * List all applications with transformed CustomFields
+   * Transforms CustomFields array to a simple key-value object for easier access
+   * @returns {Promise<Object>} Response with Items array containing applications
+   */
   async listApplications() {
     await this.ensureAuthenticated();
-    return this.withAuthRetry(
-      async () => await this.api.v4.Apps_Get({}),
-      'Failed to list applications'
-    );
+    return this.withAuthRetry(async () => {
+      const response = await this.api.v4.Apps_Get({});
+
+      // Transform CustomFields for each application
+      if (response.Items && Array.isArray(response.Items)) {
+        response.Items = response.Items.map((app) =>
+          this._transformCustomFields(app)
+        );
+      }
+
+      return response;
+    }, 'Failed to list applications');
   }
 
   async listScans(appId) {
@@ -238,31 +275,34 @@ export class AppScanService {
     }, 'Failed to list issues');
   }
 
+  /**
+   * Get detailed information for a specific application by ID
+   * Transforms CustomFields array to a simple key-value object for easier access
+   * @param {string} appId - Application UUID
+   * @returns {Promise<Object>} Application details with simplified customFields
+   */
   async getApplicationDetails(appId) {
     await this.ensureAuthenticated();
-    return this.withAuthRetry(
-      async () => await this.api.v4.Apps_Get({ Id: appId }),
-      'Failed to get application details'
-    );
+    return this.withAuthRetry(async () => {
+      // Use $filter to get a single application (no direct GET /Apps/{id} endpoint exists)
+      const response = await this.api.v4.Apps_Get({
+        $filter: `Id eq ${appId}`,
+      });
+
+      const app = response.Items?.[0];
+      if (!app) {
+        throw new Error(`Application with ID ${appId} not found`);
+      }
+
+      // Transform CustomFields using shared helper
+      return this._transformCustomFields(app);
+    }, 'Failed to get application details');
   }
 
   async getScanDetails(scanId) {
     await this.ensureAuthenticated();
     try {
       const response = await this.api.v4.Scans_Get({ ScanId: scanId });
-      return response;
-    } catch (error) {
-      throw new Error(`Failed to get scan details: ${error.message}`);
-    }
-  }
-
-  async getIssueDetails(issueId, locale = 'en-US', format = 'html') {
-    await this.ensureAuthenticated();
-    try {
-      const response = await this.api.v4.Issues_IssueDetails(issueId, {
-        Locale: locale,
-        Format: format,
-      });
       return response;
     } catch (error) {
       throw new Error(`Failed to get issue details: ${error.message}`);

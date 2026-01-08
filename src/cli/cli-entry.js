@@ -3,6 +3,7 @@
 import { Command } from 'commander';
 import { getPackageInfo } from '../utils/package-info.js';
 import { listApplications } from './commands/list-applications.js';
+import { getApplication } from './commands/get-application.js';
 import { listScans } from './commands/list-scans.js';
 import { listScanExecutions } from './commands/list-scan-executions.js';
 import { listIssues } from './commands/list-issues.js';
@@ -73,6 +74,22 @@ Examples:
   $ appscan list-applications --config ./config.env`
   )
   .action(listApplications);
+
+program
+  .command('get-application')
+  .alias('app')
+  .description('Get detailed information about a specific application')
+  .argument('<applicationId>', 'Application ID (UUID)')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan get-application <app-id>
+  $ appscan app <app-id> --json`
+  )
+  .action(getApplication);
 
 program
   .command('list-scans')
