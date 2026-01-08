@@ -24,6 +24,10 @@ export class Config {
     this.jiraEmail = process.env.JIRA_EMAIL || null;
     this.jiraApiToken = process.env.JIRA_API_TOKEN || null;
     this.jiraProjectKey = process.env.JIRA_PROJECT_KEY || null;
+    this.azureDevOpsOrg = process.env.AZURE_DEVOPS_ORG || null;
+    this.azureDevOpsBaseUrl =
+      process.env.AZURE_DEVOPS_BASE_URL || 'https://dev.azure.com';
+    this.confluenceHost = process.env.CONFLUENCE_HOST || null;
     this.bulkUpdateChunkSize = parseInt(
       process.env.BULK_UPDATE_CHUNK_SIZE || '10',
       10
@@ -66,6 +70,18 @@ export class Config {
     return this.jiraProjectKey;
   }
 
+  getAzureDevOpsOrg() {
+    return this.azureDevOpsOrg;
+  }
+
+  getAzureDevOpsBaseUrl() {
+    return this.azureDevOpsBaseUrl;
+  }
+
+  getConfluenceHost() {
+    return this.confluenceHost;
+  }
+
   getBulkUpdateChunkSize() {
     return this.bulkUpdateChunkSize;
   }
@@ -83,6 +99,12 @@ export class Config {
         instance.jiraApiToken = config.jiraApiToken || instance.jiraApiToken;
         instance.jiraProjectKey =
           config.jiraProjectKey || instance.jiraProjectKey;
+        instance.azureDevOpsOrg =
+          config.azureDevOpsOrg || instance.azureDevOpsOrg;
+        instance.azureDevOpsBaseUrl =
+          config.azureDevOpsBaseUrl || instance.azureDevOpsBaseUrl;
+        instance.confluenceHost =
+          config.confluenceHost || instance.confluenceHost;
         instance.bulkUpdateChunkSize =
           config.bulkUpdateChunkSize || instance.bulkUpdateChunkSize;
         return instance;

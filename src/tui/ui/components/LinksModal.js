@@ -10,6 +10,7 @@ import { Modal } from './Modal.js';
 import { Panel } from './Panel.js';
 import open from 'open';
 import { parseAVSFromComments } from '../../../utils/asvs-utils.js';
+import * as AppScanUrls from '../../../utils/appscan-urls.js';
 import logger from '../../../utils/logger.js';
 
 export const LinksModal = React.memo(
@@ -133,6 +134,98 @@ export const LinksModal = React.memo(
         label: `🎫 Jira Issue (${issue.ExternalId})`,
         url: jiraUrl,
       });
+    }
+
+    // Project-related links from application custom fields
+    if (app?.customFields) {
+      const customFields = app.customFields;
+      const jiraHost = config?.getJiraHost
+        ? config.getJiraHost()
+        : config?.jiraHost;
+      const azureOrg = config?.getAzureDevOpsOrg
+        ? config.getAzureDevOpsOrg()
+        : config?.azureDevOpsOrg;
+      const azureBaseUrl = config?.getAzureDevOpsBaseUrl
+        ? config.getAzureDevOpsBaseUrl()
+        : config?.azureDevOpsBaseUrl || 'https://dev.azure.com';
+      const confluenceHost = config?.getConfluenceHost
+        ? config.getConfluenceHost()
+        : config?.confluenceHost;
+
+      // Jira Project link
+      if (customFields.JiraProject && jiraHost) {
+        const projectUrl = AppScanUrls.getJiraProjectUrl(
+          jiraHost,
+          customFields.JiraProject
+        );
+        if (projectUrl) {
+          links.push({
+            label: `🗂️ Jira Project (${customFields.JiraProject})`,
+            url: projectUrl,
+          });
+        }
+      }
+
+      // Jira Parent Epic link
+      if (customFields.JiraParentEpic && jiraHost) {
+        const epicUrl = AppScanUrls.getJiraUrl(
+          jiraHost,
+          customFields.JiraParentEpic
+        );
+        if (epicUrl) {
+          links.push({
+            label: `📋 Jira Epic (${customFields.JiraParentEpic})`,
+            url: epicUrl,
+          });
+        }
+      }
+
+      // Azure DevOps Project link
+      if (customFields.DevOpsProject && azureOrg) {
+        const devOpsProjectUrl = AppScanUrls.getAzureDevOpsProjectUrl(
+          azureBaseUrl,
+          azureOrg,
+          customFields.DevOpsProject
+        );
+        if (devOpsProjectUrl) {
+          links.push({
+            label: `⚙️ Azure DevOps Project (${customFields.DevOpsProject})`,
+            url: devOpsProjectUrl,
+          });
+        }
+      }
+
+      // Azure DevOps Repository link (only if both project and repo are set)
+      if (customFields.DevOpsProject && customFields.DevOpsRepo && azureOrg) {
+        // DevOpsRepo can contain comma-separated list; take the first one
+        const firstRepo = customFields.DevOpsRepo.split(',')[0].trim();
+        const repoUrl = AppScanUrls.getAzureDevOpsRepoUrl(
+          azureBaseUrl,
+          azureOrg,
+          customFields.DevOpsProject,
+          firstRepo
+        );
+        if (repoUrl) {
+          links.push({
+            label: `📦 Azure DevOps Repo (${firstRepo})`,
+            url: repoUrl,
+          });
+        }
+      }
+
+      // Confluence Space link
+      if (customFields.ConfluenceSpace && confluenceHost) {
+        const confluenceUrl = AppScanUrls.getConfluenceSpaceUrl(
+          confluenceHost,
+          customFields.ConfluenceSpace
+        );
+        if (confluenceUrl) {
+          links.push({
+            label: `📚 Confluence Space (${customFields.ConfluenceSpace})`,
+            url: confluenceUrl,
+          });
+        }
+      }
     }
 
     // ASVS link if available

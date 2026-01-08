@@ -47,3 +47,58 @@ export function getJiraUrl(jiraHost, issueKey) {
   }
   return `${jiraHost}/browse/${issueKey}`;
 }
+
+/**
+ * Get the Jira project URL
+ * @param {string} jiraHost - Jira host URL
+ * @param {string} projectKey - Jira project key (e.g., 'AGR')
+ * @returns {string|null} The full URL to the Jira project
+ */
+export function getJiraProjectUrl(jiraHost, projectKey) {
+  if (!jiraHost || !projectKey) {
+    return null;
+  }
+  return `${jiraHost}/jira/software/c/projects/${projectKey}/summary`;
+}
+
+/**
+ * Get the Azure DevOps project URL
+ * @param {string} baseUrl - Azure DevOps base URL (default: https://dev.azure.com)
+ * @param {string} org - Organization name
+ * @param {string} project - Project name
+ * @returns {string|null} The full URL to the DevOps project
+ */
+export function getAzureDevOpsProjectUrl(baseUrl, org, project) {
+  if (!baseUrl || !org || !project) {
+    return null;
+  }
+  return `${baseUrl}/${org}/${project}`;
+}
+
+/**
+ * Get the Azure DevOps repository URL
+ * @param {string} baseUrl - Azure DevOps base URL
+ * @param {string} org - Organization name
+ * @param {string} project - Project name
+ * @param {string} repo - Repository name
+ * @returns {string|null} The full URL to the repository
+ */
+export function getAzureDevOpsRepoUrl(baseUrl, org, project, repo) {
+  if (!baseUrl || !org || !project || !repo) {
+    return null;
+  }
+  return `${baseUrl}/${org}/${project}/_git/${repo}`;
+}
+
+/**
+ * Get the Confluence space URL
+ * @param {string} confluenceHost - Confluence host URL
+ * @param {string} spaceKey - Space key
+ * @returns {string|null} The full URL to the Confluence space
+ */
+export function getConfluenceSpaceUrl(confluenceHost, spaceKey) {
+  if (!confluenceHost || !spaceKey) {
+    return null;
+  }
+  return `${confluenceHost}/wiki/spaces/${spaceKey}/overview`;
+}
