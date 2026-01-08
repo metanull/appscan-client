@@ -4,6 +4,7 @@ import { Command } from 'commander';
 import { getPackageInfo } from '../utils/package-info.js';
 import { listApplications } from './commands/list-applications.js';
 import { getApplication } from './commands/get-application.js';
+import { setApplication } from './commands/set-application.js';
 import { listScans } from './commands/list-scans.js';
 import { listScanExecutions } from './commands/list-scan-executions.js';
 import { listIssues } from './commands/list-issues.js';
@@ -90,6 +91,55 @@ Examples:
   $ appscan app <app-id> --json`
   )
   .action(getApplication);
+
+program
+  .command('set-application')
+  .description('Update application details and custom fields')
+  .argument('<applicationId>', 'Application ID (UUID)')
+  .argument('[updates]', 'JSON string with updates (optional if using flags)')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .option('--name <value>', 'Update Name')
+  .option('--description <value>', 'Update Description')
+  .option('--type <value>', 'Update Type')
+  .option('--url <value>', 'Update URL')
+  .option('--technology <value>', 'Update Technology')
+  .option('--developmentcontact <value>', 'Update Development Contact')
+  .option('--businessowner <value>', 'Update Business Owner')
+  .option('--tester <value>', 'Update Tester')
+  .option(
+    '--riskrating <value>',
+    'Update Risk Rating (Unknown/Low/Medium/High)'
+  )
+  .option(
+    '--businessimpact <value>',
+    'Update Business Impact (Unknown/Low/Medium/High)'
+  )
+  .option(
+    '--testingstatus <value>',
+    'Update Testing Status (NotStarted/InProgress/Completed)'
+  )
+  .option('--devopsproject <value>', 'Update DevOpsProject custom field')
+  .option('--jiraproject <value>', 'Update JiraProject custom field')
+  .option('--devopsrepo <value>', 'Update DevOpsRepo custom field')
+  .option('--confluencespace <value>', 'Update ConfluenceSpace custom field')
+  .option('--jiraparentepic <value>', 'Update JiraParentEpic custom field')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  # Update using JSON
+  $ appscan set-application <app-id> '{"Name":"New Name","Description":"New desc"}'
+  $ appscan set-application <app-id> '{"_customFields":{"JiraProject":"AGR"}}'
+  
+  # Update using flags
+  $ appscan set-application <app-id> --name "New Name" --description "New desc"
+  $ appscan set-application <app-id> --jiraproject "AGR" --devopsproject "Agora"
+  
+  # Mix standard and custom fields
+  $ appscan set-application <app-id> --description "Updated" --jiraproject "SEC"`
+  )
+  .action(setApplication);
 
 program
   .command('list-scans')
