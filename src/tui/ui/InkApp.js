@@ -327,7 +327,7 @@ const DetailsPreviewPanel = React.memo(
     }
 
     return (
-      <Panel title="Details" borderColor="magenta" width={80}>
+      <Panel title="Details [d to toggle]" borderColor="magenta" width={80}>
         <Box flexDirection="column">
           <Text> </Text>
           <Text>
@@ -513,6 +513,7 @@ export const InkApp = ({ configPath }) => {
 
   // Local UI state
   const [showContextPane, setShowContextPane] = useState(true);
+  const [showDetailsPane, setShowDetailsPane] = useState(true);
   const [activeModal, setActiveModal] = useState(null); // null | 'app' | 'scan' | 'filter' | 'search' | 'help' | etc.
   const [textInputConfig, setTextInputConfig] = useState(null); // Config for text input page
   const [standaloneWindow, setStandaloneWindow] = useState(null); // 'app' | 'scan' | null - for standalone window rendering
@@ -1243,6 +1244,12 @@ export const InkApp = ({ configPath }) => {
         group: 'General',
       },
       {
+        key: 'd',
+        action: () => setShowDetailsPane((prev) => !prev),
+        description: 'Toggle Details',
+        group: 'General',
+      },
+      {
         key: 'r',
         action: reloadIssues,
         description: 'Reload',
@@ -1547,15 +1554,17 @@ export const InkApp = ({ configPath }) => {
         />
 
         {/* Details Preview */}
-        <DetailsPreviewPanel
-          issue={currentIssue}
-          app={selectedApp}
-          scan={selectedScan}
-          articleContent={articleContent}
-          loading={articleLoading}
-          comments={issueComments}
-          commentsLoading={commentsLoading}
-        />
+        {showDetailsPane && (
+          <DetailsPreviewPanel
+            issue={currentIssue}
+            app={selectedApp}
+            scan={selectedScan}
+            articleContent={articleContent}
+            loading={articleLoading}
+            comments={issueComments}
+            commentsLoading={commentsLoading}
+          />
+        )}
       </Box>
 
       {/* Modals */}
