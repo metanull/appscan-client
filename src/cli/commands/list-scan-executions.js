@@ -1,29 +1,29 @@
 import chalk from 'chalk';
 import { AppScanService } from '../../services/appscan-service.js';
 import { Config } from '../../utils/config.js';
+import cliOutput from '../../utils/cli-output.js';
 
 export async function listScanExecutions(scanId, options) {
   try {
+    cliOutput.setJsonMode(options.json);
     const config = options.config
       ? Config.loadFromFile(options.config)
       : new Config();
     const service = new AppScanService(config);
 
-    console.error(chalk.blue('Authenticating...'));
+    cliOutput.status('Authenticating...');
     await service.authenticate();
 
-    console.error(chalk.blue(`Fetching executions for scan ${scanId}...`));
+    cliOutput.status(`Fetching executions for scan ${scanId}...`);
     const response = await service.listScanExecutions(scanId);
     const executions = Array.isArray(response)
       ? response
       : response.Items || [];
 
     if (options.json) {
-      console.log(JSON.stringify(executions, null, 2));
+      cliOutput.json(executions);
     } else {
-      console.error(
-        chalk.green(`\nFound ${executions.length} execution(s):\n`)
-      );
+      cliOutput.success(`\nFound ${executions.length} execution(s):\n`);
       executions.forEach((execution, index) => {
         console.log(
           `${index + 1}. ${chalk.bold('Execution ID:')} ${chalk.gray(execution.Id || 'N/A')}`
@@ -51,7 +51,7 @@ export async function listScanExecutions(scanId, options) {
       });
     }
   } catch (error) {
-    console.error(chalk.red(`Error: ${error.message}`));
+    cliOutput.error(`Error: ${error.message}`);
     process.exit(1);
   }
 }

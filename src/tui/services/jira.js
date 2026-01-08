@@ -9,7 +9,7 @@ import { JiraService as ParentJiraService } from '../../../src/services/jira-ser
 import { JiraDescriptionBuilder } from '../../../src/utils/jira-description-builder.js';
 import * as AppScanUrls from '../../../src/utils/appscan-urls.js';
 import { auditService } from '../utils/audit.js';
-import logger from '../utils/logger.js';
+import logger from '../../utils/logger.js';
 import { parseAVSFromComments } from '../../utils/asvs-utils.js';
 
 export class JiraService {

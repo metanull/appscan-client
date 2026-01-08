@@ -8,7 +8,7 @@ import { Box, Text, useInput, useApp } from 'ink';
 import TextInput from 'ink-text-input';
 import { getEnvPath } from '../../utils/config-paths.js';
 import fs from 'fs';
-import logger from '../utils/logger.js';
+import logger from '../../utils/logger.js';
 
 const STEPS = {
   WELCOME: 'welcome',

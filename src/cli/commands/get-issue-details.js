@@ -1,6 +1,7 @@
 import { AppScanService } from '../../services/appscan-service.js';
 import { Config } from '../../utils/config.js';
 import fs from 'fs';
+import cliOutput from '../../utils/cli-output.js';
 
 export async function getIssueDetails(issueId, options) {
   try {
@@ -20,13 +21,13 @@ export async function getIssueDetails(issueId, options) {
     // If output file is specified, write to file
     if (options.output) {
       fs.writeFileSync(options.output, issueDetails);
-      console.log(`Issue details saved to: ${options.output}`);
+      cliOutput.success(`Issue details saved to: ${options.output}`);
     } else {
       // Output to console
-      console.log(issueDetails);
+      cliOutput.result(issueDetails);
     }
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    cliOutput.error(`Error: ${error.message}`);
     process.exit(1);
   }
 }

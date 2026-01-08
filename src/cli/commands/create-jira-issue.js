@@ -3,6 +3,7 @@ import { AppScanService } from '../../services/appscan-service.js';
 import { JiraService } from '../../services/jira-service.js';
 import { Config } from '../../utils/config.js';
 import * as AppScanUrls from '../../utils/appscan-urls.js';
+import cliOutput from '../../utils/cli-output.js';
 
 const severityOrder = {
   Critical: 5,
@@ -15,6 +16,7 @@ const severityOrder = {
 
 export async function createJiraIssue(source, sourceId, options) {
   try {
+    cliOutput.setJsonMode(options.json);
     // Check if jira.js is available
     try {
       await import('jira.js');
@@ -46,10 +48,10 @@ export async function createJiraIssue(source, sourceId, options) {
     const appScanService = new AppScanService(config);
     const jiraService = new JiraService(config);
 
-    console.error(chalk.blue('Authenticating with AppScan...'));
+    cliOutput.status('Authenticating with AppScan...');
     await appScanService.authenticate();
 
-    console.error(chalk.blue('Initializing Jira client...'));
+    cliOutput.status('Initializing Jira client...');
     jiraService.initialize();
 
     // Get the project key from config or options
@@ -61,7 +63,7 @@ export async function createJiraIssue(source, sourceId, options) {
     }
 
     // Validate Jira project
-    console.error(chalk.blue(`Validating Jira project: ${projectKey}...`));
+    cliOutput.status(`Validating Jira project: ${projectKey}...`);
     await jiraService.getProject(projectKey);
 
     // Parse minimum severity
@@ -72,7 +74,7 @@ export async function createJiraIssue(source, sourceId, options) {
 
     if (source === 'scan') {
       // Get issues from scan
-      console.error(chalk.blue(`Fetching issues from scan ${sourceId}...`));
+      cliOutput.status(`Fetching issues from scan ${sourceId}...`);
       const excludeStatus = options.excludeStatus || 'Noise';
       const response = await appScanService.listIssues(sourceId, excludeStatus);
       issues = response.Items || [];
@@ -82,7 +84,7 @@ export async function createJiraIssue(source, sourceId, options) {
       scanInfo = scanDetails.Items?.[0] || { Id: sourceId };
     } else if (source === 'issue') {
       // Get single issue
-      console.error(chalk.blue(`Fetching issue ${sourceId}...`));
+      cliOutput.status(`Fetching issue ${sourceId}...`);
       const issue = await appScanService.api.v4.Issues_GetIssue(sourceId, {});
       if (!issue) {
         throw new Error(`Issue not found: ${sourceId}`);
@@ -175,24 +177,20 @@ export async function createJiraIssue(source, sourceId, options) {
         jiraIssueId: jiraIssue.id,
       });
 
-      console.error(
-        chalk.green(
-          `  ✓ Created Jira issue: ${jiraIssue.key} (${AppScanUrls.getJiraUrl(config.getJiraHost(), jiraIssue.key)})`
-        )
+      cliOutput.success(
+        `  ✓ Created Jira issue: ${jiraIssue.key} (${AppScanUrls.getJiraUrl(config.getJiraHost(), jiraIssue.key)})`
       );
     }
 
     if (options.json) {
-      console.log(JSON.stringify(createdJiraIssues, null, 2));
+      cliOutput.json(createdJiraIssues);
     } else {
-      console.error(
-        chalk.green(
-          `\n✓ Successfully created ${createdJiraIssues.length} Jira issue(s)`
-        )
+      cliOutput.success(
+        `\n✓ Successfully created ${createdJiraIssues.length} Jira issue(s)`
       );
     }
   } catch (error) {
-    console.error(chalk.red(`Error: ${error.message}`));
+    cliOutput.error(`Error: ${error.message}`);
     process.exit(1);
   }
 }

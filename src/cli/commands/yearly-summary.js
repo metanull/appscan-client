@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { AppScanService } from '../../services/appscan-service.js';
 import { Config } from '../../utils/config.js';
+import cliOutput from '../../utils/cli-output.js';
 
 function normalizeScanType(tech) {
   const lower = (tech || '').toLowerCase();
@@ -18,6 +19,7 @@ function isInYear(dateStr, year) {
 }
 
 export async function generateYearlySummary(year, options) {
+  cliOutput.setJsonMode(options.json);
   const config = options.config
     ? Config.loadFromFile(options.config)
     : new Config();
@@ -28,10 +30,10 @@ export async function generateYearlySummary(year, options) {
     throw new Error(`Invalid year: ${year}`);
   }
 
-  console.error(chalk.blue('Authenticating...'));
+  cliOutput.status('Authenticating...');
   await service.authenticate();
 
-  console.error(chalk.blue(`Fetching data for year ${targetYear}...`));
+  cliOutput.status(`Fetching data for year ${targetYear}...`);
   const applicationsResponse = await service.listApplications();
   const applications = applicationsResponse.Items || [];
 
@@ -74,10 +76,8 @@ export async function generateYearlySummary(year, options) {
         };
       }
 
-      console.error(
-        chalk.gray(
-          `  Processing scan: ${scan.Name || scan.Id} (${scanType}) for ${appName}`
-        )
+      cliOutput.status(
+        `  Processing scan: ${scan.Name || scan.Id} (${scanType}) for ${appName}`
       );
 
       const issuesResponse = await service.listIssues(scan.Id, 'Noise');
@@ -107,7 +107,7 @@ export async function generateYearlySummary(year, options) {
   summary.totalApps = applications.length;
 
   if (options.json) {
-    console.log(JSON.stringify(summary, null, 2));
+    cliOutput.json(summary);
   } else {
     printSummary(summary);
   }

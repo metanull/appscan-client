@@ -8,7 +8,7 @@
 import { AppScanService as ParentAppScanService } from '../../../src/services/appscan-service.js';
 import * as AppScanUrls from '../../../src/utils/appscan-urls.js';
 import { auditService } from '../utils/audit.js';
-import logger from '../utils/logger.js';
+import logger from '../../utils/logger.js';
 import { Config } from '../../../src/utils/config.js';
 
 export class AppScanService {

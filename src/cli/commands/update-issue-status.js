@@ -1,11 +1,12 @@
-import chalk from 'chalk';
 import {
   initializeAppScanService,
   handleCommandError,
 } from '../../utils/cli-common.js';
+import cliOutput from '../../utils/cli-output.js';
 
 export async function updateIssueStatus(issueId, status, options) {
   try {
+    cliOutput.setJsonMode(options.json);
     const { service } = await initializeAppScanService(options.config);
 
     // Validate status
@@ -24,9 +25,7 @@ export async function updateIssueStatus(issueId, status, options) {
       );
     }
 
-    console.error(
-      chalk.blue(`Updating issue ${issueId} to status ${status}...`)
-    );
+    cliOutput.status(`Updating issue ${issueId} to status ${status}...`);
 
     // Build the update payload
     const updateData = {
@@ -72,23 +71,19 @@ export async function updateIssueStatus(issueId, status, options) {
     );
 
     if (options.json) {
-      console.log(JSON.stringify(result, null, 2));
+      cliOutput.json(result);
     } else {
-      console.error(
-        chalk.green(
-          `\nSuccessfully updated issue ${issueId} to status ${status}`
-        )
+      cliOutput.success(
+        `\nSuccessfully updated issue ${issueId} to status ${status}`
       );
       if (result) {
-        console.error(
-          chalk.green(`Total issues updated: ${result.TotalIssues || 1}`)
-        );
+        cliOutput.success(`Total issues updated: ${result.TotalIssues || 1}`);
         if (result.UpdatedIssues) {
-          console.error(chalk.green(`Issues updated: ${result.UpdatedIssues}`));
+          cliOutput.success(`Issues updated: ${result.UpdatedIssues}`);
         }
       }
       if (options.comment) {
-        console.error(chalk.green(`Comment added: "${options.comment}"`));
+        cliOutput.success(`Comment added: "${options.comment}"`);
       }
     }
   } catch (error) {

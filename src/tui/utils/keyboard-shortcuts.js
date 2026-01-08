@@ -3,7 +3,7 @@
  * Provides a clean API for defining shortcuts and auto-generating help text
  */
 
-import logger from './logger.js';
+import logger from '../../utils/logger.js';
 
 /**
  * Keyboard shortcut definition

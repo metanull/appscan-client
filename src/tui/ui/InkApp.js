@@ -33,7 +33,7 @@ import { useArticleCache } from '../hooks/useArticleCache.js';
 import { useCommentsCache } from '../hooks/useCommentsCache.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts.js';
-import logger from '../utils/logger.js';
+import logger from '../../utils/logger.js';
 import { getPackageInfo } from '../../utils/package-info.js';
 import { Formatter } from '../../utils/formatter.js';
 import open from 'open';

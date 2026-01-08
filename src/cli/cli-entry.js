@@ -21,8 +21,6 @@ import { getIssueComments } from './commands/get-issue-comments.js';
 import { createJiraIssue } from './commands/create-jira-issue.js';
 import { setup } from './commands/setup.js';
 import { connectionCheck } from './commands/connection-check.js';
-import { triage } from './commands/triage.js';
-import triageReportCommand from './commands/triage-report.js';
 
 const packageJson = getPackageInfo();
 
@@ -59,29 +57,6 @@ Examples:
   $ appscan check --config ./config.env`
   )
   .action(connectionCheck);
-
-program
-  .command('triage')
-  .description('Interactive triage tool for vulnerability management')
-  .option('-c, --config <path>', 'Path to configuration file')
-  .addHelpText(
-    'after',
-    `
-Interactive workflow:
-  1. Select a scan from the list (with issue counts)
-  2. Browse grouped vulnerabilities by type
-  3. Multi-select issues for bulk updates
-  4. Update status and add comments
-  5. Create JIRA issues for true positives
-  6. Continue until all scans are triaged
-
-Examples:
-  $ appscan triage
-  $ appscan triage --config ./config.env`
-  )
-  .action(triage);
-
-program.addCommand(triageReportCommand);
 
 program
   .command('list-applications')

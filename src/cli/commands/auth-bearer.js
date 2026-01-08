@@ -1,5 +1,6 @@
 import { AppScanService } from '../../services/appscan-service.js';
 import { Config } from '../../utils/config.js';
+import cliOutput from '../../utils/cli-output.js';
 
 export async function authBearer(options) {
   try {
@@ -8,9 +9,9 @@ export async function authBearer(options) {
 
     const token = await service.authenticate();
 
-    console.log(token);
+    cliOutput.result(token);
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    cliOutput.error(`Error: ${error.message}`);
     process.exit(1);
   }
 }

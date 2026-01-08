@@ -2,13 +2,14 @@ import { AppScanService } from '../../services/appscan-service.js';
 import { Config } from '../../utils/config.js';
 import TurndownService from 'turndown';
 import fs from 'fs';
+import cliOutput from '../../utils/cli-output.js';
 
 export async function getArticleMarkdown(issueId, options) {
   try {
     const config = new Config(options.config);
     const service = new AppScanService(config);
 
-    console.error(`Fetching remediation article for issue: ${issueId}...`);
+    cliOutput.status(`Fetching remediation article for issue: ${issueId}...`);
 
     const articleOptions = {
       language: options.language,
@@ -21,7 +22,7 @@ export async function getArticleMarkdown(issueId, options) {
 
     const articleHtml = await service.getArticle(issueId, articleOptions);
 
-    console.error('Converting HTML to Markdown...\n');
+    cliOutput.status('Converting HTML to Markdown...\n');
 
     // Convert HTML to Markdown
     const turndownService = new TurndownService({
@@ -41,15 +42,15 @@ export async function getArticleMarkdown(issueId, options) {
 
     // Output to console
     if (!options.output) {
-      console.log('='.repeat(80));
-      console.log(markdown);
-      console.log('='.repeat(80));
+      cliOutput.result('='.repeat(80));
+      cliOutput.result(markdown);
+      cliOutput.result('='.repeat(80));
     } else {
       fs.writeFileSync(options.output, markdown);
-      console.error(`Markdown saved to: ${options.output}`);
+      cliOutput.success(`Markdown saved to: ${options.output}`);
     }
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    cliOutput.error(`Error: ${error.message}`);
     process.exit(1);
   }
 }

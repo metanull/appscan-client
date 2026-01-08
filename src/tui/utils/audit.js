@@ -6,7 +6,7 @@
 import fs from 'fs';
 import path from 'path';
 import { getLogsDir } from '../../utils/config-paths.js';
-import logger from './logger.js';
+import logger from '../../utils/logger.js';
 
 const LOG_DIR = getLogsDir();
 const AUDIT_FILE = path.join(LOG_DIR, 'audit.log');
