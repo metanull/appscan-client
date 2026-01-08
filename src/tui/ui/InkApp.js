@@ -130,31 +130,31 @@ const VulnRow = React.memo(({ issue, isSelected, isMultiSelected }) => {
 
   return (
     <Box>
-      <Box width={2} justifyContent="flex-start">
-        <Text color={isSelected ? 'cyan' : undefined}>
+      <Box width={2} justifyContent="flex-start" marginRight={1}>
+        <Text color={isSelected ? 'cyan' : undefined} wrap="truncate">
           {isSelected ? '▶' : ' '}
         </Text>
       </Box>
-      <Box width={4} justifyContent="flex-start">
-        <Text color={isMultiSelected ? 'cyan' : undefined}>
+      <Box width={5} justifyContent="flex-start" marginRight={1}>
+        <Text color={isMultiSelected ? 'cyan' : undefined} wrap="truncate">
           {isMultiSelected ? '[✓]' : '[ ]'}
         </Text>
       </Box>
-      <Box width={15} justifyContent="flex-start">
-        <Text color={severityColor} bold={isSelected}>
+      <Box width={15} justifyContent="flex-start" marginRight={1}>
+        <Text color={severityColor} bold={isSelected} wrap="truncate">
           {severity}
         </Text>
       </Box>
-      <Box width={14} justifyContent="flex-start">
-        <Text color={isSelected ? 'cyan' : undefined}>{status}</Text>
+      <Box width={12} justifyContent="flex-start" marginRight={1}>
+        <Text color={isSelected ? 'cyan' : undefined} wrap="truncate">{status}</Text>
       </Box>
-      <Box width={15} justifyContent="flex-start">
-        <Text color={jiraRef ? 'green' : 'dimColor'} wrap="truncate-end">
+      <Box width={15} justifyContent="flex-start" marginRight={1}>
+        <Text color={jiraRef ? 'green' : 'dimColor'} wrap="truncate">
           {jiraRef || '-'}
         </Text>
       </Box>
       <Box flexGrow={1} minWidth={0} justifyContent="flex-start">
-        <Text color={isSelected ? 'cyan' : undefined} wrap="truncate-end">
+        <Text color={isSelected ? 'cyan' : undefined} wrap="truncate">
           {type}
         </Text>
       </Box>
@@ -260,27 +260,27 @@ const VulnListPanel = React.memo(
 
         {/* Column Headers */}
         <Box marginBottom={1}>
-          <Box width={2} justifyContent="flex-start">
+          <Box width={2} justifyContent="flex-start" marginRight={1}>
             <Text bold dimColor>
               {' '}
             </Text>
           </Box>
-          <Box width={4} justifyContent="flex-start">
+          <Box width={5} justifyContent="flex-start" marginRight={1}>
             <Text bold dimColor>
               Sel
             </Text>
           </Box>
-          <Box width={15} justifyContent="flex-start">
+          <Box width={15} justifyContent="flex-start" marginRight={1}>
             <Text bold dimColor>
               Severity
             </Text>
           </Box>
-          <Box width={14} justifyContent="flex-start">
+          <Box width={12} justifyContent="flex-start" marginRight={1}>
             <Text bold dimColor>
               Status
             </Text>
           </Box>
-          <Box width={15} justifyContent="flex-start">
+          <Box width={15} justifyContent="flex-start" marginRight={1}>
             <Text bold dimColor>
               Jira
             </Text>
