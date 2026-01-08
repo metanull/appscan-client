@@ -25,7 +25,8 @@ export class Config {
     this.jiraApiToken = process.env.JIRA_API_TOKEN || null;
     this.jiraProjectKey = process.env.JIRA_PROJECT_KEY || null;
     this.azureDevOpsOrg = process.env.AZURE_DEVOPS_ORG || null;
-    this.azureDevOpsBaseUrl = process.env.AZURE_DEVOPS_BASE_URL || 'https://dev.azure.com';
+    this.azureDevOpsBaseUrl =
+      process.env.AZURE_DEVOPS_BASE_URL || 'https://dev.azure.com';
     this.confluenceHost = process.env.CONFLUENCE_HOST || null;
     this.bulkUpdateChunkSize = parseInt(
       process.env.BULK_UPDATE_CHUNK_SIZE || '10',

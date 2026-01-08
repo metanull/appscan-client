@@ -62,28 +62,39 @@ const ContextPane = React.memo(
             <Text dimColor>
               Issues: {issuesCount ?? app.IssueCountTotal ?? 0}
             </Text>
-            
+
             {/* Custom Fields */}
-            {app.customFields && Object.keys(app.customFields).some(k => app.customFields[k]) && (
-              <Box flexDirection="column" marginTop={1}>
-                <Text bold dimColor>Project Info:</Text>
-                {app.customFields.JiraProject && (
-                  <Text dimColor>Jira: {app.customFields.JiraProject}</Text>
-                )}
-                {app.customFields.DevOpsProject && (
-                  <Text dimColor>DevOps: {app.customFields.DevOpsProject}</Text>
-                )}
-                {app.customFields.DevOpsRepo && (
-                  <Text dimColor>Repo: {app.customFields.DevOpsRepo}</Text>
-                )}
-                {app.customFields.ConfluenceSpace && (
-                  <Text dimColor>Wiki: {app.customFields.ConfluenceSpace}</Text>
-                )}
-                {app.customFields.JiraParentEpic && (
-                  <Text dimColor>Epic: {app.customFields.JiraParentEpic}</Text>
-                )}
-              </Box>
-            )}
+            {app.customFields &&
+              Object.keys(app.customFields).some(
+                (k) => app.customFields[k]
+              ) && (
+                <Box flexDirection="column" marginTop={1}>
+                  <Text bold dimColor>
+                    Project Info:
+                  </Text>
+                  {app.customFields.JiraProject && (
+                    <Text dimColor>Jira: {app.customFields.JiraProject}</Text>
+                  )}
+                  {app.customFields.DevOpsProject && (
+                    <Text dimColor>
+                      DevOps: {app.customFields.DevOpsProject}
+                    </Text>
+                  )}
+                  {app.customFields.DevOpsRepo && (
+                    <Text dimColor>Repo: {app.customFields.DevOpsRepo}</Text>
+                  )}
+                  {app.customFields.ConfluenceSpace && (
+                    <Text dimColor>
+                      Wiki: {app.customFields.ConfluenceSpace}
+                    </Text>
+                  )}
+                  {app.customFields.JiraParentEpic && (
+                    <Text dimColor>
+                      Epic: {app.customFields.JiraParentEpic}
+                    </Text>
+                  )}
+                </Box>
+              )}
           </Box>
         )}
         {scan && !isViewingAll && (

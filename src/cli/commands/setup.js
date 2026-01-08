@@ -110,26 +110,69 @@ export async function setup(options) {
     }
 
     // Confluence OWASP ASVS Configuration (optional)
-    console.log(
-      chalk.cyan.bold('\n📚 Confluence OWASP ASVS Configuration (Optional)\n')
-    );
+    console.log(chalk.cyan.bold('\n📚 Confluence Configuration (Optional)\n'));
     console.log(
       chalk.gray(
-        'Configure links to your Confluence OWASP ASVS documentation.\n'
+        'Configure Confluence for documentation and OWASP ASVS links.\n'
       )
     );
 
     const configureConfluence = await confirm({
-      message: 'Do you want to configure Confluence OWASP ASVS links?',
+      message: 'Do you want to configure Confluence integration?',
       default: false,
     });
 
+    let confluenceHost = '';
     let confluenceBaseUrl = '';
 
     if (configureConfluence) {
+      confluenceHost = await input({
+        message:
+          'Enter your Confluence Host (e.g., https://yourcompany.atlassian.net):',
+        validate: (value) => {
+          if (value && !value.startsWith('http')) {
+            return 'Confluence Host must start with http:// or https://';
+          }
+          return true;
+        },
+      });
+
       confluenceBaseUrl = await input({
-        message: 'Enter your Confluence OWASP ASVS Base URL:',
+        message: 'Enter your Confluence OWASP ASVS Base URL (optional):',
         default: '',
+      });
+    }
+
+    // Azure DevOps Configuration (optional)
+    console.log(
+      chalk.cyan.bold('\n⚙️ Azure DevOps Configuration (Optional)\n')
+    );
+    console.log(
+      chalk.gray('Configure Azure DevOps for project and repository links.\n')
+    );
+
+    const configureAzureDevOps = await confirm({
+      message: 'Do you want to configure Azure DevOps integration?',
+      default: false,
+    });
+
+    let azureDevOpsOrg = '';
+    let azureDevOpsBaseUrl = 'https://dev.azure.com';
+
+    if (configureAzureDevOps) {
+      azureDevOpsOrg = await input({
+        message: 'Enter your Azure DevOps Organization name:',
+        validate: (value) => {
+          if (!value || value.trim().length === 0) {
+            return 'Organization name is required for Azure DevOps integration';
+          }
+          return true;
+        },
+      });
+
+      azureDevOpsBaseUrl = await input({
+        message: 'Enter Azure DevOps Base URL:',
+        default: 'https://dev.azure.com',
       });
     }
 
@@ -145,7 +188,12 @@ ${jiraEmail ? `JIRA_EMAIL=${jiraEmail}` : '# JIRA_EMAIL=your-email@company.com'}
 ${jiraApiToken ? `JIRA_API_TOKEN=${jiraApiToken}` : '# JIRA_API_TOKEN=your-api-token'}
 ${jiraProjectKey ? `JIRA_PROJECT_KEY=${jiraProjectKey}` : '# JIRA_PROJECT_KEY=SEC'}
 
+# Azure DevOps Configuration (optional)
+${azureDevOpsOrg ? `AZURE_DEVOPS_ORG=${azureDevOpsOrg}` : '# AZURE_DEVOPS_ORG=your-organization'}
+${azureDevOpsBaseUrl && azureDevOpsOrg ? `AZURE_DEVOPS_BASE_URL=${azureDevOpsBaseUrl}` : '# AZURE_DEVOPS_BASE_URL=https://dev.azure.com'}
+
 # Confluence Configuration (optional)
+${confluenceHost ? `CONFLUENCE_HOST=${confluenceHost}` : '# CONFLUENCE_HOST=https://yourcompany.atlassian.net'}
 ${confluenceBaseUrl ? `CONFLUENCE_OWASP_ASVS_URL=${confluenceBaseUrl}` : '# CONFLUENCE_OWASP_ASVS_URL=https://confluence.company.com/display/SEC/OWASP-ASVS'}
 `;
 

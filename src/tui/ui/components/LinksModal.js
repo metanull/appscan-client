@@ -139,14 +139,25 @@ export const LinksModal = React.memo(
     // Project-related links from application custom fields
     if (app?.customFields) {
       const customFields = app.customFields;
-      const jiraHost = config?.getJiraHost ? config.getJiraHost() : config?.jiraHost;
-      const azureOrg = config?.getAzureDevOpsOrg ? config.getAzureDevOpsOrg() : config?.azureDevOpsOrg;
-      const azureBaseUrl = config?.getAzureDevOpsBaseUrl ? config.getAzureDevOpsBaseUrl() : config?.azureDevOpsBaseUrl || 'https://dev.azure.com';
-      const confluenceHost = config?.getConfluenceHost ? config.getConfluenceHost() : config?.confluenceHost;
+      const jiraHost = config?.getJiraHost
+        ? config.getJiraHost()
+        : config?.jiraHost;
+      const azureOrg = config?.getAzureDevOpsOrg
+        ? config.getAzureDevOpsOrg()
+        : config?.azureDevOpsOrg;
+      const azureBaseUrl = config?.getAzureDevOpsBaseUrl
+        ? config.getAzureDevOpsBaseUrl()
+        : config?.azureDevOpsBaseUrl || 'https://dev.azure.com';
+      const confluenceHost = config?.getConfluenceHost
+        ? config.getConfluenceHost()
+        : config?.confluenceHost;
 
       // Jira Project link
       if (customFields.JiraProject && jiraHost) {
-        const projectUrl = AppScanUrls.getJiraProjectUrl(jiraHost, customFields.JiraProject);
+        const projectUrl = AppScanUrls.getJiraProjectUrl(
+          jiraHost,
+          customFields.JiraProject
+        );
         if (projectUrl) {
           links.push({
             label: `🗂️ Jira Project (${customFields.JiraProject})`,
@@ -157,7 +168,10 @@ export const LinksModal = React.memo(
 
       // Jira Parent Epic link
       if (customFields.JiraParentEpic && jiraHost) {
-        const epicUrl = AppScanUrls.getJiraUrl(jiraHost, customFields.JiraParentEpic);
+        const epicUrl = AppScanUrls.getJiraUrl(
+          jiraHost,
+          customFields.JiraParentEpic
+        );
         if (epicUrl) {
           links.push({
             label: `📋 Jira Epic (${customFields.JiraParentEpic})`,
@@ -168,7 +182,11 @@ export const LinksModal = React.memo(
 
       // Azure DevOps Project link
       if (customFields.DevOpsProject && azureOrg) {
-        const devOpsProjectUrl = AppScanUrls.getAzureDevOpsProjectUrl(azureBaseUrl, azureOrg, customFields.DevOpsProject);
+        const devOpsProjectUrl = AppScanUrls.getAzureDevOpsProjectUrl(
+          azureBaseUrl,
+          azureOrg,
+          customFields.DevOpsProject
+        );
         if (devOpsProjectUrl) {
           links.push({
             label: `⚙️ Azure DevOps Project (${customFields.DevOpsProject})`,
@@ -181,7 +199,12 @@ export const LinksModal = React.memo(
       if (customFields.DevOpsProject && customFields.DevOpsRepo && azureOrg) {
         // DevOpsRepo can contain comma-separated list; take the first one
         const firstRepo = customFields.DevOpsRepo.split(',')[0].trim();
-        const repoUrl = AppScanUrls.getAzureDevOpsRepoUrl(azureBaseUrl, azureOrg, customFields.DevOpsProject, firstRepo);
+        const repoUrl = AppScanUrls.getAzureDevOpsRepoUrl(
+          azureBaseUrl,
+          azureOrg,
+          customFields.DevOpsProject,
+          firstRepo
+        );
         if (repoUrl) {
           links.push({
             label: `📦 Azure DevOps Repo (${firstRepo})`,
@@ -192,7 +215,10 @@ export const LinksModal = React.memo(
 
       // Confluence Space link
       if (customFields.ConfluenceSpace && confluenceHost) {
-        const confluenceUrl = AppScanUrls.getConfluenceSpaceUrl(confluenceHost, customFields.ConfluenceSpace);
+        const confluenceUrl = AppScanUrls.getConfluenceSpaceUrl(
+          confluenceHost,
+          customFields.ConfluenceSpace
+        );
         if (confluenceUrl) {
           links.push({
             label: `📚 Confluence Space (${customFields.ConfluenceSpace})`,
