@@ -131,27 +131,25 @@ const VulnRow = React.memo(({ issue, isSelected, isMultiSelected }) => {
   return (
     <Box>
       <Box width={2} justifyContent="flex-start" marginRight={1}>
-        <Text color={isSelected ? 'cyan' : undefined} wrap="truncate">
+        <Text color={isSelected ? 'cyan' : undefined}>
           {isSelected ? '▶' : ' '}
         </Text>
       </Box>
-      <Box width={5} justifyContent="flex-start" marginRight={1}>
+      <Box width={6} justifyContent="flex-start" marginRight={1}>
         <Text color={isMultiSelected ? 'cyan' : undefined} wrap="truncate">
           {isMultiSelected ? '[✓]' : '[ ]'}
         </Text>
       </Box>
-      <Box width={15} justifyContent="flex-start" marginRight={1}>
-        <Text color={severityColor} bold={isSelected} wrap="truncate">
+      <Box width={14} justifyContent="flex-start" marginRight={1}>
+        <Text color={severityColor} bold={isSelected}>
           {severity}
         </Text>
       </Box>
-      <Box width={12} justifyContent="flex-start" marginRight={1}>
-        <Text color={isSelected ? 'cyan' : undefined} wrap="truncate">{status}</Text>
+      <Box width={13} justifyContent="flex-start" marginRight={1}>
+        <Text color={isSelected ? 'cyan' : undefined}>{status}</Text>
       </Box>
-      <Box width={15} justifyContent="flex-start" marginRight={1}>
-        <Text color={jiraRef ? 'green' : 'dimColor'} wrap="truncate">
-          {jiraRef || '-'}
-        </Text>
+      <Box width={14} justifyContent="flex-start" marginRight={1}>
+        <Text color={jiraRef ? 'green' : 'dimColor'}>{jiraRef || '-'}</Text>
       </Box>
       <Box flexGrow={1} minWidth={0} justifyContent="flex-start">
         <Text color={isSelected ? 'cyan' : undefined} wrap="truncate">
@@ -265,22 +263,22 @@ const VulnListPanel = React.memo(
               {' '}
             </Text>
           </Box>
-          <Box width={5} justifyContent="flex-start" marginRight={1}>
+          <Box width={6} justifyContent="flex-start" marginRight={1}>
             <Text bold dimColor>
               Sel
             </Text>
           </Box>
-          <Box width={15} justifyContent="flex-start" marginRight={1}>
+          <Box width={14} justifyContent="flex-start" marginRight={1}>
             <Text bold dimColor>
               Severity
             </Text>
           </Box>
-          <Box width={12} justifyContent="flex-start" marginRight={1}>
+          <Box width={13} justifyContent="flex-start" marginRight={1}>
             <Text bold dimColor>
               Status
             </Text>
           </Box>
-          <Box width={15} justifyContent="flex-start" marginRight={1}>
+          <Box width={14} justifyContent="flex-start" marginRight={1}>
             <Text bold dimColor>
               Jira
             </Text>
@@ -390,7 +388,7 @@ const DetailsPreviewPanel = React.memo(
                 paddingX={1}
                 marginTop={1}
               >
-                <Text wrap="wrap" dimColor>
+                <Text wrap="truncate" dimColor>
                   {Formatter.getIssueContext(issue).substring(0, 500)}
                   {Formatter.getIssueContext(issue).length > 500 ? '...' : ''}
                 </Text>
