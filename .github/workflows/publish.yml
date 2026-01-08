@@ -57,7 +57,7 @@ jobs:
 
       - name: Make package Public
         if: steps.version-check.outputs.skip != 'true'
-        run: npm access public
+        run: npm access set status=public @metanull/appscan-client
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
