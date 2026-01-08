@@ -9,8 +9,8 @@ import { useEffect, useState } from 'react';
 export function useTerminalSize() {
   const { stdout } = useStdout();
   const [size, setSize] = useState({
-    width: stdout?.columns || 80,
-    height: stdout?.rows || 24,
+    width: Math.max(120, stdout?.columns || 80),
+    height: Math.max(20, stdout?.rows || 24),
   });
 
   useEffect(() => {
@@ -18,8 +18,8 @@ export function useTerminalSize() {
 
     const updateSize = () => {
       setSize({
-        width: stdout.columns || 80,
-        height: stdout.rows || 24,
+        width: Math.max(120, stdout.columns || 80),
+        height: Math.max(20, stdout.rows || 24),
       });
     };
 

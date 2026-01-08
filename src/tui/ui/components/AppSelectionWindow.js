@@ -158,8 +158,9 @@ export const AppSelectionWindow = React.memo(
         width="100%"
         height="100%"
         flexDirection="column"
-        justifyContent="center"
+        justifyContent="flex-start"
         alignItems="center"
+        paddingTop={2}
       >
         <Box
           flexDirection="column"
