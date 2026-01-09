@@ -79,13 +79,12 @@ export const UpdateSeverityModal = React.memo(
           placeholder: 'Enter comment (optional)...',
           initialValue: '',
           onComplete: (value) => {
-            // Submit immediately after text input
-            handleSubmitWithComment(value || '');
+            handleSubmit(value);
           },
         });
       } else {
         // Fallback: submit without comment
-        handleSubmitWithComment('');
+        handleSubmit();
       }
     };
 
@@ -100,23 +99,25 @@ export const UpdateSeverityModal = React.memo(
             placeholder: 'Enter comment...',
             initialValue: '',
             onComplete: (value) => {
-              // Submit immediately after text input
-              handleSubmitWithComment(value || '');
+              handleSubmit(value);
             },
           });
         }
+      } else if (item.value === 'no-comment') {
+        // User explicitly chose not to add a comment
+        handleSubmit();
       } else {
-        // Use selected template and submit immediately
-        handleSubmitWithComment(item.value);
+        // Use selected template
+        handleSubmit(item.value);
       }
     };
 
-    const handleSubmitWithComment = async (commentText) => {
+    const handleSubmit = async (commentText = undefined) => {
       if (!issueCount || issueCount === 0) {
         return; // Prevent submission if no issues selected
       }
 
-      // Save custom comment as template if it's not empty and not already a template
+      // Save custom comment as template if provided and not already a template
       if (
         commentText &&
         commentText.trim() !== '' &&
@@ -134,7 +135,7 @@ export const UpdateSeverityModal = React.memo(
       try {
         await onUpdate(
           selectedSeverity,
-          commentText || undefined,
+          commentText && commentText.trim() !== '' ? commentText : undefined,
           (current, total) => {
             setProgress({ current, total });
           }
@@ -148,14 +149,29 @@ export const UpdateSeverityModal = React.memo(
       }
     };
 
-    // Prepare template options
+    // Check if first issue has existing comments
+    const firstIssueHasComments =
+      issues &&
+      issues.length > 0 &&
+      issues[0].LastComment &&
+      issues[0].LastComment.trim() !== '';
+
+    // Prepare template options with "Don't add a comment" option
     const templateOptions = [
+      { label: "🚫 Don't add a comment", value: 'no-comment' },
       { label: '✏️  Custom message...', value: 'custom' },
       ...templates.map((t) => ({
         label: t.length > 60 ? t.substring(0, 57) + '...' : t,
         value: t,
       })),
     ];
+
+    // Calculate initial template index:
+    // - If first issue has comments, preselect "Don't add a comment" (index 0)
+    // - Otherwise, preselect "Custom message" (index 1)
+    const getInitialTemplateIndex = () => {
+      return firstIssueHasComments ? 0 : 1;
+    };
 
     return (
       <Modal width={60} height={60}>
@@ -184,6 +200,7 @@ export const UpdateSeverityModal = React.memo(
               )}
               <SelectInput
                 items={templateOptions}
+                initialIndex={getInitialTemplateIndex()}
                 onSelect={handleTemplateSelect}
               />
             </Box>
