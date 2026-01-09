@@ -36,7 +36,6 @@ function buildOrFilter(field, values) {
 function buildODataFilter(options) {
   const filters = [];
 
-  // Status filters (mutually exclusive)
   if (options.statusActive) {
     filters.push(buildOrFilter('Status', FILTER_PRESETS.status.active));
   } else if (options.statusInactive) {
@@ -46,11 +45,9 @@ function buildODataFilter(options) {
   } else if (options.statusProcessed) {
     filters.push(buildOrFilter('Status', FILTER_PRESETS.status.processed));
   } else if (options.statusFilter) {
-    // Custom status filter
     filters.push(buildOrFilter('Status', options.statusFilter));
   }
 
-  // Severity filters (mutually exclusive)
   if (options.severityLow) {
     filters.push(buildOrFilter('Severity', FILTER_PRESETS.severity.low));
   } else if (options.severityMedium) {
@@ -58,23 +55,19 @@ function buildODataFilter(options) {
   } else if (options.severityHigh) {
     filters.push(buildOrFilter('Severity', FILTER_PRESETS.severity.high));
   } else if (options.severityFilter) {
-    // Custom severity filter
     filters.push(buildOrFilter('Severity', options.severityFilter));
   }
 
-  // Jira link filters (mutually exclusive)
   if (options.jiraAssigned) {
     filters.push('ExternalId ne null');
   } else if (options.jiraUnassigned) {
     filters.push('ExternalId eq null');
   }
 
-  // Exclude Passed and Noise statuses
   if (options.excludePassedNoise) {
     filters.push("(Status ne 'Passed' and Status ne 'Noise')");
   }
 
-  // Combine all filters with AND
   return filters.length > 0 ? filters.join(' and ') : '';
 }
 
@@ -135,16 +128,13 @@ export class AppScanService {
    */
   _transformCustomFields(app) {
     if (app.CustomFields && Array.isArray(app.CustomFields)) {
-      // Create simplified key-value object
       const customFieldsMap = {};
       app.CustomFields.forEach((cf) => {
-        // Convert empty strings to null
         customFieldsMap[cf.Name] =
           cf.Value && cf.Value.trim() ? cf.Value : null;
       });
 
       app.customFields = customFieldsMap;
-      // Keep original structure as _customFieldsRaw for potential update operations
       app._customFieldsRaw = app.CustomFields;
       delete app.CustomFields;
     }
@@ -161,7 +151,6 @@ export class AppScanService {
     return this.withAuthRetry(async () => {
       const response = await this.api.v4.Apps_Get({});
 
-      // Transform CustomFields for each application
       if (response.Items && Array.isArray(response.Items)) {
         response.Items = response.Items.map((app) =>
           this._transformCustomFields(app)
@@ -230,16 +219,12 @@ export class AppScanService {
     return this.withAuthRetry(async () => {
       const queryParams = {};
 
-      // Build OData filter if options provided
       if (filterOptions && typeof filterOptions === 'object') {
         const odataFilter = buildODataFilter(filterOptions);
         if (odataFilter) {
           queryParams.$filter = odataFilter;
         }
-      }
-      // Legacy: client-side filtering by excludeStatus
-      else if (excludeStatus) {
-        // Don't use $filter, fetch all and filter client-side for backward compatibility
+      } else if (excludeStatus) {
       }
 
       const response = await this.api.v4.Issues_Get(
@@ -248,7 +233,6 @@ export class AppScanService {
         queryParams
       );
 
-      // Legacy client-side filtering if excludeStatus is provided and no filter options
       if (
         excludeStatus &&
         typeof excludeStatus === 'string' &&
@@ -264,7 +248,6 @@ export class AppScanService {
           response.Items = response.Items.filter(
             (issue) => !statusesToExclude.includes(issue.Status)
           );
-          // Update count if present
           if (response.Count !== undefined) {
             response.Count = response.Items.length;
           }
@@ -312,21 +295,17 @@ export class AppScanService {
   async getArticle(issueId, options = {}) {
     await this.ensureAuthenticated();
     try {
-      // First, get the issue to retrieve issueType and other fields
       const issue = await this.api.v4.Issues_GetIssue(issueId, {});
 
       if (!issue) {
         throw new Error(`Issue not found: ${issueId}`);
       }
 
-      // Build query parameters according to the API specification
-      // The API expects: id (issueId), issuetype, language, api, cveId, nl, mode, enableTrainingLinks
       const queryParams = {
         id: issueId,
         issuetype: issue.IssueTypeId,
       };
 
-      // Add optional parameters if provided or available from issue
       if (options.language || issue.Language) {
         queryParams.language = options.language || issue.Language;
       }
@@ -386,14 +365,11 @@ export class AppScanService {
   async getIssueArticle(issue) {
     await this.ensureAuthenticated();
     try {
-      // Import dependencies
       const TurndownService = (await import('turndown')).default;
       const { parse } = await import('node-html-parser');
 
-      // Get the focused article URL
       const focusedUrl = await this.getFocusedArticleUrl(issue);
 
-      // Fetch the HTML content from the URL
       const response = await fetch(focusedUrl, {
         headers: {
           Authorization: `Bearer ${this.token}`,
@@ -424,13 +400,11 @@ export class AppScanService {
         linkReferenceStyle: 'full',
       });
 
-      // Remove script and style elements
       turndownService.addRule('removeScripts', {
         filter: ['script', 'style', 'noscript'],
         replacement: () => '',
       });
 
-      // Keep code blocks intact
       turndownService.addRule('preserveCodeBlocks', {
         filter: 'pre',
         replacement: (content, node) => {
@@ -466,7 +440,6 @@ export class AppScanService {
 
     const generalArticleUrl = `${baseUrl}/api/v4/Reports/Article/?${articleParams.toString()}`;
 
-    // If no ApiVulnName, return general URL
     if (!issue.ApiVulnName) {
       return generalArticleUrl;
     }
@@ -474,7 +447,6 @@ export class AppScanService {
     try {
       await this.ensureAuthenticated();
 
-      // Fetch the general article HTML
       const response = await this.api.v4.Reports_GetArticle({
         issuetype: issue.IssueTypeId,
         language: issue.Language,
@@ -484,7 +456,6 @@ export class AppScanService {
         return generalArticleUrl;
       }
 
-      // Parse HTML to find the link matching ApiVulnName
       const apiLinksMatch = response.match(
         /<div[^>]*id="apiLinks"[^>]*>([\s\S]*?)<\/div>/i
       );
@@ -502,7 +473,6 @@ export class AppScanService {
         const linkText = match[2].replace(/<[^>]*>/g, '').trim();
 
         if (linkText === issue.ApiVulnName) {
-          // Decode HTML entities
           const decodeHtmlEntities = (text) => {
             const entities = {
               '&amp;': '&',
@@ -556,7 +526,6 @@ export class AppScanService {
         Configuration: config,
       };
 
-      // Validate type
       const validTypes = ['Scan', 'Application', 'ScanExecution'];
       if (!validTypes.includes(type)) {
         throw new Error(
@@ -564,7 +533,6 @@ export class AppScanService {
         );
       }
 
-      // Use the single Reports_CreateSecurityReport method with scope parameter
       const response = await this.api.v4.Reports_CreateSecurityReport(
         type,
         id,
@@ -657,7 +625,6 @@ export class AppScanService {
         );
       }
 
-      // Download the report
       const reportContent = await this.downloadReport(reportId);
 
       return {
@@ -738,7 +705,6 @@ export class AppScanService {
       throw new Error('No issue IDs provided for bulk update');
     }
 
-    // Validate status if provided
     if (status) {
       const validStatuses = [
         'Open',
@@ -757,7 +723,6 @@ export class AppScanService {
     }
 
     try {
-      // Build the update payload
       const updateData = {};
 
       if (status) {
@@ -772,14 +737,12 @@ export class AppScanService {
         updateData.ExternalId = externalId;
       }
 
-      // Must have at least one field to update
       if (Object.keys(updateData).length === 0) {
         throw new Error(
           'No fields to update. Must provide status, comment, or externalId'
         );
       }
 
-      // Get the first issue to determine the application ID
       const firstIssue = await this.api.v4.Issues_GetIssue(issueIds[0], {});
 
       if (!firstIssue || !firstIssue.ApplicationId) {
@@ -790,12 +753,8 @@ export class AppScanService {
 
       const applicationId = firstIssue.ApplicationId;
 
-      // Build OData filter for multiple IDs
-      // Format: Id eq guid1 or Id eq guid2 or Id eq guid3
       const odataFilter = issueIds.map((id) => `Id eq ${id}`).join(' or ');
 
-      // Update all issues using filtered update
-      // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
       const result = await this.api.v4.Issues_UpdateFilteredIssues(
         'Application',
         applicationId,
@@ -833,7 +792,6 @@ export class AppScanService {
   ) {
     await this.ensureAuthenticated();
     try {
-      // Build update payload
       const updateData = { Status: status };
 
       if (comment) {
@@ -844,7 +802,6 @@ export class AppScanService {
         updateData.ExternalId = externalId;
       }
 
-      // Update all issues in the scan (no filter = all issues)
       const result = await this.api.v4.Issues_UpdateFilteredIssues(
         'Scan',
         scanId,
@@ -879,7 +836,6 @@ export class AppScanService {
   ) {
     await this.ensureAuthenticated();
     try {
-      // Build update payload
       const updateData = { Status: status };
 
       if (comment) {
@@ -890,12 +846,11 @@ export class AppScanService {
         updateData.ExternalId = externalId;
       }
 
-      // Update all issues in the application (no filter = all issues)
       const result = await this.api.v4.Issues_UpdateFilteredIssues(
         'Application',
         applicationId,
         updateData,
-        {} // No filter = update all issues in application
+        {}
       );
 
       return {

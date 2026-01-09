@@ -14,19 +14,15 @@ export async function setApplication(applicationId, updates, options) {
     cliOutput.setJsonMode(options.json);
     const { service } = await initializeAppScanService(options.config);
 
-    // Parse updates - either from JSON string or from options flags
     let updateData = {};
 
-    // Check if updates argument is provided and looks like JSON
     if (updates && (updates.startsWith('{') || updates.startsWith('['))) {
-      // Parse JSON string
       try {
         updateData = JSON.parse(updates);
       } catch (error) {
         throw new Error(`Invalid JSON format: ${error.message}`);
       }
     } else {
-      // Collect from options flags
       const standardFields = [
         'Name',
         'Description',
@@ -52,14 +48,12 @@ export async function setApplication(applicationId, updates, options) {
         'JiraParentEpic',
       ];
 
-      // Extract standard field updates
       standardFields.forEach((field) => {
         if (options[field.toLowerCase()] !== undefined) {
           updateData[field] = options[field.toLowerCase()];
         }
       });
 
-      // Extract custom field updates (will process separately)
       const customFieldUpdates = {};
       customFields.forEach((field) => {
         const flagName = field.toLowerCase();
@@ -84,17 +78,14 @@ export async function setApplication(applicationId, updates, options) {
       throw new Error(`Application ${applicationId} not found`);
     }
 
-    // Prepare update payload
     const payload = {};
 
-    // Handle standard field updates
     Object.keys(updateData).forEach((key) => {
       if (key !== '_customFields') {
         payload[key] = updateData[key];
       }
     });
 
-    // Handle custom field updates
     if (updateData._customFields || updateData.customFields) {
       const customFieldUpdates =
         updateData._customFields || updateData.customFields;
@@ -106,7 +97,6 @@ export async function setApplication(applicationId, updates, options) {
         throw new Error('Application has no custom fields defined');
       }
 
-      // Map custom field names to IDs
       payload.AppCustomFields = [];
 
       Object.entries(customFieldUpdates).forEach(([fieldName, value]) => {
@@ -131,7 +121,6 @@ export async function setApplication(applicationId, updates, options) {
     await service.api.v4.Apps_Update(applicationId, payload);
     cliOutput.success('✓ Application updated successfully');
 
-    // Fetch updated data to show changes
     const updatedApp = await service.getApplicationDetails(applicationId);
 
     if (options.json) {
