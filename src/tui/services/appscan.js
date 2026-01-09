@@ -123,6 +123,32 @@ export class AppScanService {
     return response.Items;
   }
 
+  /**
+   * Get FixGroups for a scope using the parent service API safely
+   * @param {string} scope - 'Application' | 'Scan' | 'ScanExecution'
+   * @param {string} scopeId - Scope ID
+   * @param {Object} query - Optional query parameters
+   * @returns {Promise<Array>} Array of FixGroup objects
+   */
+  async getFixGroups(scope, scopeId, query = {}) {
+    // Ensure parent service is authenticated before calling the raw API
+    await this.service.ensureAuthenticated();
+
+    try {
+      const response = await this.service.api.v4.FixGroups_Get(
+        scope,
+        scopeId,
+        query
+      );
+      return response.Items || [];
+    } catch (err) {
+      logger.error('TUI wrapper failed to load FixGroups', {
+        error: err.message,
+      });
+      throw err;
+    }
+  }
+
   // ==========================================
   // Write Methods with Audit Logging
   // ==========================================

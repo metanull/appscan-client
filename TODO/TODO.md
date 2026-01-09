@@ -1,4 +1,4 @@
-Here is a taésk list to execute (inline with copilot-instructions).
+Here is a task list to execute (inline with copilot-instructions).
 
 Proceed systematically and iteratively (Implement Task 1.1; let me review, then Task 1.2, let me review, then Task 2.1 ...)
 

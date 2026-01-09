@@ -609,12 +609,14 @@ export const InkApp = ({ configPath }) => {
   const error = useStore((state) => state.error);
   const view = useStore((state) => state.view);
   const issues = useStore((state) => state.issues);
+  const fixGroups = useStore((state) => state.fixGroups);
 
   // Filter state - subscribe to each individually to avoid object creation
   const filterStatus = useStore((state) => state.filterStatus);
   const filterSeverity = useStore((state) => state.filterSeverity);
   const filterIssueType = useStore((state) => state.filterIssueType);
   const filterJira = useStore((state) => state.filterJira);
+  const filterFixGroup = useStore((state) => state.filterFixGroup);
   const searchText = useStore((state) => state.searchText);
   const filterPreset = useStore((state) => state.filterPreset);
   const sortBy = useStore((state) => state.sortBy);
@@ -744,6 +746,25 @@ export const InkApp = ({ configPath }) => {
 
         if (cancelled) return;
         useStore.getState().setIssues(issueList || []);
+
+        if (selectedApp?.Id) {
+          try {
+            const fixGroups = await appScanService.getFixGroups(
+              'Application',
+              selectedApp.Id,
+              {}
+            );
+            if (!cancelled) {
+              useStore.getState().setFixGroups(fixGroups || []);
+            }
+          } catch (err) {
+            logger.error('Failed to load FixGroups', err);
+            if (!cancelled) {
+              useStore.getState().setFixGroups([]);
+            }
+          }
+        }
+
         useStore.getState().setView('issue-list');
         lastLoadedScanRef.current = selectedScan.Id;
         useStore.getState().setLoading(false);
@@ -772,6 +793,7 @@ export const InkApp = ({ configPath }) => {
       severity: filterSeverity,
       issueType: filterIssueType,
       jira: filterJira,
+      fixgroup: filterFixGroup,
       searchText: searchText,
       sortBy: sortBy,
     });
@@ -781,6 +803,7 @@ export const InkApp = ({ configPath }) => {
     filterSeverity,
     filterIssueType,
     filterJira,
+    filterFixGroup,
     searchText,
     sortBy,
   ]);
@@ -820,12 +843,12 @@ export const InkApp = ({ configPath }) => {
         );
 
         if (newCursor !== currentCursor) {
-          useStore.getState().setListCursor(newCursor); // Use getState() instead of prop
+          useStore.getState().setListCursor(newCursor);
         }
       }
       flushTimeout.current = null;
     }, 16);
-  }, [filteredIssuesLength]); // Only depend on data, not setter
+  }, [filteredIssuesLength]);
 
   // Helper: Get filter options for a preset
   const getFilterOptionsForPreset = useCallback(
@@ -935,6 +958,23 @@ export const InkApp = ({ configPath }) => {
       }
 
       store.setIssues(issueList || []);
+
+      // Load FixGroups for the application
+      if (selectedApp?.Id) {
+        try {
+          const fixGroups = await appScanService.getFixGroups(
+            'Application',
+            selectedApp.Id,
+            {}
+          );
+          store.setFixGroups(fixGroups || []);
+        } catch (err) {
+          logger.error('Failed to load FixGroups', err);
+          // Don't fail the whole operation if FixGroups fail to load
+          store.setFixGroups([]);
+        }
+      }
+
       store.setLoading(false);
     } catch (err) {
       logger.error('Failed to reload issues', err, {
@@ -1554,6 +1594,26 @@ export const InkApp = ({ configPath }) => {
             }
 
             useStore.getState().setIssues(issueList || []);
+
+            // Load FixGroups for the application
+            if (selectedApp?.Id) {
+              try {
+                const fixGroups = await appScanService.getFixGroups(
+                  'Application',
+                  selectedApp.Id,
+                  {}
+                );
+                if (!loadTracker.cancelled) {
+                  useStore.getState().setFixGroups(fixGroups || []);
+                }
+              } catch (err) {
+                logger.error('Failed to load FixGroups', err);
+                // Don't fail the whole operation if FixGroups fail to load
+                if (!loadTracker.cancelled) {
+                  useStore.getState().setFixGroups([]);
+                }
+              }
+            }
           } catch (err) {
             if (loadTracker.cancelled) {
               return;
@@ -1733,6 +1793,7 @@ export const InkApp = ({ configPath }) => {
       {activeModal === 'filter' && (
         <FilterModal
           issues={filteredIssues}
+          fixGroups={fixGroups}
           onSelect={(filterType, value) => {
             if (filterType === 'status')
               useStore.getState().setFilterStatus(value);
@@ -1740,6 +1801,8 @@ export const InkApp = ({ configPath }) => {
               useStore.getState().setFilterSeverity(value);
             else if (filterType === 'type')
               useStore.getState().setFilterIssueType(value);
+            else if (filterType === 'fixgroup')
+              useStore.getState().setFilterFixGroup(value);
             else if (filterType === 'jira')
               useStore.getState().setFilterJira(value);
           }}

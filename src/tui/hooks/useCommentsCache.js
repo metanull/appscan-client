@@ -31,14 +31,14 @@ export function useCommentsCache(issueId, fetchFunction) {
 
       try {
         const comments = await fetchFunction(id);
-        useStore.getState().setCommentsCache(id, comments); // Use getState() instead of prop
+        useStore.getState().setCommentsCache(id, comments);
       } catch (err) {
         setError(err.message || 'Failed to fetch comments');
       } finally {
         setLoading(false);
       }
     }, FETCH_DEBOUNCE_DELAY),
-    [fetchFunction] // Only depend on fetchFunction, not setCommentsCache
+    [fetchFunction]
   );
 
   useEffect(() => {

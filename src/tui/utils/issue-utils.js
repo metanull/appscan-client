@@ -116,6 +116,7 @@ export function filterIssues(issues, filters = {}) {
     severity,
     issueType,
     jira,
+    fixgroup,
     searchText,
     sortBy = 'severity',
   } = filters;
@@ -132,6 +133,13 @@ export function filterIssues(issues, filters = {}) {
 
   if (issueType) {
     filtered = filtered.filter((i) => i.IssueType === issueType);
+  }
+
+  if (fixgroup) {
+    // Normalize comparison to strings to handle numeric/string id mismatches
+    filtered = filtered.filter(
+      (i) => String(i.FixGroupId) === String(fixgroup)
+    );
   }
 
   if (jira === 'with') {

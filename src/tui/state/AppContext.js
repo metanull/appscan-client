@@ -13,6 +13,7 @@ import { create } from 'zustand';
  * @property {Array} applications - List of applications
  * @property {Array} scans - List of scans
  * @property {Array} issues - List of issues
+ * @property {Array} fixGroups - List of FixGroups for the current application
  * @property {Object|null} issueDetails - Detailed issue information
  * @property {string|null} articleContent - Article content for issue
  * @property {Object} articleCache - Cache of article content by issue ID
@@ -22,6 +23,7 @@ import { create } from 'zustand';
  * @property {string|null} filterSeverity - Filter by severity level
  * @property {string|null} filterIssueType - Filter by issue type
  * @property {string|null} filterJira - Filter by JIRA status: 'with' | 'without' | null
+ * @property {string|null} filterFixGroup - Filter by FixGroup ID
  * @property {string|null} searchText - Search text for filtering issues
  * @property {string} sortBy - Sort field: 'severity' | 'name' | 'status'
  * @property {string|null} scanSearchText - Search text for filtering scans
@@ -48,6 +50,7 @@ export const useStore = create((set, get) => ({
   applications: [],
   scans: [],
   issues: [],
+  fixGroups: [],
   issueDetails: null,
   articleContent: null,
 
@@ -63,6 +66,7 @@ export const useStore = create((set, get) => ({
   filterSeverity: null,
   filterIssueType: null,
   filterJira: null, // 'with' | 'without' | null
+  filterFixGroup: null,
   searchText: null,
   sortBy: 'severity', // 'severity' | 'name' | 'status'
   scanSearchText: null,
@@ -170,6 +174,12 @@ export const useStore = create((set, get) => ({
    * @param {Array} issues - Array of issue objects
    */
   setIssues: (issues) => set({ issues, listCursor: 0 }),
+
+  /**
+   * Set FixGroups list
+   * @param {Array} fixGroups - Array of FixGroup objects
+   */
+  setFixGroups: (fixGroups) => set({ fixGroups }),
 
   /**
    * Set detailed issue information
@@ -307,7 +317,14 @@ export const useStore = create((set, get) => ({
    */
   setFilterJira: (jira) => set({ filterJira: jira, selectedIssueIds: [] }),
 
+  /**FixGroup filter
+   * @param {string|null} fixGroupId - FixGroup ID to filter by
+   */
+  setFilterFixGroup: (fixGroupId) =>
+    set({ filterFixGroup: fixGroupId, selectedIssueIds: [] }),
+
   /**
+   * Set
    * Set search text filter
    * @param {string|null} text - Search text
    */
@@ -346,6 +363,7 @@ export const useStore = create((set, get) => ({
       filterSeverity: null,
       filterIssueType: null,
       filterJira: null,
+      filterFixGroup: null,
       searchText: null,
       filterPreset: null,
       selectedIssueIds: [],
@@ -458,6 +476,11 @@ export const useStore = create((set, get) => ({
           (i) => !i.ExternalId || i.ExternalId.trim() === ''
         );
       }
+      if (state.filterFixGroup) {
+        filtered = filtered.filter(
+          (i) => i.FixGroupId === state.filterFixGroup
+        );
+      }
       if (state.searchText) {
         const searchLower = state.searchText.toLowerCase();
         filtered = filtered.filter(
@@ -515,6 +538,7 @@ export const useStore = create((set, get) => ({
       filterSeverity,
       filterIssueType,
       filterJira,
+      filterFixGroup,
       searchText,
       sortBy,
     } = get();
@@ -531,6 +555,13 @@ export const useStore = create((set, get) => ({
 
     if (filterIssueType) {
       filtered = filtered.filter((i) => i.IssueType === filterIssueType);
+    }
+
+    if (filterFixGroup) {
+      // Compare as strings to avoid type mismatches between numeric ids and string inputs
+      filtered = filtered.filter(
+        (i) => String(i.FixGroupId) === String(filterFixGroup)
+      );
     }
 
     if (filterJira === 'with') {
@@ -594,6 +625,7 @@ export const useStore = create((set, get) => ({
       filterSeverity,
       filterIssueType,
       filterJira,
+      filterFixGroup,
       searchText,
     } = get();
     return !!(
@@ -601,6 +633,7 @@ export const useStore = create((set, get) => ({
       filterSeverity ||
       filterIssueType ||
       filterJira ||
+      filterFixGroup ||
       searchText
     );
   },

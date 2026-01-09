@@ -1,17 +1,17 @@
-The project is a npm package published on GitHub Package as @metanull/appscan-client. End-users install the package globally and invoke  'appscan' (a binary in the package); Developers build and invoke the app locally (`npm run build`, `node dist/index.js`). The app provides a TUI frontend and CLI commands. TUI and CLI share features via utilities and services; it avoids code deduplication and facilitates maintenance and evolution.
+The project is a npm package published on GitHub Package as @metanull/appscan-client. End-users install package globally and invoke  'appscan' (a binary in the package); Developers build and invoke the app locally (`npm run build`, `node dist/index.js`). The app provides a TUI frontend and CLI commands. TUI and CLI share features via utilities and services; it avoids code deduplication and facilitates maintenance and evolution.
 
 ## Instruction Guidelines
 
 ### User requests
 
-The requesters are normally, but not always right. If a request does not make sense to you, ask for more clarification. If you do not agree that a request improves the code, then you should explain why and ask for confirmation before implementing.
+The requesters are normally, but not always right. If a request does not make sense to you, ask for more clarification. If you do not agree that a request improves the code, explain why and ask for confirmation before implementing.
 
 Addressing requests:
 - You should only address the request provided not make unrelated changes
 - Make your changes as simple as possible and avoid adding excessive code. If you see an opportunity to simplify, take it. Less is more.
 - You should always change all instances of the same issue the request was about in the changed code.
-- Provide feedback to the user if you think that the code could be improved, explaining what could be improved and why. But do not make the changes unless explicitly requested.
-- You must not make assumptions on how third party code works, if there is a doubt you must verify the documentation and you may create a small test script to verify.
+- Provide feedback to the user if you think that the code could be improved explaining what could be improved and why. Don't make changes unless explicitly requested.
+- Don't make assumptions how third party code works, verify documentation or test first.
 
 ### Code Generation Guidelines
 
@@ -44,7 +44,6 @@ Addressing requests:
 - Ask questions if you are unsure about the implementation details, design choices, or need clarification on the requirements
 - Always answer in the same language as the question, but use english for the generated content like code, comments or docs
 - Always provide direct feedback to the user, do not create summary documents or reports unless explicitly requested
-
 
 ### TUI Rules
 

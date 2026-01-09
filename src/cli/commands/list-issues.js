@@ -126,7 +126,7 @@ async function renderFixGroupedIssues(issues, service) {
 
   const fixGroupIds = Object.keys(grouped).filter((id) => id !== 'No FixGroup');
 
-  let fixGroupDetails = {};
+  const fixGroupDetails = {};
   if (fixGroupIds.length > 0 && service) {
     try {
       const appId = issues[0]?.ApplicationId;
@@ -142,7 +142,7 @@ async function renderFixGroupedIssues(issues, service) {
           });
         }
       }
-    } catch (error) {
+    } catch {
       console.error(chalk.yellow('Warning: Could not fetch FixGroup details'));
     }
   }
