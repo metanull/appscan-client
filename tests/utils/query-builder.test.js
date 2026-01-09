@@ -24,7 +24,7 @@ describe('QueryBuilder', () => {
 
   it('clear and addCustomFilter work', () => {
     const qb = new QueryBuilder();
-    qb.addCustomFilter("a eq b");
+    qb.addCustomFilter('a eq b');
     expect(qb.toODataFilter()).toContain('(a eq b)');
     qb.clear();
     expect(qb.toODataFilter()).toBe('');

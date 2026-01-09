@@ -101,9 +101,7 @@ async function testSeverityUpdate() {
       console.log('🎉 SUCCESS! The API accepts Severity in update requests!\n');
     } catch (error) {
       console.log(`❌ Severity update failed: ${error.message}`);
-      console.log(
-        `   This means Severity cannot be updated via the API.\n`
-      );
+      console.log(`   This means Severity cannot be updated via the API.\n`);
     }
 
     // Test 3: Try changing Severity to a different value
@@ -117,9 +115,8 @@ async function testSeverityUpdate() {
     ];
     const currentSeverityIndex = severityOptions.indexOf(testIssue.Severity);
     const newSeverity =
-      severityOptions[
-        (currentSeverityIndex + 1) % severityOptions.length
-      ] || 'Medium';
+      severityOptions[(currentSeverityIndex + 1) % severityOptions.length] ||
+      'Medium';
 
     try {
       const updateData3 = {
@@ -142,7 +139,9 @@ async function testSeverityUpdate() {
         testIssue.Id,
         {}
       );
-      console.log(`   Verified Severity after update: ${updatedIssue.Severity}`);
+      console.log(
+        `   Verified Severity after update: ${updatedIssue.Severity}`
+      );
       if (updatedIssue.Severity === newSeverity) {
         console.log('   🎉 Severity was actually changed!\n');
       } else {
@@ -164,11 +163,10 @@ async function testSeverityUpdate() {
     }
 
     console.log('📊 Test Summary:');
+    console.log('   If all tests passed, Severity CAN be updated via the API!');
     console.log(
-      '   If all tests passed, Severity CAN be updated via the API!'
+      '   If Test 2/3 failed, Severity cannot be modified (read-only field)\n'
     );
-    console.log(
-      '   If Test 2/3 failed, Severity cannot be modified (read-only field)\n');
   } catch (error) {
     console.error('❌ Test failed:', error);
     logger.error('Test failed', error);

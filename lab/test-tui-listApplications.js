@@ -17,18 +17,20 @@ async function testTuiListApplications() {
     // Test listApplications
     console.log('📝 Step 1: Call TUI listApplications()');
     const result = await service.listApplications();
-    
+
     console.log('✅ Method returned successfully\n');
-    
+
     // Analyze what we got back
     console.log('📝 Step 2: Analyze return value');
     console.log(`   Type: ${typeof result}`);
     console.log(`   Is array: ${Array.isArray(result)}`);
-    console.log(`   Is object: ${typeof result === 'object' && !Array.isArray(result)}`);
-    
+    console.log(
+      `   Is object: ${typeof result === 'object' && !Array.isArray(result)}`
+    );
+
     if (Array.isArray(result)) {
       console.log(`   ✅ Got array with ${result.length} items`);
-      
+
       if (result.length > 0) {
         console.log('\n📝 Step 3: Check first item structure');
         const first = result[0];
@@ -38,9 +40,11 @@ async function testTuiListApplications() {
         console.log(`   Sample: ${first.Name || first.Id}`);
       }
     } else if (result && result.Items) {
-      console.log(`   ❌ Got response object with Items array (${result.Items.length} items)`);
+      console.log(
+        `   ❌ Got response object with Items array (${result.Items.length} items)`
+      );
       console.log('   ISSUE: Wrapper should return array, not response object');
-      
+
       if (result.Items.length > 0) {
         console.log('\n📝 Step 3: Check first item structure in Items array');
         const first = result.Items[0];
@@ -53,7 +57,7 @@ async function testTuiListApplications() {
       console.log('   ❌ Unexpected return value structure');
       console.log(`   Keys: ${Object.keys(result || {}).join(', ')}`);
     }
-    
+
     console.log('\n📊 Summary:');
     if (Array.isArray(result)) {
       console.log('   ✅ TUI wrapper correctly returns array');
@@ -64,7 +68,6 @@ async function testTuiListApplications() {
       console.log('   ❌ Unexpected return format');
     }
     console.log('');
-
   } catch (error) {
     console.error('❌ Test failed:', error);
     logger.error('TUI test failed', error);

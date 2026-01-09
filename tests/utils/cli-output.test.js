@@ -22,7 +22,9 @@ describe('cli-output', () => {
     cliOutput.setJsonMode(true);
     cliOutput.status('s');
     cliOutput.success('ok');
-    expect(console.error).not.toHaveBeenCalledWith(expect.stringContaining('s'));
+    expect(console.error).not.toHaveBeenCalledWith(
+      expect.stringContaining('s')
+    );
   });
 
   it('warning logs and prints when not json', () => {

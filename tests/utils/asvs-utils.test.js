@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { createAVSComment, parseAVSFromComments, hasAVSControl } from '../../src/utils/asvs-utils.js';
+import {
+  createAVSComment,
+  parseAVSFromComments,
+  hasAVSControl,
+} from '../../src/utils/asvs-utils.js';
 
 describe('asvs-utils', () => {
   it('creates formatted comment', () => {
@@ -11,7 +15,7 @@ describe('asvs-utils', () => {
   it('parses comments array', () => {
     const comments = [
       { Comment: 'foo' },
-      { Comment: "Something [ASVS:label:https://u] here" },
+      { Comment: 'Something [ASVS:label:https://u] here' },
     ];
 
     expect(parseAVSFromComments(comments)).toEqual({

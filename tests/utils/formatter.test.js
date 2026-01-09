@@ -8,8 +8,12 @@ describe('Formatter static methods', () => {
   });
 
   it('converts scanner name to technology', () => {
-    expect(Formatter.scannerToTechnology('AppScan Static Analyzer')).toBe('StaticAnalyzer');
-    expect(Formatter.scannerToTechnology('something sca open source')).toBe('ScaAnalyzer');
+    expect(Formatter.scannerToTechnology('AppScan Static Analyzer')).toBe(
+      'StaticAnalyzer'
+    );
+    expect(Formatter.scannerToTechnology('something sca open source')).toBe(
+      'ScaAnalyzer'
+    );
   });
 
   it('maps severity values and colors', () => {
@@ -38,7 +42,11 @@ describe('Formatter static methods', () => {
 describe('Formatter instance methods', () => {
   it('formats application', () => {
     const f = new Formatter('https://app');
-    const app = { Id: 'A', Name: 'App', Scans: [{ Technology: 'StaticAnalyzer' }] };
+    const app = {
+      Id: 'A',
+      Name: 'App',
+      Scans: [{ Technology: 'StaticAnalyzer' }],
+    };
     const out = f.formatApplication(app);
     expect(out).toHaveProperty('id', 'A');
     expect(out.scanTechnologies).toContain('SAST');

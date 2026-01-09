@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildFilterOptions, getFilterDescription } from '../../src/utils/filter-builder.js';
+import {
+  buildFilterOptions,
+  getFilterDescription,
+} from '../../src/utils/filter-builder.js';
 
 describe('buildFilterOptions', () => {
   it('builds status filter and flags hasFilters', () => {
@@ -9,8 +12,14 @@ describe('buildFilterOptions', () => {
   });
 
   it('handles severity and jira filters', () => {
-    const { filterOptions } = buildFilterOptions({ high: true, assigned: true });
-    expect(filterOptions).toMatchObject({ severityHigh: true, jiraAssigned: true });
+    const { filterOptions } = buildFilterOptions({
+      high: true,
+      assigned: true,
+    });
+    expect(filterOptions).toMatchObject({
+      severityHigh: true,
+      jiraAssigned: true,
+    });
   });
 
   it('returns no filters when none specified', () => {
@@ -22,12 +31,18 @@ describe('buildFilterOptions', () => {
 
 describe('getFilterDescription', () => {
   it('returns empty string when no filters', () => {
-    expect(getFilterDescription({ filterOptions: {}, hasFilters: false })).toBe('');
+    expect(getFilterDescription({ filterOptions: {}, hasFilters: false })).toBe(
+      ''
+    );
   });
 
   it('returns combined description', () => {
     const desc = getFilterDescription({
-      filterOptions: { statusActive: true, severityHigh: true, jiraUnassigned: true },
+      filterOptions: {
+        statusActive: true,
+        severityHigh: true,
+        jiraUnassigned: true,
+      },
       hasFilters: true,
     });
 

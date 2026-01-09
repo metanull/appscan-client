@@ -5,7 +5,9 @@ import { readFileSync } from 'fs';
 describe('package-info', () => {
   it('reads package.json and returns version and name', () => {
     const pkg = getPackageInfo();
-    const pkgRaw = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url)));
+    const pkgRaw = JSON.parse(
+      readFileSync(new URL('../../package.json', import.meta.url))
+    );
 
     expect(pkg).toHaveProperty('version');
     expect(pkg).toHaveProperty('name');

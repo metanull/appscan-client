@@ -24,14 +24,18 @@ describe('url-converter', () => {
   });
 
   it('converts appscan api path', () => {
-    expect(convertAppScanUrl('/api/v4/Issues/1', 'https://eu.cloud.appscan.com')).toBe(
-      'https://eu.cloud.appscan.com/api/v4/Issues/1'
-    );
+    expect(
+      convertAppScanUrl('/api/v4/Issues/1', 'https://eu.cloud.appscan.com')
+    ).toBe('https://eu.cloud.appscan.com/api/v4/Issues/1');
   });
 
   it('convertToAbsoluteUrl detects types', () => {
-    expect(convertToAbsoluteUrl('/api/v4/Issues/1')).toContain('/api/v4/Issues/1');
-    expect(convertToAbsoluteUrl('/org/proj/_git/repo?path=/a')).toContain('dev.azure.com');
+    expect(convertToAbsoluteUrl('/api/v4/Issues/1')).toContain(
+      '/api/v4/Issues/1'
+    );
+    expect(convertToAbsoluteUrl('/org/proj/_git/repo?path=/a')).toContain(
+      'dev.azure.com'
+    );
     expect(convertToAbsoluteUrl('https://x/y')).toBe('https://x/y');
   });
 
@@ -47,7 +51,10 @@ describe('url-converter', () => {
   });
 
   it('formatUrlForDisplay returns object', () => {
-    const out = formatUrlForDisplay('/api/v4/Issues/1', 'https://eu.cloud.appscan.com');
+    const out = formatUrlForDisplay(
+      '/api/v4/Issues/1',
+      'https://eu.cloud.appscan.com'
+    );
     expect(out).toHaveProperty('text');
     expect(out).toHaveProperty('url');
     expect(out.isAbsolute).toBe(true);

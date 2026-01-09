@@ -42,29 +42,37 @@ async function testFixGroupIssues() {
       return;
     }
 
-    const fixGroup = fixGroupsResponse.Items.find(g => g.NIssues > 0) || fixGroupsResponse.Items[0];
+    const fixGroup =
+      fixGroupsResponse.Items.find((g) => g.NIssues > 0) ||
+      fixGroupsResponse.Items[0];
     console.log(`   Selected FixGroup: ${fixGroup.Subject}`);
     console.log(`   FixGroup ID: ${fixGroup.Id}`);
     console.log(`   Total Issues: ${fixGroup.NIssues}`);
     console.log(`   Open Issues: ${fixGroup.NOpenIssues}\n`);
 
-    console.log('📝 Step 3: Test filtering issues by FixGroupId (Application scope)');
-    console.log(`   Query: Issues_Get("Application", appId, { $filter: "FixGroupId eq ${fixGroup.Id}" })`);
-    
+    console.log(
+      '📝 Step 3: Test filtering issues by FixGroupId (Application scope)'
+    );
+    console.log(
+      `   Query: Issues_Get("Application", appId, { $filter: "FixGroupId eq ${fixGroup.Id}" })`
+    );
+
     try {
       const issuesResponse = await service.api.v4.Issues_Get(
         'Application',
         app.Id,
-        { '$filter': `FixGroupId eq ${fixGroup.Id}` }
+        { $filter: `FixGroupId eq ${fixGroup.Id}` }
       );
-      
+
       console.log(`✅ Query succeeded\n`);
       console.log('📊 Response structure:');
       console.log(`   Has Items: ${!!issuesResponse.Items}`);
       console.log(`   Items count: ${issuesResponse.Items?.length || 0}`);
       console.log(`   Expected count from FixGroup: ${fixGroup.NIssues}`);
-      console.log(`   Match: ${issuesResponse.Items?.length === fixGroup.NIssues ? '✅' : '❌'}`);
-      
+      console.log(
+        `   Match: ${issuesResponse.Items?.length === fixGroup.NIssues ? '✅' : '❌'}`
+      );
+
       if (issuesResponse.Items && issuesResponse.Items.length > 0) {
         console.log('\n📋 First Issue structure:');
         const firstIssue = issuesResponse.Items[0];
@@ -73,7 +81,7 @@ async function testFixGroupIssues() {
         console.log(`   IssueType: ${firstIssue.IssueType}`);
         console.log(`   Severity: ${firstIssue.Severity}`);
         console.log(`   Status: ${firstIssue.Status}`);
-        
+
         console.log('\n   All fields:', Object.keys(firstIssue).join(', '));
       }
     } catch (error) {
@@ -82,22 +90,24 @@ async function testFixGroupIssues() {
     }
 
     console.log('\n📝 Step 4: Test with scan scope (if scans exist)');
-    
+
     try {
       const scansResponse = await service.listScans(app.Id);
-      
+
       if (scansResponse.Items && scansResponse.Items.length > 0) {
         const scan = scansResponse.Items[0];
         console.log(`   Using scan: ${scan.Name} (${scan.Id})`);
-        
+
         const scanIssuesResponse = await service.api.v4.Issues_Get(
           'Scan',
           scan.Id,
-          { '$filter': `FixGroupId eq ${fixGroup.Id}` }
+          { $filter: `FixGroupId eq ${fixGroup.Id}` }
         );
-        
+
         console.log(`✅ Scan-scoped query succeeded`);
-        console.log(`   Issues found: ${scanIssuesResponse.Items?.length || 0}`);
+        console.log(
+          `   Issues found: ${scanIssuesResponse.Items?.length || 0}`
+        );
       } else {
         console.log('   No scans found to test scan scope');
       }
@@ -106,22 +116,27 @@ async function testFixGroupIssues() {
     }
 
     console.log('\n📝 Step 5: Test selecting specific fields');
-    console.log('   Query with $select=Id,FixGroupId,IssueType,Severity,Status');
-    
+    console.log(
+      '   Query with $select=Id,FixGroupId,IssueType,Severity,Status'
+    );
+
     try {
       const selectResponse = await service.api.v4.Issues_Get(
         'Application',
         app.Id,
         {
-          '$filter': `FixGroupId eq ${fixGroup.Id}`,
-          '$select': 'Id,FixGroupId,IssueType,Severity,Status'
+          $filter: `FixGroupId eq ${fixGroup.Id}`,
+          $select: 'Id,FixGroupId,IssueType,Severity,Status',
         }
       );
-      
+
       console.log(`✅ Select query succeeded`);
       console.log(`   Issues returned: ${selectResponse.Items?.length || 0}`);
       if (selectResponse.Items && selectResponse.Items.length > 0) {
-        console.log('   Fields in response:', Object.keys(selectResponse.Items[0]).join(', '));
+        console.log(
+          '   Fields in response:',
+          Object.keys(selectResponse.Items[0]).join(', ')
+        );
       }
     } catch (error) {
       console.log(`❌ Select query failed: ${error.message}`);
@@ -129,20 +144,20 @@ async function testFixGroupIssues() {
 
     console.log('\n📝 Step 6: Test combining filters');
     console.log('   Query with Status and FixGroupId filters');
-    
+
     try {
       const combinedResponse = await service.api.v4.Issues_Get(
         'Application',
         app.Id,
-        { '$filter': `FixGroupId eq ${fixGroup.Id} and Status ne 'Noise'` }
+        { $filter: `FixGroupId eq ${fixGroup.Id} and Status ne 'Noise'` }
       );
-      
+
       console.log(`✅ Combined filter succeeded`);
       console.log(`   Issues returned: ${combinedResponse.Items?.length || 0}`);
-      
+
       if (combinedResponse.Items && combinedResponse.Items.length > 0) {
         const statuses = {};
-        combinedResponse.Items.forEach(issue => {
+        combinedResponse.Items.forEach((issue) => {
           statuses[issue.Status] = (statuses[issue.Status] || 0) + 1;
         });
         console.log('   Status distribution:', statuses);
@@ -153,20 +168,22 @@ async function testFixGroupIssues() {
 
     console.log('\n📝 Step 7: Test grouping by FixGroup');
     console.log('   Testing multiple FixGroups to verify grouping');
-    
+
     const testFixGroups = fixGroupsResponse.Items.slice(0, 3);
     console.log(`   Testing with ${testFixGroups.length} FixGroups\n`);
-    
+
     for (const fg of testFixGroups) {
       try {
         const fgIssues = await service.api.v4.Issues_Get(
           'Application',
           app.Id,
-          { '$filter': `FixGroupId eq ${fg.Id}` }
+          { $filter: `FixGroupId eq ${fg.Id}` }
         );
-        
+
         console.log(`   FixGroup: ${fg.Subject.substring(0, 50)}...`);
-        console.log(`      Expected: ${fg.NIssues} issues, Got: ${fgIssues.Items?.length || 0} ${fgIssues.Items?.length === fg.NIssues ? '✅' : '❌'}`);
+        console.log(
+          `      Expected: ${fg.NIssues} issues, Got: ${fgIssues.Items?.length || 0} ${fgIssues.Items?.length === fg.NIssues ? '✅' : '❌'}`
+        );
       } catch (error) {
         console.log(`      ❌ Failed: ${error.message}`);
       }
@@ -174,24 +191,28 @@ async function testFixGroupIssues() {
 
     console.log('\n📝 Step 8: Test issue fields related to FixGroup');
     console.log('   Analyzing fields that link issues to FixGroups');
-    
+
     try {
-      const allIssues = await service.api.v4.Issues_Get(
-        'Application',
-        app.Id,
-        { '$top': 20 }
-      );
-      
+      const allIssues = await service.api.v4.Issues_Get('Application', app.Id, {
+        $top: 20,
+      });
+
       if (allIssues.Items && allIssues.Items.length > 0) {
-        const withFixGroup = allIssues.Items.filter(i => i.FixGroupId);
-        const withCorrelationGroup = allIssues.Items.filter(i => i.CorrelationGroupId);
-        
+        const withFixGroup = allIssues.Items.filter((i) => i.FixGroupId);
+        const withCorrelationGroup = allIssues.Items.filter(
+          (i) => i.CorrelationGroupId
+        );
+
         console.log(`   Total issues sampled: ${allIssues.Items.length}`);
         console.log(`   Issues with FixGroupId: ${withFixGroup.length}`);
-        console.log(`   Issues with CorrelationGroupId: ${withCorrelationGroup.length}`);
-        
+        console.log(
+          `   Issues with CorrelationGroupId: ${withCorrelationGroup.length}`
+        );
+
         if (withFixGroup.length > 0) {
-          const uniqueFixGroups = new Set(withFixGroup.map(i => i.FixGroupId));
+          const uniqueFixGroups = new Set(
+            withFixGroup.map((i) => i.FixGroupId)
+          );
           console.log(`   Unique FixGroups in sample: ${uniqueFixGroups.size}`);
         }
       }
@@ -200,7 +221,6 @@ async function testFixGroupIssues() {
     }
 
     console.log('\n✅ Test complete');
-
   } catch (error) {
     console.error('❌ Error:', error.message);
     if (error.stack) {

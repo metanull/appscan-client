@@ -23,7 +23,7 @@ async function testGetApplicationDetails() {
     console.log('📝 Step 1: Get list of applications');
     const appsResponse = await service.listApplications();
     const apps = appsResponse.Items || appsResponse || [];
-    
+
     if (apps.length === 0) {
       console.log('❌ No applications found to test with');
       return;
@@ -39,21 +39,29 @@ async function testGetApplicationDetails() {
 
     // Verify the response structure
     console.log('✅ Method returned successfully\n');
-    
+
     console.log('📝 Step 3: Verify response structure');
     console.log(`   Type: ${typeof appDetails}`);
     console.log(`   Is single object: ${!Array.isArray(appDetails)}`);
     console.log(`   Has Id: ${!!appDetails.Id}`);
     console.log(`   Has Name: ${!!appDetails.Name}`);
-    console.log(`   Id matches requested: ${appDetails.Id === testApp.Id ? '✅' : '❌'}`);
+    console.log(
+      `   Id matches requested: ${appDetails.Id === testApp.Id ? '✅' : '❌'}`
+    );
     console.log('');
 
     // Verify CustomFields transformation
     console.log('📝 Step 4: Verify CustomFields transformation');
     console.log(`   Has customFields property: ${!!appDetails.customFields}`);
-    console.log(`   customFields is object: ${appDetails.customFields && typeof appDetails.customFields === 'object'}`);
-    console.log(`   customFields is NOT array: ${!Array.isArray(appDetails.customFields)}`);
-    console.log(`   Original CustomFields removed: ${appDetails.CustomFields === undefined ? '✅' : '❌'}`);
+    console.log(
+      `   customFields is object: ${appDetails.customFields && typeof appDetails.customFields === 'object'}`
+    );
+    console.log(
+      `   customFields is NOT array: ${!Array.isArray(appDetails.customFields)}`
+    );
+    console.log(
+      `   Original CustomFields removed: ${appDetails.CustomFields === undefined ? '✅' : '❌'}`
+    );
     console.log(`   Raw data preserved: ${!!appDetails._customFieldsRaw}`);
     console.log('');
 
@@ -70,11 +78,17 @@ async function testGetApplicationDetails() {
       console.log('');
 
       // Verify no empty strings
-      const emptyStrings = Object.entries(appDetails.customFields).filter(([k, v]) => v === '');
-      console.log(`   Empty strings found: ${emptyStrings.length} ${emptyStrings.length === 0 ? '✅' : '❌ SHOULD BE NULL'}`);
-      
+      const emptyStrings = Object.entries(appDetails.customFields).filter(
+        ([k, v]) => v === ''
+      );
+      console.log(
+        `   Empty strings found: ${emptyStrings.length} ${emptyStrings.length === 0 ? '✅' : '❌ SHOULD BE NULL'}`
+      );
+
       // Verify nulls for empty values
-      const nullValues = Object.entries(appDetails.customFields).filter(([k, v]) => v === null);
+      const nullValues = Object.entries(appDetails.customFields).filter(
+        ([k, v]) => v === null
+      );
       console.log(`   Null values: ${nullValues.length} ✅`);
       console.log('');
     } else {
@@ -85,21 +99,39 @@ async function testGetApplicationDetails() {
     console.log('📝 Step 6: Test access patterns');
     if (appDetails.customFields) {
       console.log('   Direct access:');
-      console.log(`     appDetails.customFields.DevOpsProject: ${appDetails.customFields.DevOpsProject ?? 'null'}`);
-      console.log(`     appDetails.customFields.JiraProject: ${appDetails.customFields.JiraProject ?? 'null'}`);
-      console.log(`     appDetails.customFields.JiraParentEpic: ${appDetails.customFields.JiraParentEpic ?? 'null'}`);
+      console.log(
+        `     appDetails.customFields.DevOpsProject: ${appDetails.customFields.DevOpsProject ?? 'null'}`
+      );
+      console.log(
+        `     appDetails.customFields.JiraProject: ${appDetails.customFields.JiraProject ?? 'null'}`
+      );
+      console.log(
+        `     appDetails.customFields.JiraParentEpic: ${appDetails.customFields.JiraParentEpic ?? 'null'}`
+      );
       console.log('');
       console.log('   With fallback:');
-      console.log(`     customFields.DevOpsProject || "default": "${appDetails.customFields.DevOpsProject || 'default'}"`);
-      console.log(`     customFields.JiraProject ?? "N/A": "${appDetails.customFields.JiraProject ?? 'N/A'}"`);
+      console.log(
+        `     customFields.DevOpsProject || "default": "${appDetails.customFields.DevOpsProject || 'default'}"`
+      );
+      console.log(
+        `     customFields.JiraProject ?? "N/A": "${appDetails.customFields.JiraProject ?? 'N/A'}"`
+      );
       console.log('');
     }
 
     // Verify standard fields
     console.log('📝 Step 7: Verify all standard fields are present');
-    const requiredFields = ['Id', 'Name', 'RiskRating', 'BusinessImpact', 'TestingStatus'];
-    const missingFields = requiredFields.filter(field => appDetails[field] === undefined);
-    
+    const requiredFields = [
+      'Id',
+      'Name',
+      'RiskRating',
+      'BusinessImpact',
+      'TestingStatus',
+    ];
+    const missingFields = requiredFields.filter(
+      (field) => appDetails[field] === undefined
+    );
+
     if (missingFields.length === 0) {
       console.log('   ✅ All required fields present');
     } else {
@@ -123,7 +155,9 @@ async function testGetApplicationDetails() {
     // Test error handling - invalid ID
     console.log('📝 Step 9: Test error handling with invalid ID');
     try {
-      await service.getApplicationDetails('00000000-0000-0000-0000-000000000000');
+      await service.getApplicationDetails(
+        '00000000-0000-0000-0000-000000000000'
+      );
       console.log('   ❌ Should have thrown an error for invalid ID');
     } catch (error) {
       console.log(`   ✅ Correctly threw error: "${error.message}"`);
@@ -132,11 +166,15 @@ async function testGetApplicationDetails() {
 
     console.log('🎉 All tests passed!\n');
     console.log('📊 Summary:');
-    console.log('   ✅ getApplicationDetails() returns single application object');
+    console.log(
+      '   ✅ getApplicationDetails() returns single application object'
+    );
     console.log('   ✅ Returns only the requested application (not all apps)');
     console.log('   ✅ CustomFields transformed to simple key-value object');
     console.log('   ✅ Empty values converted to null (not empty strings)');
-    console.log('   ✅ Original CustomFields structure preserved as _customFieldsRaw');
+    console.log(
+      '   ✅ Original CustomFields structure preserved as _customFieldsRaw'
+    );
     console.log('   ✅ All standard application fields present');
     console.log('   ✅ Error handling works for invalid IDs\n');
 
@@ -147,7 +185,7 @@ async function testGetApplicationDetails() {
       const agoraApp = await service.getApplicationDetails(agoraId);
       console.log(`✅ Retrieved: ${agoraApp.Name}`);
       console.log('');
-      
+
       if (agoraApp.customFields) {
         console.log('   Custom Fields with real data:');
         Object.entries(agoraApp.customFields).forEach(([key, value]) => {
@@ -156,10 +194,14 @@ async function testGetApplicationDetails() {
           const displayValue = value || '(not set)';
           console.log(`     ${icon} ${key}: ${displayValue}`);
         });
-        
-        const populatedFields = Object.values(agoraApp.customFields).filter(v => v !== null).length;
+
+        const populatedFields = Object.values(agoraApp.customFields).filter(
+          (v) => v !== null
+        ).length;
         console.log('');
-        console.log(`   Populated fields: ${populatedFields}/${Object.keys(agoraApp.customFields).length}`);
+        console.log(
+          `   Populated fields: ${populatedFields}/${Object.keys(agoraApp.customFields).length}`
+        );
       } else {
         console.log('   ⚠️  No custom fields found');
       }
@@ -171,15 +213,18 @@ async function testGetApplicationDetails() {
 
     console.log('🎉 All tests passed!\n');
     console.log('📊 Summary:');
-    console.log('   ✅ getApplicationDetails() returns single application object');
+    console.log(
+      '   ✅ getApplicationDetails() returns single application object'
+    );
     console.log('   ✅ Returns only the requested application (not all apps)');
     console.log('   ✅ CustomFields transformed to simple key-value object');
     console.log('   ✅ Empty values converted to null (not empty strings)');
-    console.log('   ✅ Original CustomFields structure preserved as _customFieldsRaw');
+    console.log(
+      '   ✅ Original CustomFields structure preserved as _customFieldsRaw'
+    );
     console.log('   ✅ All standard application fields present');
     console.log('   ✅ Error handling works for invalid IDs');
     console.log('   ✅ Works correctly with real custom field data\n');
-
   } catch (error) {
     console.error('❌ Test failed:', error);
     logger.error('Test failed', error);

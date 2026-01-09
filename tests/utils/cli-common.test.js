@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { parseCommaSeparated, extractShortPath } from '../../src/utils/cli-common.js';
+import {
+  parseCommaSeparated,
+  extractShortPath,
+} from '../../src/utils/cli-common.js';
 
 describe('parseCommaSeparated', () => {
   it('returns empty array for falsy or empty markers', () => {
@@ -22,7 +25,9 @@ describe('extractShortPath', () => {
 
   it('extracts path from query param and returns last three segments when long', () => {
     expect(extractShortPath('?path=/a/b/c/d')).toBe('b/c/d');
-    expect(extractShortPath('https://example.com/path/one/two/three/four')).toBe('two/three/four');
+    expect(
+      extractShortPath('https://example.com/path/one/two/three/four')
+    ).toBe('two/three/four');
   });
 
   it('returns full path when short', () => {

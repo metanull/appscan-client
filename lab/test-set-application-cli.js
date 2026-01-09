@@ -16,8 +16,11 @@ try {
     `node dist/index.js set-application ${testAppId} --description "CLI Test Description"`,
     { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }
   );
-  
-  if (result1.includes('updated successfully') || result1.includes('Changes Applied')) {
+
+  if (
+    result1.includes('updated successfully') ||
+    result1.includes('Changes Applied')
+  ) {
     console.log('   ✅ Command executed successfully');
   } else {
     console.log('   ⚠️  Unexpected output:', result1);
@@ -30,8 +33,11 @@ try {
     `node dist/index.js set-application ${testAppId} --jiraproject "TEST-CLI"`,
     { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }
   );
-  
-  if (result2.includes('updated successfully') || result2.includes('Changes Applied')) {
+
+  if (
+    result2.includes('updated successfully') ||
+    result2.includes('Changes Applied')
+  ) {
     console.log('   ✅ Command executed successfully');
   } else {
     console.log('   ⚠️  Unexpected output:', result2);
@@ -44,8 +50,11 @@ try {
     `node dist/index.js set-application ${testAppId} --description "Multi-flag test" --jiraproject "AGR"`,
     { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }
   );
-  
-  if (result3.includes('updated successfully') || result3.includes('Changes Applied')) {
+
+  if (
+    result3.includes('updated successfully') ||
+    result3.includes('Changes Applied')
+  ) {
     console.log('   ✅ Command executed successfully');
   } else {
     console.log('   ⚠️  Unexpected output:', result3);
@@ -61,7 +70,6 @@ try {
   console.log('   ✅ Restored\n');
 
   console.log('🎉 All CLI command tests passed!');
-
 } catch (error) {
   console.error('❌ Test failed:', error.message);
   if (error.stdout) console.log('stdout:', error.stdout.toString());

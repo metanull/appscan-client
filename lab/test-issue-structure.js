@@ -43,11 +43,10 @@ async function testIssueStructure() {
     console.log('');
 
     // Check if issue has any comment-related properties
-    const commentProps = Object.keys(firstIssue).filter(k => 
+    const commentProps = Object.keys(firstIssue).filter((k) =>
       k.toLowerCase().includes('comment')
     );
     console.log('Comment-related properties:', commentProps);
-
   } catch (error) {
     console.error('❌ Error:', error.message);
     console.error(error.stack);

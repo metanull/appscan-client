@@ -38,7 +38,7 @@ describe('config-paths', () => {
     expect(dir).toContain('.appscan-client');
 
     // Access the mocked functions to assert they were called
-    const fsMock = (await import('fs'));
+    const fsMock = await import('fs');
     expect(fsMock.mkdirSync).toHaveBeenCalled();
   });
 
