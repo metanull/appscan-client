@@ -102,7 +102,7 @@ export async function connectionCheck(options) {
       cliOutput.result(chalk.cyan('You can now use:'));
       cliOutput.result(
         chalk.white('  • ') +
-          chalk.yellow('appscan triage') +
+          chalk.yellow('appscan') +
           chalk.white(' - Start triaging vulnerabilities')
       );
       cliOutput.result(
