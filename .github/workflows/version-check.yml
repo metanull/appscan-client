@@ -1,4 +1,4 @@
-name: Version Change Check
+name: Version Check
 
 on:
   pull_request:
