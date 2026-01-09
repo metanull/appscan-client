@@ -330,8 +330,10 @@ export class AppScanService {
 
       const response = await this.api.v4.Reports_GetArticle(queryParams);
 
-      // Fix relative URLs in the article HTML by converting them to absolute URLs
       if (response && typeof response === 'string') {
+        // Convert relative article links to absolute URLs
+        // API returns: href="?issuetype=xyz"
+        // We need: href="https://base.url/api/v4/Reports/Article/?issuetype=xyz"
         const baseUrl = this.config.getBaseUrl();
         const articleApiPath = '/api/v4/Reports/Article/';
         return response.replace(
@@ -463,6 +465,7 @@ export class AppScanService {
       }
 
       const apiLinksContent = apiLinksMatch[1];
+      // Extract anchor tags from HTML - using regex instead of DOM parser since response is plain HTML string
       const linkRegex = /<a[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi;
       let match;
 
@@ -471,6 +474,8 @@ export class AppScanService {
         const linkText = match[2].replace(/<[^>]*>/g, '').trim();
 
         if (linkText === issue.ApiVulnName) {
+          // API returns URLs with HTML entities - manual decode to avoid dependency
+          // Covers common entities found in AppScan article URLs
           const decodeHtmlEntities = (text) => {
             const entities = {
               '&amp;': '&',
@@ -494,6 +499,7 @@ export class AppScanService {
 
       return generalArticleUrl;
     } catch {
+      // Fallback to general article if focused URL extraction fails (network issues, HTML parsing errors)
       return generalArticleUrl;
     }
   }

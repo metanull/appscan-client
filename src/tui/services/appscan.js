@@ -183,7 +183,7 @@ export class AppScanService {
     issueIds,
     appId,
     updateData,
-    chunkSize = 20,
+    chunkSize = 20, // Optimal batch size to balance API performance and progress feedback
     onProgress = null
   ) {
     logger.info('Starting chunked bulk update', {

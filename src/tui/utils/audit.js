@@ -145,6 +145,7 @@ class AuditService {
    * @returns {Array} Array of audit entries
    */
   readAuditLog(limit = 100) {
+    // Default 100 entries balances memory usage with useful history
     try {
       if (!fs.existsSync(AUDIT_FILE)) {
         return [];

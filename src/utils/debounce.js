@@ -6,7 +6,7 @@
 /**
  * Debounce function - delays execution until after a pause
  * @param {Function} func - Function to debounce
- * @param {number} delay - Delay in milliseconds
+ * @param {number} delay - Delay in milliseconds (default 300ms provides good balance for user input)
  * @returns {Function} Debounced function
  */
 export function debounce(func, delay = 300) {

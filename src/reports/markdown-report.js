@@ -475,6 +475,7 @@ export class MarkdownReportGenerator {
         try {
           decodedPath = decodeURIComponent(decodedPath);
         } catch {
+          // Invalid URI encoding - use original path
           decodedPath = normalizedPath;
         }
       }
@@ -485,7 +486,7 @@ export class MarkdownReportGenerator {
         return segmentsToShow.join('/');
       }
     } catch {
-      // noop
+      // Invalid URL format - fall through to generic label
     }
     return 'Source';
   }
