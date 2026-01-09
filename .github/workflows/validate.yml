@@ -104,7 +104,7 @@ jobs:
     needs: [lint, build, test]
     if: always()
     steps:
-      - name: Report results
+      - name: QC passed
         run: |
           echo "Lint result: ${{ needs.lint.result }}"
           echo "Build result: ${{ needs.build.result }}"
