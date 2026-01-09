@@ -1,17 +1,20 @@
 name: Quality Check
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
-    branches: [ main ]
+    branches: ["main"]
+    types: [opened, synchronize, reopened]
+
+  workflow_dispatch:
+    # Allow manual triggering
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
 
 jobs:
   lint:
