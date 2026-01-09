@@ -35,6 +35,8 @@ Addressing requests:
 - Use Vitest for testing
 - Write tests for all new features and bug fixes
 - Ensure tests cover edge cases and error handling
+- Do not test the framework or third party libraries, test the business logic only
+- Use mocking and stubbing to isolate the code under test
 - NEVER change the original code to make it easier to test, instead, write tests that cover the original code as it is
 
 #### User interactions
