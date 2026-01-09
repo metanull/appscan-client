@@ -56,6 +56,10 @@ export default [
         beforeAll: 'readonly',
         afterAll: 'readonly'
       }
+    },
+    // Tests and lab scripts are allowed more permissive rules (helpers, stubs, unused variables)
+    rules: {
+      'no-unused-vars': 'off'
     }
   }
 ];

@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { FilterParser } from '../../src/utils/filter-parser.js';
 
+// Simple QueryBuilder-like stub to capture calls
 const makeQB = () => ({
   calls: [],
   filterByStatus(v) {
@@ -21,17 +22,17 @@ const makeQB = () => ({
   filterByDate(op, date) {
     this.calls.push(['date', op, date]);
   },
-};
+});
 
-describe('FilterParser', () => {
-  it('ignores empty filters', () => {
+describe('FilterParser.parse', () => {
+  it('returns same queryBuilder when filter string is empty', () => {
     const qb = makeQB();
-    const result = FilterParser.parse('', qb);
-    expect(result).toBe(qb);
-    expect(qb.calls.length).toBe(0);
+    const out = FilterParser.parse('', qb);
+    expect(out).toBe(qb);
+    expect(qb.calls).toHaveLength(0);
   });
 
-  it('parses status and severity with ORs', () => {
+  it('parses status and severity OR conditions', () => {
     const qb = makeQB();
     FilterParser.parse('status:Open|Closed;severity:High|Critical', qb);
     expect(qb.calls).toEqual([
@@ -40,7 +41,7 @@ describe('FilterParser', () => {
     ]);
   });
 
-  it('parses name and issue type and external id', () => {
+  it('parses name, issue type and external id correctly', () => {
     const qb = makeQB();
     FilterParser.parse('name:Injection;issuetype:SQL;external-id:ABC-1', qb);
     expect(qb.calls).toEqual([
@@ -50,7 +51,7 @@ describe('FilterParser', () => {
     ]);
   });
 
-  it('parses date conditions with operator', () => {
+  it('parses date condition with operator', () => {
     const qb = makeQB();
     FilterParser.parse('date:>2025-01-01', qb);
     expect(qb.calls).toEqual([['date', '>', '2025-01-01']]);
