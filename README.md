@@ -69,18 +69,19 @@ Configuration file location:
 Create `.env` file:
 
 ```env
-APPSCAN_API_KEY=your_key
-APPSCAN_API_SECRET=your_secret
+APPSCAN_API_KEY=your_api_key_here
+APPSCAN_API_SECRET=your_api_secret_here
 APPSCAN_BASE_URL=https://cloud.appscan.com
 
-# Optional Jira integration
-JIRA_HOST=https://company.atlassian.net
-JIRA_EMAIL=email@company.com
-JIRA_API_TOKEN=token
-JIRA_PROJECT_KEY=SEC
+JIRA_HOST=https://your-domain.atlassian.net
+JIRA_EMAIL=your_email@example.com
+JIRA_API_TOKEN=your_jira_api_token_here
+JIRA_PROJECT_KEY=PROJ
 
-# Optional Confluence link
-CONFLUENCE_OWASP_ASVS_URL=https://confluence.company.com/display/SEC/OWASP-ASVS
+AZURE_DEVOPS_ORG=your-organization
+AZURE_DEVOPS_BASE_URL=https://dev.azure.com
+
+CONFLUENCE_HOST=https://your-domain.atlassian.net
 ```
 
 ## Usage
@@ -91,24 +92,38 @@ Launch terminal UI for vulnerability triage:
 
 ```bash
 appscan
-# or
-appscan triage
 ```
 
 **Keyboard Shortcuts:**
 - `↑/↓` - Navigate list
-- `Enter` - View details
-- `Space` - Toggle selection
+- `Enter` - View details (open details modal)
+- `Space` - Toggle selection (moves to next item)
 - `Ctrl+A` - Select all
-- `a` - Change application
-- `s` - Update severity
-- `f` - Filter issues
-- `/` - Search
+- `Alt+A` - Clear selection
+- `Left` - Open vulnerability (open issue in browser)
+- `Right` - Open source file/URL (if available)
+- `Ctrl+←` - Open scan in AppScan (when applicable)
+- `Ctrl+→` - Open linked Jira issue (when present)
+- `Ctrl+O` - Open application selector
+- `Ctrl+W` - Open scan selector
+- `l` - Links (open links modal)
+- `p` - Edit application properties
 - `u` - Update status
-- `j` - Create Jira issue
+- `s` - Update severity
+- `j` - Create Jira issue for current vulnerability
+- `Ctrl+K` - Link selected issues to Jira
+- `Alt+K` - Unlink selected issues from Jira
+- `f` - Open filter modal
+- `/` - Open search modal
+- `Alt+F` - Clear filters
+- `x` / `Alt+X` - Exclude / Include Noise & Passed issues
+- `1`–`6` - Filter presets (status & severity presets)
+- `o` - Sort (cycles through sort options)
 - `c` - Toggle context pane
-- `h` - Help
-- `q` - Quit
+- `d` - Toggle details pane
+- `h` / `?` - Help
+- `Ctrl+D` / `Alt+D` - Enable / Disable debug mode
+- `Ctrl+Q` - Quit
 
 ### CLI Commands
 
