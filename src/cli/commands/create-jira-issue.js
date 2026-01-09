@@ -114,7 +114,7 @@ export async function createJiraIssue(source, sourceId, options) {
     });
 
     if (filteredIssues.length === 0) {
-      console.error(
+      cliOutput.warning(
         chalk.yellow(
           `No issues found matching the criteria (min severity: ${minSeverityValue})`
         )
@@ -122,7 +122,7 @@ export async function createJiraIssue(source, sourceId, options) {
       return;
     }
 
-    console.error(
+    cliOutput.success(
       chalk.green(
         `\nFound ${filteredIssues.length} issue(s) matching the criteria`
       )
@@ -170,7 +170,7 @@ export async function createJiraIssue(source, sourceId, options) {
       // Note: Priority field is not set as different Jira instances have different priority schemes
       // Users can set priority manually in Jira if needed
 
-      console.error(
+      cliOutput.status(
         chalk.blue(`Creating Jira issue for AppScan issue ${issue.Id}...`)
       );
 

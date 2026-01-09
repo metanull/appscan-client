@@ -18,6 +18,8 @@ describe('listScanExecutions CLI', () => {
     vi.spyOn(cliOutput, 'setJsonMode').mockImplementation(() => {});
     vi.spyOn(cliOutput, 'json').mockImplementation(() => {});
     vi.spyOn(cliOutput, 'result').mockImplementation(() => {});
+    vi.spyOn(cliOutput, 'status').mockImplementation(() => {});
+    vi.spyOn(cliOutput, 'success').mockImplementation(() => {});
   });
 
   afterEach(() => vi.restoreAllMocks());
@@ -32,9 +34,7 @@ describe('listScanExecutions CLI', () => {
   });
 
   it('prints formatted when not JSON', async () => {
-    vi.spyOn(console, 'log').mockImplementation(() => {});
     await listScanExecutions('scan1', { json: false });
-    expect(console.log).toHaveBeenCalled();
-    console.log.mockRestore();
+    expect(cliOutput.status).toHaveBeenCalled();
   });
 });

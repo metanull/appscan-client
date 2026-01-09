@@ -13,8 +13,8 @@ describe('listFixGroups CLI', () => {
   beforeEach(() => {
     vi.spyOn(cliOutput, 'setJsonMode').mockImplementation(() => {});
     vi.spyOn(cliOutput, 'json').mockImplementation(() => {});
-    vi.spyOn(console, 'log').mockImplementation(() => {});
-    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(cliOutput, 'status').mockImplementation(() => {});
+    vi.spyOn(cliOutput, 'success').mockImplementation(() => {});
   });
 
   afterEach(() => vi.restoreAllMocks());
@@ -54,8 +54,8 @@ describe('listFixGroups CLI', () => {
 
     await listFixGroups('app1', { json: false });
 
-    expect(console.log).toHaveBeenCalled();
-    // ensure header printed via console.error
-    expect(console.error).toHaveBeenCalled();
+    expect(cliOutput.status).toHaveBeenCalled();
+    // ensure header printed via cliOutput.success
+    expect(cliOutput.success).toHaveBeenCalled();
   });
 });

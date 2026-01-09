@@ -50,12 +50,12 @@ export async function listFixGroups(appId, options) {
       cliOutput.json(fixGroups);
     } else {
       const filterInfo = queryParams['$filter'] ? ` (filtered)` : '';
-      console.error(
+      cliOutput.success(
         chalk.green(`\nFound ${fixGroups.length} FixGroup(s)${filterInfo}:\n`)
       );
 
       if (fixGroups.length === 0) {
-        console.log(chalk.dim('No FixGroups found'));
+        cliOutput.status(chalk.dim('No FixGroups found'));
         return;
       }
 
@@ -74,28 +74,32 @@ export async function listFixGroups(appId, options) {
               ? 'green'
               : 'dim';
 
-        console.log(`${index + 1}. ${chalk.bold(fixGroup.Subject || 'N/A')}`);
-        console.log(`   ${chalk.dim('ID:')} ${chalk.gray(fixGroup.Id)}`);
-        console.log(
+        cliOutput.status(
+          `${index + 1}. ${chalk.bold(fixGroup.Subject || 'N/A')}`
+        );
+        cliOutput.status(`   ${chalk.dim('ID:')} ${chalk.gray(fixGroup.Id)}`);
+        cliOutput.status(
           `   ${chalk.dim('Severity:')} ${chalk[severityColor](fixGroup.Severity || 'N/A')}`
         );
-        console.log(
+        cliOutput.status(
           `   ${chalk.dim('Status:')} ${chalk[statusColor](fixGroup.Status || 'N/A')}`
         );
-        console.log(
+        cliOutput.status(
           `   ${chalk.dim('Issues:')} ${fixGroup.NIssues || 0} total, ${fixGroup.NOpenIssues || 0} open`
         );
-        console.log(`   ${chalk.dim('Type:')} ${fixGroup.IssueType || 'N/A'}`);
+        cliOutput.status(
+          `   ${chalk.dim('Type:')} ${fixGroup.IssueType || 'N/A'}`
+        );
         if (fixGroup.File) {
           const displayFile =
             fixGroup.File.length > 60
               ? '...' + fixGroup.File.slice(-57)
               : fixGroup.File;
-          console.log(
+          cliOutput.status(
             `   ${chalk.dim('Location:')} ${displayFile}${fixGroup.Line ? `:${fixGroup.Line}` : ''}`
           );
         }
-        console.log('');
+        cliOutput.status('');
       });
 
       const summary = {
@@ -106,8 +110,8 @@ export async function listFixGroups(appId, options) {
         ),
       };
 
-      console.log(chalk.dim('─'.repeat(60)));
-      console.log(
+      cliOutput.status(chalk.dim('─'.repeat(60)));
+      cliOutput.status(
         chalk.bold(
           `Total: ${fixGroups.length} FixGroups, ${summary.totalIssues} issues (${summary.openIssues} open)`
         )

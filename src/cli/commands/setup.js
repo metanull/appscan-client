@@ -1,5 +1,6 @@
 import { input, confirm, password } from '@inquirer/prompts';
 import chalk from 'chalk';
+import cliOutput from '../../utils/cli-output.js';
 import { writeFileSync, existsSync } from 'fs';
 import { getEnvPath } from '../../utils/config-paths.js';
 
@@ -10,8 +11,8 @@ import { getEnvPath } from '../../utils/config-paths.js';
  */
 export async function setup(options) {
   try {
-    console.log(chalk.blue.bold('\n🔧 AppScan Client Setup\n'));
-    console.log(
+    cliOutput.status(chalk.blue.bold('\n🔧 AppScan Client Setup\n'));
+    cliOutput.status(
       chalk.gray('This wizard will help you configure your .env file.\n')
     );
 
@@ -23,7 +24,7 @@ export async function setup(options) {
       });
 
       if (!overwrite) {
-        console.log(
+        cliOutput.warning(
           chalk.yellow(
             '\n⚠️  Setup cancelled. Use --force to skip this prompt.\n'
           )
@@ -32,7 +33,7 @@ export async function setup(options) {
       }
     }
 
-    console.log(chalk.cyan.bold('\n📡 AppScan API Configuration\n'));
+    cliOutput.status(chalk.cyan.bold('\n📡 AppScan API Configuration\n'));
 
     const apiKey = await input({
       message: 'Enter your AppScan API Key:',
@@ -62,8 +63,8 @@ export async function setup(options) {
       default: 'https://cloud.appscan.com',
     });
 
-    console.log(chalk.cyan.bold('\n🎫 JIRA Configuration (Optional)\n'));
-    console.log(
+    cliOutput.status(chalk.cyan.bold('\n🎫 JIRA Configuration (Optional)\n'));
+    cliOutput.status(
       chalk.gray(
         'Configure JIRA to create issues from vulnerability reports.\n'
       )
@@ -111,8 +112,10 @@ export async function setup(options) {
       });
     }
 
-    console.log(chalk.cyan.bold('\n📚 Confluence Configuration (Optional)\n'));
-    console.log(
+    cliOutput.status(
+      chalk.cyan.bold('\n📚 Confluence Configuration (Optional)\n')
+    );
+    cliOutput.status(
       chalk.gray(
         'Configure Confluence for documentation and OWASP ASVS links.\n'
       )
@@ -144,10 +147,10 @@ export async function setup(options) {
       });
     }
 
-    console.log(
+    cliOutput.status(
       chalk.cyan.bold('\n⚙️ Azure DevOps Configuration (Optional)\n')
     );
-    console.log(
+    cliOutput.status(
       chalk.gray('Configure Azure DevOps for project and repository links.\n')
     );
 
@@ -198,25 +201,32 @@ ${confluenceBaseUrl ? `CONFLUENCE_OWASP_ASVS_URL=${confluenceBaseUrl}` : '# CONF
 
     writeFileSync(envPath, envContent, 'utf8');
 
-    console.log(chalk.green.bold('\n✅ Setup complete!\n'));
-    console.log(chalk.gray(`Configuration saved to: ${envPath}\n`));
-    console.log(chalk.cyan('Next steps:'));
-    console.log(
-      chalk.white('  1. Run'),
-      chalk.yellow('appscan connection-check'),
-      chalk.white('to verify your setup')
+    cliOutput.success(chalk.green.bold('\n✅ Setup complete!\n'));
+    cliOutput.status(chalk.gray(`Configuration saved to: ${envPath}\n`));
+    cliOutput.status(chalk.cyan('Next steps:'));
+    cliOutput.status(
+      chalk.white('  1. Run') +
+        ' ' +
+        chalk.yellow('appscan connection-check') +
+        ' ' +
+        chalk.white('to verify your setup')
     );
-    console.log(
-      chalk.white('  2. Run'),
-      chalk.yellow('appscan'),
-      chalk.white('to start triaging vulnerabilities\n')
+    cliOutput.status(
+      chalk.white('  2. Run') +
+        ' ' +
+        chalk.yellow('appscan') +
+        ' ' +
+        chalk.white('to start triaging vulnerabilities\n')
     );
   } catch (error) {
     if (error.name === 'ExitPromptError') {
-      console.log(chalk.yellow('\n⚠️  Setup cancelled by user.\n'));
+      cliOutput.warning(chalk.yellow('\n⚠️  Setup cancelled by user.\n'));
       process.exit(0);
     }
-    console.error(chalk.red(`\n❌ Error during setup: ${error.message}\n`));
+    cliOutput.error(
+      chalk.red(`\n❌ Error during setup: ${error.message}\n`),
+      error
+    );
     process.exit(1);
   }
 }

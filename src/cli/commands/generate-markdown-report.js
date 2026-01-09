@@ -91,17 +91,17 @@ export async function generateMarkdownReport(type, id, options) {
 
     const markdown = turndownService.turndown(result.content);
 
-    console.log('='.repeat(80));
-    console.log(markdown);
-    console.log('='.repeat(80));
+    cliOutput.result('='.repeat(80));
+    cliOutput.result(markdown);
+    cliOutput.result('='.repeat(80));
 
     if (options.output) {
       const fs = await import('fs');
       fs.writeFileSync(options.output, markdown);
-      console.log(`\nMarkdown saved to: ${options.output}`);
+      cliOutput.success(`\nMarkdown saved to: ${options.output}`);
     }
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    cliOutput.error(`Error: ${error.message}`, error);
     process.exit(1);
   }
 }

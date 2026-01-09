@@ -15,7 +15,6 @@ describe('listIssues CLI', () => {
     vi.spyOn(cliOutput, 'json').mockImplementation(() => {});
     vi.spyOn(cliOutput, 'status').mockImplementation(() => {});
     vi.spyOn(cliOutput, 'success').mockImplementation(() => {});
-    vi.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => vi.restoreAllMocks());
@@ -73,6 +72,6 @@ describe('listIssues CLI', () => {
       'App1',
       {}
     );
-    expect(console.log).toHaveBeenCalled();
+    expect(cliOutput.status).toHaveBeenCalled();
   });
 });

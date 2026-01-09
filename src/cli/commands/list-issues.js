@@ -100,12 +100,14 @@ function renderSeverityGroupedIssues(issues) {
     }
 
     const color = severityColors[severity] || 'white';
-    console.log(chalk[color].bold(`${severity} (${severityIssues.length}):`));
-    console.log(header);
+    cliOutput.status(
+      chalk[color].bold(`${severity} (${severityIssues.length}):`)
+    );
+    cliOutput.status(header);
     severityIssues.forEach((issue) => {
-      console.log(formatListIssueRow(issue, color));
+      cliOutput.status(formatListIssueRow(issue, color));
     });
-    console.log('');
+    cliOutput.status('');
   });
 }
 
@@ -143,12 +145,14 @@ async function renderFixGroupedIssues(issues, service) {
         }
       }
     } catch {
-      console.error(chalk.yellow('Warning: Could not fetch FixGroup details'));
+      cliOutput.warning(
+        chalk.yellow('Warning: Could not fetch FixGroup details')
+      );
     }
   }
 
-  console.log(chalk.bold('Issues grouped by FixGroup:'));
-  console.log('');
+  cliOutput.status(chalk.bold('Issues grouped by FixGroup:'));
+  cliOutput.status('');
 
   fixGroupIds.sort((a, b) => {
     const aDetail = fixGroupDetails[a];
@@ -167,37 +171,37 @@ async function renderFixGroupedIssues(issues, service) {
 
     if (detail) {
       const severityColor = severityColors[detail.Severity] || 'white';
-      console.log(
+      cliOutput.status(
         chalk[severityColor].bold(`${detail.Subject} [${detail.Severity}]`)
       );
-      console.log(
+      cliOutput.status(
         chalk.dim(
           `  FixGroup ID: ${fixGroupId} | Issues: ${fixGroupIssues.length} | Type: ${detail.IssueType || 'N/A'}`
         )
       );
     } else {
-      console.log(chalk.bold(`FixGroup: ${fixGroupId}`));
-      console.log(chalk.dim(`  Issues: ${fixGroupIssues.length}`));
+      cliOutput.status(chalk.bold(`FixGroup: ${fixGroupId}`));
+      cliOutput.status(chalk.dim(`  Issues: ${fixGroupIssues.length}`));
     }
 
-    console.log(buildListHeader());
+    cliOutput.status(buildListHeader());
     fixGroupIssues
       .sort((a, b) => compareSeverity(b.Severity, a.Severity))
       .forEach((issue) => {
         const color = severityColors[issue.Severity] || 'white';
-        console.log(formatListIssueRow(issue, color));
+        cliOutput.status(formatListIssueRow(issue, color));
       });
-    console.log('');
+    cliOutput.status('');
   });
 
   if (grouped['No FixGroup'] && grouped['No FixGroup'].length > 0) {
-    console.log(chalk.dim.bold('Issues without FixGroup:'));
-    console.log(buildListHeader());
+    cliOutput.status(chalk.dim.bold('Issues without FixGroup:'));
+    cliOutput.status(buildListHeader());
     grouped['No FixGroup'].forEach((issue) => {
       const color = severityColors[issue.Severity] || 'white';
-      console.log(formatListIssueRow(issue, color));
+      cliOutput.status(formatListIssueRow(issue, color));
     });
-    console.log('');
+    cliOutput.status('');
   }
 }
 
@@ -219,15 +223,15 @@ function renderGroupedIssues(issues) {
     return compareSeverity(b.Severity, a.Severity);
   });
 
-  console.log(
+  cliOutput.status(
     chalk.bold('Grouped issues (Application → Issue Type → Severity):')
   );
-  console.log(buildGroupedHeader());
+  cliOutput.status(buildGroupedHeader());
   sorted.forEach((issue) => {
     const color = severityColors[issue.Severity] || 'white';
-    console.log(formatGroupedIssueRow(issue, color));
+    cliOutput.status(formatGroupedIssueRow(issue, color));
   });
-  console.log('');
+  cliOutput.status('');
 }
 
 /**

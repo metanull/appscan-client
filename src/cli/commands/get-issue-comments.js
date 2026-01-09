@@ -32,22 +32,22 @@ export async function getIssueComments(issueId, options) {
       cliOutput.success(`\nFound ${comments.length} comment(s):\n`);
 
       if (comments.length === 0) {
-        console.log('No comments found for this issue.');
+        cliOutput.status('No comments found for this issue.');
       } else {
         comments.forEach((comment, index) => {
-          console.log(chalk.bold(`Comment ${index + 1}:`));
-          console.log(`  ID: ${comment.Id || 'N/A'}`);
-          console.log(`  Author: ${comment.Author || 'N/A'}`);
-          console.log(`  Created: ${comment.CreatedAt || 'N/A'}`);
-          console.log(`  Modified: ${comment.ModifiedAt || 'N/A'}`);
-          console.log(`  Source Type: ${comment.SourceType || 'N/A'}`);
-          console.log(`  Comment: ${comment.Comment || 'N/A'}`);
-          console.log('');
+          cliOutput.status(chalk.bold(`Comment ${index + 1}:`));
+          cliOutput.status(`  ID: ${comment.Id || 'N/A'}`);
+          cliOutput.status(`  Author: ${comment.Author || 'N/A'}`);
+          cliOutput.status(`  Created: ${comment.CreatedAt || 'N/A'}`);
+          cliOutput.status(`  Modified: ${comment.ModifiedAt || 'N/A'}`);
+          cliOutput.status(`  Source Type: ${comment.SourceType || 'N/A'}`);
+          cliOutput.status(`  Comment: ${comment.Comment || 'N/A'}`);
+          cliOutput.status('');
         });
       }
     }
   } catch (error) {
-    console.error(chalk.red(`Error: ${error.message}`));
+    cliOutput.error(chalk.red(`Error: ${error.message}`), error);
     process.exit(1);
   }
 }

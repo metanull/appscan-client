@@ -32,7 +32,7 @@ export async function listScanExecutions(scanId, options) {
     } else {
       cliOutput.success(`\nFound ${executions.length} execution(s):\n`);
       executions.forEach((execution, index) => {
-        console.log(
+        cliOutput.status(
           `${index + 1}. ${chalk.bold('Execution ID:')} ${chalk.gray(execution.Id || 'N/A')}`
         );
         const statusColor =
@@ -41,20 +41,20 @@ export async function listScanExecutions(scanId, options) {
             : execution.Status === 'Failed'
               ? 'red'
               : 'yellow';
-        console.log(
+        cliOutput.status(
           `   ${chalk.dim('Status:')} ${chalk[statusColor](execution.Status || 'N/A')}`
         );
         if (execution.StartedAt) {
-          console.log(
+          cliOutput.status(
             `   ${chalk.dim('Started:')} ${new Date(execution.StartedAt).toLocaleString()}`
           );
         }
         if (execution.CompletedAt) {
-          console.log(
+          cliOutput.status(
             `   ${chalk.dim('Completed:')} ${new Date(execution.CompletedAt).toLocaleString()}`
           );
         }
-        console.log('');
+        cliOutput.status('');
       });
     }
   } catch (error) {

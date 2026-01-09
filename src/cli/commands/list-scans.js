@@ -25,12 +25,12 @@ export async function listScans(appId, options) {
     if (options.json) {
       cliOutput.json(scans);
     } else {
-      console.error(chalk.green(`\nFound ${scans.length} scan(s):\n`));
+      cliOutput.success(chalk.green(`\nFound ${scans.length} scan(s):\n`));
       scans.forEach((scan, index) => {
-        console.log(
+        cliOutput.status(
           `${index + 1}. ${chalk.bold(scan.Name || 'N/A')} ${chalk.gray(`(ID: ${scan.Id || 'N/A'})`)}`
         );
-        console.log(`   ${chalk.dim('Type:')} ${scan.ScanType || 'N/A'}`);
+        cliOutput.status(`   ${chalk.dim('Type:')} ${scan.ScanType || 'N/A'}`);
         if (scan.LatestExecution) {
           const statusColor =
             scan.LatestExecution.Status === 'Ready'
@@ -38,11 +38,11 @@ export async function listScans(appId, options) {
               : scan.LatestExecution.Status === 'Failed'
                 ? 'red'
                 : 'yellow';
-          console.log(
+          cliOutput.status(
             `   ${chalk.dim('Status:')} ${chalk[statusColor](scan.LatestExecution.Status || 'N/A')}`
           );
         }
-        console.log('');
+        cliOutput.status('');
       });
     }
   } catch (error) {

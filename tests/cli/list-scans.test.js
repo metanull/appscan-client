@@ -14,6 +14,8 @@ describe('listScans CLI', () => {
     vi.spyOn(cliOutput, 'setJsonMode').mockImplementation(() => {});
     vi.spyOn(cliOutput, 'json').mockImplementation(() => {});
     vi.spyOn(cliOutput, 'result').mockImplementation(() => {});
+    vi.spyOn(cliOutput, 'status').mockImplementation(() => {});
+    vi.spyOn(cliOutput, 'success').mockImplementation(() => {});
   });
 
   afterEach(() => vi.restoreAllMocks());
@@ -35,13 +37,8 @@ describe('listScans CLI', () => {
       service: { listScans: vi.fn().mockResolvedValue({ Items: scans }) },
     });
 
-    vi.spyOn(console, 'log').mockImplementation(() => {});
-    vi.spyOn(console, 'error').mockImplementation(() => {});
-
     await listScans('app1', { json: false });
-    expect(console.log).toHaveBeenCalled();
-
-    console.log.mockRestore();
-    console.error.mockRestore();
+    expect(cliOutput.status).toHaveBeenCalled();
+    expect(cliOutput.success).toHaveBeenCalled();
   });
 });

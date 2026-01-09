@@ -104,23 +104,14 @@ export async function generateAllReports(options) {
   const htmlGenerator = new HtmlReportGenerator();
   const outDir = path.resolve(options.outdir || DEFAULT_OUTPUT_DIR);
 
-  // Helper to show status updates; kept minimal for CLI usage
-  function writeStatus(msg) {
-    cliOutput.status(msg);
-  }
-
-  // Helper to clear status line (no-op in simple CLI)
-  function clearStatusLine() {
-    // Intentionally noop; reserved for interactive shells
-  }
-
-  writeStatus('Authenticating...');
+  // Use cliOutput.status for status updates
+  cliOutput.status('Authenticating...');
   await service.authenticate();
-  writeStatus('Authenticated');
+  cliOutput.status('Authenticated');
 
   ensureEmptyDirectory(outDir);
 
-  writeStatus('Fetching applications...');
+  cliOutput.status('Fetching applications...');
   const applicationsResponse = await service.listApplications();
   const applications = applicationsResponse.Items || [];
 
@@ -154,7 +145,7 @@ export async function generateAllReports(options) {
           'unknown-app',
       };
 
-      writeStatus(
+      cliOutput.status(
         `Generating report for scan ${scanName} (${scanTechnology})...`
       );
 
@@ -171,8 +162,7 @@ export async function generateAllReports(options) {
       }
 
       if ((issues || []).length === 0) {
-        clearStatusLine();
-        console.warn(
+        cliOutput.warning(
           `Warning: no issues found for scan ${scanName} (app: ${scanMeta.appName}) with current filters` +
             (excludeStatus ? ` (excluded status: ${excludeStatus})` : '') +
             (options.minSeverity
