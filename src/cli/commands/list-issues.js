@@ -18,6 +18,7 @@ import cliOutput from '../../utils/cli-output.js';
  * @param {boolean} [options.json] - Output in JSON format
  * @param {string} [options.excludeStatus='Noise'] - Comma-separated statuses to exclude
  * @param {boolean} [options.grouped] - Apply grouped sorting (Application → Issue Type → Severity)
+ * @param {boolean} [options.byFixgroup] - Group issues by FixGroup
  * @param {string} [options.severity] - Filter by severity
  * @param {string} [options.status] - Filter by status
  */
@@ -47,13 +48,16 @@ export async function listIssues(scanId, options) {
 
     const issues = response.Items || [];
     const groupedMode = options.grouped ?? false;
+    const byFixgroupMode = options.byFixgroup ?? false;
 
     if (options.json) {
       cliOutput.json(issues);
     } else {
       cliOutput.success(`\nFound ${issues.length} issue(s):\n`);
 
-      if (groupedMode) {
+      if (byFixgroupMode) {
+        renderFixGroupedIssues(issues, service);
+      } else if (groupedMode) {
         renderGroupedIssues(issues);
       } else {
         renderSeverityGroupedIssues(issues);
@@ -104,6 +108,101 @@ function renderSeverityGroupedIssues(issues) {
     console.log('');
   });
 }
+
+/**
+ * Render issues grouped by FixGroup
+ * @param {Array} issues - Array of issue objects
+ * @param {Object} service - AppScan service instance for fetching FixGroup details
+ */
+async function renderFixGroupedIssues(issues, service) {
+  const grouped = issues.reduce((acc, issue) => {
+    const fixGroupId = issue.FixGroupId || 'No FixGroup';
+    if (!acc[fixGroupId]) {
+      acc[fixGroupId] = [];
+    }
+    acc[fixGroupId].push(issue);
+    return acc;
+  }, {});
+
+  const fixGroupIds = Object.keys(grouped).filter((id) => id !== 'No FixGroup');
+
+  let fixGroupDetails = {};
+  if (fixGroupIds.length > 0 && service) {
+    try {
+      const appId = issues[0]?.ApplicationId;
+      if (appId) {
+        const fixGroupsResponse = await service.api.v4.FixGroups_Get(
+          'Application',
+          appId,
+          {}
+        );
+        if (fixGroupsResponse.Items) {
+          fixGroupsResponse.Items.forEach((fg) => {
+            fixGroupDetails[fg.Id] = fg;
+          });
+        }
+      }
+    } catch (error) {
+      console.error(chalk.yellow('Warning: Could not fetch FixGroup details'));
+    }
+  }
+
+  console.log(chalk.bold('Issues grouped by FixGroup:'));
+  console.log('');
+
+  fixGroupIds.sort((a, b) => {
+    const aDetail = fixGroupDetails[a];
+    const bDetail = fixGroupDetails[b];
+    if (!aDetail || !bDetail) return compare(a, b);
+
+    const severityCompare = compareSeverity(bDetail.Severity, aDetail.Severity);
+    if (severityCompare !== 0) return severityCompare;
+
+    return (bDetail.NIssues || 0) - (aDetail.NIssues || 0);
+  });
+
+  fixGroupIds.forEach((fixGroupId) => {
+    const fixGroupIssues = grouped[fixGroupId];
+    const detail = fixGroupDetails[fixGroupId];
+
+    if (detail) {
+      const severityColor = severityColors[detail.Severity] || 'white';
+      console.log(
+        chalk[severityColor].bold(`${detail.Subject} [${detail.Severity}]`)
+      );
+      console.log(
+        chalk.dim(
+          `  FixGroup ID: ${fixGroupId} | Issues: ${fixGroupIssues.length} | Type: ${detail.IssueType || 'N/A'}`
+        )
+      );
+    } else {
+      console.log(chalk.bold(`FixGroup: ${fixGroupId}`));
+      console.log(chalk.dim(`  Issues: ${fixGroupIssues.length}`));
+    }
+
+    console.log(buildListHeader());
+    fixGroupIssues
+      .sort((a, b) => compareSeverity(b.Severity, a.Severity))
+      .forEach((issue) => {
+        const color = severityColors[issue.Severity] || 'white';
+        console.log(formatListIssueRow(issue, color));
+      });
+    console.log('');
+  });
+
+  if (grouped['No FixGroup'] && grouped['No FixGroup'].length > 0) {
+    console.log(chalk.dim.bold('Issues without FixGroup:'));
+    console.log(buildListHeader());
+    grouped['No FixGroup'].forEach((issue) => {
+      const color = severityColors[issue.Severity] || 'white';
+      console.log(formatListIssueRow(issue, color));
+    });
+    console.log('');
+  }
+}
+
+/**
+ * Render issues 
 
 /**
  * Render issues with grouped sorting by Application, Issue Type, and Severity

@@ -9,6 +9,7 @@ import { listScans } from './commands/list-scans.js';
 import { listScanExecutions } from './commands/list-scan-executions.js';
 import { listIssues } from './commands/list-issues.js';
 import { listIssuesByApp } from './commands/list-issues-by-app.js';
+import { listFixGroups } from './commands/list-fixgroups.js';
 import { getIssueDetails } from './commands/get-issue-details.js';
 import { authBearer } from './commands/auth-bearer.js';
 import { generateReport } from './commands/generate-report.js';
@@ -190,6 +191,7 @@ program
     '-g, --grouped',
     'Sort issues by application, issue type, and severity before printing'
   )
+  .option('--by-fixgroup', 'Group issues by FixGroup')
   .option('--active', 'Filter active issues (Open, Reopened, InProgress)')
   .option('--inactive', 'Filter inactive issues (Noise, Passed, Fixed)')
   .option('--pending', 'Filter pending issues (Open, Reopened)')
@@ -207,6 +209,7 @@ Examples:
   $ appscan issues <scanId> --json
   $ appscan issues <scanId> --exclude-status "Noise,Ignore"
   $ appscan issues <scanId> --grouped
+  $ appscan issues <scanId> --by-fixgroup
   $ appscan issues <scanId> --active --high
   $ appscan issues <scanId> --pending --unassigned`
   )
@@ -227,6 +230,7 @@ program
     '-g, --grouped',
     'Sort issues by application, scan, issue type, and severity before printing'
   )
+  .option('--by-fixgroup', 'Group issues by FixGroup')
   .option('--active', 'Filter active issues (Open, Reopened, InProgress)')
   .option('--inactive', 'Filter inactive issues (Noise, Passed, Fixed)')
   .option('--pending', 'Filter pending issues (Open, Reopened)')
@@ -243,10 +247,40 @@ Examples:
   $ appscan list-issues-by-app <appId>
   $ appscan app-issues <appId> --json
   $ appscan app-issues <appId> --grouped
+  $ appscan app-issues <appId> --by-fixgroup
   $ appscan app-issues <appId> --active --high
   $ appscan app-issues <appId> --pending --unassigned`
   )
   .action(listIssuesByApp);
+
+program
+  .command('list-fixgroups')
+  .alias('fixgroups')
+  .description('List FixGroups for an application')
+  .argument('<appId>', 'Application ID')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .option(
+    '--status <status>',
+    'Filter by status (Open, InProgress, Fixed, Passed, Noise, etc.)'
+  )
+  .option(
+    '--severity <severity>',
+    'Filter by severity (Critical, High, Medium, Low, Informational)'
+  )
+  .option('--filter <odata>', 'Custom OData filter expression')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan list-fixgroups <appId>
+  $ appscan fixgroups <appId> --json
+  $ appscan fixgroups <appId> --status Open
+  $ appscan fixgroups <appId> --severity High
+  $ appscan fixgroups <appId> --status Open --severity Critical
+  $ appscan fixgroups <appId> --filter "NIssues gt 5"`
+  )
+  .action(listFixGroups);
 
 program
   .command('auth')
