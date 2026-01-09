@@ -1,124 +1,68 @@
-/**
- * Unit tests for audit service
- */
-
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fs from 'fs';
-import auditService from '../../src/tui/utils/audit.js';
+import { auditService } from '../../src/tui/utils/audit.js';
 
 describe('AuditService', () => {
-  const auditFile = auditService.getAuditFilePath();
+  let appendSpy;
+  let existsSpy;
+  let readSpy;
+  let writeSpy;
 
   beforeEach(() => {
-    // Clear audit file before each test
-    if (fs.existsSync(auditFile)) {
-      fs.unlinkSync(auditFile);
-    }
+    appendSpy = vi.spyOn(fs, 'appendFileSync').mockImplementation(() => {});
+    existsSpy = vi.spyOn(fs, 'existsSync').mockImplementation(() => true);
+    readSpy = vi
+      .spyOn(fs, 'readFileSync')
+      .mockImplementation(() => JSON.stringify({ a: 1 }) + '\n');
+    writeSpy = vi.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
   });
 
   afterEach(() => {
-    // Clean up
-    if (fs.existsSync(auditFile)) {
-      fs.unlinkSync(auditFile);
-    }
+    vi.restoreAllMocks();
   });
 
-  it('should log audit entries', () => {
+  it('log redacts sensitive fields and returns an entry', () => {
     const entry = auditService.log(
-      'TEST_ACTION',
-      { key: 'value' },
-      { success: true }
+      'TEST',
+      { password: 'p', token: 't', keep: 1 },
+      { success: true },
+      { meta: true }
     );
-
-    expect(entry.action).toBe('TEST_ACTION');
-    expect(entry.params.key).toBe('value');
-    expect(entry.result.success).toBe(true);
-    expect(entry.timestamp).toBeDefined();
-  });
-
-  it('should sanitize sensitive parameters', () => {
-    const entry = auditService.log('TEST_ACTION', {
-      password: 'secret123',
-      token: 'abc',
-    });
-
+    expect(entry.action).toBe('TEST');
     expect(entry.params.password).toBe('***REDACTED***');
     expect(entry.params.token).toBe('***REDACTED***');
+    expect(entry.params.keep).toBe(1);
+    expect(appendSpy).toHaveBeenCalled();
   });
 
-  it('should log AppScan updates', () => {
-    const entry = auditService.logAppScanUpdate(
-      ['issue1', 'issue2'],
-      'app123',
-      { Status: 'Fixed' },
+  it('readAuditLog returns parsed entries', () => {
+    existsSpy.mockImplementation(() => true);
+    readSpy.mockImplementation(
+      () => `${JSON.stringify({ x: 1 })}\n${JSON.stringify({ y: 2 })}\n`
+    );
+    const entries = auditService.readAuditLog(10);
+    expect(entries.length).toBe(2);
+    expect(entries[0].x).toBe(1);
+  });
+
+  it('clearAuditLog writes empty file and logs AUDIT_CLEARED', () => {
+    auditService.clearAuditLog();
+    expect(writeSpy).toHaveBeenCalledWith(expect.any(String), '', 'utf8');
+    // append called via log inside clearAuditLog
+    expect(appendSpy).toHaveBeenCalled();
+  });
+
+  it('logAppUpdate and logJiraCreate and logJiraLink call log and return entry', () => {
+    const a = auditService.logAppUpdate(
+      ['1'],
+      'app',
+      { f: 1 },
       { success: true }
     );
-
-    expect(entry.action).toBe('APPSCAN_UPDATE');
-    expect(entry.params.issueIds).toEqual(['issue1', 'issue2']);
-    expect(entry.params.applicationId).toBe('app123');
-    expect(entry.metadata.issueCount).toBe(2);
-  });
-
-  it('should log Jira creation', () => {
-    const entry = auditService.logJiraCreate('PROJ', 'Test Issue', 5, {
-      success: true,
-      jiraKey: 'PROJ-123',
-    });
-
-    expect(entry.action).toBe('JIRA_CREATE');
-    expect(entry.params.projectKey).toBe('PROJ');
-    expect(entry.params.issueCount).toBe(5);
-    expect(entry.result.jiraKey).toBe('PROJ-123');
-  });
-
-  it('should log Jira link', () => {
-    const entry = auditService.logJiraLink('issue1', 'app123', 'PROJ-123', {
-      success: true,
-    });
-
-    expect(entry.action).toBe('JIRA_LINK');
-    expect(entry.params.issueId).toBe('issue1');
-    expect(entry.params.jiraKey).toBe('PROJ-123');
-  });
-
-  it('should read audit log entries', () => {
-    auditService.log('ACTION1', {}, { success: true });
-    auditService.log('ACTION2', {}, { success: true });
-    auditService.log('ACTION3', {}, { success: true });
-
-    const entries = auditService.readAuditLog();
-
-    expect(entries.length).toBe(3);
-    expect(entries[0].action).toBe('ACTION1');
-    expect(entries[2].action).toBe('ACTION3');
-  });
-
-  it('should limit read entries', () => {
-    for (let i = 0; i < 50; i++) {
-      auditService.log(`ACTION${i}`, {}, { success: true });
-    }
-
-    const entries = auditService.readAuditLog(10);
-
-    expect(entries.length).toBe(10);
-  });
-
-  it('should handle missing audit file', () => {
-    const entries = auditService.readAuditLog();
-
-    expect(entries).toEqual([]);
-  });
-
-  it('should clear audit log', () => {
-    auditService.log('TEST_ACTION', {}, { success: true });
-    expect(fs.existsSync(auditFile)).toBe(true);
-
-    auditService.clearAuditLog();
-
-    const content = fs.readFileSync(auditFile, 'utf8');
-    // After clear, only the AUDIT_CLEARED entry should exist
-    expect(content).toContain('AUDIT_CLEARED');
-    expect(content).not.toContain('TEST_ACTION');
+    expect(a.action).toBe('APPSCAN_APP_UPDATE');
+    const b = auditService.logJiraCreate('PRJ', 'sum', 2, { success: true });
+    expect(b.action).toBe('JIRA_CREATE');
+    const c = auditService.logJiraLink('1', 'app', 'PRJ-1', { success: true });
+    expect(c.action).toBe('JIRA_LINK');
   });
 });

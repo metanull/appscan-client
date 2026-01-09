@@ -10,7 +10,10 @@ import { marked } from 'marked';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 
 /**
- * Extract plain text from marked tokens (handles inline formatting)
+ * Extract plain text from marked tokens recursively
+ *
+ * @param {Object|string} token - Marked token or string
+ * @returns {string}
  */
 const extractText = (token) => {
   if (typeof token === 'string') return token;
@@ -20,7 +23,10 @@ const extractText = (token) => {
 };
 
 /**
- * Convert marked tokens into renderable line elements
+ * Convert marked tokens into renderable line elements with styling
+ *
+ * @param {Array} tokens - Array of marked tokens
+ * @returns {Array<Object>} Array of line objects with type, text, and styling props
  */
 const tokensToLines = (tokens) => {
   const lines = [];
@@ -70,7 +76,6 @@ const tokensToLines = (tokens) => {
             color: 'white',
           });
 
-          // Handle nested lists
           if (item.tokens) {
             item.tokens.forEach((subToken) => {
               if (subToken.type === 'list') {
@@ -130,7 +135,6 @@ const tokensToLines = (tokens) => {
         break;
 
       default:
-        // Handle other token types as plain text
         const text = extractText(token);
         if (text && text.trim()) {
           addLine('text', text, { color: 'white' });
@@ -143,6 +147,16 @@ const tokensToLines = (tokens) => {
   return lines;
 };
 
+/**
+ * Scrollable markdown content viewer with syntax highlighting
+ *
+ * @param {Object} props
+ * @param {string} props.markdown - Markdown content to render
+ * @param {number} [props.maxHeight] - Maximum height in lines
+ * @param {boolean} [props.enableScrolling=true] - Whether to enable scrolling
+ * @param {number} [props.maxWidth] - Maximum width in characters
+ * @returns {JSX.Element}
+ */
 export const MarkdownBox = React.memo(
   ({ markdown, maxHeight, enableScrolling = true, maxWidth }) => {
     const [scrollOffset, setScrollOffset] = useState(0);
@@ -172,7 +186,6 @@ export const MarkdownBox = React.memo(
     // Calculate content width (90% of modal width minus padding)
     const contentWidth = maxWidth || Math.floor(terminalWidth * 0.9) - 10;
 
-    // Handle scrolling
     useInput(
       (input, key) => {
         if (!enableScrolling) return;

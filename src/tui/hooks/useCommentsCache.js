@@ -10,12 +10,18 @@ import { debounce } from '../../utils/debounce.js';
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 const FETCH_DEBOUNCE_DELAY = 300; // 300ms
 
+/**
+ * Caches and retrieves issue comments to minimize API calls with debounced fetching
+ * @param {string} issueId - The issue ID to fetch comments for
+ * @param {Function} fetchFunction - Async function that fetches comments for given ID
+ * @returns {{comments: Array, loading: boolean, error: string|null, isCached: boolean}} Comments array, loading state, error message, and cache status
+ */
 export function useCommentsCache(issueId, fetchFunction) {
   const commentsCache = useStore((state) => state.commentsCache);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Create debounced fetch function - use getState() to avoid setter dependency
+  // use getState() to avoid setter dependency
   const debouncedFetch = useCallback(
     debounce(async (id) => {
       if (!id || !fetchFunction) return;
@@ -25,14 +31,14 @@ export function useCommentsCache(issueId, fetchFunction) {
 
       try {
         const comments = await fetchFunction(id);
-        useStore.getState().setCommentsCache(id, comments); // Use getState() instead of prop
+        useStore.getState().setCommentsCache(id, comments);
       } catch (err) {
         setError(err.message || 'Failed to fetch comments');
       } finally {
         setLoading(false);
       }
     }, FETCH_DEBOUNCE_DELAY),
-    [fetchFunction] // Only depend on fetchFunction, not setCommentsCache
+    [fetchFunction]
   );
 
   useEffect(() => {

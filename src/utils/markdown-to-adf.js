@@ -162,8 +162,9 @@ function tokenToADF(token) {
 }
 
 /**
- * Convert list item to ADF listItem node
- * Per docs: listItem must contain at least one of: paragraph, bulletList, orderedList, codeBlock, mediaSingle
+ * Convert list item to ADF listItem with required content
+ * @param {Object} item - Marked list item token
+ * @returns {Object} ADF listItem node
  * @private
  */
 function listItemToADF(item) {
@@ -208,8 +209,9 @@ function listItemToADF(item) {
 }
 
 /**
- * Convert table token to ADF table node
- * Per docs: table cells require attrs object, tableRow contains tableHeader or tableCell
+ * Convert table to ADF with headers and rows
+ * @param {Object} token - Marked table token
+ * @returns {Object|null} ADF table node
  * @private
  */
 function tableToADF(token) {
@@ -265,8 +267,9 @@ function tableToADF(token) {
 }
 
 /**
- * Convert inline tokens (bold, italic, links, etc.) to ADF content
- * Returns array of inline nodes (text, hardBreak, etc.)
+ * Convert inline tokens to ADF content array
+ * @param {Array} tokens - Array of inline tokens
+ * @returns {Array} Array of ADF inline nodes
  * @private
  */
 function inlineTokensToADF(tokens) {
@@ -291,8 +294,9 @@ function inlineTokensToADF(tokens) {
 }
 
 /**
- * Convert a single inline token to ADF node(s)
- * Returns text node with optional marks, or hardBreak node
+ * Convert single inline token to ADF text node with marks
+ * @param {Object} token - Inline token (text, strong, em, link, etc.)
+ * @returns {Object|Array|null} ADF node(s) or null
  * @private
  */
 function inlineTokenToADF(token) {
@@ -381,7 +385,9 @@ function inlineTokenToADF(token) {
 }
 
 /**
- * Extract plain text from token recursively
+ * Recursively extract plain text from token tree
+ * @param {Object|string} token - Token or string
+ * @returns {string} Plain text
  * @private
  */
 function extractText(token) {

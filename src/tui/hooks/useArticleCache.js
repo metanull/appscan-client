@@ -10,12 +10,18 @@ import { debounce } from '../../utils/debounce.js';
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 const FETCH_DEBOUNCE_DELAY = 300; // 300ms
 
+/**
+ * Caches and retrieves issue articles to minimize API calls with debounced fetching
+ * @param {string} issueId - The issue ID to fetch article for
+ * @param {Function} fetchFunction - Async function that fetches article content for given ID
+ * @returns {{content: string|null, loading: boolean, error: string|null, isCached: boolean}} Article data, loading state, error message, and cache status
+ */
 export function useArticleCache(issueId, fetchFunction) {
   const articleCache = useStore((state) => state.articleCache);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Create debounced fetch function - use getState() to avoid setter dependency
+  // use getState() to avoid setter dependency
   const debouncedFetch = useCallback(
     debounce(async (id) => {
       if (!id || !fetchFunction) return;
@@ -25,14 +31,14 @@ export function useArticleCache(issueId, fetchFunction) {
 
       try {
         const content = await fetchFunction(id);
-        useStore.getState().setArticleCache(id, content); // Use getState() instead of prop
+        useStore.getState().setArticleCache(id, content);
       } catch (err) {
         setError(err.message || 'Failed to fetch article');
       } finally {
         setLoading(false);
       }
     }, FETCH_DEBOUNCE_DELAY),
-    [fetchFunction] // Only depend on fetchFunction, not setArticleCache
+    [fetchFunction]
   );
 
   useEffect(() => {

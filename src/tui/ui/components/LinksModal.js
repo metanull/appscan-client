@@ -13,6 +13,19 @@ import { parseAVSFromComments } from '../../../utils/asvs-utils.js';
 import * as AppScanUrls from '../../../utils/appscan-urls.js';
 import logger from '../../../utils/logger.js';
 
+/**
+ * Modal dialog displaying related links for an issue
+ * Includes AppScan, Azure DevOps, Jira, and other external links
+ *
+ * @param {Object} props
+ * @param {Object} props.issue - Issue object with link information
+ * @param {Object} props.app - Application object with custom fields
+ * @param {Object} props.scan - Scan object
+ * @param {Object} props.config - Configuration for URL generation
+ * @param {Object} props.appScanService - Service for URL generation
+ * @param {Function} props.onClose - Callback when modal is closed
+ * @returns {JSX.Element}
+ */
 export const LinksModal = React.memo(
   ({ issue, app, scan, config, appScanService, onClose }) => {
     const [cursor, setCursor] = useState(0);

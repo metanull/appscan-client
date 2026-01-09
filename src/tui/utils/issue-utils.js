@@ -20,7 +20,10 @@ export const SEVERITY_COLORS = {
 };
 
 /**
- * Group issues by a specific property
+ * Group issues by property and sort by severity
+ * @param {Array} issues - Issues to group
+ * @param {string} property - Property to group by (default: IssueType)
+ * @returns {Array<{name: string, severity: string, issues: Array}>} Grouped issues
  */
 export function groupIssuesBy(issues, property = 'IssueType') {
   const grouped = {};
@@ -37,7 +40,6 @@ export function groupIssuesBy(issues, property = 'IssueType') {
     grouped[key].issues.push(issue);
   });
 
-  // Sort groups by severity
   return Object.values(grouped).sort((a, b) => {
     return (
       (SEVERITY_ORDER[b.severity] || 0) - (SEVERITY_ORDER[a.severity] || 0)
@@ -46,7 +48,9 @@ export function groupIssuesBy(issues, property = 'IssueType') {
 }
 
 /**
- * Calculate issue statistics
+ * Calculate comprehensive issue statistics
+ * @param {Array} issues - Issues to analyze
+ * @returns {Object} Stats including counts by severity, status, type, and Jira presence
  */
 export function calculateStats(issues) {
   const stats = {
@@ -63,21 +67,17 @@ export function calculateStats(issues) {
   };
 
   issues.forEach((issue) => {
-    // Count by severity
     const severity = issue.Severity || 'Unknown';
     if (stats[severity] !== undefined) {
       stats[severity]++;
     }
 
-    // Count by status
     const status = issue.Status || 'Unknown';
     stats.byStatus[status] = (stats.byStatus[status] || 0) + 1;
 
-    // Count by type
     const type = issue.IssueType || 'Unknown';
     stats.byType[type] = (stats.byType[type] || 0) + 1;
 
-    // Count Jira presence
     if (issue.ExternalId && issue.ExternalId.trim() !== '') {
       stats.withJira++;
     } else {
@@ -89,7 +89,9 @@ export function calculateStats(issues) {
 }
 
 /**
- * Get severity badge text
+ * Get severity badge for display
+ * @param {string} severity - Severity level
+ * @returns {string} Badge like [C], [H], [M], [L], [I]
  */
 export function getSeverityBadge(severity) {
   const badges = {
@@ -114,6 +116,7 @@ export function filterIssues(issues, filters = {}) {
     severity,
     issueType,
     jira,
+    fixgroup,
     searchText,
     sortBy = 'severity',
   } = filters;
@@ -130,6 +133,13 @@ export function filterIssues(issues, filters = {}) {
 
   if (issueType) {
     filtered = filtered.filter((i) => i.IssueType === issueType);
+  }
+
+  if (fixgroup) {
+    // Normalize comparison to strings to handle numeric/string id mismatches
+    filtered = filtered.filter(
+      (i) => String(i.FixGroupId) === String(fixgroup)
+    );
   }
 
   if (jira === 'with') {
@@ -152,8 +162,6 @@ export function filterIssues(issues, filters = {}) {
     );
   }
 
-  // Apply sorting
-  // Use local severity order to match AppContext logic (0 is highest priority)
   const severityOrder = {
     Critical: 0,
     High: 1,
@@ -186,7 +194,9 @@ export function filterIssues(issues, filters = {}) {
 }
 
 /**
- * Get status badge text
+ * Get status emoji badge
+ * @param {string} status - Issue status
+ * @returns {string} Emoji representing status
  */
 export function getStatusBadge(status) {
   const badges = {
@@ -201,7 +211,9 @@ export function getStatusBadge(status) {
 }
 
 /**
- * Format issue for display
+ * Format issue as single line with badges
+ * @param {Object} issue - Issue object
+ * @returns {string} Formatted string with severity, status, type, location, Jira
  */
 export function formatIssueForDisplay(issue) {
   const severity = getSeverityBadge(issue.Severity);

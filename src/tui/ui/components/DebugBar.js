@@ -7,6 +7,14 @@
 import React from 'react';
 import { Box, Text } from 'ink';
 
+/**
+ * Debug bar component that displays debug messages at the bottom of the screen
+ *
+ * @param {Object} props
+ * @param {string} props.message - Debug message to display
+ * @param {boolean} [props.visible=false] - Whether the debug bar should be visible
+ * @returns {JSX.Element|null}
+ */
 export const DebugBar = React.memo(({ message, visible = false }) => {
   if (!visible) {
     return null;

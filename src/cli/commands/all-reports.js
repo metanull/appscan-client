@@ -8,6 +8,11 @@ import cliOutput from '../../utils/cli-output.js';
 
 const DEFAULT_OUTPUT_DIR = './reports';
 
+/**
+ * Normalize technology filter string to array of lowercase tokens
+ * @param {string} value - Comma-separated technology filter
+ * @returns {Array<string>} Array of normalized technology names
+ */
 function normalizeTechnologyFilter(value) {
   if (!value) {
     return [];
@@ -19,6 +24,11 @@ function normalizeTechnologyFilter(value) {
     .map((token) => token.toLowerCase());
 }
 
+/**
+ * Ensure output directory exists and is empty
+ * @param {string} outDir - Output directory path
+ * @throws {Error} If directory is not empty or path is not a directory
+ */
 function ensureEmptyDirectory(outDir) {
   if (fs.existsSync(outDir)) {
     const stat = fs.statSync(outDir);
@@ -35,6 +45,11 @@ function ensureEmptyDirectory(outDir) {
   }
 }
 
+/**
+ * Sanitize a string for use as a filename
+ * @param {string} value - String to sanitize
+ * @returns {string} Sanitized filename
+ */
 function sanitizeFileName(value) {
   if (!value) {
     return 'report';
@@ -45,6 +60,11 @@ function sanitizeFileName(value) {
     .slice(0, 255);
 }
 
+/**
+ * Format a timestamp for use in filenames
+ * @param {string} value - Timestamp string
+ * @returns {string} Formatted timestamp with colons replaced by dashes
+ */
 function formatTimestamp(value) {
   if (!value) {
     return 'unknown-date';
@@ -56,6 +76,18 @@ function formatTimestamp(value) {
   return date.toISOString().replace(/:/g, '-');
 }
 
+/**
+ * Generate reports for all scans across all applications
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ * @param {boolean} [options.html] - Generate HTML reports instead of Markdown
+ * @param {string} [options.outdir='./reports'] - Output directory path
+ * @param {boolean} [options.grouped] - Apply grouped sorting
+ * @param {string} [options.columns] - Force columns: sast, dast, sca, all
+ * @param {string} [options.excludeStatus='Noise'] - Comma-separated statuses to exclude
+ * @param {string} [options.technology] - Comma-separated technology filter (e.g., 'sast,dast')
+ * @param {string} [options.minSeverity='3'] - Minimum severity integer 0-5
+ */
 export async function generateAllReports(options) {
   const config = options.config
     ? Config.loadFromFile(options.config)
@@ -71,13 +103,15 @@ export async function generateAllReports(options) {
   const markdownGenerator = new MarkdownReportGenerator();
   const htmlGenerator = new HtmlReportGenerator();
   const outDir = path.resolve(options.outdir || DEFAULT_OUTPUT_DIR);
-  writeStatus('Authenticating...');
+
+  // Use cliOutput.status for status updates
+  cliOutput.status('Authenticating...');
   await service.authenticate();
-  writeStatus('Authenticated');
+  cliOutput.status('Authenticated');
 
   ensureEmptyDirectory(outDir);
 
-  writeStatus('Fetching applications...');
+  cliOutput.status('Fetching applications...');
   const applicationsResponse = await service.listApplications();
   const applications = applicationsResponse.Items || [];
 
@@ -111,7 +145,7 @@ export async function generateAllReports(options) {
           'unknown-app',
       };
 
-      writeStatus(
+      cliOutput.status(
         `Generating report for scan ${scanName} (${scanTechnology})...`
       );
 
@@ -128,8 +162,7 @@ export async function generateAllReports(options) {
       }
 
       if ((issues || []).length === 0) {
-        clearStatusLine();
-        console.warn(
+        cliOutput.warning(
           `Warning: no issues found for scan ${scanName} (app: ${scanMeta.appName}) with current filters` +
             (excludeStatus ? ` (excluded status: ${excludeStatus})` : '') +
             (options.minSeverity

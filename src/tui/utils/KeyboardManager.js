@@ -25,8 +25,10 @@ export const KeyboardMode = {
 const KeyboardContext = createContext(null);
 
 /**
- * Keyboard Manager Provider
- * Wraps the entire app to manage keyboard state
+ * Keyboard Manager Provider - wraps the entire app to manage keyboard state
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Child components
+ * @returns {JSX.Element} Provider component
  */
 export const KeyboardProvider = ({ children }) => {
   const [mode, setMode] = useState(KeyboardMode.NORMAL);
@@ -47,6 +49,7 @@ export const KeyboardProvider = ({ children }) => {
 
   /**
    * Unregister a keyboard handler
+   * @param {string} id - Unique identifier for the handler
    */
   const unregisterHandler = useCallback((id) => {
     handlersRef.current.delete(id);
@@ -55,6 +58,8 @@ export const KeyboardProvider = ({ children }) => {
 
   /**
    * Set keyboard mode
+   * @param {string} newMode - New keyboard mode from KeyboardMode enum
+   * @param {string} [inputId] - Optional input identifier for INPUT mode
    */
   const setKeyboardMode = useCallback(
     (newMode, inputId = null) => {
@@ -67,6 +72,10 @@ export const KeyboardProvider = ({ children }) => {
 
   /**
    * Throttle function to prevent rapid repeated actions
+   * @param {string} key - Unique key for the throttle
+   * @param {Function} callback - Function to execute
+   * @param {number} [delay=100] - Minimum delay between executions in milliseconds
+   * @returns {boolean} True if callback was executed, false if throttled
    */
   const throttle = useCallback((key, callback, delay = 100) => {
     const now = Date.now();
@@ -87,7 +96,6 @@ export const KeyboardProvider = ({ children }) => {
   useInput(
     (input, key) => {
       try {
-        // In INPUT or MODAL mode, don't process global shortcuts
         if (mode === KeyboardMode.INPUT || mode === KeyboardMode.MODAL) {
           logger.debug('Input blocked - mode is INPUT or MODAL', { mode });
           return;
@@ -98,13 +106,10 @@ export const KeyboardProvider = ({ children }) => {
           return;
         }
 
-        // Get handlers sorted by priority
         const handlers = Array.from(handlersRef.current.entries()).sort(
           ([, a], [, b]) => b.priority - a.priority
         );
 
-        // Execute handlers in priority order
-        // If a handler returns true, stop propagation
         for (const [id, { handler }] of handlers) {
           try {
             const shouldStopPropagation = handler(input, key);
@@ -142,7 +147,9 @@ export const KeyboardProvider = ({ children }) => {
 };
 
 /**
- * Hook to access keyboard manager
+ * Hook to access keyboard manager context
+ * @returns {{mode: string, activeInputId: string, setKeyboardMode: Function, registerHandler: Function, unregisterHandler: Function, throttle: Function}} Keyboard manager context
+ * @throws {Error} If used outside KeyboardProvider
  */
 export const useKeyboardManager = () => {
   const context = useContext(KeyboardContext);
@@ -155,11 +162,9 @@ export const useKeyboardManager = () => {
 };
 
 /**
- * Hook to register keyboard shortcuts
- * Automatically unregisters on unmount
- *
- * @param {Function} handler - Handler function
- * @param {object} options - Configuration options
+ * Hook to register keyboard shortcuts that automatically unregister on unmount
+ * @param {Function} handler - Handler function (input, key) => boolean
+ * @param {Object} [options] - Configuration options
  * @param {number} options.priority - Handler priority (default: 0)
  * @param {boolean} options.enabled - Whether handler is enabled (default: true)
  * @param {Array} options.deps - Dependencies array for handler

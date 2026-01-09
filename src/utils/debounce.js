@@ -6,7 +6,7 @@
 /**
  * Debounce function - delays execution until after a pause
  * @param {Function} func - Function to debounce
- * @param {number} delay - Delay in milliseconds
+ * @param {number} delay - Delay in milliseconds (default 300ms provides good balance for user input)
  * @returns {Function} Debounced function
  */
 export function debounce(func, delay = 300) {
@@ -62,24 +62,35 @@ export function throttle(func, limit = 100) {
 export function debounceAsync(func, delay = 300) {
   let timeoutId;
   let pendingPromise = null;
+  let resolveRef = null;
+  let rejectRef = null;
+  let lastArgs = null;
 
   return function (...args) {
-    clearTimeout(timeoutId);
+    lastArgs = args;
 
     if (!pendingPromise) {
       pendingPromise = new Promise((resolve, reject) => {
-        timeoutId = setTimeout(async () => {
-          try {
-            const result = await func.apply(this, args);
-            resolve(result);
-          } catch (error) {
-            reject(error);
-          } finally {
-            pendingPromise = null;
-          }
-        }, delay);
+        resolveRef = resolve;
+        rejectRef = reject;
+      }).finally(() => {
+        pendingPromise = null;
+        resolveRef = null;
+        rejectRef = null;
+        lastArgs = null;
       });
     }
+
+    // Always reset the timeout to debounce
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(async () => {
+      try {
+        const result = await func.apply(this, lastArgs);
+        if (resolveRef) resolveRef(result);
+      } catch (error) {
+        if (rejectRef) rejectRef(error);
+      }
+    }, delay);
 
     return pendingPromise;
   };

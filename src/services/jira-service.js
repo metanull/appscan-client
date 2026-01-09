@@ -81,50 +81,6 @@ export class JiraService {
     }
   }
 
-  /**
-   * Parse inline content (links, bold, etc.)
-   * @deprecated - Kept for backward compatibility, but convertToADF now uses marked
-   */
-  parseInlineContent(text) {
-    const content = [];
-
-    // Simple link pattern: [text](url)
-    const linkPattern = /\[([^\]]+)\]\(([^\)]+)\)/g;
-    let lastIndex = 0;
-    let match;
-
-    while ((match = linkPattern.exec(text)) !== null) {
-      // Add text before link
-      if (match.index > lastIndex) {
-        const beforeText = text.substring(lastIndex, match.index);
-        if (beforeText) {
-          content.push({ type: 'text', text: beforeText });
-        }
-      }
-
-      // Add link
-      content.push({
-        type: 'text',
-        text: match[1],
-        marks: [
-          {
-            type: 'link',
-            attrs: { href: match[2] },
-          },
-        ],
-      });
-
-      lastIndex = match.index + match[0].length;
-    }
-
-    // Add remaining text
-    if (lastIndex < text.length) {
-      content.push({ type: 'text', text: text.substring(lastIndex) });
-    }
-
-    return content.length > 0 ? content : [{ type: 'text', text: text }];
-  }
-
   async createIssue(
     projectKey,
     summary,

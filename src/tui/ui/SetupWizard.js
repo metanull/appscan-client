@@ -1,8 +1,3 @@
-/**
- * SetupWizard Component
- * Interactive setup wizard for configuring AppScan and JIRA credentials
- */
-
 import React, { useState } from 'react';
 import { Box, Text, useInput, useApp } from 'ink';
 import TextInput from 'ink-text-input';
@@ -26,6 +21,14 @@ const STEPS = {
   COMPLETE: 'complete',
 };
 
+/**
+ * Interactive setup wizard for configuring AppScan and JIRA credentials
+ * Guides users through multi-step configuration process
+ * @param {Object} props - Component props
+ * @param {Function} props.onComplete - Callback when setup is complete
+ * @param {Function} props.onCancel - Callback when setup is cancelled
+ * @returns {JSX.Element}
+ */
 export const SetupWizard = ({ onComplete, onCancel }) => {
   const { exit } = useApp();
   const [step, setStep] = useState(STEPS.WELCOME);

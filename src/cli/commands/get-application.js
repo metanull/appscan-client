@@ -7,7 +7,10 @@ import cliOutput from '../../utils/cli-output.js';
 
 /**
  * Get detailed information about a specific application
- * Displays all application details including custom fields (simplified structure)
+ * @param {string} applicationId - Application ID to retrieve
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ * @param {boolean} [options.json] - Output in JSON format
  */
 export async function getApplication(applicationId, options) {
   try {
@@ -24,7 +27,6 @@ export async function getApplication(applicationId, options) {
         `\n${chalk.bold.green('📱 Application:')} ${chalk.bold(app.Name)}\n`
       );
 
-      // Basic Information
       cliOutput.result(chalk.bold.cyan('Basic Information:'));
       cliOutput.result(`  ${chalk.bold('ID:')} ${app.Id}`);
       cliOutput.result(`  ${chalk.bold('Name:')} ${app.Name}`);
@@ -42,7 +44,6 @@ export async function getApplication(applicationId, options) {
       }
       cliOutput.result('');
 
-      // Risk & Testing
       cliOutput.result(chalk.bold.cyan('Risk & Testing:'));
       cliOutput.result(
         `  ${chalk.bold('Risk Rating:')} ${app.RiskRating || 'Unknown'}`
@@ -55,7 +56,6 @@ export async function getApplication(applicationId, options) {
       );
       cliOutput.result('');
 
-      // Issues Summary
       cliOutput.result(chalk.bold.cyan('Issues Summary:'));
       cliOutput.result(
         `  ${chalk.bold('Total:')} ${app.TotalIssues || 0} | ${chalk.bold('Open:')} ${app.OpenIssues || 0} | ${chalk.bold('New:')} ${app.NewIssues || 0}`
@@ -75,7 +75,6 @@ export async function getApplication(applicationId, options) {
       }
       cliOutput.result('');
 
-      // Scans
       cliOutput.result(chalk.bold.cyan('Scans:'));
       cliOutput.result(`  ${chalk.bold('Total:')} ${app.TotalScans || 0}`);
       if (app.NScanExecutions) {
@@ -90,7 +89,6 @@ export async function getApplication(applicationId, options) {
       }
       cliOutput.result('');
 
-      // Custom Fields
       if (app.customFields && Object.keys(app.customFields).length > 0) {
         cliOutput.result(chalk.bold.cyan('Custom Fields:'));
 
@@ -115,7 +113,6 @@ export async function getApplication(applicationId, options) {
         cliOutput.result('');
       }
 
-      // Contacts
       const hasContacts =
         app.DevelopmentContact || app.BusinessOwner || app.Tester;
       if (hasContacts) {
@@ -136,7 +133,6 @@ export async function getApplication(applicationId, options) {
         cliOutput.result('');
       }
 
-      // Timestamps
       cliOutput.result(chalk.bold.cyan('Timestamps:'));
       if (app.DateCreated) {
         cliOutput.result(`  ${chalk.bold('Created:')} ${app.DateCreated}`);
@@ -146,7 +142,6 @@ export async function getApplication(applicationId, options) {
       }
       cliOutput.result('');
 
-      // Security Requirements
       cliOutput.result(chalk.bold.cyan('Security Requirements:'));
       cliOutput.result(
         `  ${chalk.bold('Confidentiality:')} ${app.ConfidentialityRequirement || 'NotDefined'}`
@@ -159,7 +154,6 @@ export async function getApplication(applicationId, options) {
       );
       cliOutput.result('');
 
-      // Asset Group
       if (app.AssetGroupName || app.AssetGroupId) {
         cliOutput.result(chalk.bold.cyan('Asset Group:'));
         if (app.AssetGroupName)

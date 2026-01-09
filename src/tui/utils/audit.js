@@ -45,11 +45,13 @@ class AuditService {
 
   /**
    * Sanitize parameters to remove sensitive information
+   * @param {Object} params - Parameters to sanitize
+   * @returns {Object} Sanitized parameters with sensitive fields redacted
+   * @private
    */
   _sanitizeParams(params) {
     const sanitized = { ...params };
 
-    // Remove sensitive fields
     const sensitiveFields = [
       'password',
       'token',
@@ -69,6 +71,11 @@ class AuditService {
 
   /**
    * Log AppScan issue update
+   * @param {string|string[]} issueIds - Issue ID(s) being updated
+   * @param {string} applicationId - Application ID
+   * @param {Object} updateData - Update data
+   * @param {Object} result - Result of the update operation
+   * @returns {Object} Audit log entry
    */
   logAppScanUpdate(issueIds, applicationId, updateData, result) {
     return this.log(
@@ -87,6 +94,11 @@ class AuditService {
 
   /**
    * Log Jira issue creation
+   * @param {string} projectKey - Jira project key
+   * @param {string} summary - Issue summary
+   * @param {number} issueCount - Number of issues created
+   * @param {Object} result - Result of the creation operation
+   * @returns {Object} Audit log entry
    */
   logJiraCreate(projectKey, summary, issueCount, result) {
     return this.log(
@@ -102,6 +114,11 @@ class AuditService {
 
   /**
    * Log Jira issue link
+   * @param {string} issueId - AppScan issue ID
+   * @param {string} applicationId - Application ID
+   * @param {string} jiraKey - Jira issue key
+   * @param {Object} result - Result of the link operation
+   * @returns {Object} Audit log entry
    */
   logJiraLink(issueId, applicationId, jiraKey, result) {
     return this.log(
@@ -116,7 +133,29 @@ class AuditService {
   }
 
   /**
+   * Log AppScan application update
+   * @param {string} applicationId - Application ID
+   * @param {Object} updateData - Update data
+   * @param {Object} result - Result of the update operation
+   * @returns {Object} Audit log entry
+   */
+  logAppUpdate(applicationId, updateData, result) {
+    return this.log(
+      'APPSCAN_APP_UPDATE',
+      {
+        applicationId,
+        updateData,
+      },
+      result,
+      {
+        fields: Object.keys(updateData),
+      }
+    );
+  }
+
+  /**
    * Get audit log file path
+   * @returns {string} Absolute path to the audit log file
    */
   getAuditFilePath() {
     return AUDIT_FILE;
@@ -136,7 +175,6 @@ class AuditService {
       const content = fs.readFileSync(AUDIT_FILE, 'utf8');
       const lines = content.trim().split('\n').filter(Boolean);
 
-      // Get last N entries
       const recentLines = lines.slice(-limit);
 
       return recentLines
@@ -155,7 +193,7 @@ class AuditService {
   }
 
   /**
-   * Clear audit log
+   * Clear audit log by removing all entries
    */
   clearAuditLog() {
     try {
@@ -167,6 +205,5 @@ class AuditService {
   }
 }
 
-// Export singleton instance
 export const auditService = new AuditService();
 export default auditService;

@@ -1,6 +1,7 @@
 [![CodeQL](https://github.com/metanull/appscan-client/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/metanull/appscan-client/actions/workflows/github-code-scanning/codeql)
-[![Create Release](https://github.com/metanull/appscan-client/actions/workflows/release.yml/badge.svg)](https://github.com/metanull/appscan-client/actions/workflows/release.yml)
-[![Publish Package to GitHub Packages](https://github.com/metanull/appscan-client/actions/workflows/publish.yml/badge.svg)](https://github.com/metanull/appscan-client/actions/workflows/publish.yml)
+[![Quality Check](https://github.com/metanull/appscan-client/actions/workflows/validate.yml/badge.svg)](https://github.com/metanull/appscan-client/actions/workflows/validate.yml)
+[![Publish Release](https://github.com/metanull/appscan-client/actions/workflows/release.yml/badge.svg)](https://github.com/metanull/appscan-client/actions/workflows/release.yml)
+[![Publish Package](https://github.com/metanull/appscan-client/actions/workflows/publish.yml/badge.svg)](https://github.com/metanull/appscan-client/actions/workflows/publish.yml)
 
 ---
 

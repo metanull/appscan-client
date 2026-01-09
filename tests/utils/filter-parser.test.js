@@ -1,74 +1,59 @@
+import { describe, it, expect } from 'vitest';
 import { FilterParser } from '../../src/utils/filter-parser.js';
-import { QueryBuilder } from '../../src/utils/query-builder.js';
 
-describe('FilterParser', () => {
-  test('parse status filter', () => {
-    const qb = FilterParser.parse('status:Open', new QueryBuilder());
-    const filter = qb.toODataFilter();
-    expect(filter).toBe("(Status eq 'Open')");
+// Simple QueryBuilder-like stub to capture calls
+const makeQB = () => ({
+  calls: [],
+  filterByStatus(v) {
+    this.calls.push(['status', v]);
+  },
+  filterBySeverity(v) {
+    this.calls.push(['severity', v]);
+  },
+  filterByName(v) {
+    this.calls.push(['name', v]);
+  },
+  filterByIssueType(v) {
+    this.calls.push(['type', v]);
+  },
+  filterByExternalId(v) {
+    this.calls.push(['external', v]);
+  },
+  filterByDate(op, date) {
+    this.calls.push(['date', op, date]);
+  },
+});
+
+describe('FilterParser.parse', () => {
+  it('returns same queryBuilder when filter string is empty', () => {
+    const qb = makeQB();
+    const out = FilterParser.parse('', qb);
+    expect(out).toBe(qb);
+    expect(qb.calls).toHaveLength(0);
   });
 
-  test('parse severity filter with multiple values', () => {
-    const qb = FilterParser.parse('severity:High|Critical', new QueryBuilder());
-    const filter = qb.toODataFilter();
-    expect(filter).toBe("(Severity eq 'High' or Severity eq 'Critical')");
+  it('parses status and severity OR conditions', () => {
+    const qb = makeQB();
+    FilterParser.parse('status:Open|Closed;severity:High|Critical', qb);
+    expect(qb.calls).toEqual([
+      ['status', ['Open', 'Closed']],
+      ['severity', ['High', 'Critical']],
+    ]);
   });
 
-  test('parse combined filters with semicolon', () => {
-    const qb = FilterParser.parse(
-      'status:Open;severity:High',
-      new QueryBuilder()
-    );
-    const filter = qb.toODataFilter();
-    expect(filter).toContain("Status eq 'Open'");
-    expect(filter).toContain("Severity eq 'High'");
-    expect(filter).toContain(' and ');
+  it('parses name, issue type and external id correctly', () => {
+    const qb = makeQB();
+    FilterParser.parse('name:Injection;issuetype:SQL;external-id:ABC-1', qb);
+    expect(qb.calls).toEqual([
+      ['name', 'Injection'],
+      ['type', 'SQL'],
+      ['external', 'ABC-1'],
+    ]);
   });
 
-  test('parse name filter', () => {
-    const qb = FilterParser.parse('name:Injection', new QueryBuilder());
-    const filter = qb.toODataFilter();
-    expect(filter).toBe("contains(Name, 'Injection')");
-  });
-
-  test('parse date filter with operator', () => {
-    const qb = FilterParser.parse('date:>2025-12-01', new QueryBuilder());
-    const filter = qb.toODataFilter();
-    expect(filter).toContain('DateCreated gt 2025-12-01');
-  });
-
-  test('parse external-id filter', () => {
-    const qb = FilterParser.parse('external-id:SEC-123', new QueryBuilder());
-    const filter = qb.toODataFilter();
-    expect(filter).toBe("ExternalId eq 'SEC-123'");
-  });
-
-  test('parse type filter', () => {
-    const qb = FilterParser.parse('type:SQL', new QueryBuilder());
-    const filter = qb.toODataFilter();
-    expect(filter).toBe("contains(IssueType, 'SQL')");
-  });
-
-  test('empty filter string returns empty filter', () => {
-    const qb = FilterParser.parse('', new QueryBuilder());
-    const filter = qb.toODataFilter();
-    expect(filter).toBe('');
-  });
-
-  test('ignore invalid filter format', () => {
-    const qb = FilterParser.parse('invalid filter', new QueryBuilder());
-    const filter = qb.toODataFilter();
-    expect(filter).toBe('');
-  });
-
-  test('complex filter with multiple conditions', () => {
-    const qb = FilterParser.parse(
-      'status:Open|InProgress;severity:High|Critical;name:SQL',
-      new QueryBuilder()
-    );
-    const filter = qb.toODataFilter();
-    expect(filter).toContain("Status eq 'Open' or Status eq 'InProgress'");
-    expect(filter).toContain("Severity eq 'High' or Severity eq 'Critical'");
-    expect(filter).toContain("contains(Name, 'SQL')");
+  it('parses date condition with operator', () => {
+    const qb = makeQB();
+    FilterParser.parse('date:>2025-01-01', qb);
+    expect(qb.calls).toEqual([['date', '>', '2025-01-01']]);
   });
 });

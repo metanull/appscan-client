@@ -7,6 +7,10 @@ import { useMemo } from 'react';
 import { useStore } from '../state/AppContext.js';
 import { filterIssues } from '../utils/issue-utils.js';
 
+/**
+ * Computes current issue based on cursor position and active filters
+ * @returns {Object|null} Current issue object at cursor position after applying filters, or null if none
+ */
 export function useCurrentIssue() {
   const listCursor = useStore((state) => state.listCursor);
   const issues = useStore((state) => state.issues);

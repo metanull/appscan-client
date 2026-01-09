@@ -3,6 +3,20 @@ import { Config } from '../../utils/config.js';
 import fs from 'fs';
 import cliOutput from '../../utils/cli-output.js';
 
+/**
+ * Get remediation article for a specific issue in HTML format
+ * @param {string} issueId - Issue ID to retrieve article for
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ * @param {string} [options.output] - Output file path (prints to console if not specified)
+ * @param {string} [options.language] - Programming language for article
+ * @param {string} [options.api] - API framework for article
+ * @param {string} [options.cveId] - CVE ID for article
+ * @param {string} [options.nl] - Natural language for article
+ * @param {string} [options.mode='light'] - Display mode: light or dark
+ * @param {boolean} [options.enableTrainingLinks] - Include training links in article
+ * @param {boolean} [options.debug] - Enable debug output
+ */
 export async function getArticle(issueId, options) {
   try {
     const config = new Config(options.config);
@@ -10,7 +24,6 @@ export async function getArticle(issueId, options) {
 
     cliOutput.status(`Fetching issue details for: ${issueId}...`);
 
-    // Get issue first to show what fields are available
     await service.ensureAuthenticated();
     const issue = await service.api.v4.Issues_GetIssue(issueId, {});
 

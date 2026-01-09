@@ -1,8 +1,3 @@
-/**
- * UpdateSeverityModal Component
- * Modal for updating issue severity (single or bulk)
- */
-
 import React, { useState, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
@@ -22,9 +17,19 @@ const SEVERITY_OPTIONS = [
   { label: 'Critical', value: 'Critical' },
 ];
 
+/**
+ * Modal for updating issue severity with optional comments
+ * Supports single and bulk updates with comment templates
+ * @param {Object} props - Component props
+ * @param {number} props.issueCount - Number of issues to update
+ * @param {Array} props.issues - Array of issues with their current severity and types
+ * @param {Function} props.onUpdate - Callback with severity and comment to update issues
+ * @param {Function} props.onClose - Callback when modal is closed
+ * @param {Function} props.onRequestTextInput - Callback to request text input from parent
+ * @returns {JSX.Element}
+ */
 export const UpdateSeverityModal = React.memo(
   ({ issueCount, issues = [], onUpdate, onClose, onRequestTextInput }) => {
-    // Calculate initial index from first issue's severity
     const getInitialIndex = () => {
       if (issues && issues.length > 0) {
         const firstIssueSeverity = issues[0].Severity;
@@ -43,14 +48,11 @@ export const UpdateSeverityModal = React.memo(
     const [progress, setProgress] = useState({ current: 0, total: 0 });
     const [updateError, setUpdateError] = useState(null);
 
-    // Load templates when issues are available
     useEffect(() => {
       if (issues && issues.length > 0) {
-        // Get unique issue types from selected issues
         const types = [...new Set(issues.map((i) => i.IssueType))];
         setIssueTypes(types);
 
-        // Load templates for the first issue type
         if (types.length > 0) {
           const loadedTemplates = getTemplatesForType(types[0]);
           setTemplates(loadedTemplates);
@@ -67,11 +69,9 @@ export const UpdateSeverityModal = React.memo(
     const handleSeveritySelect = (item) => {
       setSelectedSeverity(item.value);
 
-      // If we have templates, show template selection; otherwise request text input directly
       if (templates.length > 0) {
         setStep('template');
       } else if (onRequestTextInput) {
-        // No templates - go directly to text input page
         onRequestTextInput({
           title: '⚠️  Update Severity - Add Comment',
           subtitle: `Updating ${issueCount} issue(s) to: ${item.value}`,
@@ -79,19 +79,16 @@ export const UpdateSeverityModal = React.memo(
           placeholder: 'Enter comment (optional)...',
           initialValue: '',
           onComplete: (value) => {
-            // Submit immediately after text input
-            handleSubmitWithComment(value || '');
+            handleSubmit(value);
           },
         });
       } else {
-        // Fallback: submit without comment
-        handleSubmitWithComment('');
+        handleSubmit();
       }
     };
 
     const handleTemplateSelect = (item) => {
       if (item.value === 'custom') {
-        // User wants to type custom message - request text input page
         if (onRequestTextInput) {
           onRequestTextInput({
             title: '⚠️  Update Severity - Add Comment',
@@ -100,46 +97,42 @@ export const UpdateSeverityModal = React.memo(
             placeholder: 'Enter comment...',
             initialValue: '',
             onComplete: (value) => {
-              // Submit immediately after text input
-              handleSubmitWithComment(value || '');
+              handleSubmit(value);
             },
           });
         }
+      } else if (item.value === 'no-comment') {
+        handleSubmit();
       } else {
-        // Use selected template and submit immediately
-        handleSubmitWithComment(item.value);
+        handleSubmit(item.value);
       }
     };
 
-    const handleSubmitWithComment = async (commentText) => {
+    const handleSubmit = async (commentText = undefined) => {
       if (!issueCount || issueCount === 0) {
-        return; // Prevent submission if no issues selected
+        return;
       }
 
-      // Save custom comment as template if it's not empty and not already a template
       if (
         commentText &&
         commentText.trim() !== '' &&
         !templates.includes(commentText) &&
         issueTypes.length > 0
       ) {
-        // Save to first issue type
         saveTemplate(issueTypes[0], commentText.trim());
       }
 
-      // Show progress step
       setStep('progress');
       setProgress({ current: 0, total: issueCount });
 
       try {
         await onUpdate(
           selectedSeverity,
-          commentText || undefined,
+          commentText && commentText.trim() !== '' ? commentText : undefined,
           (current, total) => {
             setProgress({ current, total });
           }
         );
-        // Success - close after a brief delay
         setTimeout(() => {
           onClose();
         }, 500);
@@ -148,14 +141,24 @@ export const UpdateSeverityModal = React.memo(
       }
     };
 
-    // Prepare template options
+    const firstIssueHasComments =
+      issues &&
+      issues.length > 0 &&
+      issues[0].LastComment &&
+      issues[0].LastComment.trim() !== '';
+
     const templateOptions = [
+      { label: "🚫 Don't add a comment", value: 'no-comment' },
       { label: '✏️  Custom message...', value: 'custom' },
       ...templates.map((t) => ({
         label: t.length > 60 ? t.substring(0, 57) + '...' : t,
         value: t,
       })),
     ];
+
+    const getInitialTemplateIndex = () => {
+      return firstIssueHasComments ? 0 : 1;
+    };
 
     return (
       <Modal width={60} height={60}>
@@ -184,6 +187,7 @@ export const UpdateSeverityModal = React.memo(
               )}
               <SelectInput
                 items={templateOptions}
+                initialIndex={getInitialTemplateIndex()}
                 onSelect={handleTemplateSelect}
               />
             </Box>

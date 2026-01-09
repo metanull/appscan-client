@@ -3,6 +3,11 @@ import { AppScanService } from '../../services/appscan-service.js';
 import { Config } from '../../utils/config.js';
 import cliOutput from '../../utils/cli-output.js';
 
+/**
+ * Check AppScan API connection and validate configuration
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ */
 export async function connectionCheck(options) {
   try {
     cliOutput.result(chalk.blue.bold('\n🔍 AppScan Connection Check\n'));
@@ -97,7 +102,7 @@ export async function connectionCheck(options) {
       cliOutput.result(chalk.cyan('You can now use:'));
       cliOutput.result(
         chalk.white('  • ') +
-          chalk.yellow('appscan triage') +
+          chalk.yellow('appscan') +
           chalk.white(' - Start triaging vulnerabilities')
       );
       cliOutput.result(

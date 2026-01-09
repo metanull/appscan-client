@@ -13,6 +13,19 @@ import { Formatter } from '../../../utils/formatter.js';
 import { parseAVSFromComments } from '../../../utils/asvs-utils.js';
 import logger from '../../../utils/logger.js';
 
+/**
+ * Modal dialog displaying detailed information about a security issue
+ * Includes issue metadata, remediation article, and comments
+ *
+ * @param {Object} props
+ * @param {Object} props.issue - Issue object with details
+ * @param {Object} props.app - Application object
+ * @param {string} props.articleContent - Markdown content for remediation article
+ * @param {Object} props.appScanService - Service for fetching additional issue data
+ * @param {Object} props._config - Configuration object (unused but accepted)
+ * @param {Function} props.onClose - Callback when modal is closed
+ * @returns {JSX.Element|null}
+ */
 export const IssueDetailsModal = React.memo(
   ({ issue, app, articleContent, appScanService, _config, onClose }) => {
     const [focusedArticleUrl, setFocusedArticleUrl] = useState(null);
@@ -50,7 +63,6 @@ export const IssueDetailsModal = React.memo(
       }
     }, [issue?.Id, appScanService]);
 
-    // Handle keyboard input
     useInput((input, key) => {
       if (key.escape) {
         onClose();

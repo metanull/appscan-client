@@ -13,12 +13,18 @@ import logger from '../../utils/logger.js';
 import { parseAVSFromComments } from '../../utils/asvs-utils.js';
 
 export class JiraService {
+  /**
+   * @param {Config} config - Configuration object with Jira settings
+   */
   constructor(config) {
     this.config = config;
     this.service = new ParentJiraService(config);
     this.initialized = false;
   }
 
+  /**
+   * Initializes the Jira API client connection
+   */
   initialize() {
     if (!this.initialized) {
       this.service.initialize();
@@ -26,6 +32,18 @@ export class JiraService {
     }
   }
 
+  /**
+   * Creates a single Jira issue from AppScan issues via Jira API
+   * @param {string} projectKey - Jira project key
+   * @param {string} summary - Issue summary/title
+   * @param {Array<Object>} issues - Array of AppScan issue objects
+   * @param {string} baseUrl - AppScan base URL for links
+   * @param {AppScanService} appScanService - Service to fetch additional details
+   * @param {Object|null} app - Optional application object
+   * @param {Object|null} scan - Optional scan object
+   * @param {string|null} parentEpic - Optional parent epic key
+   * @returns {Promise<Object>} Created Jira issue object
+   */
   async createJiraIssue(
     projectKey,
     summary,
@@ -72,7 +90,6 @@ export class JiraService {
         assignee: null,
       };
 
-      // Add parent epic if provided
       if (parentEpic) {
         fields.parent = { key: parentEpic };
       }
@@ -129,7 +146,9 @@ export class JiraService {
   }
 
   /**
-   * Enrich issues with article content and comments
+   * Enriches issues with article content and comments from AppScan API
+   * @param {Array<Object>} issues - Array of AppScan issue objects to enrich
+   * @param {AppScanService} appScanService - Service to fetch additional details
    * @private
    */
   async enrichIssuesWithDetails(issues, appScanService) {
@@ -186,7 +205,9 @@ export class JiraService {
   }
 
   /**
-   * Extract only the Cause and Fix recommendation sections from article markdown
+   * Extracts only the Cause and Fix recommendation sections from article markdown
+   * @param {string} markdown - Full article markdown content
+   * @returns {string} Filtered markdown with only relevant sections
    * @private
    */
   extractRelevantArticleSections(markdown) {
@@ -225,6 +246,11 @@ export class JiraService {
     return result.join('\n').trim();
   }
 
+  /**
+   * Retrieves a Jira issue by key or ID via Jira API
+   * @param {string} issueKey - Jira issue key or ID
+   * @returns {Promise<Object>} Jira issue object
+   */
   async getJiraIssue(issueKey) {
     this.initialize();
     return await this.service.client.issues.getIssue({
@@ -232,6 +258,11 @@ export class JiraService {
     });
   }
 
+  /**
+   * Searches for Jira issues using JQL query via Jira API
+   * @param {string} jql - JQL query string
+   * @returns {Promise<Object>} Search results with matching issues
+   */
   async searchJiraIssues(jql) {
     this.initialize();
     return await this.service.client.issueSearch.searchForIssuesUsingJql({
@@ -239,15 +270,36 @@ export class JiraService {
     });
   }
 
+  /**
+   * Generates URL to view a Jira issue
+   * @param {string} issueKey - Jira issue key
+   * @returns {string} URL to the Jira issue
+   */
   getJiraUrl(issueKey) {
     const jiraHost = this.config.getJiraHost();
     return AppScanUrls.getJiraUrl(jiraHost, issueKey);
   }
 
+  /**
+   * Gets the configured Jira project key
+   * @returns {string} Jira project key
+   */
   getProjectKey() {
     return this.config.getJiraProjectKey();
   }
 
+  /**
+   * Creates one or more Jira issues from AppScan issues with optional grouping
+   * @param {string} projectKey - Jira project key
+   * @param {string} groupBy - Grouping strategy ('type', 'severity', or 'none')
+   * @param {Array<Object>} issues - Array of AppScan issue objects
+   * @param {AppScanService} appScanService - Service to fetch additional details
+   * @param {Object|null} app - Optional application object
+   * @param {Object|null} scan - Optional scan object
+   * @param {string|null} parentEpic - Optional parent epic key
+   * @param {string|null} appName - Optional application name for summary prefix
+   * @returns {Promise<Array<Object>>} Array of created Jira issue objects
+   */
   async createIssues(
     projectKey,
     groupBy,
@@ -319,6 +371,10 @@ export class JiraService {
     }
   }
 
+  /**
+   * Checks if Jira configuration is valid and ready to use
+   * @returns {boolean} True if Jira is configured
+   */
   isConfigured() {
     return this.config.isJiraValid();
   }

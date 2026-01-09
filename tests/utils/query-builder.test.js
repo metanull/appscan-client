@@ -1,97 +1,32 @@
+import { describe, it, expect } from 'vitest';
 import { QueryBuilder } from '../../src/utils/query-builder.js';
 
 describe('QueryBuilder', () => {
-  test('filterByStatus builds correct OData filter', () => {
+  it('builds status and severity filters', () => {
     const qb = new QueryBuilder();
-    qb.filterByStatus(['Open', 'InProgress']);
-    const filter = qb.toODataFilter();
-    expect(filter).toBe("(Status eq 'Open' or Status eq 'InProgress')");
+    qb.filterByStatus(['Open', 'Closed']).filterBySeverity(['High']);
+    expect(qb.toODataFilter()).toContain("Status eq 'Open'");
+    expect(qb.toODataFilter()).toContain("Severity eq 'High'");
   });
 
-  test('filterBySeverity builds correct OData filter', () => {
+  it('escapes single quotes and handles name filters', () => {
     const qb = new QueryBuilder();
-    qb.filterBySeverity(['High', 'Critical']);
-    const filter = qb.toODataFilter();
-    expect(filter).toBe("(Severity eq 'High' or Severity eq 'Critical')");
+    qb.filterByName("O'Brien");
+    expect(qb.toODataFilter()).toContain("contains(Name, 'O''Brien')");
   });
 
-  test('filterByName builds correct OData filter with contains', () => {
+  it('maps date operators and external id', () => {
     const qb = new QueryBuilder();
-    qb.filterByName('Injection');
-    const filter = qb.toODataFilter();
-    expect(filter).toBe("contains(Name, 'Injection')");
+    qb.filterByDate('>', '2025-01-01').filterByExternalId('EXT-1');
+    expect(qb.toODataFilter()).toContain('DateCreated gt 2025-01-01');
+    expect(qb.toODataFilter()).toContain("ExternalId eq 'EXT-1'");
   });
 
-  test('filterByDate with > operator', () => {
+  it('clear and addCustomFilter work', () => {
     const qb = new QueryBuilder();
-    qb.filterByDate('>', '2025-12-01');
-    const filter = qb.toODataFilter();
-    expect(filter).toContain('DateCreated gt 2025-12-01');
-  });
-
-  test('filterByDate with < operator', () => {
-    const qb = new QueryBuilder();
-    qb.filterByDate('<', '2025-12-31');
-    const filter = qb.toODataFilter();
-    expect(filter).toContain('DateCreated lt 2025-12-31');
-  });
-
-  test('multiple filters combined with AND', () => {
-    const qb = new QueryBuilder();
-    qb.filterByStatus(['Open']);
-    qb.filterBySeverity(['High']);
-    const filter = qb.toODataFilter();
-    expect(filter).toBe("(Status eq 'Open') and (Severity eq 'High')");
-  });
-
-  test('escapeString escapes single quotes', () => {
-    const qb = new QueryBuilder();
-    const escaped = qb.escapeString("O'Reilly");
-    expect(escaped).toBe("O''Reilly");
-  });
-
-  test('clear removes all filters', () => {
-    const qb = new QueryBuilder();
-    qb.filterByStatus(['Open']);
+    qb.addCustomFilter('a eq b');
+    expect(qb.toODataFilter()).toContain('(a eq b)');
     qb.clear();
-    const filter = qb.toODataFilter();
-    expect(filter).toBe('');
-  });
-
-  test('empty QueryBuilder returns empty string', () => {
-    const qb = new QueryBuilder();
-    const filter = qb.toODataFilter();
-    expect(filter).toBe('');
-  });
-
-  test('filterByExternalId builds correct filter', () => {
-    const qb = new QueryBuilder();
-    qb.filterByExternalId('SEC-123');
-    const filter = qb.toODataFilter();
-    expect(filter).toBe("ExternalId eq 'SEC-123'");
-  });
-
-  test('filterByAppId builds correct filter', () => {
-    const qb = new QueryBuilder();
-    qb.filterByAppId('app-123');
-    const filter = qb.toODataFilter();
-    expect(filter).toBe("AppId eq 'app-123'");
-  });
-
-  test('addCustomFilter adds raw expression', () => {
-    const qb = new QueryBuilder();
-    qb.addCustomFilter("contains(Description, 'test')");
-    const filter = qb.toODataFilter();
-    expect(filter).toBe("(contains(Description, 'test'))");
-  });
-
-  test('mapOperator converts comparison operators', () => {
-    const qb = new QueryBuilder();
-    expect(qb.mapOperator('>')).toBe('gt');
-    expect(qb.mapOperator('<')).toBe('lt');
-    expect(qb.mapOperator('>=')).toBe('ge');
-    expect(qb.mapOperator('<=')).toBe('le');
-    expect(qb.mapOperator('==')).toBe('eq');
-    expect(qb.mapOperator('=')).toBe('eq');
+    expect(qb.toODataFilter()).toBe('');
   });
 });

@@ -9,6 +9,18 @@ import TextInput from 'ink-text-input';
 import { ScrollableList } from './ScrollableList.js';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 
+/**
+ * Full-screen application selection window with search, filtering, and sorting capabilities
+ *
+ * @param {Object} props
+ * @param {Array} props.applications - List of applications to display
+ * @param {Function} props.onSelect - Callback when an application is selected
+ * @param {Function} props.onCancel - Callback when selection is cancelled
+ * @param {boolean} [props.hideEmpty=false] - Whether to hide applications with no issues
+ * @param {Object} props.appScanService - Service for application/scan operations
+ * @param {Object} props.selectedApp - Currently selected application
+ * @returns {JSX.Element}
+ */
 export const AppSelectionWindow = React.memo(
   ({
     applications,
@@ -90,11 +102,9 @@ export const AppSelectionWindow = React.memo(
           setCursor(index);
         }
       }
-    }, [selectedApp, filteredApps]); // Run when selectedApp or filteredApps changes
+    }, [selectedApp, filteredApps]);
 
-    // Handle keyboard input
     useInput((input, key) => {
-      // Handle special keys first (before they can affect search)
       if (key.escape) {
         onCancel();
         return;

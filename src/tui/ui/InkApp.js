@@ -20,6 +20,7 @@ import { HelpModal } from './components/HelpModal.js';
 import { FilterModal } from './FilterModal.js';
 import { SearchModal } from './SearchModal.js';
 import { LinksModal } from './components/LinksModal.js';
+import { EditAppPropertiesWindow } from './components/EditAppPropertiesWindow.js';
 import { UpdateStatusModal } from './UpdateStatusModal.js';
 import { UpdateSeverityModal } from './UpdateSeverityModal.js';
 import { TextInputPage } from './TextInputPage.js';
@@ -39,7 +40,14 @@ import { Formatter } from '../../utils/formatter.js';
 import open from 'open';
 
 /**
- * Context Pane - Shows selected app/scan info
+ * Context pane displaying selected application and scan information
+ * @param {Object} props - Component props
+ * @param {Object} props.app - Selected application with name, ID, and custom fields
+ * @param {Object} props.scan - Selected scan information
+ * @param {number} props.issuesCount - Total number of issues
+ * @param {Array} props.shortcuts - Array of keyboard shortcuts to display
+ * @param {Function} props.onToggle - Toggle handler (unused)
+ * @returns {JSX.Element}
  */
 const ContextPane = React.memo(
   ({ app, scan, issuesCount, shortcuts, onToggle: _onToggle }) => {
@@ -144,7 +152,12 @@ const ContextPane = React.memo(
 ContextPane.displayName = 'ContextPane';
 
 /**
- * Vulnerability List Row - Memoized
+ * Individual vulnerability row displaying severity, status, Jira link, and type
+ * @param {Object} props - Component props
+ * @param {Object} props.issue - Vulnerability issue object with severity, status, type, and ExternalId
+ * @param {boolean} props.isSelected - Whether this row is the currently selected item
+ * @param {boolean} props.isMultiSelected - Whether this row is included in multi-selection
+ * @returns {JSX.Element}
  */
 const VulnRow = React.memo(({ issue, isSelected, isMultiSelected }) => {
   const severity = issue.Severity || 'Unknown';
@@ -195,7 +208,21 @@ const VulnRow = React.memo(({ issue, isSelected, isMultiSelected }) => {
 VulnRow.displayName = 'VulnRow';
 
 /**
- * Vulnerability List Panel
+ * Panel displaying list of vulnerabilities with filtering and selection indicators
+ * Includes filter status display, column headers, and scrollable list
+ * @param {Object} props - Component props
+ * @param {Array} props.issues - Array of filtered vulnerability issues
+ * @param {number} props.cursor - Current cursor position in the list
+ * @param {Array<string>} props.selectedIssueIds - Array of selected issue IDs for multi-selection
+ * @param {string} props.filterStatus - Active status filter
+ * @param {string} props.filterSeverity - Active severity filter
+ * @param {string} props.filterIssueType - Active issue type filter
+ * @param {string} props.filterJira - Active Jira filter (with/without)
+ * @param {string} props.searchText - Active search text
+ * @param {string} props.filterPreset - Active filter preset name
+ * @param {Function} props.onCursorChange - Cursor change handler (unused)
+ * @param {number} props.height - Available height for panel
+ * @returns {JSX.Element}
  */
 const VulnListPanel = React.memo(
   ({
@@ -337,7 +364,17 @@ const VulnListPanel = React.memo(
 VulnListPanel.displayName = 'VulnListPanel';
 
 /**
- * Details Preview Panel
+ * Panel displaying detailed preview of selected vulnerability
+ * Shows issue metadata, comments, and article content loading state
+ * @param {Object} props - Component props
+ * @param {Object} props.issue - Selected vulnerability issue
+ * @param {Object} props.app - Selected application
+ * @param {Object} props.scan - Selected scan (unused)
+ * @param {string} props.articleContent - Loaded article content for the issue
+ * @param {boolean} props.loading - Whether article content is loading
+ * @param {Array} props.comments - Array of comments for the issue
+ * @param {boolean} props.commentsLoading - Whether comments are loading
+ * @returns {JSX.Element}
  */
 const DetailsPreviewPanel = React.memo(
   ({
@@ -475,7 +512,13 @@ const DetailsPreviewPanel = React.memo(
 DetailsPreviewPanel.displayName = 'DetailsPreviewPanel';
 
 /**
- * Status Bar
+ * Status bar displaying error messages, loading indicators, and application info
+ * @param {Object} props - Component props
+ * @param {string} props.error - Error message to display
+ * @param {boolean} props.loading - Whether application is in loading state
+ * @param {string} props.message - Custom loading message
+ * @param {boolean} props.excludePassedNoise - Whether Passed/Noise issues are excluded
+ * @returns {JSX.Element}
  */
 const pkg = getPackageInfo();
 const StatusBar = React.memo(
@@ -523,7 +566,12 @@ const StatusBar = React.memo(
 StatusBar.displayName = 'StatusBar';
 
 /**
- * Main InkApp Component
+ * Main TUI application component with 3-pane layout
+ * Manages application state, user interactions, and modal workflows
+ * Optimized with memoization to prevent render loops
+ * @param {Object} props - Component props
+ * @param {string} props.configPath - Path to configuration file
+ * @returns {JSX.Element}
  */
 export const InkApp = ({ configPath }) => {
   const { exit } = useApp();
@@ -545,9 +593,11 @@ export const InkApp = ({ configPath }) => {
   // Local UI state
   const [showContextPane, setShowContextPane] = useState(true);
   const [showDetailsPane, setShowDetailsPane] = useState(true);
-  const [activeModal, setActiveModal] = useState(null); // null | 'app' | 'scan' | 'filter' | 'search' | 'help' | etc.
+  const [activeModal, setActiveModal] = useState(null); // null | 'filter' | 'search' | 'help' | etc. (NOT for edit-app-properties)
   const [textInputConfig, setTextInputConfig] = useState(null); // Config for text input page
-  const [standaloneWindow, setStandaloneWindow] = useState(null); // 'app' | 'scan' | null - for standalone window rendering
+  const [standaloneWindow, setStandaloneWindow] = useState(null); // 'app' | 'scan' | 'edit-app-properties' | null - for standalone window rendering
+  const [editAppPropertiesCursor, setEditAppPropertiesCursor] = useState(0); // Track cursor position in edit properties modal
+  const [editAppPropertiesField, setEditAppPropertiesField] = useState(null); // Track field being edited
   const [debugMode, setDebugMode] = useState(false);
   const [debugMessage, setDebugMessage] = useState('');
   const [loadingMessage, setLoadingMessage] = useState('Ready'); // Custom loading message
@@ -559,12 +609,14 @@ export const InkApp = ({ configPath }) => {
   const error = useStore((state) => state.error);
   const view = useStore((state) => state.view);
   const issues = useStore((state) => state.issues);
+  const fixGroups = useStore((state) => state.fixGroups);
 
   // Filter state - subscribe to each individually to avoid object creation
   const filterStatus = useStore((state) => state.filterStatus);
   const filterSeverity = useStore((state) => state.filterSeverity);
   const filterIssueType = useStore((state) => state.filterIssueType);
   const filterJira = useStore((state) => state.filterJira);
+  const filterFixGroup = useStore((state) => state.filterFixGroup);
   const searchText = useStore((state) => state.searchText);
   const filterPreset = useStore((state) => state.filterPreset);
   const sortBy = useStore((state) => state.sortBy);
@@ -578,7 +630,6 @@ export const InkApp = ({ configPath }) => {
     });
   }, []);
 
-  // Load applications on mount - runs once
   const hasLoadedApps = useRef(false);
   React.useEffect(() => {
     if (hasLoadedApps.current) return; // Guard against double-mounting
@@ -658,7 +709,6 @@ export const InkApp = ({ configPath }) => {
       )
     );
 
-  // Load issues when a scan is selected (runs when `selectedScan` changes)
   const lastLoadedScanRef = useRef(null);
   React.useEffect(() => {
     if (!selectedScan || !selectedScan.Id) return;
@@ -682,14 +732,12 @@ export const InkApp = ({ configPath }) => {
 
         let issueList;
         if (isViewAll && selectedApp?.Id) {
-          // Load all issues for the application (across all scans)
           issueList = await appScanService.listIssues(
             selectedApp.Id,
             filterOptions,
             'Application'
           );
         } else {
-          // Load issues for the specific scan
           issueList = await appScanService.listIssues(
             selectedScan.Id,
             filterOptions
@@ -698,6 +746,25 @@ export const InkApp = ({ configPath }) => {
 
         if (cancelled) return;
         useStore.getState().setIssues(issueList || []);
+
+        if (selectedApp?.Id) {
+          try {
+            const fixGroups = await appScanService.getFixGroups(
+              'Application',
+              selectedApp.Id,
+              {}
+            );
+            if (!cancelled) {
+              useStore.getState().setFixGroups(fixGroups || []);
+            }
+          } catch (err) {
+            logger.error('Failed to load FixGroups', err);
+            if (!cancelled) {
+              useStore.getState().setFixGroups([]);
+            }
+          }
+        }
+
         useStore.getState().setView('issue-list');
         lastLoadedScanRef.current = selectedScan.Id;
         useStore.getState().setLoading(false);
@@ -726,6 +793,7 @@ export const InkApp = ({ configPath }) => {
       severity: filterSeverity,
       issueType: filterIssueType,
       jira: filterJira,
+      fixgroup: filterFixGroup,
       searchText: searchText,
       sortBy: sortBy,
     });
@@ -735,6 +803,7 @@ export const InkApp = ({ configPath }) => {
     filterSeverity,
     filterIssueType,
     filterJira,
+    filterFixGroup,
     searchText,
     sortBy,
   ]);
@@ -774,12 +843,12 @@ export const InkApp = ({ configPath }) => {
         );
 
         if (newCursor !== currentCursor) {
-          useStore.getState().setListCursor(newCursor); // Use getState() instead of prop
+          useStore.getState().setListCursor(newCursor);
         }
       }
       flushTimeout.current = null;
     }, 16);
-  }, [filteredIssuesLength]); // Only depend on data, not setter
+  }, [filteredIssuesLength]);
 
   // Helper: Get filter options for a preset
   const getFilterOptionsForPreset = useCallback(
@@ -797,7 +866,6 @@ export const InkApp = ({ configPath }) => {
       };
       const options = presetMap[presetName] || {};
 
-      // Add Passed/Noise exclusion if enabled
       if (excludePassedNoise) {
         options.excludePassedNoise = true;
       }
@@ -890,6 +958,23 @@ export const InkApp = ({ configPath }) => {
       }
 
       store.setIssues(issueList || []);
+
+      // Load FixGroups for the application
+      if (selectedApp?.Id) {
+        try {
+          const fixGroups = await appScanService.getFixGroups(
+            'Application',
+            selectedApp.Id,
+            {}
+          );
+          store.setFixGroups(fixGroups || []);
+        } catch (err) {
+          logger.error('Failed to load FixGroups', err);
+          // Don't fail the whole operation if FixGroups fail to load
+          store.setFixGroups([]);
+        }
+      }
+
       store.setLoading(false);
     } catch (err) {
       logger.error('Failed to reload issues', err, {
@@ -1048,6 +1133,13 @@ export const InkApp = ({ configPath }) => {
         action: () => currentIssue && setActiveModal('links'),
         description: 'Links',
         condition: () => !!currentIssue,
+        group: 'Actions',
+      },
+      {
+        key: 'p',
+        action: () => selectedApp && setStandaloneWindow('edit-app-properties'),
+        description: 'Edit App Properties',
+        condition: () => !!selectedApp,
         group: 'Actions',
       },
       {
@@ -1256,7 +1348,6 @@ export const InkApp = ({ configPath }) => {
       {
         key: 'o',
         action: () => {
-          // Create a simple sort modal or cycle through sort options
           const currentSort = useStore.getState().sortBy;
           const sortOptions = ['severity', 'name', 'status'];
           const currentIndex = sortOptions.indexOf(currentSort);
@@ -1390,7 +1481,6 @@ export const InkApp = ({ configPath }) => {
             pendingScanLoad.current.cancelled = true;
           }
 
-          // Create new cancellation tracker
           const loadTracker = { cancelled: false };
           pendingAppLoad.current = loadTracker;
 
@@ -1462,7 +1552,6 @@ export const InkApp = ({ configPath }) => {
             pendingScanLoad.current.cancelled = true;
           }
 
-          // Create new cancellation tracker
           const loadTracker = { cancelled: false };
           pendingScanLoad.current = loadTracker;
 
@@ -1505,6 +1594,26 @@ export const InkApp = ({ configPath }) => {
             }
 
             useStore.getState().setIssues(issueList || []);
+
+            // Load FixGroups for the application
+            if (selectedApp?.Id) {
+              try {
+                const fixGroups = await appScanService.getFixGroups(
+                  'Application',
+                  selectedApp.Id,
+                  {}
+                );
+                if (!loadTracker.cancelled) {
+                  useStore.getState().setFixGroups(fixGroups || []);
+                }
+              } catch (err) {
+                logger.error('Failed to load FixGroups', err);
+                // Don't fail the whole operation if FixGroups fail to load
+                if (!loadTracker.cancelled) {
+                  useStore.getState().setFixGroups([]);
+                }
+              }
+            }
           } catch (err) {
             if (loadTracker.cancelled) {
               return;
@@ -1526,6 +1635,85 @@ export const InkApp = ({ configPath }) => {
         hideEmpty={false}
         appScanService={appScanService}
         selectedScan={selectedScan}
+      />
+    );
+  }
+
+  // If standalone edit app properties window is active
+  if (standaloneWindow === 'edit-app-properties' && selectedApp) {
+    // If we're editing a field, show text input
+    if (editAppPropertiesField) {
+      return (
+        <TextInputPage
+          title={`Edit ${editAppPropertiesField.label}`}
+          subtitle={`Application: ${selectedApp.Name}`}
+          borderColor={editAppPropertiesField.isCustom ? 'yellow' : 'cyan'}
+          placeholder={editAppPropertiesField.value || 'Enter value...'}
+          initialValue={editAppPropertiesField.value || ''}
+          onSubmit={async (value) => {
+            try {
+              const currentApp = await appScanService.getApplicationDetails(
+                selectedApp.Id
+              );
+              const apiPayload = {};
+
+              if (!editAppPropertiesField.isCustom) {
+                apiPayload[editAppPropertiesField.key] = value;
+              } else {
+                const fieldDef = currentApp._customFieldsRaw?.find(
+                  (f) => f.Name === editAppPropertiesField.key
+                );
+                if (fieldDef) {
+                  apiPayload.AppCustomFields = [
+                    { Id: fieldDef.Id, Value: value || '' },
+                  ];
+                }
+              }
+
+              await appScanService.updateApplication(
+                selectedApp.Id,
+                apiPayload
+              );
+              const updatedApp = await appScanService.getApplicationDetails(
+                selectedApp.Id
+              );
+              useStore.getState().setSelectedApp(updatedApp);
+
+              // Return to field selection
+              setEditAppPropertiesField(null);
+            } catch (err) {
+              logger.error('Failed to update application', err);
+              setEditAppPropertiesField(null);
+              setStandaloneWindow(null);
+            }
+          }}
+          onCancel={() => {
+            setEditAppPropertiesField(null);
+          }}
+        />
+      );
+    }
+
+    // Show field selection
+    return (
+      <EditAppPropertiesWindow
+        app={selectedApp}
+        initialCursor={editAppPropertiesCursor}
+        onSelectField={(field, fieldIndex) => {
+          logger.info('Field selected for editing', {
+            field: field.key,
+            index: fieldIndex,
+          });
+          setEditAppPropertiesCursor(fieldIndex);
+          setEditAppPropertiesField(field);
+          logger.info('State updated', { editAppPropertiesField: field.key });
+        }}
+        onCancel={() => {
+          logger.info('Edit app properties cancelled');
+          setEditAppPropertiesCursor(0);
+          setEditAppPropertiesField(null);
+          setStandaloneWindow(null);
+        }}
       />
     );
   }
@@ -1605,6 +1793,7 @@ export const InkApp = ({ configPath }) => {
       {activeModal === 'filter' && (
         <FilterModal
           issues={filteredIssues}
+          fixGroups={fixGroups}
           onSelect={(filterType, value) => {
             if (filterType === 'status')
               useStore.getState().setFilterStatus(value);
@@ -1612,6 +1801,8 @@ export const InkApp = ({ configPath }) => {
               useStore.getState().setFilterSeverity(value);
             else if (filterType === 'type')
               useStore.getState().setFilterIssueType(value);
+            else if (filterType === 'fixgroup')
+              useStore.getState().setFilterFixGroup(value);
             else if (filterType === 'jira')
               useStore.getState().setFilterJira(value);
           }}

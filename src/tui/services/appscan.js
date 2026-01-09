@@ -1,7 +1,6 @@
 /**
- * AppScan Service Wrapper
- * This wraps the parent package's AppScanService to provide a clean interface
- * for the Ink UI and adds audit logging for all read/write operations.
+ * AppScan Service Wrapper for TUI
+ * Provides UI-specific helpers and audit logging for write operations
  */
 
 // Import from parent package
@@ -12,11 +11,13 @@ import logger from '../../utils/logger.js';
 import { Config } from '../../../src/utils/config.js';
 
 export class AppScanService {
+  /**
+   * @param {string|null} configPath - Optional path to config file
+   */
   constructor(configPath = null) {
     this.config = configPath ? Config.loadFromFile(configPath) : new Config();
     this.service = new ParentAppScanService(this.config);
-    this.authenticated = false;
-    // Emit helpful diagnostic info when running the TUI
+
     logger.info('TUI AppScanService initialized', {
       configValid: this.config.isValid(),
       baseUrl: this.config.getBaseUrl(),
@@ -24,325 +25,183 @@ export class AppScanService {
     });
   }
 
-  async authenticate() {
-    if (!this.authenticated) {
-      await this.service.authenticate();
-      this.authenticated = true;
-    }
-  }
+  // ==========================================
+  // Delegated Read Methods (no modification)
+  // ==========================================
 
+  /**
+   * Retrieves all applications from AppScan API
+   * @returns {Promise<Array>} Array of application objects
+   */
   async listApplications() {
-    await this.authenticate();
     const response = await this.service.listApplications();
-    const apps = response.Items || response || [];
-
-    // Log sample app data for debugging
-    if (apps.length > 0) {
-      logger.debug('Sample application data', {
-        sample: apps[0],
-        keys: Object.keys(apps[0]),
-      });
-    }
-
-    return apps;
+    return response.Items;
   }
 
+  /**
+   * Retrieves all scans for a specific application from AppScan API
+   * @param {string} appId - Application ID
+   * @returns {Promise<Array>} Array of scan objects
+   */
   async listScans(appId) {
-    await this.authenticate();
     const response = await this.service.listScans(appId);
-    const scans = response.Items || response || [];
-
-    // Log sample scan data for debugging
-    if (scans.length > 0) {
-      logger.debug('Sample scan data', {
-        sample: scans[0],
-        keys: Object.keys(scans[0]),
-        latestExecution: scans[0].LatestExecution,
-      });
-    }
-
-    return scans;
+    return response.Items;
   }
 
   /**
-   * Get issue counts for an application
-   * @param {Object} app - Application object
-   * @returns {{ inProgress: number, active: number, total: number }} Issue counts
-   */
-  getAppIssueCounts(app) {
-    if (!app) {
-      return { inProgress: 0, active: 0, total: 0 };
-    }
-
-    // Read counters directly from API response
-    const inProgress = Number(app.IssuesInProgress) || 0;
-    const active = Number(app.OpenIssues) || 0;
-    const total = Number(app.TotalIssues) || 0;
-
-    return { inProgress, active, total };
-  }
-
-  /**
-   * Get severity breakdown for a scan
-   * @param {Object} scan - Scan object
-   * @returns {{ critical: number, high: number, medium: number, low: number, info: number, total: number }} Severity counts
-   */
-  getScanIssueCounts(scan) {
-    if (!scan) {
-      return { critical: 0, high: 0, medium: 0, low: 0, info: 0, total: 0 };
-    }
-
-    const execution = scan.LatestExecution || {};
-
-    const critical = Number(execution.NCriticalIssues) || 0;
-    const high = Number(execution.NHighIssues) || 0;
-    const medium = Number(execution.NMediumIssues) || 0;
-    const low = Number(execution.NLowIssues) || 0;
-    const info = Number(execution.NInfoIssues) || 0;
-
-    // Total issues from execution
-    const total =
-      Number(execution.NIssuesFound) || critical + high + medium + low + info;
-
-    return { critical, high, medium, low, info, total };
-  }
-
-  /**
-   * Get the number of scans for an application
-   * @param {Object} app - Application object
-   * @returns {number} Number of scans
-   */
-  getAppScanCount(app) {
-    if (!app) {
-      return 0;
-    }
-
-    // Check various fields that might contain scan count
-    return (
-      Number(app.ScanCount) ||
-      Number(app.NumberOfScans) ||
-      Number(app.TotalScans) ||
-      0
-    );
-  }
-
-  /**
-   * List issues for a scope (Application or Scan)
-   * @param {string} scopeId - Scope ID (Application ID or Scan ID)
-   * @param {Object} filterOptions - Filter options
-   * @param {string} scope - Scope type: 'Application' or 'Scan' (default: 'Scan')
-   * @returns {Promise<Array>} Issues array
+   * Retrieves issues for a specific scope (scan or application) from AppScan API
+   * @param {string} scopeId - Scan or Application ID
+   * @param {Object|null} filterOptions - Optional filter criteria
+   * @param {string} scope - Scope type ('Scan' or 'Application')
+   * @returns {Promise<Array>} Array of issue objects
    */
   async listIssues(scopeId, filterOptions = null, scope = 'Scan') {
-    await this.authenticate();
     const response = await this.service.listIssues(
       scopeId,
       filterOptions,
       null,
       scope
     );
-    return response.Items || [];
-  }
-
-  async getIssueDetails(issueId) {
-    await this.authenticate();
-    return await this.service.getIssueDetails(issueId);
-  }
-
-  async getArticle(issueId) {
-    await this.authenticate();
-    return await this.service.getArticle(issueId);
-  }
-
-  async getIssueArticle(issue) {
-    await this.authenticate();
-    return await this.service.getIssueArticle(issue);
+    return response.Items;
   }
 
   /**
-   * Get the AppScan URL for a specific issue
-   * @param {string} appId - Application ID
+   * Retrieves detailed information for a specific issue from AppScan API
    * @param {string} issueId - Issue ID
-   * @returns {string} The full URL to the issue in AppScan
+   * @returns {Promise<Object>} Issue details object
    */
-  getIssueUrl(appId, issueId) {
-    return AppScanUrls.getIssueUrl(this.config.getBaseUrl(), appId, issueId);
+  async getIssueDetails(issueId) {
+    return this.service.getIssueDetails(issueId);
   }
 
   /**
-   * Get the AppScan URL for a specific application
+   * Retrieves the security advisory article for an issue from AppScan API
+   * @param {string} issueId - Issue ID
+   * @returns {Promise<string>} Article content in markdown format
+   */
+  async getArticle(issueId) {
+    return this.service.getArticle(issueId);
+  }
+
+  /**
+   * Retrieves the security advisory article for an issue object from AppScan API
+   * @param {Object} issue - Issue object
+   * @returns {Promise<string>} Article content in markdown format
+   */
+  async getIssueArticle(issue) {
+    return this.service.getIssueArticle(issue);
+  }
+
+  /**
+   * Retrieves detailed information for a specific application from AppScan API
    * @param {string} appId - Application ID
-   * @returns {string} The full URL to the application in AppScan
+   * @returns {Promise<Object>} Application details object
    */
-  getApplicationUrl(appId) {
-    return AppScanUrls.getApplicationUrl(this.config.getBaseUrl(), appId);
+  async getApplicationDetails(appId) {
+    return this.service.getApplicationDetails(appId);
   }
 
   /**
-   * Get the AppScan URL for a specific scan
-   * @param {string} appId - Application ID
-   * @param {string} scanId - Scan ID
-   * @returns {string} The full URL to the scan in AppScan
-   */
-  getScanUrl(appId, scanId) {
-    return AppScanUrls.getScanUrl(this.config.getBaseUrl(), appId, scanId);
-  }
-
-  /**
-   * Get the Jira URL for an issue (if it has an ExternalId)
-   * @param {Object} issue - Issue object containing ExternalId
-   * @returns {string|null} The full URL to the Jira issue, or null if not available
-   */
-  getJiraUrl(issue) {
-    if (!issue || !issue.ExternalId) {
-      return null;
-    }
-
-    const jiraHost = this.config.jiraHost;
-    return AppScanUrls.getJiraUrl(jiraHost, issue.ExternalId);
-  }
-
-  /**
-   * Get focused article URL for an issue based on ApiVulnName
-   *
-   * This function:
-   * 1. Fetches the general article HTML
-   * 2. Parses it to find the specific link matching ApiVulnName
-   * 3. Returns the focused article URL, or falls back to the general URL
-   *
-   * @param {Object} issue - The issue object containing IssueTypeId, Language, and ApiVulnName
-   * @returns {Promise<string>} The focused article URL or general article URL
+   * Generates a URL to the focused article view for an issue in AppScan
+   * @param {Object} issue - Issue object
+   * @returns {Promise<string>} URL to the focused article
    */
   async getFocusedArticleUrl(issue) {
-    const baseUrl = this.config.getBaseUrl();
-
-    // Build general article URL
-    const articleParams = new URLSearchParams({
-      issuetype: issue.IssueTypeId,
-    });
-
-    if (issue.Language) {
-      articleParams.append('language', issue.Language);
-    }
-
-    const generalArticleUrl = `${baseUrl}/api/v4/Reports/Article/?${articleParams.toString()}`;
-
-    // If no ApiVulnName, return general URL
-    if (!issue.ApiVulnName) {
-      return generalArticleUrl;
-    }
-
-    try {
-      await this.authenticate();
-
-      // Fetch the general article HTML
-      logger.info('Fetching article to find focused URL', {
-        issueTypeId: issue.IssueTypeId,
-        language: issue.Language,
-        apiVulnName: issue.ApiVulnName,
-      });
-
-      const response = await this.service.api.v4.Reports_GetArticle({
-        issuetype: issue.IssueTypeId,
-        language: issue.Language,
-      });
-
-      if (!response || typeof response !== 'string') {
-        logger.warn('Article response is not HTML string, using general URL');
-        return generalArticleUrl;
-      }
-
-      // Parse HTML to find the link matching ApiVulnName
-      // Look for <div id="apiLinks"> and find the <a> tag with text matching ApiVulnName
-      const apiLinksMatch = response.match(
-        /<div[^>]*id="apiLinks"[^>]*>([\s\S]*?)<\/div>/i
-      );
-
-      if (!apiLinksMatch) {
-        logger.warn(
-          'Could not find apiLinks div in article HTML, using general URL'
-        );
-        return generalArticleUrl;
-      }
-
-      const apiLinksContent = apiLinksMatch[1];
-
-      // Find all <a> tags with href attributes
-      const linkRegex = /<a[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi;
-      let match;
-
-      while ((match = linkRegex.exec(apiLinksContent)) !== null) {
-        const href = match[1];
-        const linkText = match[2].replace(/<[^>]*>/g, '').trim(); // Strip any HTML tags and trim
-
-        // Check if link text matches ApiVulnName exactly
-        if (linkText === issue.ApiVulnName) {
-          // Found the matching link - construct full URL
-          // href is relative like "?issuetype=...&api=..." but contains HTML entities
-          // Decode HTML entities using a temporary DOM element approach
-          const decodeHtmlEntities = (text) => {
-            const entities = {
-              '&amp;': '&',
-              '&lt;': '<',
-              '&gt;': '>',
-              '&quot;': '"',
-              '&#39;': "'",
-              '&apos;': "'",
-            };
-            return text.replace(
-              /&[#\w]+;/g,
-              (entity) => entities[entity] || entity
-            );
-          };
-
-          const decodedHref = decodeHtmlEntities(href);
-          const focusedUrl = `${baseUrl}/api/v4/Reports/Article/${decodedHref}`;
-
-          logger.info('Found focused article URL', {
-            apiVulnName: issue.ApiVulnName,
-            focusedUrl,
-          });
-
-          return focusedUrl;
-        }
-      }
-
-      logger.warn(
-        'Could not find matching link for ApiVulnName in article, using general URL',
-        {
-          apiVulnName: issue.ApiVulnName,
-        }
-      );
-
-      return generalArticleUrl;
-    } catch (error) {
-      logger.error(
-        'Error fetching focused article URL, falling back to general URL',
-        {
-          error: error.message,
-          issueId: issue.Id,
-        }
-      );
-      return generalArticleUrl;
-    }
+    return this.service.getFocusedArticleUrl(issue);
   }
 
+  /**
+   * Retrieves all comments for a specific issue from AppScan API
+   * @param {string} issueId - Issue ID
+   * @returns {Promise<Array>} Array of comment objects
+   */
   async getIssueComments(issueId) {
-    await this.authenticate();
     const response = await this.service.api.v4.Issues_GetIssueComments(
       issueId,
       {}
     );
-    return response.Items || [];
+    return response.Items;
   }
 
-  async updateIssue(issueId, appId, updateData) {
-    await this.authenticate();
+  /**
+   * Get FixGroups for a scope using the parent service API safely
+   * @param {string} scope - 'Application' | 'Scan' | 'ScanExecution'
+   * @param {string} scopeId - Scope ID
+   * @param {Object} query - Optional query parameters
+   * @returns {Promise<Array>} Array of FixGroup objects
+   */
+  async getFixGroups(scope, scopeId, query = {}) {
+    // Ensure parent service is authenticated before calling the raw API
+    await this.service.ensureAuthenticated();
 
     try {
-      logger.info('Updating AppScan issue', { issueId, appId, updateData });
+      const response = await this.service.api.v4.FixGroups_Get(
+        scope,
+        scopeId,
+        query
+      );
+      return response.Items || [];
+    } catch (err) {
+      logger.error('TUI wrapper failed to load FixGroups', {
+        error: err.message,
+      });
+      throw err;
+    }
+  }
 
-      // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
+  // ==========================================
+  // Write Methods with Audit Logging
+  // ==========================================
+
+  /**
+   * Updates application metadata in AppScan API with audit logging
+   * @param {string} appId - Application ID
+   * @param {Object} updateData - Fields to update
+   * @returns {Promise<Object>} Update result from API
+   */
+  async updateApplication(appId, updateData) {
+    try {
+      logger.info('Updating application', {
+        appId,
+        fields: Object.keys(updateData),
+      });
+      const result = await this.service.api.v4.Apps_Update(appId, updateData);
+
+      auditService.logAppUpdate(appId, updateData, {
+        success: true,
+        result,
+      });
+
+      return result;
+    } catch (error) {
+      auditService.logAppUpdate(appId, updateData, {
+        success: false,
+        error: error.message,
+      });
+
+      logger.error('Failed to update application', {
+        appId,
+        error: error.message,
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Updates a single issue in AppScan API with audit logging
+   * @param {string} issueId - Issue ID
+   * @param {string} appId - Application ID
+   * @param {Object} updateData - Fields to update (Status, Comment, ExternalId, etc.)
+   * @returns {Promise<Object>} Update result from API
+   */
+  async updateIssue(issueId, appId, updateData) {
+    try {
+      logger.info('Updating issue', {
+        issueId,
+        appId,
+        fields: Object.keys(updateData),
+      });
+
       const result = await this.service.api.v4.Issues_UpdateFilteredIssues(
         'Application',
         appId,
@@ -350,116 +209,94 @@ export class AppScanService {
         { odataFilter: `Id eq ${issueId}` }
       );
 
-      // Audit the update
       auditService.logAppScanUpdate([issueId], appId, updateData, {
         success: true,
         result,
       });
 
-      logger.info('Issue updated successfully', { issueId });
       return result;
     } catch (error) {
-      logger.error('Failed to update issue', error, { issueId, appId });
-
       auditService.logAppScanUpdate([issueId], appId, updateData, {
         success: false,
         error: error.message,
       });
 
+      logger.error('Failed to update issue', { issueId, error: error.message });
       throw error;
     }
   }
 
+  /**
+   * Updates multiple issues in a single AppScan API call with audit logging
+   * @param {Array<string>} issueIds - Array of issue IDs
+   * @param {string} appId - Application ID
+   * @param {Object} updateData - Fields to update (Status, Comment, ExternalId, etc.)
+   * @returns {Promise<Object>} Update result from API
+   */
   async bulkUpdateIssues(issueIds, appId, updateData) {
-    await this.authenticate();
-
     try {
-      logger.info('Bulk updating AppScan issues', {
-        issueCount: issueIds.length,
-        appId,
-        updateData,
-      });
+      logger.info('Bulk updating issues', { count: issueIds.length, appId });
 
       const odataFilter = issueIds.map((id) => `Id eq ${id}`).join(' or ');
-      // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
       const result = await this.service.api.v4.Issues_UpdateFilteredIssues(
         'Application',
         appId,
         updateData,
-        { odataFilter: odataFilter }
+        { odataFilter }
       );
 
-      // Audit the bulk update
       auditService.logAppScanUpdate(issueIds, appId, updateData, {
         success: true,
         result,
       });
 
-      logger.info('Issues updated successfully', {
-        issueCount: issueIds.length,
-      });
       return result;
     } catch (error) {
-      logger.error('Failed to bulk update issues', error, {
-        issueCount: issueIds.length,
-        appId,
-      });
-
       auditService.logAppScanUpdate(issueIds, appId, updateData, {
         success: false,
         error: error.message,
       });
 
-      throw error;
-    }
-  }
-
-  async updateIssueStatus(issueId, status, comment) {
-    await this.authenticate();
-
-    try {
-      // Get the application ID from the issue
-      const issue = await this.service.api.v4.Issues_GetIssue(issueId, {});
-      const appId = issue.ApplicationId;
-
-      logger.info('Updating issue status', { issueId, status, comment });
-
-      const updateData = {
-        Status: status,
-        Comment: comment || '',
-      };
-
-      const result = await this.updateIssue(issueId, appId, updateData);
-
-      logger.info('Issue status updated successfully', { issueId, status });
-      return result;
-    } catch (error) {
-      logger.error('Failed to update issue status', error, {
-        issueId,
-        status,
+      logger.error('Failed to bulk update issues', {
+        count: issueIds.length,
+        error: error.message,
       });
       throw error;
     }
   }
 
   /**
-   * Bulk update issues in chunks to avoid HTTP 414 errors
-   * @param {Array} issueIds - Array of issue IDs to update
+   * Updates the status of a single issue in AppScan API
+   * @param {string} issueId - Issue ID
+   * @param {string} status - New status value
+   * @param {string} comment - Optional comment explaining the status change
+   * @returns {Promise<Object>} Update result from API
+   */
+  async updateIssueStatus(issueId, status, comment) {
+    const issue = await this.service.api.v4.Issues_GetIssue(issueId, {});
+    const updateData = {
+      Status: status,
+      Comment: comment || '',
+    };
+    return this.updateIssue(issueId, issue.ApplicationId, updateData);
+  }
+
+  /**
+   * Updates multiple issues in chunks to provide progress feedback and handle large batches
+   * @param {Array<string>} issueIds - Array of issue IDs
    * @param {string} appId - Application ID
-   * @param {object} updateData - Update data
+   * @param {Object} updateData - Fields to update
    * @param {number} chunkSize - Number of issues per batch (default: 20)
-   * @param {Function} onProgress - Progress callback (current, total)
-   * @returns {object} Summary of results
+   * @param {Function|null} onProgress - Callback function for progress updates (processed, total)
+   * @returns {Promise<Object>} Results summary with counts and errors
    */
   async bulkUpdateIssuesChunked(
     issueIds,
     appId,
     updateData,
-    chunkSize = 20,
+    chunkSize = 20, // Optimal batch size to balance API performance and progress feedback
     onProgress = null
   ) {
-    await this.authenticate();
-
     logger.info('Starting chunked bulk update', {
       totalIssues: issueIds.length,
       chunkSize,
@@ -492,7 +329,6 @@ export class AppScanService {
           issueIds: chunk,
           error: error.message,
         });
-        logger.error(`Failed to update chunk ${i + 1}/${chunks.length}`, error);
       }
 
       results.processed += chunk.length;
@@ -506,30 +342,158 @@ export class AppScanService {
     return results;
   }
 
+  /**
+   * Updates all issues within a scan scope using AppScan API
+   * @param {string} scanId - Scan ID
+   * @param {Object} updateData - Fields to update
+   * @returns {Promise<Object>} Update result from API
+   */
   async updateAllIssuesInScan(scanId, updateData) {
-    await this.authenticate();
-    return await this.service.api.v4.Issues_UpdateFilteredIssues(
-      'Scan',
+    return this.service.updateAllIssuesInScan(
       scanId,
-      updateData,
-      {} // No filter = update all issues in scan
+      updateData.Status,
+      updateData.Comment,
+      updateData.ExternalId
     );
   }
 
+  /**
+   * Updates all issues within an application scope using AppScan API
+   * @param {string} appId - Application ID
+   * @param {Object} updateData - Fields to update
+   * @returns {Promise<Object>} Update result from API
+   */
   async updateAllIssuesInApplication(appId, updateData) {
-    await this.authenticate();
-    return await this.service.api.v4.Issues_UpdateFilteredIssues(
-      'Application',
+    return this.service.updateAllIssuesInApplication(
       appId,
-      updateData,
-      {} // No filter = update all issues in application
+      updateData.Status,
+      updateData.Comment,
+      updateData.ExternalId
     );
   }
 
+  // ==========================================
+  // UI Helper Methods
+  // ==========================================
+
+  /**
+   * Get issue counts for an application
+   * @param {Object} app - Application object
+   * @returns {{ inProgress: number, active: number, total: number }} Issue counts
+   */
+  getAppIssueCounts(app) {
+    if (!app) {
+      return { inProgress: 0, active: 0, total: 0 };
+    }
+
+    const inProgress = Number(app.IssuesInProgress) || 0;
+    const active = Number(app.OpenIssues) || 0;
+    const total = Number(app.TotalIssues) || 0;
+
+    return { inProgress, active, total };
+  }
+
+  /**
+   * Get severity breakdown for a scan
+   * @param {Object} scan - Scan object
+   * @returns {{ critical: number, high: number, medium: number, low: number, info: number, total: number }} Severity counts
+   */
+  getScanIssueCounts(scan) {
+    if (!scan) {
+      return { critical: 0, high: 0, medium: 0, low: 0, info: 0, total: 0 };
+    }
+
+    const execution = scan.LatestExecution || {};
+    const critical = Number(execution.NCriticalIssues) || 0;
+    const high = Number(execution.NHighIssues) || 0;
+    const medium = Number(execution.NMediumIssues) || 0;
+    const low = Number(execution.NLowIssues) || 0;
+    const info = Number(execution.NInfoIssues) || 0;
+    const total =
+      Number(execution.NIssuesFound) || critical + high + medium + low + info;
+
+    return { critical, high, medium, low, info, total };
+  }
+
+  /**
+   * Get the number of scans for an application
+   * @param {Object} app - Application object
+   * @returns {number} Number of scans
+   */
+  getAppScanCount(app) {
+    if (!app) {
+      return 0;
+    }
+
+    return (
+      Number(app.ScanCount) ||
+      Number(app.NumberOfScans) ||
+      Number(app.TotalScans) ||
+      0
+    );
+  }
+
+  // ==========================================
+  // URL Helper Methods
+  // ==========================================
+
+  /**
+   * Generates URL to view an issue in AppScan web interface
+   * @param {string} appId - Application ID
+   * @param {string} issueId - Issue ID
+   * @returns {string} URL to the issue
+   */
+  getIssueUrl(appId, issueId) {
+    return AppScanUrls.getIssueUrl(this.config.getBaseUrl(), appId, issueId);
+  }
+
+  /**
+   * Generates URL to view an application in AppScan web interface
+   * @param {string} appId - Application ID
+   * @returns {string} URL to the application
+   */
+  getApplicationUrl(appId) {
+    return AppScanUrls.getApplicationUrl(this.config.getBaseUrl(), appId);
+  }
+
+  /**
+   * Generates URL to view a scan in AppScan web interface
+   * @param {string} appId - Application ID
+   * @param {string} scanId - Scan ID
+   * @returns {string} URL to the scan
+   */
+  getScanUrl(appId, scanId) {
+    return AppScanUrls.getScanUrl(this.config.getBaseUrl(), appId, scanId);
+  }
+
+  /**
+   * Generates URL to view a Jira issue from an AppScan issue
+   * @param {Object} issue - AppScan issue object with ExternalId field
+   * @returns {string|null} URL to the Jira issue, or null if no ExternalId
+   */
+  getJiraUrl(issue) {
+    if (!issue || !issue.ExternalId) {
+      return null;
+    }
+    return AppScanUrls.getJiraUrl(this.config.jiraHost, issue.ExternalId);
+  }
+
+  // ==========================================
+  // Config Access
+  // ==========================================
+
+  /**
+   * Gets the configuration object
+   * @returns {Config} Configuration instance
+   */
   getConfig() {
     return this.config;
   }
 
+  /**
+   * Gets the base URL for AppScan API
+   * @returns {string} Base URL
+   */
   getBaseUrl() {
     return this.config.getBaseUrl();
   }

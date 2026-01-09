@@ -24,15 +24,12 @@ export function saveParentEpic(epicKey) {
 
   const trimmedKey = epicKey.trim();
 
-  // Don't save if already exists
   if (epicCache.includes(trimmedKey)) {
     return;
   }
 
-  // Add to end (most recent)
   epicCache.push(trimmedKey);
 
-  // Keep only last 10
   if (epicCache.length > 10) {
     epicCache.shift();
   }

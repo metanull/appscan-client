@@ -5,6 +5,12 @@ import {
 } from '../../utils/cli-common.js';
 import cliOutput from '../../utils/cli-output.js';
 
+/**
+ * List all applications from AppScan
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ * @param {boolean} [options.json] - Output in JSON format
+ */
 export async function listApplications(options) {
   try {
     cliOutput.setJsonMode(options.json);
@@ -22,19 +28,16 @@ export async function listApplications(options) {
       );
 
       applications.forEach((app, index) => {
-        // App name and ID
         cliOutput.result(
           `${index + 1}. ${chalk.bold(app.Name || 'N/A')} ${chalk.gray(`(ID: ${app.Id || 'N/A'})`)}`
         );
 
-        // Description
         if (app.Description) {
           cliOutput.result(
             `   ${chalk.dim('Description:')} ${app.Description}`
           );
         }
 
-        // Key metrics
         const metrics = [];
         if (app.TotalIssues !== undefined)
           metrics.push(`${app.OpenIssues || 0}/${app.TotalIssues || 0} issues`);
@@ -47,11 +50,10 @@ export async function listApplications(options) {
           cliOutput.result(`   ${chalk.dim(metrics.join(' | '))}`);
         }
 
-        // Custom fields (only show if populated)
         if (app.customFields && Object.keys(app.customFields).length > 0) {
           const populatedFields = Object.entries(app.customFields)
             .filter(([_, value]) => value !== null)
-            .slice(0, 3); // Show max 3 fields
+            .slice(0, 3);
 
           if (populatedFields.length > 0) {
             const fieldDisplay = populatedFields

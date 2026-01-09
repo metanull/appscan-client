@@ -6,6 +6,10 @@
 import { useStdout } from 'ink';
 import { useEffect, useState } from 'react';
 
+/**
+ * Tracks terminal dimensions and updates on resize events
+ * @returns {{width: number, height: number}} Terminal dimensions with minimum of 120x20
+ */
 export function useTerminalSize() {
   const { stdout } = useStdout();
   const [size, setSize] = useState({

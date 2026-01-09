@@ -6,6 +6,19 @@ import fs from 'fs';
 import path from 'path';
 import cliOutput from '../../utils/cli-output.js';
 
+/**
+ * Generate report from AppScan data
+ * @param {string} type - Report type: applications, scans, issues, executions
+ * @param {string} id - Resource ID (required for scans, issues, executions)
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ * @param {string} [options.format='markdown'] - Output format: markdown, html
+ * @param {string} [options.output] - Output file path (prints to console if not specified)
+ * @param {string} [options.excludeStatus='Noise'] - Comma-separated statuses to exclude (issues only)
+ * @param {string} [options.minSeverity='3'] - Minimum severity integer 0-5 (issues only)
+ * @param {boolean} [options.grouped] - Apply grouped sorting (issues only)
+ * @param {string} [options.columns] - Force columns: sast, dast, sca, all (issues only)
+ */
 export async function generateReport(type, id, options) {
   try {
     const config = options.config
@@ -46,7 +59,6 @@ export async function generateReport(type, id, options) {
         break;
       }
       case 'issues': {
-        // Handle exclude-status option
         const excludeStatus =
           options.excludeStatus !== undefined ? options.excludeStatus : 'Noise';
         if (excludeStatus) {
@@ -60,7 +72,6 @@ export async function generateReport(type, id, options) {
         const response = await service.listIssues(id, excludeStatus);
         let issues = response.Items || [];
 
-        // Filter by minimum severity if specified
         const minSeverity = parseInt(options.minSeverity || '3', 10);
         if (!Number.isNaN(minSeverity)) {
           issues = issues.filter((issue) => {
@@ -69,7 +80,6 @@ export async function generateReport(type, id, options) {
           });
         }
 
-        // If no issues remain after applying filters, do not generate a report file.
         if ((issues || []).length === 0) {
           cliOutput.warning(
             `Warning: no issues found for scan ${id} with current filters` +

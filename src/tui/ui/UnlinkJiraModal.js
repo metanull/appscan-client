@@ -1,8 +1,3 @@
-/**
- * UnlinkJiraModal Component
- * Modal for unlinking Jira issues from selected vulnerabilities by setting ExternalId to null
- */
-
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
@@ -14,13 +9,22 @@ const CONFIRM_OPTIONS = [
   { label: 'No, cancel', value: 'cancel' },
 ];
 
+/**
+ * Modal for unlinking Jira issues from selected vulnerabilities
+ * Sets ExternalId field to null after user confirmation
+ * @param {Object} props - Component props
+ * @param {number} props.issueCount - Number of selected vulnerabilities to unlink
+ * @param {Array<string>} props.jiraKeys - Array of currently linked Jira keys
+ * @param {Function} props.onUnlink - Callback to unlink issues
+ * @param {Function} props.onClose - Callback when modal is closed
+ * @returns {JSX.Element}
+ */
 export const UnlinkJiraModal = React.memo(
   ({ issueCount, jiraKeys, onUnlink, onClose }) => {
     const [step, setStep] = useState('confirm'); // 'confirm' | 'unlinking' | 'success'
     const [error, setError] = useState(null);
 
     useInput((input, key) => {
-      // Only intercept ESC when not unlinking
       if (key.escape && step !== 'unlinking') {
         onClose();
       }

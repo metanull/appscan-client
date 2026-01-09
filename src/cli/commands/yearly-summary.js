@@ -3,6 +3,11 @@ import { AppScanService } from '../../services/appscan-service.js';
 import { Config } from '../../utils/config.js';
 import cliOutput from '../../utils/cli-output.js';
 
+/**
+ * Normalize scan technology to standard type
+ * @param {string} tech - Technology string from scan
+ * @returns {string} Normalized type: SAST, DAST, SCA, or Other
+ */
 function normalizeScanType(tech) {
   const lower = (tech || '').toLowerCase();
   if (lower.includes('static')) return 'SAST';
@@ -11,6 +16,12 @@ function normalizeScanType(tech) {
   return 'Other';
 }
 
+/**
+ * Check if a date string falls within a specific year
+ * @param {string} dateStr - Date string to check
+ * @param {number} year - Year to check against
+ * @returns {boolean} True if date is in the specified year
+ */
 function isInYear(dateStr, year) {
   if (!dateStr) return false;
   const date = new Date(dateStr);
@@ -18,6 +29,13 @@ function isInYear(dateStr, year) {
   return date.getFullYear() === year;
 }
 
+/**
+ * Generate a summary report of all scans and issues for a specific year
+ * @param {string|number} [year] - Year to generate summary for (defaults to current year)
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ * @param {boolean} [options.json] - Output in JSON format
+ */
 export async function generateYearlySummary(year, options) {
   cliOutput.setJsonMode(options.json);
   const config = options.config
@@ -113,32 +131,36 @@ export async function generateYearlySummary(year, options) {
   }
 }
 
+/**
+ * Print formatted summary to console
+ * @param {Object} summary - Summary data object
+ */
 function printSummary(summary) {
-  console.log(
+  cliOutput.status(
     chalk.bold.cyan(`\n=== AppScan Yearly Summary (${summary.year}) ===\n`)
   );
 
-  console.log(chalk.bold('Overview:'));
-  console.log(`  Total Applications: ${summary.totalApps}`);
-  console.log(`  Total Scans: ${summary.totalScans}`);
-  console.log(`  Total Issues (excl. Noise): ${summary.totalIssues}\n`);
+  cliOutput.status(chalk.bold('Overview:'));
+  cliOutput.status(`  Total Applications: ${summary.totalApps}`);
+  cliOutput.status(`  Total Scans: ${summary.totalScans}`);
+  cliOutput.status(`  Total Issues (excl. Noise): ${summary.totalIssues}\n`);
 
-  console.log(chalk.bold('Scans by Type:'));
+  cliOutput.status(chalk.bold('Scans by Type:'));
   Object.entries(summary.scansByType)
     .filter(([, count]) => count > 0)
     .forEach(([type, count]) => {
-      console.log(`  ${type}: ${count}`);
+      cliOutput.status(`  ${type}: ${count}`);
     });
 
-  console.log(chalk.bold('\nIssues by Scan Type:'));
+  cliOutput.status(chalk.bold('\nIssues by Scan Type:'));
   Object.entries(summary.issuesByType)
     .filter(([, count]) => count > 0)
     .forEach(([type, count]) => {
-      console.log(`  ${type}: ${count}`);
+      cliOutput.status(`  ${type}: ${count}`);
     });
 
   if (Object.keys(summary.issuesBySeverity).length > 0) {
-    console.log(chalk.bold('\nIssues by Severity:'));
+    cliOutput.status(chalk.bold('\nIssues by Severity:'));
     const severityOrder = [
       'Critical',
       'High',
@@ -148,46 +170,50 @@ function printSummary(summary) {
     ];
     severityOrder.forEach((severity) => {
       if (summary.issuesBySeverity[severity]) {
-        console.log(`  ${severity}: ${summary.issuesBySeverity[severity]}`);
+        cliOutput.status(
+          `  ${severity}: ${summary.issuesBySeverity[severity]}`
+        );
       }
     });
     Object.entries(summary.issuesBySeverity)
       .filter(([sev]) => !severityOrder.includes(sev))
       .forEach(([severity, count]) => {
-        console.log(`  ${severity}: ${count}`);
+        cliOutput.status(`  ${severity}: ${count}`);
       });
   }
 
-  console.log(chalk.bold('\nIssues by Application and Scan Type:\n'));
+  cliOutput.status(chalk.bold('\nIssues by Application and Scan Type:\n'));
   const sortedApps = Object.entries(summary.issuesByApp).sort(
     (a, b) => b[1].total - a[1].total
   );
   sortedApps.forEach(([appName, counts]) => {
-    console.log(chalk.bold(`  ${appName}`) + ` (Total: ${counts.total})`);
+    cliOutput.status(chalk.bold(`  ${appName}`) + ` (Total: ${counts.total})`);
     ['SAST', 'DAST', 'SCA', 'Other'].forEach((type) => {
       if (counts[type] > 0) {
-        console.log(`    ${type}: ${counts[type]}`);
+        cliOutput.status(`    ${type}: ${counts[type]}`);
       }
     });
   });
 
   if (summary.scans.length > 0) {
-    console.log(chalk.bold(`\nRecent Scans (${summary.scans.length}):\n`));
+    cliOutput.status(chalk.bold(`\nRecent Scans (${summary.scans.length}):\n`));
     summary.scans
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       .slice(0, 10)
       .forEach((scan) => {
         const date = new Date(scan.createdAt).toLocaleDateString();
-        console.log(
+        cliOutput.status(
           `  ${date} | ${scan.appName} | ${scan.scanName} (${scan.scanType}) | ${scan.issueCount} issues`
         );
       });
     if (summary.scans.length > 10) {
-      console.log(chalk.gray(`  ... and ${summary.scans.length - 10} more`));
+      cliOutput.status(
+        chalk.gray(`  ... and ${summary.scans.length - 10} more`)
+      );
     }
   }
 
-  console.log('');
+  cliOutput.status('');
 }
 
 export default generateYearlySummary;

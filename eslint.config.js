@@ -43,18 +43,23 @@ export default [
     }
   },
   {
-    files: ['tests/**/*.js'],
+    files: ['tests/**/*.js', 'lab/**/*.js'],
     languageOptions: {
       globals: {
         describe: 'readonly',
+        it: 'readonly',
         test: 'readonly',
         expect: 'readonly',
-        jest: 'readonly',
+        vi: 'readonly',
         beforeEach: 'readonly',
         afterEach: 'readonly',
         beforeAll: 'readonly',
         afterAll: 'readonly'
       }
+    },
+    // Tests and lab scripts are allowed more permissive rules (helpers, stubs, unused variables)
+    rules: {
+      'no-unused-vars': 'off'
     }
   }
 ];

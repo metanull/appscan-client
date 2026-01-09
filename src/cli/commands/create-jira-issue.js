@@ -14,6 +14,19 @@ const severityOrder = {
   Unknown: 0,
 };
 
+/**
+ * Create Jira issues from AppScan scan or issue
+ * @param {string} source - Source type: 'scan' or 'issue'
+ * @param {string} sourceId - Scan ID or Issue ID
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ * @param {boolean} [options.json] - Output in JSON format
+ * @param {string} [options.project] - Jira project key (overrides JIRA_PROJECT_KEY env var)
+ * @param {string} [options.excludeStatus='Noise'] - Comma-separated statuses to exclude (scan source only)
+ * @param {string} [options.minSeverity='0'] - Minimum severity integer 0-5
+ * @param {string} [options.issueType='Bug'] - Jira issue type
+ * @param {string} [options.labels='appscan,security'] - Comma-separated labels
+ */
 export async function createJiraIssue(source, sourceId, options) {
   try {
     cliOutput.setJsonMode(options.json);
@@ -101,7 +114,7 @@ export async function createJiraIssue(source, sourceId, options) {
     });
 
     if (filteredIssues.length === 0) {
-      console.error(
+      cliOutput.warning(
         chalk.yellow(
           `No issues found matching the criteria (min severity: ${minSeverityValue})`
         )
@@ -109,7 +122,7 @@ export async function createJiraIssue(source, sourceId, options) {
       return;
     }
 
-    console.error(
+    cliOutput.success(
       chalk.green(
         `\nFound ${filteredIssues.length} issue(s) matching the criteria`
       )
@@ -157,7 +170,7 @@ export async function createJiraIssue(source, sourceId, options) {
       // Note: Priority field is not set as different Jira instances have different priority schemes
       // Users can set priority manually in Jira if needed
 
-      console.error(
+      cliOutput.status(
         chalk.blue(`Creating Jira issue for AppScan issue ${issue.Id}...`)
       );
 
