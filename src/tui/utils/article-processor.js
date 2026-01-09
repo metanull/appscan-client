@@ -8,8 +8,9 @@ import TurndownService from 'turndown';
 import cliMarkdown from 'cli-markdown';
 
 /**
- * Sanitize HTML article content
- * Removes scripts, styles, images, and other potentially harmful content
+ * Sanitize HTML article removing scripts, styles, and images
+ * @param {string} htmlContent - HTML to sanitize
+ * @returns {string} Sanitized HTML
  */
 export function sanitizeArticle(htmlContent) {
   if (!htmlContent) return '';
@@ -38,7 +39,9 @@ export function sanitizeArticle(htmlContent) {
 }
 
 /**
- * Convert HTML to Markdown
+ * Convert HTML to Markdown with console-friendly link format
+ * @param {string} htmlContent - HTML to convert
+ * @returns {string} Markdown text
  */
 export function htmlToMarkdown(htmlContent) {
   if (!htmlContent) return '';
@@ -67,7 +70,9 @@ export function htmlToMarkdown(htmlContent) {
 }
 
 /**
- * Render Markdown for terminal display
+ * Render Markdown with terminal formatting (colors, styles)
+ * @param {string} markdown - Markdown to render
+ * @returns {string} Styled text for terminal
  */
 export function renderMarkdown(markdown) {
   if (!markdown) return '';
@@ -84,8 +89,9 @@ export function renderMarkdown(markdown) {
 }
 
 /**
- * Process article HTML for terminal display
- * Full pipeline: sanitize → convert to markdown → render for terminal
+ * Process HTML article for terminal display (sanitize → markdown → render)
+ * @param {string} htmlContent - HTML article content
+ * @returns {string} Terminal-ready formatted text
  */
 export function processArticle(htmlContent) {
   if (!htmlContent) return '';
@@ -98,7 +104,10 @@ export function processArticle(htmlContent) {
 }
 
 /**
- * Truncate text to a maximum length
+ * Truncate text with ellipsis if exceeds max length
+ * @param {string} text - Text to truncate
+ * @param {number} maxLength - Maximum length (default: 100)
+ * @returns {string} Truncated text with ... if needed
  */
 export function truncateText(text, maxLength = 100) {
   if (!text || text.length <= maxLength) return text;

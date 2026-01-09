@@ -16,9 +16,9 @@ import logger from '../../utils/logger.js';
  */
 
 /**
- * Parse key string into key definition
- * @param {string} keyString - Key string like 'ctrl+a', 'alt+shift+x', 'escape'
- * @returns {Object} Key definition for matching
+ * Parse key string into matchable definition
+ * @param {string} keyString - Key like 'ctrl+a', 'alt+shift+x', 'escape'
+ * @returns {{ctrl: boolean, alt: boolean, shift: boolean, input: string, specialKey: string}} Key definition
  */
 export function parseKeyString(keyString) {
   const parts = keyString.toLowerCase().split('+');

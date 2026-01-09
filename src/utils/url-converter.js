@@ -108,8 +108,9 @@ export function convertToAbsoluteUrl(
 }
 
 /**
- * Get display-friendly label from URL
- * Extracts meaningful parts for display
+ * Extract display-friendly label from URL
+ * @param {string} url - URL to extract label from
+ * @returns {string} Shortened label for display
  */
 export function getUrlLabel(url) {
   if (!url || typeof url !== 'string') return 'N/A';
@@ -157,8 +158,10 @@ export function getUrlLabel(url) {
 }
 
 /**
- * Format URL for display in terminal
- * Returns object with display text and absolute URL
+ * Format URL for terminal display with text and absolute URL
+ * @param {string} url - URL to format
+ * @param {string} appScanBaseUrl - Base URL for AppScan
+ * @returns {{text: string, url: string, isAbsolute: boolean}} Display object
  */
 export function formatUrlForDisplay(
   url,

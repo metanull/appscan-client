@@ -6,6 +6,19 @@ import fs from 'fs';
 import path from 'path';
 import cliOutput from '../../utils/cli-output.js';
 
+/**
+ * Generate report from AppScan data
+ * @param {string} type - Report type: applications, scans, issues, executions
+ * @param {string} id - Resource ID (required for scans, issues, executions)
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ * @param {string} [options.format='markdown'] - Output format: markdown, html
+ * @param {string} [options.output] - Output file path (prints to console if not specified)
+ * @param {string} [options.excludeStatus='Noise'] - Comma-separated statuses to exclude (issues only)
+ * @param {string} [options.minSeverity='3'] - Minimum severity integer 0-5 (issues only)
+ * @param {boolean} [options.grouped] - Apply grouped sorting (issues only)
+ * @param {string} [options.columns] - Force columns: sast, dast, sca, all (issues only)
+ */
 export async function generateReport(type, id, options) {
   try {
     const config = options.config

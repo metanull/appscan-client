@@ -20,7 +20,10 @@ export const SEVERITY_COLORS = {
 };
 
 /**
- * Group issues by a specific property
+ * Group issues by property and sort by severity
+ * @param {Array} issues - Issues to group
+ * @param {string} property - Property to group by (default: IssueType)
+ * @returns {Array<{name: string, severity: string, issues: Array}>} Grouped issues
  */
 export function groupIssuesBy(issues, property = 'IssueType') {
   const grouped = {};
@@ -46,7 +49,9 @@ export function groupIssuesBy(issues, property = 'IssueType') {
 }
 
 /**
- * Calculate issue statistics
+ * Calculate comprehensive issue statistics
+ * @param {Array} issues - Issues to analyze
+ * @returns {Object} Stats including counts by severity, status, type, and Jira presence
  */
 export function calculateStats(issues) {
   const stats = {
@@ -89,7 +94,9 @@ export function calculateStats(issues) {
 }
 
 /**
- * Get severity badge text
+ * Get severity badge for display
+ * @param {string} severity - Severity level
+ * @returns {string} Badge like [C], [H], [M], [L], [I]
  */
 export function getSeverityBadge(severity) {
   const badges = {
@@ -186,7 +193,9 @@ export function filterIssues(issues, filters = {}) {
 }
 
 /**
- * Get status badge text
+ * Get status emoji badge
+ * @param {string} status - Issue status
+ * @returns {string} Emoji representing status
  */
 export function getStatusBadge(status) {
   const badges = {
@@ -201,7 +210,9 @@ export function getStatusBadge(status) {
 }
 
 /**
- * Format issue for display
+ * Format issue as single line with badges
+ * @param {Object} issue - Issue object
+ * @returns {string} Formatted string with severity, status, type, location, Jira
  */
 export function formatIssueForDisplay(issue) {
   const severity = getSeverityBadge(issue.Severity);
