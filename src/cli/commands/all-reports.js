@@ -103,6 +103,17 @@ export async function generateAllReports(options) {
   const markdownGenerator = new MarkdownReportGenerator();
   const htmlGenerator = new HtmlReportGenerator();
   const outDir = path.resolve(options.outdir || DEFAULT_OUTPUT_DIR);
+
+  // Helper to show status updates; kept minimal for CLI usage
+  function writeStatus(msg) {
+    cliOutput.status(msg);
+  }
+
+  // Helper to clear status line (no-op in simple CLI)
+  function clearStatusLine() {
+    // Intentionally noop; reserved for interactive shells
+  }
+
   writeStatus('Authenticating...');
   await service.authenticate();
   writeStatus('Authenticated');
