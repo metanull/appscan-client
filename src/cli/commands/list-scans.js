@@ -5,6 +5,13 @@ import {
 } from '../../utils/cli-common.js';
 import cliOutput from '../../utils/cli-output.js';
 
+/**
+ * List scans for a specific application or all scans
+ * @param {string} [appId] - Application ID to filter scans (optional, lists all if not provided)
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ * @param {boolean} [options.json] - Output in JSON format
+ */
 export async function listScans(appId, options) {
   try {
     cliOutput.setJsonMode(options.json);

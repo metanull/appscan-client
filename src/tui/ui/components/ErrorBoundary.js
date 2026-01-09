@@ -7,6 +7,12 @@ import React from 'react';
 import { Box, Text } from 'ink';
 import logger from '../../../utils/logger.js';
 
+/**
+ * React error boundary that catches and displays errors gracefully
+ *
+ * @class
+ * @extends React.Component
+ */
 export class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);

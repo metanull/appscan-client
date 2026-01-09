@@ -10,6 +10,14 @@ import { Panel } from './Panel.js';
 import { useGroupedShortcuts } from '../../hooks/useKeyboardShortcuts.js';
 import { formatKeyForDisplay } from '../../utils/keyboard-shortcuts.js';
 
+/**
+ * Modal dialog that displays available keyboard shortcuts for the current view
+ *
+ * @param {Object} props
+ * @param {string} props.view - Current view name for context-specific shortcuts
+ * @param {Function} props.onClose - Callback when modal is closed
+ * @returns {JSX.Element}
+ */
 export const HelpModal = React.memo(({ view, onClose }) => {
   const groupedShortcuts = useGroupedShortcuts(view || 'issue-list');
 

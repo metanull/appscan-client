@@ -10,15 +10,23 @@ import {
 } from '../../utils/filter-builder.js';
 import cliOutput from '../../utils/cli-output.js';
 
+/**
+ * List all issues for a specific application with filtering options
+ * @param {string} appId - Application ID to retrieve issues for
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ * @param {boolean} [options.json] - Output in JSON format
+ * @param {boolean} [options.grouped] - Apply grouped sorting
+ * @param {string} [options.severity] - Filter by severity
+ * @param {string} [options.status] - Filter by status
+ */
 export async function listIssuesByApp(appId, options) {
   try {
     cliOutput.setJsonMode(options.json);
     const { service } = await initializeAppScanService(options.config);
 
-    // Build filter options using shared utility
     const { filterOptions, hasFilters } = buildFilterOptions(options);
 
-    // Fetch issues using Application scope
     cliOutput.status(
       `Fetching issues for application ${appId}${hasFilters ? ' with filters' : ''}...`
     );
@@ -58,6 +66,10 @@ const severityLevels = [
   'Unknown',
 ];
 
+/**
+ * Render issues grouped by severity level
+ * @param {Array} issues - Array of issue objects
+ */
 function renderSeverityGroupedIssues(issues) {
   const grouped = issues.reduce((acc, issue) => {
     const severity = issue.Severity || 'Unknown';
@@ -85,6 +97,10 @@ function renderSeverityGroupedIssues(issues) {
   });
 }
 
+/**
+ * Render issues with grouped sorting by Application, Scan, Issue Type, and Severity
+ * @param {Array} issues - Array of issue objects
+ */
 function renderGroupedIssues(issues) {
   const sorted = [...issues].sort((a, b) => {
     const cmp1 = compare(a.ApplicationId, b.ApplicationId);
@@ -105,6 +121,10 @@ function renderGroupedIssues(issues) {
   console.log('');
 }
 
+/**
+ * Build header row for list view
+ * @returns {string} Formatted header string
+ */
 function buildListHeader() {
   return `  ${chalk.dim('Scan')} | ${chalk.dim('Issue Type')} | ${chalk.dim(
     'Severity'
@@ -138,6 +158,12 @@ function formatListIssueRow(issue, color) {
   return `  ${chalk[color]('•')} ${columns.join(' | ')}`;
 }
 
+/**
+ * Format a single issue row for grouped view
+ * @param {Object} issue - Issue object
+ * @param {string} color - Chalk color name for severity
+ * @returns {string} Formatted row string
+ */
 function formatGroupedIssueRow(issue, color) {
   const columns = [
     issue.ApplicationId || 'N/A',
@@ -155,12 +181,24 @@ function formatGroupedIssueRow(issue, color) {
   return `  ${chalk[color]('•')} ${columns.join(' | ')}`;
 }
 
+/**
+ * Compare two severity values for sorting
+ * @param {string} a - First severity value
+ * @param {string} b - Second severity value
+ * @returns {number} Sort comparison result
+ */
 function compareSeverity(a, b) {
   const aScore = severityOrder[a] ?? severityOrder.Unknown;
   const bScore = severityOrder[b] ?? severityOrder.Unknown;
   return aScore - bScore;
 }
 
+/**
+ * Generic string comparison for sorting
+ * @param {string} a - First value
+ * @param {string} b - Second value
+ * @returns {number} Sort comparison result
+ */
 function compare(a, b) {
   const aValue = a || '';
   const bValue = b || '';

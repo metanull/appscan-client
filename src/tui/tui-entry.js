@@ -24,7 +24,6 @@ export async function launchTUI(options = {}) {
   // Enable TUI mode FIRST to disable console output
   logger.setTuiMode(true);
 
-  // Load .env file from correct location (user home for installed packages)
   const envPath = getEnvPath();
   if (fs.existsSync(envPath)) {
     dotenv.config({ path: envPath });

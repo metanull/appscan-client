@@ -1,8 +1,3 @@
-/**
- * CreateJiraModal Component
- * Modal for creating Jira issues from selected vulnerabilities
- */
-
 import React, { useState, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
@@ -25,6 +20,19 @@ const GROUP_OPTIONS = [
   { label: 'None (one issue per vulnerability)', value: 'none' },
 ];
 
+/**
+ * Modal for creating Jira issues from selected vulnerabilities
+ * Multi-step wizard for project key, grouping, ASVS comments, and parent epic
+ * @param {Object} props - Component props
+ * @param {Array} props.issues - Array of selected vulnerabilities
+ * @param {string} props.defaultProjectKey - Default Jira project key
+ * @param {string} props.appName - Application name for Jira issue context
+ * @param {Function} props.onCreate - Callback to create Jira issues with configuration
+ * @param {Function} props.onSaveAvsComment - Callback to save ASVS comments to issues
+ * @param {Object} props.appScanService - AppScan service for fetching issue comments
+ * @param {Function} props.onClose - Callback when modal is closed
+ * @returns {JSX.Element}
+ */
 export const CreateJiraModal = React.memo(
   ({
     issues,
@@ -58,7 +66,6 @@ export const CreateJiraModal = React.memo(
       const types = [...new Set(issues.map((i) => i.IssueType || 'Unknown'))];
       setIssueTypes(types);
 
-      // Load comments for all issues
       if (appScanService && issues.length > 0) {
         Promise.all(
           issues.map(async (issue) => {
@@ -110,7 +117,6 @@ export const CreateJiraModal = React.memo(
         setAvsUrl('');
         setStep('avsLabel');
       } else if (item.value === 'remove') {
-        // Remove ASVS by adding empty comment (overwrite)
         try {
           const typeIssues = issues.filter((i) => i.IssueType === currentType);
           for (const issue of typeIssues) {

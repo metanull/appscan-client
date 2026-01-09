@@ -3,6 +3,39 @@ import { create } from 'zustand';
 /**
  * Global application state store using Zustand
  * Manages selection, filters, navigation, and UI state
+ *
+ * State shape:
+ * @typedef {Object} AppState
+ * @property {string} view - Current view: 'app-selection' | 'scan-selection' | 'issue-list' | 'issue-details'
+ * @property {Object|null} selectedApp - Currently selected application
+ * @property {Object|null} selectedScan - Currently selected scan
+ * @property {Object|null} selectedIssue - Currently selected issue
+ * @property {Array} applications - List of applications
+ * @property {Array} scans - List of scans
+ * @property {Array} issues - List of issues
+ * @property {Object|null} issueDetails - Detailed issue information
+ * @property {string|null} articleContent - Article content for issue
+ * @property {Object} articleCache - Cache of article content by issue ID
+ * @property {Object} commentsCache - Cache of comments by issue ID
+ * @property {Array<string>} selectedIssueIds - IDs of selected issues for bulk operations
+ * @property {string|null} filterStatus - Filter by issue status
+ * @property {string|null} filterSeverity - Filter by severity level
+ * @property {string|null} filterIssueType - Filter by issue type
+ * @property {string|null} filterJira - Filter by JIRA status: 'with' | 'without' | null
+ * @property {string|null} searchText - Search text for filtering issues
+ * @property {string} sortBy - Sort field: 'severity' | 'name' | 'status'
+ * @property {string|null} scanSearchText - Search text for filtering scans
+ * @property {string|null} scanFilterType - Filter scans by type (SAST, DAST, etc.)
+ * @property {boolean} hideEmptyScans - Whether to hide scans with no issues
+ * @property {string|null} filterPreset - Server-side filter preset
+ * @property {boolean} excludePassedNoise - Exclude Passed and Noise issues from API
+ * @property {boolean} loading - Loading state
+ * @property {Error|null} error - Current error
+ * @property {boolean} showHelp - Help panel visibility
+ * @property {boolean} showJiraPanel - JIRA panel visibility
+ * @property {number} listCursor - Current cursor position in active list
+ * @property {number} appSelectionCursor - Saved cursor for app selection
+ * @property {number} scanSelectionCursor - Saved cursor for scan selection
  */
 export const useStore = create((set, get) => ({
   // Navigation state
@@ -54,8 +87,16 @@ export const useStore = create((set, get) => ({
   scanSelectionCursor: 0, // Saved cursor position for scan selection list
 
   // Actions - Navigation
+  /**
+   * Set the current view and reset cursor
+   * @param {string} view - View name
+   */
   setView: (view) => set({ view, listCursor: 0 }),
 
+  /**
+   * Set selected application and clear dependent state
+   * @param {Object} app - Application object
+   */
   setSelectedApp: (app) =>
     set({
       selectedApp: app,
@@ -64,20 +105,31 @@ export const useStore = create((set, get) => ({
       scans: [],
       issues: [],
       selectedIssueIds: [],
-      appSelectionCursor: get().listCursor, // Save current cursor position
+      appSelectionCursor: get().listCursor,
     }),
 
+  /**
+   * Set selected scan and clear dependent state
+   * @param {Object} scan - Scan object
+   */
   setSelectedScan: (scan) =>
     set({
       selectedScan: scan,
       selectedIssue: null,
       issues: [],
       selectedIssueIds: [],
-      scanSelectionCursor: get().listCursor, // Save current cursor position
+      scanSelectionCursor: get().listCursor,
     }),
 
+  /**
+   * Set selected issue
+   * @param {Object} issue - Issue object
+   */
   setSelectedIssue: (issue) => set({ selectedIssue: issue }),
 
+  /**
+   * Navigate back to previous view, restoring saved cursor positions
+   */
   goBack: () => {
     const { view, appSelectionCursor, scanSelectionCursor } = get();
     if (view === 'issue-details') {
@@ -101,13 +153,42 @@ export const useStore = create((set, get) => ({
   },
 
   // Actions - Data
+  /**
+   * Set applications list
+   * @param {Array} applications - Array of application objects
+   */
   setApplications: (applications) => set({ applications }),
+
+  /**
+   * Set scans list
+   * @param {Array} scans - Array of scan objects
+   */
   setScans: (scans) => set({ scans }),
+
+  /**
+   * Set issues list and reset cursor
+   * @param {Array} issues - Array of issue objects
+   */
   setIssues: (issues) => set({ issues, listCursor: 0 }),
+
+  /**
+   * Set detailed issue information
+   * @param {Object} issueDetails - Issue details object
+   */
   setIssueDetails: (issueDetails) => set({ issueDetails }),
+
+  /**
+   * Set article content for current issue
+   * @param {string} articleContent - Article content text
+   */
   setArticleContent: (articleContent) => set({ articleContent }),
 
   // Actions - Cache
+  /**
+   * Cache article content for an issue
+   * @param {string} issueId - Issue ID
+   * @param {string} content - Article content
+   */
   setArticleCache: (issueId, content) =>
     set((state) => ({
       articleCache: {
@@ -116,6 +197,11 @@ export const useStore = create((set, get) => ({
       },
     })),
 
+  /**
+   * Cache comments for an issue
+   * @param {string} issueId - Issue ID
+   * @param {Array} comments - Array of comment objects
+   */
   setCommentsCache: (issueId, comments) =>
     set((state) => ({
       commentsCache: {
@@ -124,6 +210,10 @@ export const useStore = create((set, get) => ({
       },
     })),
 
+  /**
+   * Invalidate cached data for a specific issue
+   * @param {string} issueId - Issue ID
+   */
   invalidateCacheForIssue: (issueId) =>
     set((state) => {
       const newArticleCache = { ...state.articleCache };
@@ -136,6 +226,9 @@ export const useStore = create((set, get) => ({
       };
     }),
 
+  /**
+   * Clear all cached data
+   */
   clearAllCaches: () =>
     set({
       articleCache: {},
@@ -143,6 +236,10 @@ export const useStore = create((set, get) => ({
     }),
 
   // Actions - Multi-select
+  /**
+   * Toggle selection state of an issue
+   * @param {string} issueId - Issue ID to toggle
+   */
   toggleIssueSelection: (issueId) => {
     const { selectedIssueIds } = get();
     const isSelected = selectedIssueIds.includes(issueId);
@@ -153,13 +250,22 @@ export const useStore = create((set, get) => ({
     });
   },
 
+  /**
+   * Select all filtered issues
+   */
   selectAllIssues: () => {
     const filteredIssues = get().getFilteredIssues();
     set({ selectedIssueIds: filteredIssues.map((i) => i.Id) });
   },
 
+  /**
+   * Clear all issue selections
+   */
   selectNone: () => set({ selectedIssueIds: [] }),
 
+  /**
+   * Invert current issue selection
+   */
   invertSelection: () => {
     const filteredIssues = get().getFilteredIssues();
     const { selectedIssueIds } = get();
@@ -168,23 +274,72 @@ export const useStore = create((set, get) => ({
     set({ selectedIssueIds: newSelection });
   },
 
+  /**
+   * Clear issue selection (alias for selectNone)
+   */
   clearSelection: () => set({ selectedIssueIds: [] }),
 
   // Actions - Filters
+  /**
+   * Set issue status filter
+   * @param {string|null} status - Status to filter by
+   */
   setFilterStatus: (status) =>
     set({ filterStatus: status, selectedIssueIds: [] }),
+
+  /**
+   * Set severity filter
+   * @param {string|null} severity - Severity level to filter by
+   */
   setFilterSeverity: (severity) =>
     set({ filterSeverity: severity, selectedIssueIds: [] }),
+
+  /**
+   * Set issue type filter
+   * @param {string|null} type - Issue type to filter by
+   */
   setFilterIssueType: (type) =>
     set({ filterIssueType: type, selectedIssueIds: [] }),
+
+  /**
+   * Set JIRA filter
+   * @param {string|null} jira - 'with' | 'without' | null
+   */
   setFilterJira: (jira) => set({ filterJira: jira, selectedIssueIds: [] }),
+
+  /**
+   * Set search text filter
+   * @param {string|null} text - Search text
+   */
   setSearchText: (text) => set({ searchText: text, selectedIssueIds: [] }),
+
+  /**
+   * Set sort order
+   * @param {string} sortBy - Sort field: 'severity' | 'name' | 'status'
+   */
   setSortBy: (sortBy) => set({ sortBy }),
+
+  /**
+   * Set scan search text
+   * @param {string|null} text - Search text for scans
+   */
   setScanSearchText: (text) => set({ scanSearchText: text }),
+
+  /**
+   * Set scan type filter
+   * @param {string|null} type - Scan type to filter by
+   */
   setScanFilterType: (type) => set({ scanFilterType: type }),
+
+  /**
+   * Toggle hiding of empty scans
+   */
   toggleHideEmptyScans: () =>
     set((state) => ({ hideEmptyScans: !state.hideEmptyScans })),
 
+  /**
+   * Clear all filters
+   */
   clearFilters: () =>
     set({
       filterStatus: null,
@@ -196,7 +351,10 @@ export const useStore = create((set, get) => ({
       selectedIssueIds: [],
     }),
 
-  // Apply filter presets
+  /**
+   * Apply a server-side filter preset
+   * @param {string|null} preset - Preset name
+   */
   applyFilterPreset: (preset) => {
     set({
       filterPreset: preset,
@@ -208,26 +366,72 @@ export const useStore = create((set, get) => ({
   },
 
   // API-level filtering actions
+  /**
+   * Toggle exclusion of Passed and Noise issues
+   */
   toggleExcludePassedNoise: () =>
     set((state) => ({ excludePassedNoise: !state.excludePassedNoise })),
 
+  /**
+   * Set whether to exclude Passed and Noise issues
+   * @param {boolean} exclude - Whether to exclude
+   */
   setExcludePassedNoise: (exclude) => set({ excludePassedNoise: exclude }),
 
   // Actions - UI
+  /**
+   * Set loading state
+   * @param {boolean} loading - Loading state
+   */
   setLoading: (loading) => set({ loading }),
+
+  /**
+   * Set error state
+   * @param {Error|null} error - Error object
+   */
   setError: (error) => set({ error }),
+
+  /**
+   * Toggle help panel visibility
+   */
   toggleHelp: () => set((state) => ({ showHelp: !state.showHelp })),
+
+  /**
+   * Toggle JIRA panel visibility
+   */
   toggleJiraPanel: () =>
     set((state) => ({ showJiraPanel: !state.showJiraPanel })),
 
   // Actions - List navigation
+  /**
+   * Set current list cursor position
+   * @param {number} cursor - Cursor position
+   */
   setListCursor: (cursor) => set({ listCursor: cursor }),
+
+  /**
+   * Set app selection cursor position
+   * @param {number} cursor - Cursor position
+   */
   setAppSelectionCursor: (cursor) => set({ appSelectionCursor: cursor }),
+
+  /**
+   * Set scan selection cursor position
+   * @param {number} cursor - Cursor position
+   */
   setScanSelectionCursor: (cursor) => set({ scanSelectionCursor: cursor }),
+
+  /**
+   * Move cursor up in current list
+   */
   moveCursorUp: () =>
     set((state) => ({
       listCursor: Math.max(0, state.listCursor - 1),
     })),
+
+  /**
+   * Move cursor down in current list with bounds checking
+   */
   moveCursorDown: () =>
     set((state) => {
       const { listCursor, view, applications, issues } = state;
@@ -300,6 +504,10 @@ export const useStore = create((set, get) => ({
     }),
 
   // Computed/helper functions
+  /**
+   * Get filtered and sorted issues based on current filters
+   * @returns {Array} Filtered and sorted issues array
+   */
   getFilteredIssues: () => {
     const {
       issues,
@@ -345,7 +553,6 @@ export const useStore = create((set, get) => ({
       );
     }
 
-    // Apply sorting
     const severityOrder = {
       Critical: 0,
       High: 1,
@@ -377,6 +584,10 @@ export const useStore = create((set, get) => ({
     return filtered;
   },
 
+  /**
+   * Check if any filters are currently active
+   * @returns {boolean} True if any filter is active
+   */
   hasActiveFilters: () => {
     const {
       filterStatus,
@@ -394,6 +605,10 @@ export const useStore = create((set, get) => ({
     );
   },
 
+  /**
+   * Get filtered scans based on current scan filters
+   * @returns {Array} Filtered scans array
+   */
   getFilteredScans: () => {
     const { scans, scanSearchText, scanFilterType, hideEmptyScans } = get();
     let filtered = [...scans];

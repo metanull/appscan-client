@@ -1,14 +1,18 @@
-/**
- * LinkJiraModal Component
- * Modal for linking Jira issues to selected vulnerabilities by setting ExternalId
- */
-
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
 import { Modal } from './components/Modal.js';
 import { Panel } from './components/Panel.js';
 
+/**
+ * Modal for linking Jira issues to selected vulnerabilities
+ * Sets ExternalId field to provided Jira issue key
+ * @param {Object} props - Component props
+ * @param {number} props.issueCount - Number of selected vulnerabilities to link
+ * @param {Function} props.onLink - Callback with Jira key to link issues
+ * @param {Function} props.onClose - Callback when modal is closed
+ * @returns {JSX.Element}
+ */
 export const LinkJiraModal = React.memo(({ issueCount, onLink, onClose }) => {
   const [step, setStep] = useState('input'); // 'input' | 'linking' | 'success'
   const [jiraKey, setJiraKey] = useState('');
@@ -26,7 +30,6 @@ export const LinkJiraModal = React.memo(({ issueCount, onLink, onClose }) => {
       return;
     }
 
-    // Basic validation - should be like "KEY-123"
     if (!/^[A-Z]+-\d+$/.test(jiraKey.trim())) {
       setError('Invalid Jira key format. Expected format: KEY-123');
       return;

@@ -7,7 +7,15 @@ import cliOutput from '../../utils/cli-output.js';
 
 /**
  * Update application details including custom fields
- * Supports both standard fields (Name, Description, Type, etc.) and custom fields
+ * @param {string} applicationId - Application ID to update
+ * @param {string|Object} updates - JSON string or object with field updates
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ * @param {boolean} [options.json] - Output in JSON format
+ * @param {string} [options.name] - Application name
+ * @param {string} [options.description] - Application description
+ * @param {string} [options.devopsproject] - DevOps project custom field
+ * @param {string} [options.jiraproject] - Jira project custom field
  */
 export async function setApplication(applicationId, updates, options) {
   try {
@@ -135,7 +143,6 @@ export async function setApplication(applicationId, updates, options) {
       cliOutput.result(chalk.bold.green('Changes Applied:'));
       cliOutput.result('');
 
-      // Show standard field changes
       Object.keys(updateData).forEach((key) => {
         if (key !== '_customFields' && key !== 'customFields') {
           const oldValue = currentApp[key] || chalk.gray('(not set)');
@@ -149,7 +156,6 @@ export async function setApplication(applicationId, updates, options) {
         }
       });
 
-      // Show custom field changes
       if (updateData._customFields || updateData.customFields) {
         const customFieldUpdates =
           updateData._customFields || updateData.customFields;

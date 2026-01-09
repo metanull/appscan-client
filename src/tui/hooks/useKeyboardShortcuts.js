@@ -24,7 +24,6 @@ export function useKeyboardShortcuts(view, shortcuts, options = {}) {
     }
   }, [view, shortcuts]);
 
-  // Handle input
   useInput(
     (input, key) => {
       if (!enabled) return;

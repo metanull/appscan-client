@@ -4,12 +4,21 @@ import {
 } from '../../utils/cli-common.js';
 import cliOutput from '../../utils/cli-output.js';
 
+/**
+ * Update the status of a specific issue
+ * @param {string} issueId - Issue ID to update
+ * @param {string} status - New status: Open, InProgress, Reopened, Noise, Passed, Fixed, New
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ * @param {boolean} [options.json] - Output in JSON format
+ * @param {string} [options.comment] - Comment to add with status update
+ * @param {string} [options.externalId] - External tracking ID (e.g., Jira issue key)
+ */
 export async function updateIssueStatus(issueId, status, options) {
   try {
     cliOutput.setJsonMode(options.json);
     const { service } = await initializeAppScanService(options.config);
 
-    // Validate status
     const validStatuses = [
       'Open',
       'InProgress',
@@ -27,27 +36,20 @@ export async function updateIssueStatus(issueId, status, options) {
 
     cliOutput.status(`Updating issue ${issueId} to status ${status}...`);
 
-    // Build the update payload
     const updateData = {
       Status: status,
     };
 
-    // Add comment if provided
     if (options.comment) {
       updateData.Comment = options.comment;
     }
 
-    // Add external ID if provided
     if (options.externalId) {
       updateData.ExternalId = options.externalId;
     }
 
-    // Use OData filter to target specific issue
-    // GUID values in OData filters need to be without quotes (the API handles GUID comparison)
     const odataFilter = `Id eq ${issueId}`;
 
-    // Update the issue by using the Issues_UpdateFilteredIssues endpoint
-    // We need to get the application ID for this issue first
     const issue = await service.api.v4.Issues_GetIssue(issueId, {});
 
     if (!issue) {
@@ -60,7 +62,6 @@ export async function updateIssueStatus(issueId, status, options) {
 
     const applicationId = issue.ApplicationId;
 
-    // Note: PUT endpoint uses 'odataFilter' parameter (not '$filter' like GET)
     const result = await service.api.v4.Issues_UpdateFilteredIssues(
       'Application',
       applicationId,

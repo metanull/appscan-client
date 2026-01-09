@@ -3,6 +3,13 @@ import { AppScanService } from '../../services/appscan-service.js';
 import { Config } from '../../utils/config.js';
 import cliOutput from '../../utils/cli-output.js';
 
+/**
+ * Get all comments for a specific issue
+ * @param {string} issueId - Issue ID to retrieve comments for
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ * @param {boolean} [options.json] - Output in JSON format
+ */
 export async function getIssueComments(issueId, options) {
   try {
     cliOutput.setJsonMode(options.json);

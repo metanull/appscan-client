@@ -3,6 +3,11 @@ import chalk from 'chalk';
 import { writeFileSync, existsSync } from 'fs';
 import { getEnvPath } from '../../utils/config-paths.js';
 
+/**
+ * Interactive setup wizard to configure AppScan client credentials and integrations
+ * @param {Object} options - CLI options
+ * @param {boolean} [options.force] - Skip confirmation prompt if .env file exists
+ */
 export async function setup(options) {
   try {
     console.log(chalk.blue.bold('\n🔧 AppScan Client Setup\n'));
@@ -10,7 +15,6 @@ export async function setup(options) {
       chalk.gray('This wizard will help you configure your .env file.\n')
     );
 
-    // Check if .env already exists
     const envPath = getEnvPath();
     if (existsSync(envPath) && !options.force) {
       const overwrite = await confirm({
@@ -28,7 +32,6 @@ export async function setup(options) {
       }
     }
 
-    // AppScan Configuration
     console.log(chalk.cyan.bold('\n📡 AppScan API Configuration\n'));
 
     const apiKey = await input({
@@ -59,7 +62,6 @@ export async function setup(options) {
       default: 'https://cloud.appscan.com',
     });
 
-    // JIRA Configuration (optional)
     console.log(chalk.cyan.bold('\n🎫 JIRA Configuration (Optional)\n'));
     console.log(
       chalk.gray(
@@ -109,7 +111,6 @@ export async function setup(options) {
       });
     }
 
-    // Confluence OWASP ASVS Configuration (optional)
     console.log(chalk.cyan.bold('\n📚 Confluence Configuration (Optional)\n'));
     console.log(
       chalk.gray(
@@ -143,7 +144,6 @@ export async function setup(options) {
       });
     }
 
-    // Azure DevOps Configuration (optional)
     console.log(
       chalk.cyan.bold('\n⚙️ Azure DevOps Configuration (Optional)\n')
     );
@@ -176,7 +176,6 @@ export async function setup(options) {
       });
     }
 
-    // Create .env content
     const envContent = `# AppScan API Configuration
 APPSCAN_API_KEY=${apiKey}
 APPSCAN_API_SECRET=${apiSecret}
@@ -197,7 +196,6 @@ ${confluenceHost ? `CONFLUENCE_HOST=${confluenceHost}` : '# CONFLUENCE_HOST=http
 ${confluenceBaseUrl ? `CONFLUENCE_OWASP_ASVS_URL=${confluenceBaseUrl}` : '# CONFLUENCE_OWASP_ASVS_URL=https://confluence.company.com/display/SEC/OWASP-ASVS'}
 `;
 
-    // Write .env file
     writeFileSync(envPath, envContent, 'utf8');
 
     console.log(chalk.green.bold('\n✅ Setup complete!\n'));

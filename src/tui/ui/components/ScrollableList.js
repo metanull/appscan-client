@@ -8,6 +8,19 @@ import React, { useMemo } from 'react';
 import { Box, Text } from 'ink';
 import logger from '../../../utils/logger.js';
 
+/**
+ * Virtual scrolling list that only renders visible items for performance
+ * Automatically centers the cursor in the visible window
+ *
+ * @param {Object} props
+ * @param {Array} props.items - Array of items to display
+ * @param {number} props.cursor - Current cursor position (index)
+ * @param {Function} props.renderItem - Render function for each item: (item, isSelected, index) => JSX.Element
+ * @param {number} [props.visibleRows=10] - Number of visible rows
+ * @param {Function} [props.onCursorChange] - Callback when cursor changes (unused)
+ * @param {string} [props.emptyMessage='No items'] - Message to show when list is empty
+ * @returns {JSX.Element}
+ */
 export const ScrollableList = React.memo(
   ({
     items,

@@ -40,7 +40,14 @@ import { Formatter } from '../../utils/formatter.js';
 import open from 'open';
 
 /**
- * Context Pane - Shows selected app/scan info
+ * Context pane displaying selected application and scan information
+ * @param {Object} props - Component props
+ * @param {Object} props.app - Selected application with name, ID, and custom fields
+ * @param {Object} props.scan - Selected scan information
+ * @param {number} props.issuesCount - Total number of issues
+ * @param {Array} props.shortcuts - Array of keyboard shortcuts to display
+ * @param {Function} props.onToggle - Toggle handler (unused)
+ * @returns {JSX.Element}
  */
 const ContextPane = React.memo(
   ({ app, scan, issuesCount, shortcuts, onToggle: _onToggle }) => {
@@ -145,7 +152,12 @@ const ContextPane = React.memo(
 ContextPane.displayName = 'ContextPane';
 
 /**
- * Vulnerability List Row - Memoized
+ * Individual vulnerability row displaying severity, status, Jira link, and type
+ * @param {Object} props - Component props
+ * @param {Object} props.issue - Vulnerability issue object with severity, status, type, and ExternalId
+ * @param {boolean} props.isSelected - Whether this row is the currently selected item
+ * @param {boolean} props.isMultiSelected - Whether this row is included in multi-selection
+ * @returns {JSX.Element}
  */
 const VulnRow = React.memo(({ issue, isSelected, isMultiSelected }) => {
   const severity = issue.Severity || 'Unknown';
@@ -196,7 +208,21 @@ const VulnRow = React.memo(({ issue, isSelected, isMultiSelected }) => {
 VulnRow.displayName = 'VulnRow';
 
 /**
- * Vulnerability List Panel
+ * Panel displaying list of vulnerabilities with filtering and selection indicators
+ * Includes filter status display, column headers, and scrollable list
+ * @param {Object} props - Component props
+ * @param {Array} props.issues - Array of filtered vulnerability issues
+ * @param {number} props.cursor - Current cursor position in the list
+ * @param {Array<string>} props.selectedIssueIds - Array of selected issue IDs for multi-selection
+ * @param {string} props.filterStatus - Active status filter
+ * @param {string} props.filterSeverity - Active severity filter
+ * @param {string} props.filterIssueType - Active issue type filter
+ * @param {string} props.filterJira - Active Jira filter (with/without)
+ * @param {string} props.searchText - Active search text
+ * @param {string} props.filterPreset - Active filter preset name
+ * @param {Function} props.onCursorChange - Cursor change handler (unused)
+ * @param {number} props.height - Available height for panel
+ * @returns {JSX.Element}
  */
 const VulnListPanel = React.memo(
   ({
@@ -338,7 +364,17 @@ const VulnListPanel = React.memo(
 VulnListPanel.displayName = 'VulnListPanel';
 
 /**
- * Details Preview Panel
+ * Panel displaying detailed preview of selected vulnerability
+ * Shows issue metadata, comments, and article content loading state
+ * @param {Object} props - Component props
+ * @param {Object} props.issue - Selected vulnerability issue
+ * @param {Object} props.app - Selected application
+ * @param {Object} props.scan - Selected scan (unused)
+ * @param {string} props.articleContent - Loaded article content for the issue
+ * @param {boolean} props.loading - Whether article content is loading
+ * @param {Array} props.comments - Array of comments for the issue
+ * @param {boolean} props.commentsLoading - Whether comments are loading
+ * @returns {JSX.Element}
  */
 const DetailsPreviewPanel = React.memo(
   ({
@@ -476,7 +512,13 @@ const DetailsPreviewPanel = React.memo(
 DetailsPreviewPanel.displayName = 'DetailsPreviewPanel';
 
 /**
- * Status Bar
+ * Status bar displaying error messages, loading indicators, and application info
+ * @param {Object} props - Component props
+ * @param {string} props.error - Error message to display
+ * @param {boolean} props.loading - Whether application is in loading state
+ * @param {string} props.message - Custom loading message
+ * @param {boolean} props.excludePassedNoise - Whether Passed/Noise issues are excluded
+ * @returns {JSX.Element}
  */
 const pkg = getPackageInfo();
 const StatusBar = React.memo(
@@ -524,7 +566,12 @@ const StatusBar = React.memo(
 StatusBar.displayName = 'StatusBar';
 
 /**
- * Main InkApp Component
+ * Main TUI application component with 3-pane layout
+ * Manages application state, user interactions, and modal workflows
+ * Optimized with memoization to prevent render loops
+ * @param {Object} props - Component props
+ * @param {string} props.configPath - Path to configuration file
+ * @returns {JSX.Element}
  */
 export const InkApp = ({ configPath }) => {
   const { exit } = useApp();
@@ -581,7 +628,6 @@ export const InkApp = ({ configPath }) => {
     });
   }, []);
 
-  // Load applications on mount - runs once
   const hasLoadedApps = useRef(false);
   React.useEffect(() => {
     if (hasLoadedApps.current) return; // Guard against double-mounting
@@ -661,7 +707,6 @@ export const InkApp = ({ configPath }) => {
       )
     );
 
-  // Load issues when a scan is selected (runs when `selectedScan` changes)
   const lastLoadedScanRef = useRef(null);
   React.useEffect(() => {
     if (!selectedScan || !selectedScan.Id) return;
@@ -685,14 +730,12 @@ export const InkApp = ({ configPath }) => {
 
         let issueList;
         if (isViewAll && selectedApp?.Id) {
-          // Load all issues for the application (across all scans)
           issueList = await appScanService.listIssues(
             selectedApp.Id,
             filterOptions,
             'Application'
           );
         } else {
-          // Load issues for the specific scan
           issueList = await appScanService.listIssues(
             selectedScan.Id,
             filterOptions
@@ -800,7 +843,6 @@ export const InkApp = ({ configPath }) => {
       };
       const options = presetMap[presetName] || {};
 
-      // Add Passed/Noise exclusion if enabled
       if (excludePassedNoise) {
         options.excludePassedNoise = true;
       }
@@ -1266,7 +1308,6 @@ export const InkApp = ({ configPath }) => {
       {
         key: 'o',
         action: () => {
-          // Create a simple sort modal or cycle through sort options
           const currentSort = useStore.getState().sortBy;
           const sortOptions = ['severity', 'name', 'status'];
           const currentIndex = sortOptions.indexOf(currentSort);
@@ -1400,7 +1441,6 @@ export const InkApp = ({ configPath }) => {
             pendingScanLoad.current.cancelled = true;
           }
 
-          // Create new cancellation tracker
           const loadTracker = { cancelled: false };
           pendingAppLoad.current = loadTracker;
 
@@ -1472,7 +1512,6 @@ export const InkApp = ({ configPath }) => {
             pendingScanLoad.current.cancelled = true;
           }
 
-          // Create new cancellation tracker
           const loadTracker = { cancelled: false };
           pendingScanLoad.current = loadTracker;
 

@@ -3,6 +3,13 @@ import { AppScanService } from '../../services/appscan-service.js';
 import { Config } from '../../utils/config.js';
 import cliOutput from '../../utils/cli-output.js';
 
+/**
+ * List all executions for a specific scan
+ * @param {string} scanId - Scan ID to retrieve executions for
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ * @param {boolean} [options.json] - Output in JSON format
+ */
 export async function listScanExecutions(scanId, options) {
   try {
     cliOutput.setJsonMode(options.json);

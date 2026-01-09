@@ -1,23 +1,20 @@
-/**
- * TextInputPage Component
- * Full-screen text input page that replaces the entire UI
- * Used to avoid rendering lag from other components
- */
-
 import React, { useState, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
 import { useKeyboardManager, KeyboardMode } from '../utils/KeyboardManager.js';
 
 /**
- * @param {Object} props
+ * Full-screen text input page replacing entire UI to avoid rendering lag
+ * Used for collecting text input without interference from background components
+ * @param {Object} props - Component props
  * @param {string} props.title - Title of the input page
  * @param {string} props.subtitle - Subtitle/context information
  * @param {string} props.borderColor - Border color (green, yellow, cyan, etc.)
  * @param {string} props.placeholder - Placeholder text for input
  * @param {string} props.initialValue - Initial value for input
- * @param {Function} props.onSubmit - Called when user submits (Enter)
- * @param {Function} props.onCancel - Called when user cancels (ESC)
+ * @param {Function} props.onSubmit - Callback when user submits with Enter key
+ * @param {Function} props.onCancel - Callback when user cancels with ESC key
+ * @returns {JSX.Element}
  */
 export const TextInputPage = React.memo(
   ({

@@ -11,14 +11,16 @@ import {
 } from '../../utils/KeyboardManager.js';
 
 /**
- * Modal component
- * Automatically manages keyboard mode when mounted/unmounted
+ * Centered modal dialog wrapper with automatic keyboard mode management
+ * Automatically switches to MODAL keyboard mode when mounted
  *
- * @param {ReactNode} children - Modal content
- * @param {Function} onClose - Close handler (optional)
- * @param {boolean} showOverlay - Show dark overlay behind modal (default: false, causes text input lag if true)
- * @param {number} width - Modal width percentage (default: 80)
- * @param {number} height - Modal height percentage (default: 80)
+ * @param {Object} props
+ * @param {JSX.Element} props.children - Modal content
+ * @param {Function} [props.onClose] - Close handler (currently unused)
+ * @param {boolean} [props.showOverlay=false] - Show dark overlay behind modal (causes text input lag if true)
+ * @param {number} [props.width=80] - Modal width percentage
+ * @param {number} [props.height=80] - Modal height percentage
+ * @returns {JSX.Element}
  */
 export const Modal = ({
   children,

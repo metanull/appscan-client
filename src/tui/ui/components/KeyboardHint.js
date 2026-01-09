@@ -7,7 +7,13 @@ import React from 'react';
 import { Box, Text } from 'ink';
 
 /**
- * KeyboardHint - Display a keyboard shortcut with individual key buttons
+ * Display a keyboard shortcut as styled key buttons with description
+ * Parses key combinations and renders each key in a bordered box
+ *
+ * @param {Object} props
+ * @param {string} props.keyString - Key combination string (e.g., "Ctrl+S", "Enter", "↑")
+ * @param {string} props.description - Description of what the shortcut does
+ * @returns {JSX.Element}
  */
 export const KeyboardHint = React.memo(({ keyString, description }) => {
   // Split the key string into individual keys

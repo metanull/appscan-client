@@ -10,22 +10,29 @@ import {
 } from '../../utils/filter-builder.js';
 import cliOutput from '../../utils/cli-output.js';
 
+/**
+ * List issues for a specific scan with filtering options
+ * @param {string} scanId - Scan ID to retrieve issues for
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ * @param {boolean} [options.json] - Output in JSON format
+ * @param {string} [options.excludeStatus='Noise'] - Comma-separated statuses to exclude
+ * @param {boolean} [options.grouped] - Apply grouped sorting (Application → Issue Type → Severity)
+ * @param {string} [options.severity] - Filter by severity
+ * @param {string} [options.status] - Filter by status
+ */
 export async function listIssues(scanId, options) {
   try {
     cliOutput.setJsonMode(options.json);
     const { service } = await initializeAppScanService(options.config);
 
-    // Build filter options using shared utility
     const { filterOptions, hasFilters } = buildFilterOptions(options);
 
-    // Determine which approach to use
     let response;
     if (hasFilters) {
-      // Use new OData filter approach
       cliOutput.status(`Fetching issues for scan ${scanId} with filters...`);
       response = await service.listIssues(scanId, filterOptions);
     } else {
-      // Use legacy exclude-status approach
       const excludeStatus =
         options.excludeStatus !== undefined ? options.excludeStatus : 'Noise';
       if (excludeStatus) {
@@ -66,6 +73,10 @@ const severityLevels = [
   'Unknown',
 ];
 
+/**
+ * Render issues grouped by severity level
+ * @param {Array} issues - Array of issue objects
+ */
 function renderSeverityGroupedIssues(issues) {
   const grouped = issues.reduce((acc, issue) => {
     const severity = issue.Severity || 'Unknown';
@@ -94,6 +105,10 @@ function renderSeverityGroupedIssues(issues) {
   });
 }
 
+/**
+ * Render issues with grouped sorting by Application, Issue Type, and Severity
+ * @param {Array} issues - Array of issue objects
+ */
 function renderGroupedIssues(issues) {
   const sorted = [...issues].sort((a, b) => {
     const appCompare = compare(a.ApplicationId, b.ApplicationId);
@@ -116,6 +131,10 @@ function renderGroupedIssues(issues) {
   console.log('');
 }
 
+/**
+ * Build header row for list view
+ * @returns {string} Formatted header string
+ */
 function buildListHeader() {
   return `  ${chalk.dim('Issue Type')} | ${chalk.dim('Severity')} | ${chalk.dim(
     'Threat Class'
@@ -124,6 +143,10 @@ function buildListHeader() {
   )} | ${chalk.dim('Location')}`;
 }
 
+/**
+ * Build header row for grouped view
+ * @returns {string} Formatted header string
+ */
 function buildGroupedHeader() {
   return `  ${chalk.dim('Application ID')} | ${chalk.dim('Issue Type ID')} | ${chalk.dim(
     'Issue Type'
@@ -134,6 +157,12 @@ function buildGroupedHeader() {
   )}`;
 }
 
+/**
+ * Format a single issue row for list view
+ * @param {Object} issue - Issue object
+ * @param {string} color - Chalk color name for severity
+ * @returns {string} Formatted row string
+ */
 function formatListIssueRow(issue, color) {
   const columns = [
     issue.IssueType || 'N/A',
@@ -148,6 +177,12 @@ function formatListIssueRow(issue, color) {
   return `  ${chalk[color]('•')} ${columns.join(' | ')}`;
 }
 
+/**
+ * Format a single issue row for grouped view
+ * @param {Object} issue - Issue object
+ * @param {string} color - Chalk color name for severity
+ * @returns {string} Formatted row string
+ */
 function formatGroupedIssueRow(issue, color) {
   const columns = [
     issue.ApplicationId || 'N/A',
@@ -164,12 +199,24 @@ function formatGroupedIssueRow(issue, color) {
   return `  ${chalk[color]('•')} ${columns.join(' | ')}`;
 }
 
+/**
+ * Compare two severity values for sorting
+ * @param {string} a - First severity value
+ * @param {string} b - Second severity value
+ * @returns {number} Sort comparison result
+ */
 function compareSeverity(a, b) {
   const aScore = severityOrder[a] ?? severityOrder.Unknown;
   const bScore = severityOrder[b] ?? severityOrder.Unknown;
   return aScore - bScore;
 }
 
+/**
+ * Generic string comparison for sorting
+ * @param {string} a - First value
+ * @param {string} b - Second value
+ * @returns {number} Sort comparison result
+ */
 function compare(a, b) {
   const aValue = a || '';
   const bValue = b || '';

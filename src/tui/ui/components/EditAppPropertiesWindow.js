@@ -11,6 +11,16 @@ import {
   KeyboardMode,
 } from '../../utils/KeyboardManager.js';
 
+/**
+ * Full-screen window for selecting which application property to edit
+ *
+ * @param {Object} props
+ * @param {Object} props.app - Application object with properties to edit
+ * @param {number} [props.initialCursor=0] - Initial cursor position
+ * @param {Function} props.onSelectField - Callback when a field is selected for editing
+ * @param {Function} props.onCancel - Callback when window is cancelled
+ * @returns {JSX.Element|null}
+ */
 export const EditAppPropertiesWindow = React.memo(
   ({ app, initialCursor = 0, onSelectField, onCancel }) => {
     const [cursor, setCursor] = useState(initialCursor);

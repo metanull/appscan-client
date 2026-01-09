@@ -40,7 +40,6 @@ export function groupIssuesBy(issues, property = 'IssueType') {
     grouped[key].issues.push(issue);
   });
 
-  // Sort groups by severity
   return Object.values(grouped).sort((a, b) => {
     return (
       (SEVERITY_ORDER[b.severity] || 0) - (SEVERITY_ORDER[a.severity] || 0)
@@ -68,21 +67,17 @@ export function calculateStats(issues) {
   };
 
   issues.forEach((issue) => {
-    // Count by severity
     const severity = issue.Severity || 'Unknown';
     if (stats[severity] !== undefined) {
       stats[severity]++;
     }
 
-    // Count by status
     const status = issue.Status || 'Unknown';
     stats.byStatus[status] = (stats.byStatus[status] || 0) + 1;
 
-    // Count by type
     const type = issue.IssueType || 'Unknown';
     stats.byType[type] = (stats.byType[type] || 0) + 1;
 
-    // Count Jira presence
     if (issue.ExternalId && issue.ExternalId.trim() !== '') {
       stats.withJira++;
     } else {
@@ -159,8 +154,6 @@ export function filterIssues(issues, filters = {}) {
     );
   }
 
-  // Apply sorting
-  // Use local severity order to match AppContext logic (0 is highest priority)
   const severityOrder = {
     Critical: 0,
     High: 1,

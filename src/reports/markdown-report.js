@@ -1,12 +1,21 @@
 import TurndownService from 'turndown';
 
 export class MarkdownReportGenerator {
+  /**
+   * Escapes special characters in markdown table cells to prevent rendering issues.
+   * @param {string} text - The text to escape.
+   * @returns {string} The escaped text or 'N/A' if input is empty.
+   */
   escapeMarkdownTableCell(text) {
     if (!text) return 'N/A';
-    // Escape backslashes first, then pipes
     return text.replace(/\\/g, '\\\\').replace(/\|/g, '\\|');
   }
 
+  /**
+   * Generates a markdown report listing all applications.
+   * @param {Array<object>} applications - Array of application objects containing Name, Id, and Description.
+   * @returns {string} Formatted markdown report with applications table.
+   */
   generateApplicationsReport(applications) {
     let report = '# AppScan Applications Report\n\n';
     report += `Generated: ${new Date().toISOString()}\n\n`;
@@ -30,6 +39,12 @@ export class MarkdownReportGenerator {
     return report;
   }
 
+  /**
+   * Generates a markdown report listing all scans.
+   * @param {Array<object>} scans - Array of scan objects containing Name, Id, ScanType, and LatestExecution.
+   * @param {string} [appName] - Optional application name to include in the report header.
+   * @returns {string} Formatted markdown report with scans table.
+   */
   generateScansReport(scans, appName) {
     let report = '# AppScan Scans Report\n\n';
     report += `Generated: ${new Date().toISOString()}\n\n`;
@@ -57,6 +72,17 @@ export class MarkdownReportGenerator {
     return report;
   }
 
+  /**
+   * Generates a markdown report of security issues with optional grouping and remediation.
+   * @param {Array<object>} issues - Array of issue objects from AppScan.
+   * @param {string} [scanName] - Optional scan name for the report header.
+   * @param {object} [options] - Report options.
+   * @param {boolean} [options.grouped] - Whether to group issues by type and language.
+   * @param {string} [options.columns] - Technology type for column selection ('sca', 'dast', or auto-detect).
+   * @param {object} [service] - AppScanService instance for fetching remediation articles.
+   * @param {object} [scanMeta] - Scan metadata containing appId, id, technology, and appName.
+   * @returns {Promise<string>} Formatted markdown report with issues tables.
+   */
   async generateIssuesReport(
     issues,
     scanName,
@@ -83,7 +109,6 @@ export class MarkdownReportGenerator {
       const groupedIssues = this.groupIssuesByApplicationAndType(issues);
       const turndownService = this.createTurndownService();
 
-      // Build table of contents
       report += '## Table of Contents\n\n';
       groupedIssues.forEach((group, index) => {
         const issueType = group.issueType || 'Unknown Issue';
@@ -113,7 +138,6 @@ export class MarkdownReportGenerator {
 
         report += `#### <a id="${anchor}"></a>${issueType} (${language}) – ${highestSeverity} (${highestSeverityValue})\n\n`;
 
-        // For grouped view we also offer technology-aware, compact summary columns.
         const firstIssue = group.issues[0] || {};
         const forcedColumns = options.columns || null;
         const detectedTech =
@@ -228,7 +252,6 @@ export class MarkdownReportGenerator {
       .forEach((severity) => {
         const severityIssues = grouped[severity] || [];
         report += `### ${severity} Severity (${severityIssues.length})\n\n`;
-        // Build technology-aware columns to better support SAST, DAST and SCA
         const exampleIssue = severityIssues[0] || {};
         const technology =
           scanMeta?.technology ||
@@ -236,7 +259,6 @@ export class MarkdownReportGenerator {
           exampleIssue.Scanner ||
           '';
 
-        // base columns common to most scanners
         const baseCols = [
           'Issue ID',
           'Issue Type',
@@ -254,7 +276,6 @@ export class MarkdownReportGenerator {
           t.includes('sca analyzer') ||
           t.includes('thirdpartylib')
         ) {
-          // SCA-focused columns
           techCols = [
             'Library',
             'Library Version',
@@ -268,7 +289,6 @@ export class MarkdownReportGenerator {
           t.includes('dast') ||
           exampleIssue.ElementType === 'Page'
         ) {
-          // DAST-focused columns
           techCols = [
             'URL',
             'Domain',
@@ -279,7 +299,6 @@ export class MarkdownReportGenerator {
             'Scheme',
           ];
         } else {
-          // Default to SAST-friendly columns
           techCols = [
             'Threat Class',
             'Scanner',
@@ -290,12 +309,10 @@ export class MarkdownReportGenerator {
           ];
         }
 
-        // common trailing column
         const trailing = ['Status'];
 
         const columns = baseCols.concat(techCols).concat(trailing);
 
-        // write header
         report += `| ${columns.join(' | ')} |\n`;
         report += `|${columns.map(() => '---').join('|')}|\n`;
 
@@ -353,6 +370,12 @@ export class MarkdownReportGenerator {
     return report;
   }
 
+  /**
+   * Generates a markdown report of scan executions.
+   * @param {Array<object>} executions - Array of execution objects containing Id, Status, StartedAt, and CompletedAt.
+   * @param {string} [scanName] - Optional scan name to include in the report header.
+   * @returns {string} Formatted markdown report with executions table.
+   */
   generateScanExecutionsReport(executions, scanName) {
     let report = '# AppScan Scan Executions Report\n\n';
     report += `Generated: ${new Date().toISOString()}\n\n`;
@@ -384,6 +407,11 @@ export class MarkdownReportGenerator {
     return report;
   }
 
+  /**
+   * Groups issues by severity level.
+   * @param {Array<object>} issues - Array of issue objects with Severity property.
+   * @returns {object} Object with severity levels as keys and arrays of issues as values.
+   */
   groupBySeverity(issues) {
     return issues.reduce((acc, issue) => {
       const severity = issue.Severity || 'Unknown';
@@ -395,10 +423,19 @@ export class MarkdownReportGenerator {
     }, {});
   }
 
+  /**
+   * Returns an ordered array of standard severity levels.
+   * @returns {Array<string>} Array of severity level names in descending order of importance.
+   */
   severityLevels() {
     return ['Critical', 'High', 'Medium', 'Low', 'Informational', 'Unknown'];
   }
 
+  /**
+   * Returns a numeric priority value for a severity level.
+   * @param {string} severity - Severity level name.
+   * @returns {number} Numeric priority (5 for Critical, 0 for Unknown).
+   */
   getSeverityOrder(severity) {
     const order = {
       Critical: 5,
@@ -411,6 +448,11 @@ export class MarkdownReportGenerator {
     return order[severity] || 0;
   }
 
+  /**
+   * Sorts issues by SeverityValue in descending order.
+   * @param {Array<object>} issues - Array of issue objects with SeverityValue property.
+   * @returns {Array<object>} New sorted array of issues.
+   */
   sortIssuesBySeverityValue(issues) {
     return [...issues].sort((a, b) => {
       const aValue = a.SeverityValue ?? 0;
@@ -419,6 +461,16 @@ export class MarkdownReportGenerator {
     });
   }
 
+  /**
+   * Formats scan metadata into a comma-separated string with markdown links.
+   * @param {object} [scanMeta] - Scan metadata object.
+   * @param {string} [scanMeta.appId] - Application ID.
+   * @param {string} [scanMeta.id] - Scan ID.
+   * @param {string} [scanMeta.technology] - Scan technology.
+   * @param {string} [scanMeta.appName] - Application name.
+   * @param {string} [baseUrl='https://eu.cloud.appscan.com'] - Base URL for AppScan links.
+   * @returns {string} Formatted metadata string with links.
+   */
   formatScanMeta(scanMeta = {}, baseUrl = 'https://eu.cloud.appscan.com') {
     const parts = [];
     if (scanMeta.appId) {
@@ -440,6 +492,10 @@ export class MarkdownReportGenerator {
     return parts.join(', ');
   }
 
+  /**
+   * Formats text as a markdown blockquote by prefixing each line with '>'.  * @param {string} text - Text to format.
+   * @returns {string} Blockquote-formatted text.
+   */
   formatAsBlockquote(text) {
     return text
       .split('\n')
@@ -447,10 +503,20 @@ export class MarkdownReportGenerator {
       .join('\n');
   }
 
+  /**
+   * Encodes spaces in a URL for use in markdown links.
+   * @param {string} url - URL to encode.
+   * @returns {string} URL with spaces replaced by %20.
+   */
   encodeUrlForLink(url) {
     return url.replace(/ /g, '%20');
   }
 
+  /**
+   * Creates a URL-safe anchor ID from text for markdown links.
+   * @param {string} text - Text to convert to an anchor.
+   * @returns {string} Lowercase anchor with special characters replaced by hyphens.
+   */
   createAnchor(text) {
     return text
       .toLowerCase()
@@ -458,6 +524,11 @@ export class MarkdownReportGenerator {
       .replace(/^-+|-+$/g, '');
   }
 
+  /**
+   * Extracts a human-readable label from a source control URL.
+   * @param {string} rawUrl - Full source control URL.
+   * @returns {string} Simplified label combining project, repository, and path, or 'Source' if parsing fails.
+   */
   extractSourceLabel(rawUrl) {
     try {
       const parsed = new URL(rawUrl);
@@ -475,7 +546,6 @@ export class MarkdownReportGenerator {
         try {
           decodedPath = decodeURIComponent(decodedPath);
         } catch {
-          // Invalid URI encoding - use original path
           decodedPath = normalizedPath;
         }
       }
@@ -486,11 +556,14 @@ export class MarkdownReportGenerator {
         return segmentsToShow.join('/');
       }
     } catch {
-      // Invalid URL format - fall through to generic label
+      return 'Source';
     }
-    return 'Source';
   }
 
+  /**
+   * Creates and configures a TurndownService instance for HTML to markdown conversion.
+   * @returns {import('turndown')} Configured TurndownService instance.
+   */
   createTurndownService() {
     const turndownService = new TurndownService({
       headingStyle: 'atx',
@@ -548,8 +621,12 @@ export class MarkdownReportGenerator {
     }
   }
 
+  /**
+   * Groups issues by application ID, issue type ID, and language, sorted by severity.
+   * @param {Array<object>} issues - Array of issue objects.
+   * @returns {Array<object>} Array of group objects with applicationId, issueTypeId, issueType, language, issues array, and severity metrics.
+   */
   groupIssuesByApplicationAndType(issues) {
-    // Create a map to group issues by applicationId and IssueTypeId
     const groupMap = new Map();
 
     issues.forEach((issue) => {
@@ -571,7 +648,6 @@ export class MarkdownReportGenerator {
       const group = groupMap.get(key);
       group.issues.push(issue);
 
-      // Track the highest severity value in the group
       const severityValue = issue.SeverityValue ?? 0;
       if (severityValue > group.maxSeverityValue) {
         group.maxSeverityValue = severityValue;
@@ -580,12 +656,10 @@ export class MarkdownReportGenerator {
       }
     });
 
-    // Convert map to array and sort groups by max severity value descending
     const groups = Array.from(groupMap.values()).sort((a, b) => {
       return b.maxSeverityValue - a.maxSeverityValue;
     });
 
-    // Sort issues within each group by severity value descending
     groups.forEach((group) => {
       group.issues.sort((a, b) => {
         const aValue = a.SeverityValue ?? 0;
@@ -597,6 +671,11 @@ export class MarkdownReportGenerator {
     return groups;
   }
 
+  /**
+   * Sorts issues for grouped reports by application, issue type, and severity.
+   * @param {Array<object>} issues - Array of issue objects.
+   * @returns {Array<object>} New sorted array of issues.
+   */
   sortIssuesForGroupedReport(issues) {
     return [...issues].sort((a, b) => {
       const appCompare = this.compareValues(a.ApplicationId, b.ApplicationId);
@@ -618,6 +697,12 @@ export class MarkdownReportGenerator {
     });
   }
 
+  /**
+   * Compares two values for sorting, treating undefined/null as empty strings.
+   * @param {*} a - First value to compare.
+   * @param {*} b - Second value to compare.
+   * @returns {number} -1 if a < b, 1 if a > b, 0 if equal.
+   */
   compareValues(a, b) {
     const aValue = a ?? '';
     const bValue = b ?? '';

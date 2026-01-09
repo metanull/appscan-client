@@ -59,7 +59,6 @@ export async function generateReport(type, id, options) {
         break;
       }
       case 'issues': {
-        // Handle exclude-status option
         const excludeStatus =
           options.excludeStatus !== undefined ? options.excludeStatus : 'Noise';
         if (excludeStatus) {
@@ -73,7 +72,6 @@ export async function generateReport(type, id, options) {
         const response = await service.listIssues(id, excludeStatus);
         let issues = response.Items || [];
 
-        // Filter by minimum severity if specified
         const minSeverity = parseInt(options.minSeverity || '3', 10);
         if (!Number.isNaN(minSeverity)) {
           issues = issues.filter((issue) => {
@@ -82,7 +80,6 @@ export async function generateReport(type, id, options) {
           });
         }
 
-        // If no issues remain after applying filters, do not generate a report file.
         if ((issues || []).length === 0) {
           cliOutput.warning(
             `Warning: no issues found for scan ${id} with current filters` +

@@ -11,6 +11,19 @@ import { useTerminalSize } from '../../hooks/useTerminalSize.js';
 
 const SCAN_TYPES = ['SAST', 'DAST', 'SCA', 'IAST', 'IAC'];
 
+/**
+ * Full-screen scan selection window with search, filtering, and type-based filtering
+ * Includes a special "View All" option to see issues across all scans
+ *
+ * @param {Object} props
+ * @param {Array} props.scans - List of scans to display
+ * @param {Function} props.onSelect - Callback when a scan is selected
+ * @param {Function} props.onCancel - Callback when selection is cancelled
+ * @param {boolean} [props.hideEmpty=false] - Whether to hide scans with no issues
+ * @param {Object} props.appScanService - Service for scan operations
+ * @param {Object} props.selectedScan - Currently selected scan
+ * @returns {JSX.Element}
+ */
 export const ScanSelectionWindow = React.memo(
   ({
     scans,
@@ -65,11 +78,8 @@ export const ScanSelectionWindow = React.memo(
         );
       }
 
-      // Sort by name
       filtered.sort((a, b) => (a.Name || '').localeCompare(b.Name || ''));
 
-      // Add "View all vulnerabilities" as the first option
-      // Use a special marker object to identify it
       const viewAllOption = {
         Id: '__VIEW_ALL__',
         Name: '🔍 View all vulnerabilities (across all scans)',
@@ -90,11 +100,9 @@ export const ScanSelectionWindow = React.memo(
           setCursor(index);
         }
       }
-    }, [selectedScan, filteredScans]); // Run when selectedScan or filteredScans changes
+    }, [selectedScan, filteredScans]);
 
-    // Handle keyboard input
     useInput((input, key) => {
-      // Handle special keys first (before they can affect search)
       if (key.escape) {
         onCancel();
         return;

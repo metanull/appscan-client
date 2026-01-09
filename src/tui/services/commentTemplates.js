@@ -19,7 +19,6 @@ export function loadTemplates() {
 
   try {
     if (!fs.existsSync(TEMPLATES_FILE)) {
-      // Create empty file if it doesn't exist
       fs.writeFileSync(
         TEMPLATES_FILE,
         '# Comment Templates for AppScan Triage\n# Format: [IssueType]|Comment text\n\n',
@@ -34,7 +33,6 @@ export function loadTemplates() {
     for (const line of lines) {
       const trimmed = line.trim();
 
-      // Skip empty lines and comments
       if (!trimmed || trimmed.startsWith('#')) {
         continue;
       }
@@ -49,7 +47,7 @@ export function loadTemplates() {
       const comment = trimmed.substring(separatorIndex + 1).trim();
 
       if (!issueType || !comment) {
-        continue; // Skip if either part is empty
+        continue;
       }
 
       if (!templates.has(issueType)) {
@@ -65,7 +63,7 @@ export function loadTemplates() {
 }
 
 /**
- * Save a new template to the file
+ * Saves a new template to the file if it doesn't already exist
  * @param {string} issueType - The vulnerability type
  * @param {string} comment - The comment text
  */
@@ -75,11 +73,9 @@ export function saveTemplate(issueType, comment) {
       return;
     }
 
-    // Load existing templates to check for duplicates
     const existing = loadTemplates();
     const existingComments = existing.get(issueType) || [];
 
-    // Don't save if already exists
     if (existingComments.includes(comment)) {
       return;
     }

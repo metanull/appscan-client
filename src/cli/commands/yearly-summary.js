@@ -3,6 +3,11 @@ import { AppScanService } from '../../services/appscan-service.js';
 import { Config } from '../../utils/config.js';
 import cliOutput from '../../utils/cli-output.js';
 
+/**
+ * Normalize scan technology to standard type
+ * @param {string} tech - Technology string from scan
+ * @returns {string} Normalized type: SAST, DAST, SCA, or Other
+ */
 function normalizeScanType(tech) {
   const lower = (tech || '').toLowerCase();
   if (lower.includes('static')) return 'SAST';
@@ -11,6 +16,12 @@ function normalizeScanType(tech) {
   return 'Other';
 }
 
+/**
+ * Check if a date string falls within a specific year
+ * @param {string} dateStr - Date string to check
+ * @param {number} year - Year to check against
+ * @returns {boolean} True if date is in the specified year
+ */
 function isInYear(dateStr, year) {
   if (!dateStr) return false;
   const date = new Date(dateStr);
@@ -18,6 +29,13 @@ function isInYear(dateStr, year) {
   return date.getFullYear() === year;
 }
 
+/**
+ * Generate a summary report of all scans and issues for a specific year
+ * @param {string|number} [year] - Year to generate summary for (defaults to current year)
+ * @param {Object} options - CLI options
+ * @param {string} [options.config] - Path to config file
+ * @param {boolean} [options.json] - Output in JSON format
+ */
 export async function generateYearlySummary(year, options) {
   cliOutput.setJsonMode(options.json);
   const config = options.config
@@ -113,6 +131,10 @@ export async function generateYearlySummary(year, options) {
   }
 }
 
+/**
+ * Print formatted summary to console
+ * @param {Object} summary - Summary data object
+ */
 function printSummary(summary) {
   console.log(
     chalk.bold.cyan(`\n=== AppScan Yearly Summary (${summary.year}) ===\n`)

@@ -1,8 +1,3 @@
-/**
- * FilterModal Component
- * Modal for selecting filters
- */
-
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
@@ -42,11 +37,19 @@ const JIRA_OPTIONS = [
   { label: 'Only issues WITHOUT Jira link', value: 'without' },
 ];
 
+/**
+ * Modal for filtering vulnerability list by status, severity, type, and Jira linkage
+ * Provides multi-step interface for selecting filter type and specific values
+ * @param {Object} props - Component props
+ * @param {Array} props.issues - Array of issues for generating type filter options
+ * @param {Function} props.onSelect - Callback with filter type and value when filter is applied
+ * @param {Function} props.onClose - Callback when modal is closed
+ * @returns {JSX.Element}
+ */
 export const FilterModal = ({ issues, onSelect, onClose }) => {
   const [step, setStep] = useState('type'); // 'type' | 'status' | 'severity' | 'jira' | 'issueType'
   const [filterType, setFilterType] = useState(null);
 
-  // Handle ESC key to cancel
   useInput((input, key) => {
     if (key.escape) {
       onClose();

@@ -2,10 +2,18 @@ import { marked } from 'marked';
 import { MarkdownReportGenerator } from './markdown-report.js';
 
 export class HtmlReportGenerator {
+  /**
+   * Creates an HTML report generator that wraps markdown reports with HTML styling.
+   */
   constructor() {
     this.markdownGenerator = new MarkdownReportGenerator();
   }
 
+  /**
+   * Generates an HTML report listing all applications.
+   * @param {Array<object>} applications - Array of application objects.
+   * @returns {Promise<string>} Complete HTML document with styled applications table.
+   */
   async generateApplicationsReport(applications) {
     const markdown =
       await this.markdownGenerator.generateApplicationsReport(applications);
@@ -15,6 +23,12 @@ export class HtmlReportGenerator {
     );
   }
 
+  /**
+   * Generates an HTML report listing all scans.
+   * @param {Array<object>} scans - Array of scan objects.
+   * @param {string} [appName] - Optional application name for the report header.
+   * @returns {Promise<string>} Complete HTML document with styled scans table.
+   */
   async generateScansReport(scans, appName) {
     const markdown = await this.markdownGenerator.generateScansReport(
       scans,
@@ -23,6 +37,15 @@ export class HtmlReportGenerator {
     return this.wrapInHtml(marked.parse(markdown), 'AppScan Scans Report');
   }
 
+  /**
+   * Generates an HTML report of security issues.
+   * @param {Array<object>} issues - Array of issue objects from AppScan.
+   * @param {string} [scanName] - Optional scan name for the report header.
+   * @param {object} [options] - Report options passed to markdown generator.
+   * @param {object} [service] - AppScanService instance for fetching remediation.
+   * @param {object} [scanMeta] - Scan metadata containing appId, id, technology, and appName.
+   * @returns {Promise<string>} Complete HTML document with styled issues tables.
+   */
   async generateIssuesReport(
     issues,
     scanName,
@@ -40,6 +63,12 @@ export class HtmlReportGenerator {
     return this.wrapInHtml(marked.parse(markdown), 'AppScan Issues Report');
   }
 
+  /**
+   * Generates an HTML report of scan executions.
+   * @param {Array<object>} executions - Array of execution objects.
+   * @param {string} [scanName] - Optional scan name for the report header.
+   * @returns {Promise<string>} Complete HTML document with styled executions table.
+   */
   async generateScanExecutionsReport(executions, scanName) {
     const markdown = await this.markdownGenerator.generateScanExecutionsReport(
       executions,
@@ -51,6 +80,12 @@ export class HtmlReportGenerator {
     );
   }
 
+  /**
+   * Wraps HTML content in a complete HTML document with styling.
+   * @param {string} content - HTML content to wrap.
+   * @param {string} title - Page title for the HTML document.
+   * @returns {string} Complete HTML document with embedded styles.
+   */
   wrapInHtml(content, title) {
     return `<!DOCTYPE html>
 <html lang="en">
