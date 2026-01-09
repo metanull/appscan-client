@@ -20,6 +20,7 @@ import { HelpModal } from './components/HelpModal.js';
 import { FilterModal } from './FilterModal.js';
 import { SearchModal } from './SearchModal.js';
 import { LinksModal } from './components/LinksModal.js';
+import { EditAppPropertiesWindow } from './components/EditAppPropertiesWindow.js';
 import { UpdateStatusModal } from './UpdateStatusModal.js';
 import { UpdateSeverityModal } from './UpdateSeverityModal.js';
 import { TextInputPage } from './TextInputPage.js';
@@ -545,9 +546,11 @@ export const InkApp = ({ configPath }) => {
   // Local UI state
   const [showContextPane, setShowContextPane] = useState(true);
   const [showDetailsPane, setShowDetailsPane] = useState(true);
-  const [activeModal, setActiveModal] = useState(null); // null | 'app' | 'scan' | 'filter' | 'search' | 'help' | etc.
+  const [activeModal, setActiveModal] = useState(null); // null | 'filter' | 'search' | 'help' | etc. (NOT for edit-app-properties)
   const [textInputConfig, setTextInputConfig] = useState(null); // Config for text input page
-  const [standaloneWindow, setStandaloneWindow] = useState(null); // 'app' | 'scan' | null - for standalone window rendering
+  const [standaloneWindow, setStandaloneWindow] = useState(null); // 'app' | 'scan' | 'edit-app-properties' | null - for standalone window rendering
+  const [editAppPropertiesCursor, setEditAppPropertiesCursor] = useState(0); // Track cursor position in edit properties modal
+  const [editAppPropertiesField, setEditAppPropertiesField] = useState(null); // Track field being edited
   const [debugMode, setDebugMode] = useState(false);
   const [debugMessage, setDebugMessage] = useState('');
   const [loadingMessage, setLoadingMessage] = useState('Ready'); // Custom loading message
@@ -1051,6 +1054,13 @@ export const InkApp = ({ configPath }) => {
         group: 'Actions',
       },
       {
+        key: 'p',
+        action: () => selectedApp && setStandaloneWindow('edit-app-properties'),
+        description: 'Edit App Properties',
+        condition: () => !!selectedApp,
+        group: 'Actions',
+      },
+      {
         key: 'u',
         action: () => currentIssue && setActiveModal('update'),
         description: 'Update Status',
@@ -1526,6 +1536,85 @@ export const InkApp = ({ configPath }) => {
         hideEmpty={false}
         appScanService={appScanService}
         selectedScan={selectedScan}
+      />
+    );
+  }
+
+  // If standalone edit app properties window is active
+  if (standaloneWindow === 'edit-app-properties' && selectedApp) {
+    // If we're editing a field, show text input
+    if (editAppPropertiesField) {
+      return (
+        <TextInputPage
+          title={`Edit ${editAppPropertiesField.label}`}
+          subtitle={`Application: ${selectedApp.Name}`}
+          borderColor={editAppPropertiesField.isCustom ? 'yellow' : 'cyan'}
+          placeholder={editAppPropertiesField.value || 'Enter value...'}
+          initialValue={editAppPropertiesField.value || ''}
+          onSubmit={async (value) => {
+            try {
+              const currentApp = await appScanService.getApplicationDetails(
+                selectedApp.Id
+              );
+              const apiPayload = {};
+
+              if (!editAppPropertiesField.isCustom) {
+                apiPayload[editAppPropertiesField.key] = value;
+              } else {
+                const fieldDef = currentApp._customFieldsRaw?.find(
+                  (f) => f.Name === editAppPropertiesField.key
+                );
+                if (fieldDef) {
+                  apiPayload.AppCustomFields = [
+                    { Id: fieldDef.Id, Value: value || '' },
+                  ];
+                }
+              }
+
+              await appScanService.updateApplication(
+                selectedApp.Id,
+                apiPayload
+              );
+              const updatedApp = await appScanService.getApplicationDetails(
+                selectedApp.Id
+              );
+              useStore.getState().setSelectedApp(updatedApp);
+
+              // Return to field selection
+              setEditAppPropertiesField(null);
+            } catch (err) {
+              logger.error('Failed to update application', err);
+              setEditAppPropertiesField(null);
+              setStandaloneWindow(null);
+            }
+          }}
+          onCancel={() => {
+            setEditAppPropertiesField(null);
+          }}
+        />
+      );
+    }
+
+    // Show field selection
+    return (
+      <EditAppPropertiesWindow
+        app={selectedApp}
+        initialCursor={editAppPropertiesCursor}
+        onSelectField={(field, fieldIndex) => {
+          logger.info('Field selected for editing', {
+            field: field.key,
+            index: fieldIndex,
+          });
+          setEditAppPropertiesCursor(fieldIndex);
+          setEditAppPropertiesField(field);
+          logger.info('State updated', { editAppPropertiesField: field.key });
+        }}
+        onCancel={() => {
+          logger.info('Edit app properties cancelled');
+          setEditAppPropertiesCursor(0);
+          setEditAppPropertiesField(null);
+          setStandaloneWindow(null);
+        }}
       />
     );
   }

@@ -159,6 +159,41 @@ export class AppScanService {
     return await this.service.getIssueArticle(issue);
   }
 
+  async getApplicationDetails(appId) {
+    await this.authenticate();
+    return await this.service.getApplicationDetails(appId);
+  }
+
+  async updateApplication(appId, updateData) {
+    await this.authenticate();
+
+    try {
+      logger.info('Updating AppScan application', { appId, updateData });
+      const result = await this.service.api.v4.Apps_Update(appId, updateData);
+
+      // Audit the update
+      auditService.logAppUpdate(appId, updateData, {
+        success: true,
+        result,
+      });
+
+      logger.info('Application updated successfully', { appId });
+      return result;
+    } catch (error) {
+      // Audit the failed update
+      auditService.logAppUpdate(appId, updateData, {
+        success: false,
+        error: error.message,
+      });
+
+      logger.error('Failed to update application', {
+        appId,
+        error: error.message,
+      });
+      throw error;
+    }
+  }
+
   /**
    * Get the AppScan URL for a specific issue
    * @param {string} appId - Application ID

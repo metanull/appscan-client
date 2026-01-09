@@ -116,6 +116,23 @@ class AuditService {
   }
 
   /**
+   * Log AppScan application update
+   */
+  logAppUpdate(applicationId, updateData, result) {
+    return this.log(
+      'APPSCAN_APP_UPDATE',
+      {
+        applicationId,
+        updateData,
+      },
+      result,
+      {
+        fields: Object.keys(updateData),
+      }
+    );
+  }
+
+  /**
    * Get audit log file path
    */
   getAuditFilePath() {
