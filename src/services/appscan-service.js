@@ -198,7 +198,7 @@ export class AppScanService {
    * @param {boolean} filterOptions.jiraUnassigned - Issues without Jira link
    * @param {Array<string>} filterOptions.statusFilter - Custom status filter array
    * @param {Array<string>} filterOptions.severityFilter - Custom severity filter array
-   * @param {string} excludeStatus - Deprecated: Use filterOptions.statusFilter instead
+   * @param {string} excludeStatus - Comma-separated statuses to exclude (client-side filtering)
    * @param {string} scope - Scope type: 'Application', 'Scan', or 'ScanExecution' (default: 'Scan')
    * @returns {Promise<Object>} Issues response
    */
@@ -210,7 +210,6 @@ export class AppScanService {
   ) {
     await this.ensureAuthenticated();
 
-    // Handle backward compatibility: if filterOptions is a string, it's the old excludeStatus param
     if (typeof filterOptions === 'string') {
       excludeStatus = filterOptions;
       filterOptions = null;
@@ -224,7 +223,6 @@ export class AppScanService {
         if (odataFilter) {
           queryParams.$filter = odataFilter;
         }
-      } else if (excludeStatus) {
       }
 
       const response = await this.api.v4.Issues_Get(
@@ -863,40 +861,6 @@ export class AppScanService {
       throw new Error(
         `Failed to update all issues in application: ${error.message}`
       );
-    }
-  }
-
-  /**
-   * Get issue counts grouped by severity for a scan
-   * @param {string} scanId - Scan ID
-   * @param {string} excludeStatus - Comma-separated statuses to exclude
-   * @returns {Promise<Object>} Issue statistics
-   */
-  async getIssueCounts(scanId, excludeStatus = 'Noise') {
-    await this.ensureAuthenticated();
-    try {
-      const response = await this.listIssues(scanId, excludeStatus);
-      const issues = response.Items || [];
-
-      const stats = {
-        total: issues.length,
-        Critical: 0,
-        High: 0,
-        Medium: 0,
-        Low: 0,
-        Informational: 0,
-      };
-
-      issues.forEach((issue) => {
-        const severity = issue.Severity || 'Unknown';
-        if (stats[severity] !== undefined) {
-          stats[severity]++;
-        }
-      });
-
-      return stats;
-    } catch (error) {
-      throw new Error(`Failed to get issue counts: ${error.message}`);
     }
   }
 }
