@@ -119,35 +119,34 @@ export function getUrlLabel(url) {
     // If it's an absolute URL, try to extract meaningful parts
     if (isAbsoluteUrl(url)) {
       const parsed = new URL(url);
+      const hostname = (parsed.hostname || '').toLowerCase();
+      const pathname = parsed.pathname || '';
 
       // Azure DevOps
-      if (
-        parsed.hostname === 'dev.azure.com' ||
-        parsed.hostname.endsWith('.dev.azure.com')
-      ) {
+      if (hostname === 'dev.azure.com' || hostname.endsWith('.dev.azure.com')) {
         const pathParam = parsed.searchParams.get('path');
         if (pathParam) {
           // Return just the file path
           return pathParam.replace(/^\/+/, '');
         }
         // Return the pathname without leading slash
-        return parsed.pathname.replace(/^\/+/, '');
+        return pathname.replace(/^\/+/, '');
       }
 
       // AppScan Cloud
       if (
-        parsed.hostname === 'cloud.appscan.com' ||
-        parsed.hostname.endsWith('.cloud.appscan.com')
+        hostname === 'cloud.appscan.com' ||
+        hostname.endsWith('.cloud.appscan.com')
       ) {
-        // For issue URLs, return just "Issue Details"
-        if (parsed.pathname.includes('/Issues/')) {
+        // For issue URLs, return just "Issue Details" (case-insensitive)
+        if (pathname.toLowerCase().includes('/issues/')) {
           return 'Issue Details';
         }
-        return parsed.pathname;
+        return pathname;
       }
 
       // Other URLs - return hostname + path
-      return `${parsed.hostname}${parsed.pathname}`;
+      return `${parsed.hostname}${pathname}`;
     }
 
     // For relative paths, return as-is but clean up
