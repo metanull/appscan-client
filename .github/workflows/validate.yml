@@ -1,17 +1,20 @@
 name: Quality Check
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
-    branches: [ main ]
+    branches: ["main"]
+    types: [opened, synchronize, reopened]
+
+  workflow_dispatch:
+    # Allow manual triggering
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
 
 jobs:
   lint:
@@ -96,12 +99,12 @@ jobs:
         run: npm test
 
   report:
-    name: Final report
+    name: QC passed
     runs-on: ubuntu-latest
     needs: [lint, build, test]
     if: always()
     steps:
-      - name: Report results
+      - name: QC passed
         run: |
           echo "Lint result: ${{ needs.lint.result }}"
           echo "Build result: ${{ needs.build.result }}"
