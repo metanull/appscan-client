@@ -52,4 +52,38 @@ KISS & DRY: work iteratively, making sure to preserve similar patterns, and pref
 - Azure DevOps Node.js API | https://github.com/Microsoft/azure-devops-node-api |
 - Advanced Security Alerts API | https://learn.microsoft.com/en-us/rest/api/azure/devops/advancedsecurity/alerts |
 - Defender for Cloud REST API | https://learn.microsoft.com/en-us/rest/api/defenderforcloud/ |
-- Microsoft Graph Security API | https://learn.microsoft.com/en-us/graph/security-concept-overview |
+- Microsoft Graph Security API | https://learn.microsoft.com/en-us/graph/security-concept-overview
+
+---
+
+## Lab: Azure DevOps connectivity test
+
+A minimal lab script has been added to verify connectivity against Azure DevOps using the official node client `azure-devops-node-api`.
+
+Files added:
+
+- `lab/azdo-auth.js` — simple helper that reads env variables and returns a connected `WebApi` client. It also exports `listAzdoProjects()`.
+- `lab/test-azdo-connection.js` — executable script that lists projects and prints them to stdout.
+- `tests/test-azdo-connection.spec.js` — Vitest test that runs `listAzdoProjects()`; it will be skipped when required env vars are not set.
+
+Required environment variables (set in your `.env` or CI environment):
+
+You can use either the `AZDO_*` names or the `AZURE_DEVOPS_*` names already present in some environments.
+
+- `AZDO_ORG_URL` or `AZDO_OR` or (`AZURE_DEVOPS_BASE_URL` + `AZURE_DEVOPS_ORG`) — Azure DevOps organization URL (e.g., `https://dev.azure.com/<org>`)
+- `AZDO_PAT` or `AZDO_PERSONAL_ACCESS_TOKEN` or `AZURE_DEVOPS_PAT` — Personal Access Token with appropriate scopes (read access to the organization and projects)
+
+Note: The helper will accept any of the above variants; if you use `AZURE_DEVOPS_BASE_URL` and `AZURE_DEVOPS_ORG` the script will compose the org URL automatically.
+
+Usage:
+
+- Install the new dependency: `npm install --save azure-devops-node-api`
+- Run the quick script: `node lab/test-azdo-connection.js`
+- Run tests (skipped if env vars missing): `npm test -- tests/test-azdo-connection.spec.js`
+
+Next steps:
+
+- Add scripts to enumerate repositories, check Advanced Security enablement and list Advanced Security alerts
+- Add Defender for Cloud exploration scripts (GraphQL / REST)
+
+|
