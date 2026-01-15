@@ -107,3 +107,49 @@ export async function getRepoAdvancedSecuritySettings(project, repoId) {
     return { error: err && err.message ? err.message : String(err) };
   }
 }
+
+/**
+ * Get organization-level advanced security enablement settings via documented management endpoint
+ * @returns {Promise<any>} parsed enablement object
+ */
+export async function getOrgEnablement() {
+  const conn = await getAzdoClient();
+  const org = process.env.AZDO_ORG_URL || process.env.AZDO_OR || (process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}` : process.env.AZURE_DEVOPS_ORG_URL);
+  if (!org) throw new Error('Cannot determine org URL');
+  const orgName = org.replace(/^https?:\/\//,'').replace(/\/$/,'');
+  const advBase = orgName.startsWith('dev.azure.com/') ? `https://advsec.dev.azure.com/${orgName.replace('dev.azure.com/','')}` : `https://advsec.dev.azure.com/${orgName.split('.')[0]}`;
+  const url = `${advBase}/_apis/management/enablement?api-version=7.2-preview.3&includeAllProperties=true`;
+  const res = await conn.rest.get(url, {});
+  return res && res.result ? res.result : res;
+}
+
+/**
+ * Get project-level advanced security enablement settings
+ * @param {string} project Project id or name
+ */
+export async function getProjectEnablement(project) {
+  const conn = await getAzdoClient();
+  const org = process.env.AZDO_ORG_URL || process.env.AZDO_OR || (process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}` : process.env.AZURE_DEVOPS_ORG_URL);
+  if (!org) throw new Error('Cannot determine org URL');
+  const orgName = org.replace(/^https?:\/\//,'').replace(/\/$/,'');
+  const advBase = orgName.startsWith('dev.azure.com/') ? `https://advsec.dev.azure.com/${orgName.replace('dev.azure.com/','')}` : `https://advsec.dev.azure.com/${orgName.split('.')[0]}`;
+  const url = `${advBase}/${encodeURIComponent(project)}/_apis/management/enablement?api-version=7.2-preview.3&includeAllProperties=true`;
+  const res = await conn.rest.get(url, {});
+  return res && res.result ? res.result : res;
+}
+
+/**
+ * Get repository-level advanced security enablement settings
+ * @param {string} project
+ * @param {string} repositoryId
+ */
+export async function getRepoEnablement(project, repositoryId) {
+  const conn = await getAzdoClient();
+  const org = process.env.AZDO_ORG_URL || process.env.AZDO_OR || (process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}` : process.env.AZURE_DEVOPS_ORG_URL);
+  if (!org) throw new Error('Cannot determine org URL');
+  const orgName = org.replace(/^https?:\/\//,'').replace(/\/$/,'');
+  const advBase = orgName.startsWith('dev.azure.com/') ? `https://advsec.dev.azure.com/${orgName.replace('dev.azure.com/','')}` : `https://advsec.dev.azure.com/${orgName.split('.')[0]}`;
+  const url = `${advBase}/${encodeURIComponent(project)}/_apis/management/repositories/${encodeURIComponent(repositoryId)}/enablement?api-version=7.2-preview.3&includeAllProperties=true`;
+  const res = await conn.rest.get(url, {});
+  return res && res.result ? res.result : res;
+}
