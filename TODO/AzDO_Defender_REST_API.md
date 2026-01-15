@@ -83,7 +83,13 @@ Usage:
 
 Next steps:
 
-- Add scripts to enumerate repositories, check Advanced Security enablement and list Advanced Security alerts
+- Add scripts to enumerate repositories and check Advanced Security enablement per-repository (implemented: `lab/azdo-repos.js`)
+- Add scripts to list Advanced Security alerts (implemented: `lab/azdo-adv-alerts.js` / `lab/azdo-adv.js`)
+  - Uses documented advsec host and alerts API: `GET https://advsec.dev.azure.com/{organization}/{project}/_apis/alert/repositories/{repository}/alerts?api-version=7.2-preview.1`
+  - Example: `https://advsec.dev.azure.com/EESC-CoR/MembersPortal/_apis/alert/repositories/49ecea0e-70c3-43d7-8a49-7f90c394c2c1/alerts?api-version=7.2-preview.1`
+  - Added `tests/test-azdo-adv-alerts.test.js` which exercises this API (skips when env is missing)
+  - The probe `lab/azdo-adv-troubleshoot.js` was extended to try the advsec host and documented path variants
 - Add Defender for Cloud exploration scripts (GraphQL / REST)
+- implement Advanced Security alert enumeration and a summary report listing repositories missing Advanced Security.
 
 |

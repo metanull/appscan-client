@@ -46,3 +46,64 @@ export async function listAzdoProjects() {
   const projects = await coreApi.getProjects();
   return (projects || []).map((p) => ({ id: p.id, name: p.name }));
 }
+
+/**
+ * List repositories for a project.
+ * @param {string} project Project id or name
+ * @returns {Promise<Array<{id:string,name:string,projectName?:string}>>}
+ */
+export async function listRepositories(project) {
+  const conn = await getAzdoClient();
+  const gitApi = await conn.getGitApi();
+  const repos = await gitApi.getRepositories(project);
+  return (repos || []).map((r) => ({ id: r.id, name: r.name, projectName: r.project?.name }));
+}
+
+/**
+ * Try to get Advanced Security settings for a repository. Not all orgs have Advanced Security APIs enabled;
+ * this function returns an object describing the result and marks unknowns.
+ *
+ * @param {string} project Project id or name
+ * @param {string} repoId Repository id
+ * @returns {Promise<{advancedSecurityEnabled?:boolean, pushProtectionEnabled?:boolean, secretScanningEnabled?:boolean, raw?:any, error?:string}>}
+ */
+export async function getRepoAdvancedSecuritySettings(project, repoId) {
+  const conn = await getAzdoClient();
+  try {
+    // Prefer SDK client when available
+    if (typeof conn.getAdvancedSecurityManagementApi === 'function') {
+      const adv = await conn.getAdvancedSecurityManagementApi();
+      const settings = await adv.getRepoAdvancedSecuritySettings(project, repoId);
+      return {
+        advancedSecurityEnabled: settings?.enabled,
+        pushProtectionEnabled: settings?.pushProtectionEnabled,
+        secretScanningEnabled: settings?.secretScanningEnabled,
+        raw: settings,
+      };
+    }
+
+    // Fallback to REST API call
+    const base = process.env.AZDO_ORG_URL || process.env.AZDO_OR ||
+      (process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}` : undefined) || process.env.AZURE_DEVOPS_ORG_URL;
+
+    if (!base) {
+      return { error: 'Cannot determine Azure DevOps base URL for REST fallback' };
+    }
+
+    const url = `${base}/${encodeURIComponent(project)}/_apis/advancedsecurity/repositories/${encodeURIComponent(repoId)}/settings?api-version=7.2-preview.1`; 
+    try {
+      const res = await conn.rest.get(url);
+      // Response shape may vary. Map common fields.
+      return {
+        advancedSecurityEnabled: res?.enabled ?? res?.advancedSecurityEnabled ?? undefined,
+        pushProtectionEnabled: res?.pushProtectionEnabled ?? undefined,
+        secretScanningEnabled: res?.secretScanningEnabled ?? undefined,
+        raw: res,
+      };
+    } catch (restErr) {
+      return { error: restErr && restErr.message ? restErr.message : String(restErr) };
+    }
+  } catch (err) {
+    return { error: err && err.message ? err.message : String(err) };
+  }
+}
