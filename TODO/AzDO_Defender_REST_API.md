@@ -216,20 +216,34 @@ We have created azdo-xx-*.js script that uses EXCLUSIVELY the npm package to
 6. List alerts in Azure DevOps Projects
 7. List security threats in Azure DevOps Projects by "category"; identify criteria we can use to categorize, filter, search the list.
 8. Update security threats in Azure DevOps Projects (change categorization/status/severity/comment)
+9. Close alerts with a reason and structured comment (for metadata)
 
-Add a '09' script that demonstrates the ability to add metadata and comments to an alert (example of METADATA: an ID (to permit linking to other systems dealing with the same issue); and URL (to permit linking with Jira work); a label (to permit relating similar alerts accross whole  organisation))
-- select the first available alert; display its web URL (for me to review), then make the changes one by one; asserting the change is saved
-- Verify if metadata can be used as an array, structure, object or plain string
-- Verify if metadata can be added without lossing old one; and if existing can be modified and deleted
-- Make sure to only act one ONE SINGLE alert, and leave all other untouched.
+We also have access to Azure and  Defender for Cloud
+- Defender for Cloud REST API | https://learn.microsoft.com/en-us/rest/api/defenderforcloud/ |
+- Microsoft Graph Security API | https://learn.microsoft.com/en-us/graph/security-concept-overview
 
-`labs` contains scripts that interact with the API:
+Investigate what options we have to use these two apis in order to perform the 9 tasks described above.
+You must no not change the existing code; but you can interrogate web resources and create small node js scripts to verify your assumptions
+Preferably use well supported NPM package to interact with the API (if any exists, instead of writing direct API calls)
+
+
+Note: `labs` contains scripts that interact with the API:
 - you may inspect there code
 - You may run the `labs` scripts
 - You must NOT include any of the existing labs in the solution; we want a single self contained script.
 - You must use the existing .env 
 - You must use the client package to interact with AZDO
 - You must NEVER use direct REST API requests to interact with AZDO
-- I see that the alertApi has an updateAlert function (https://github.com/microsoft/azure-devops-node-api/blob/a90acbea84261f8d099bd2019088b907f40bb926/api/AlertApi.ts#L226) and updateAlertMetadata (https://github.com/microsoft/azure-devops-node-api/blob/a90acbea84261f8d099bd2019088b907f40bb926/api/AlertApi.ts#L505) it is probably the one to use
+- We are unaware of client packages to itneract with Defender and Azure Cloud (but some may exist!)
+
+---
+
+Resource about Defender For Cloud REST API for devOps:
+https://learn.microsoft.com/en-us/rest/api/defenderforcloud/?view=rest-defenderforcloud-composite-stable
+https://learn.microsoft.com/en-us/rest/api/defenderforcloud-composite/alerts?view=rest-defenderforcloud-composite-stablehttps://learn.microsoft.com/en-us/rest/api/defenderforcloud-composite/azure-devops-repos/list?view=rest-defenderforcloud-composite-stable&tabs=HTTP
+https://learn.microsoft.com/en-us/rest/api/defenderforcloud-composite/azure-devops-projects?view=rest-defenderforcloud-composite-stable
+https://learn.microsoft.com/en-us/rest/api/defenderforcloud-composite/azure-devops-orgs?view=rest-defenderforcloud-composite-stable
+https://learn.microsoft.com/en-us/rest/api/defenderforcloud-composite/devops-configurations?view=rest-defenderforcloud-composite-stable
+https://learn.microsoft.com/en-us/rest/api/defenderforcloud-composite/devops-operation-results?view=rest-defenderforcloud-composite-stable
 
 ---
