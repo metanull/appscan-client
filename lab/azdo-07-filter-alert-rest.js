@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 /*
- Self-contained script to exercise Advanced Security Alerts filter options
- Uses only the azure-devops-node-api package + dotenv to read env vars.
+ DO NOT USE THIS SCRIPT AS A TEMPLATE IT IS FOR TESTING PURPOSE ONLY;
+ ACTUAL scripts MUST use the azure-devops-node-api package instead of direct API calls!
+ 
+ Experiment Self-contained script to exercise Advanced Security Alerts filter options.
 
  Behaviour:
  1. List projects
- 2. Find project(s) with name == 'Agora'
+ 2. Select project
  3. For each such project, list repositories
  4. For each repository: collect distinct values for requested criteria, and
     run a small sample query (top=3) for the first value where applicable.
