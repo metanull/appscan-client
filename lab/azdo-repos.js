@@ -1,5 +1,9 @@
 #!/usr/bin/env node
-import { listAzdoProjects, listRepositories, getRepoAdvancedSecuritySettings } from './azdo-auth.js';
+import {
+  listAzdoProjects,
+  listRepositories,
+  getRepoAdvancedSecuritySettings,
+} from './azdo-auth.js';
 
 async function main() {
   try {
@@ -31,11 +35,17 @@ async function main() {
     }
     process.exit(0);
   } catch (err) {
-    console.error('Error listing repositories:', err.stack || err.message || err);
+    console.error(
+      'Error listing repositories:',
+      err.stack || err.message || err
+    );
     process.exit(2);
   }
 }
 
-if ((process.argv[1] && process.argv[1].endsWith('azdo-repos.js')) || process.argv[1] === undefined) {
+if (
+  (process.argv[1] && process.argv[1].endsWith('azdo-repos.js')) ||
+  process.argv[1] === undefined
+) {
   main();
 }

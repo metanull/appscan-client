@@ -1,5 +1,9 @@
 #!/usr/bin/env node
-import { getAzdoClient, listAzdoProjects, listRepositories } from './azdo-auth.js';
+import {
+  getAzdoClient,
+  listAzdoProjects,
+  listRepositories,
+} from './azdo-auth.js';
 
 function baseFromOrgUrl(orgUrl) {
   if (!orgUrl) return undefined;
@@ -8,7 +12,13 @@ function baseFromOrgUrl(orgUrl) {
 
 function getOrgName() {
   // From AZDO_ORG_URL or AZURE_DEVOPS_ORG
-  const orgUrl = process.env.AZDO_ORG_URL || process.env.AZDO_OR || (process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}` : undefined) || process.env.AZURE_DEVOPS_ORG_URL;
+  const orgUrl =
+    process.env.AZDO_ORG_URL ||
+    process.env.AZDO_OR ||
+    (process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG
+      ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}`
+      : undefined) ||
+    process.env.AZURE_DEVOPS_ORG_URL;
   if (!orgUrl) return undefined;
   // orgUrl might be https://dev.azure.com/<org> or https://<org>.visualstudio.com
   const m = orgUrl.match(/dev\.azure\.com\/(.+)$/);
@@ -31,7 +41,8 @@ async function tryGet(conn, url, note) {
   } catch (err) {
     const msg = err && err.message ? err.message : String(err);
     console.log(`${note}: ERROR -> ${msg}`);
-    if (err && err.statusCode) console.log(`  HTTP statusCode: ${err.statusCode}`);
+    if (err && err.statusCode)
+      console.log(`  HTTP statusCode: ${err.statusCode}`);
     return { ok: false, err };
   }
 }
@@ -45,7 +56,14 @@ async function main() {
   console.log('Repos count:', repos.length);
   const repo = repos[0];
 
-  const base = baseFromOrgUrl(process.env.AZDO_ORG_URL || process.env.AZDO_OR || (process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}` : undefined) || process.env.AZURE_DEVOPS_ORG_URL);
+  const base = baseFromOrgUrl(
+    process.env.AZDO_ORG_URL ||
+      process.env.AZDO_OR ||
+      (process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG
+        ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}`
+        : undefined) ||
+      process.env.AZURE_DEVOPS_ORG_URL
+  );
 
   console.log('Using base url:', base);
 
@@ -67,19 +85,31 @@ async function main() {
     const vsspsUrl = `https://vssps.dev.azure.com/${orgName}/_apis/tokenadmin/pats?api-version=6.0-preview.1`;
     await tryGet(conn, vsspsUrl, 'PAT admin (vssps tokenadmin)');
   } else {
-    console.log('Could not determine organization name for vssps token admin check');
+    console.log(
+      'Could not determine organization name for vssps token admin check'
+    );
   }
 
   // Also try to get the current authorized scopes indirectly using the tokens endpoint on app service
   try {
-    const me = await conn.rest.get('https://app.vssps.visualstudio.com/_apis/profile/profiles/me?api-version=6.0');
-    console.log('Profile retrieval: OK (profile id ' + (me.id || 'unknown') + ')');
+    const me = await conn.rest.get(
+      'https://app.vssps.visualstudio.com/_apis/profile/profiles/me?api-version=6.0'
+    );
+    console.log(
+      'Profile retrieval: OK (profile id ' + (me.id || 'unknown') + ')'
+    );
   } catch (err) {
-    console.log('Profile retrieval: ERROR ->', err && err.message ? err.message : String(err));
+    console.log(
+      'Profile retrieval: ERROR ->',
+      err && err.message ? err.message : String(err)
+    );
   }
 }
 
-if ((process.argv[1] && process.argv[1].endsWith('azdo-token-check.js')) || process.argv[1] === undefined) {
+if (
+  (process.argv[1] && process.argv[1].endsWith('azdo-token-check.js')) ||
+  process.argv[1] === undefined
+) {
   main().catch((e) => {
     console.error(e.stack || e.message || e);
     process.exit(2);

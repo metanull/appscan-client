@@ -18,15 +18,25 @@ export async function getAzdoClient() {
   // - AZDO_ORG_URL, AZDO_OR
   // - AZDO_PAT, AZDO_PERSONAL_ACCESS_TOKEN
   // - AZURE_DEVOPS_BASE_URL + AZURE_DEVOPS_ORG, AZURE_DEVOPS_PAT
-  const orgUrlFromAzureEnv = process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG
-    ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}`
-    : undefined;
+  const orgUrlFromAzureEnv =
+    process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG
+      ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}`
+      : undefined;
 
-  const orgUrl = process.env.AZDO_ORG_URL || process.env.AZDO_OR || orgUrlFromAzureEnv || process.env.AZURE_DEVOPS_ORG_URL;
-  const pat = process.env.AZDO_PAT || process.env.AZDO_PERSONAL_ACCESS_TOKEN || process.env.AZURE_DEVOPS_PAT;
+  const orgUrl =
+    process.env.AZDO_ORG_URL ||
+    process.env.AZDO_OR ||
+    orgUrlFromAzureEnv ||
+    process.env.AZURE_DEVOPS_ORG_URL;
+  const pat =
+    process.env.AZDO_PAT ||
+    process.env.AZDO_PERSONAL_ACCESS_TOKEN ||
+    process.env.AZURE_DEVOPS_PAT;
 
   if (!orgUrl || !pat) {
-    throw new Error('Missing Azure DevOps environment variables. Set one of (AZDO_ORG_URL | AZDO_OR | AZURE_DEVOPS_BASE_URL+AZURE_DEVOPS_ORG) and one of (AZDO_PAT | AZDO_PERSONAL_ACCESS_TOKEN | AZURE_DEVOPS_PAT)');
+    throw new Error(
+      'Missing Azure DevOps environment variables. Set one of (AZDO_ORG_URL | AZDO_OR | AZURE_DEVOPS_BASE_URL+AZURE_DEVOPS_ORG) and one of (AZDO_PAT | AZDO_PERSONAL_ACCESS_TOKEN | AZURE_DEVOPS_PAT)'
+    );
   }
 
   const authHandler = azdev.getPersonalAccessTokenHandler(pat);
@@ -56,7 +66,11 @@ export async function listRepositories(project) {
   const conn = await getAzdoClient();
   const gitApi = await conn.getGitApi();
   const repos = await gitApi.getRepositories(project);
-  return (repos || []).map((r) => ({ id: r.id, name: r.name, projectName: r.project?.name }));
+  return (repos || []).map((r) => ({
+    id: r.id,
+    name: r.name,
+    projectName: r.project?.name,
+  }));
 }
 
 /**
@@ -73,7 +87,10 @@ export async function getRepoAdvancedSecuritySettings(project, repoId) {
     // Prefer SDK client when available
     if (typeof conn.getAdvancedSecurityManagementApi === 'function') {
       const adv = await conn.getAdvancedSecurityManagementApi();
-      const settings = await adv.getRepoAdvancedSecuritySettings(project, repoId);
+      const settings = await adv.getRepoAdvancedSecuritySettings(
+        project,
+        repoId
+      );
       return {
         advancedSecurityEnabled: settings?.enabled,
         pushProtectionEnabled: settings?.pushProtectionEnabled,
@@ -83,25 +100,35 @@ export async function getRepoAdvancedSecuritySettings(project, repoId) {
     }
 
     // Fallback to REST API call
-    const base = process.env.AZDO_ORG_URL || process.env.AZDO_OR ||
-      (process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}` : undefined) || process.env.AZURE_DEVOPS_ORG_URL;
+    const base =
+      process.env.AZDO_ORG_URL ||
+      process.env.AZDO_OR ||
+      (process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG
+        ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}`
+        : undefined) ||
+      process.env.AZURE_DEVOPS_ORG_URL;
 
     if (!base) {
-      return { error: 'Cannot determine Azure DevOps base URL for REST fallback' };
+      return {
+        error: 'Cannot determine Azure DevOps base URL for REST fallback',
+      };
     }
 
-    const url = `${base}/${encodeURIComponent(project)}/_apis/advancedsecurity/repositories/${encodeURIComponent(repoId)}/settings?api-version=7.2-preview.1`; 
+    const url = `${base}/${encodeURIComponent(project)}/_apis/advancedsecurity/repositories/${encodeURIComponent(repoId)}/settings?api-version=7.2-preview.1`;
     try {
       const res = await conn.rest.get(url);
       // Response shape may vary. Map common fields.
       return {
-        advancedSecurityEnabled: res?.enabled ?? res?.advancedSecurityEnabled ?? undefined,
+        advancedSecurityEnabled:
+          res?.enabled ?? res?.advancedSecurityEnabled ?? undefined,
         pushProtectionEnabled: res?.pushProtectionEnabled ?? undefined,
         secretScanningEnabled: res?.secretScanningEnabled ?? undefined,
         raw: res,
       };
     } catch (restErr) {
-      return { error: restErr && restErr.message ? restErr.message : String(restErr) };
+      return {
+        error: restErr && restErr.message ? restErr.message : String(restErr),
+      };
     }
   } catch (err) {
     return { error: err && err.message ? err.message : String(err) };
@@ -114,10 +141,17 @@ export async function getRepoAdvancedSecuritySettings(project, repoId) {
  */
 export async function getOrgEnablement() {
   const conn = await getAzdoClient();
-  const org = process.env.AZDO_ORG_URL || process.env.AZDO_OR || (process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}` : process.env.AZURE_DEVOPS_ORG_URL);
+  const org =
+    process.env.AZDO_ORG_URL ||
+    process.env.AZDO_OR ||
+    (process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG
+      ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}`
+      : process.env.AZURE_DEVOPS_ORG_URL);
   if (!org) throw new Error('Cannot determine org URL');
-  const orgName = org.replace(/^https?:\/\//,'').replace(/\/$/,'');
-  const advBase = orgName.startsWith('dev.azure.com/') ? `https://advsec.dev.azure.com/${orgName.replace('dev.azure.com/','')}` : `https://advsec.dev.azure.com/${orgName.split('.')[0]}`;
+  const orgName = org.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  const advBase = orgName.startsWith('dev.azure.com/')
+    ? `https://advsec.dev.azure.com/${orgName.replace('dev.azure.com/', '')}`
+    : `https://advsec.dev.azure.com/${orgName.split('.')[0]}`;
   const url = `${advBase}/_apis/management/enablement?api-version=7.2-preview.3&includeAllProperties=true`;
   const res = await conn.rest.get(url, {});
   return res && res.result ? res.result : res;
@@ -129,10 +163,17 @@ export async function getOrgEnablement() {
  */
 export async function getProjectEnablement(project) {
   const conn = await getAzdoClient();
-  const org = process.env.AZDO_ORG_URL || process.env.AZDO_OR || (process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}` : process.env.AZURE_DEVOPS_ORG_URL);
+  const org =
+    process.env.AZDO_ORG_URL ||
+    process.env.AZDO_OR ||
+    (process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG
+      ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}`
+      : process.env.AZURE_DEVOPS_ORG_URL);
   if (!org) throw new Error('Cannot determine org URL');
-  const orgName = org.replace(/^https?:\/\//,'').replace(/\/$/,'');
-  const advBase = orgName.startsWith('dev.azure.com/') ? `https://advsec.dev.azure.com/${orgName.replace('dev.azure.com/','')}` : `https://advsec.dev.azure.com/${orgName.split('.')[0]}`;
+  const orgName = org.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  const advBase = orgName.startsWith('dev.azure.com/')
+    ? `https://advsec.dev.azure.com/${orgName.replace('dev.azure.com/', '')}`
+    : `https://advsec.dev.azure.com/${orgName.split('.')[0]}`;
   const url = `${advBase}/${encodeURIComponent(project)}/_apis/management/enablement?api-version=7.2-preview.3&includeAllProperties=true`;
   const res = await conn.rest.get(url, {});
   return res && res.result ? res.result : res;
@@ -145,10 +186,17 @@ export async function getProjectEnablement(project) {
  */
 export async function getRepoEnablement(project, repositoryId) {
   const conn = await getAzdoClient();
-  const org = process.env.AZDO_ORG_URL || process.env.AZDO_OR || (process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}` : process.env.AZURE_DEVOPS_ORG_URL);
+  const org =
+    process.env.AZDO_ORG_URL ||
+    process.env.AZDO_OR ||
+    (process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG
+      ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}`
+      : process.env.AZURE_DEVOPS_ORG_URL);
   if (!org) throw new Error('Cannot determine org URL');
-  const orgName = org.replace(/^https?:\/\//,'').replace(/\/$/,'');
-  const advBase = orgName.startsWith('dev.azure.com/') ? `https://advsec.dev.azure.com/${orgName.replace('dev.azure.com/','')}` : `https://advsec.dev.azure.com/${orgName.split('.')[0]}`;
+  const orgName = org.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  const advBase = orgName.startsWith('dev.azure.com/')
+    ? `https://advsec.dev.azure.com/${orgName.replace('dev.azure.com/', '')}`
+    : `https://advsec.dev.azure.com/${orgName.split('.')[0]}`;
   const url = `${advBase}/${encodeURIComponent(project)}/_apis/management/repositories/${encodeURIComponent(repositoryId)}/enablement?api-version=7.2-preview.3&includeAllProperties=true`;
   const res = await conn.rest.get(url, {});
   return res && res.result ? res.result : res;

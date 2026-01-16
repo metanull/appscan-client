@@ -16,15 +16,25 @@ const MIN_ALERTS = Number(process.env.AZDO_MIN_ALERTS) || 200;
 const PAGE_TOP = Number(process.env.AZDO_ALERTS_PAGE_TOP) || 200;
 
 async function getAzdoClient() {
-  const orgUrlFromAzureEnv = process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG
-    ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}`
-    : undefined;
+  const orgUrlFromAzureEnv =
+    process.env.AZURE_DEVOPS_BASE_URL && process.env.AZURE_DEVOPS_ORG
+      ? `${process.env.AZURE_DEVOPS_BASE_URL.replace(/\/$/, '')}/${process.env.AZURE_DEVOPS_ORG}`
+      : undefined;
 
-  const orgUrl = process.env.AZDO_ORG_URL || process.env.AZDO_OR || orgUrlFromAzureEnv || process.env.AZURE_DEVOPS_ORG_URL;
-  const pat = process.env.AZDO_PAT || process.env.AZDO_PERSONAL_ACCESS_TOKEN || process.env.AZURE_DEVOPS_PAT;
+  const orgUrl =
+    process.env.AZDO_ORG_URL ||
+    process.env.AZDO_OR ||
+    orgUrlFromAzureEnv ||
+    process.env.AZURE_DEVOPS_ORG_URL;
+  const pat =
+    process.env.AZDO_PAT ||
+    process.env.AZDO_PERSONAL_ACCESS_TOKEN ||
+    process.env.AZURE_DEVOPS_PAT;
 
   if (!orgUrl || !pat) {
-    throw new Error('Missing environment variables. Set AZDO_ORG_URL (or AZDO_OR) and AZDO_PAT');
+    throw new Error(
+      'Missing environment variables. Set AZDO_ORG_URL (or AZDO_OR) and AZDO_PAT'
+    );
   }
 
   const authHandler = azdev.getPersonalAccessTokenHandler(pat);
@@ -42,11 +52,24 @@ async function getAzdoClient() {
  * @param {object} [criteria]
  * @param {number} [pageTop]
  */
-async function fetchAllAlertsUsingApi(alertApi, projectName, repositoryId, criteria = {}, pageTop = PAGE_TOP) {
+async function fetchAllAlertsUsingApi(
+  alertApi,
+  projectName,
+  repositoryId,
+  criteria = {},
+  pageTop = PAGE_TOP
+) {
   const all = [];
   let continuation = undefined;
   do {
-    const page = await alertApi.getAlerts(projectName, repositoryId, pageTop, undefined, criteria, continuation);
+    const page = await alertApi.getAlerts(
+      projectName,
+      repositoryId,
+      pageTop,
+      undefined,
+      criteria,
+      continuation
+    );
 
     // Normalize page data to an array of alerts
     let pageAlerts = [];
@@ -61,12 +84,19 @@ async function fetchAllAlertsUsingApi(alertApi, projectName, repositoryId, crite
     // Detect continuation token in different potential shapes
     let next = null;
     if (page) {
-      next = page.continuationToken || (page.__continuation && (page.__continuation.continuationToken || page.__continuation.token)) || null;
+      next =
+        page.continuationToken ||
+        (page.__continuation &&
+          (page.__continuation.continuationToken ||
+            page.__continuation.token)) ||
+        null;
     }
-    if (!next && Array.isArray(page) && page.continuationToken) next = page.continuationToken;
+    if (!next && Array.isArray(page) && page.continuationToken)
+      next = page.continuationToken;
     if (!next && pageAlerts.length > 0) {
       const a0 = pageAlerts[0];
-      if (a0 && (a0.__continuation || a0.continuationToken)) next = a0.__continuation || a0.continuationToken;
+      if (a0 && (a0.__continuation || a0.continuationToken))
+        next = a0.__continuation || a0.continuationToken;
     }
 
     continuation = next || undefined;
@@ -88,7 +118,12 @@ async function fetchAllAlertsUsingApi(alertApi, projectName, repositoryId, crite
     const targetProject = process.env.AZDO_PROJECT || null;
 
     for (const project of projects || []) {
-      if (targetProject && String(project.name).toLowerCase() !== String(targetProject).toLowerCase()) continue;
+      if (
+        targetProject &&
+        String(project.name).toLowerCase() !==
+          String(targetProject).toLowerCase()
+      )
+        continue;
 
       console.log(`\nScanning project: ${project.name}`);
       const repos = await gitApi.getRepositories(project.id);
@@ -97,26 +132,36 @@ async function fetchAllAlertsUsingApi(alertApi, projectName, repositoryId, crite
       for (const r of repos || []) {
         try {
           console.log(`\n  Checking repository: ${r.name} (${r.id}) ...`);
-          const allAlerts = await fetchAllAlertsUsingApi(alertApi, project.name, r.id);
+          const allAlerts = await fetchAllAlertsUsingApi(
+            alertApi,
+            project.name,
+            r.id
+          );
           const count = allAlerts.length;
           console.log(`    Alerts found: ${count}`);
 
           if (count >= MIN_ALERTS) {
-            console.log(`\n=== Repository '${r.name}' meets threshold (${count} alerts >= ${MIN_ALERTS}) ===\n`);
+            console.log(
+              `\n=== Repository '${r.name}' meets threshold (${count} alerts >= ${MIN_ALERTS}) ===\n`
+            );
             // List all alerts (id | severity | title)
             for (const a of allAlerts) {
               const id = a.alertId || a.id || '(no-id)';
-              const sev = a.severity || a.severityLabel || a.priority || '(no-severity)';
-              const title = a.title || a.ruleName || a.description || '(no-title)';
+              const sev =
+                a.severity || a.severityLabel || a.priority || '(no-severity)';
+              const title =
+                a.title || a.ruleName || a.description || '(no-title)';
               console.log(`* ${id} | ${sev} | ${title}`);
             }
 
             console.log(`\nTotal alerts listed: ${count}`);
             process.exit(0);
           }
-
         } catch (e) {
-          console.error(`    Error checking repo ${r.name}:`, e && e.message ? e.message : String(e));
+          console.error(
+            `    Error checking repo ${r.name}:`,
+            e && e.message ? e.message : String(e)
+          );
         }
       }
     }
@@ -124,7 +169,10 @@ async function fetchAllAlertsUsingApi(alertApi, projectName, repositoryId, crite
     console.log(`\nNo repository found with >= ${MIN_ALERTS} alerts.`);
     process.exit(2);
   } catch (err) {
-    console.error('Fatal error:', err && err.message ? err.message : String(err));
+    console.error(
+      'Fatal error:',
+      err && err.message ? err.message : String(err)
+    );
     process.exit(1);
   }
 })();
