@@ -1,17 +1,16 @@
 #!/usr/bin/env node
 /*
  Client-only script to exercise Advanced Security Alerts filter options
- Uses ONLY the `azure-devops-node-api` package + dotenv to read env vars.
+ Uses ONLY the `azure-devops-node-api` package
 
- Behaviour (mirrors azdo-07-filter-alert-rest.js):
+ Behaviour (mirrors azdo-07-filter-alert-rest.js, but properly, with no direct REST calls):
  1. List projects
  2. Find project(s) with name == 'Agora'
  3. For each such project, list repositories
  4. For each repository: collect distinct values for requested criteria, and
     run a small sample query (top=3) for the first value where applicable.
 
- NOTE: This script uses the client API `getAlertApi()` and
- does NOT make direct REST calls.
+ NOTE: This script uses the client API `getAlertApi()`.
 */
 
 import dotenv from 'dotenv';

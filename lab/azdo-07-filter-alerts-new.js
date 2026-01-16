@@ -4,10 +4,8 @@
  * 
  * Purpose: Demonstrate Advanced Security Alert filtering and search capabilities
  * Package APIs: getAlertApi(), getAlerts() with SearchCriteria
- * Self-contained: Yes
  * 
- * This script is based on the working azdo-07-filter-alert-client.js
- * It demonstrates various filtering options available in the Alert API.
+ * This script demonstrates various filtering options available in the Alert API.
  */
 
 import dotenv from 'dotenv';
