@@ -1,6 +1,6 @@
 {
   "name": "@metanull/appscan-client",
-  "version": "4.4.2",
+  "version": "4.4.3",
   "description": "Utility to work with HCL AppScan Cloud API",
   "main": "src/index.js",
   "type": "module",
@@ -52,6 +52,7 @@
   "dependencies": {
     "@inquirer/prompts": "^8.1.0",
     "axios": "^1.13.2",
+    "azure-devops-node-api": "^15.1.2",
     "chalk": "^5.6.2",
     "cli-markdown": "^3.5.1",
     "commander": "^14.0.2",
