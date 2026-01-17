@@ -247,3 +247,104 @@ https://learn.microsoft.com/en-us/rest/api/defenderforcloud-composite/devops-con
 https://learn.microsoft.com/en-us/rest/api/defenderforcloud-composite/devops-operation-results?view=rest-defenderforcloud-composite-stable
 
 ---
+
+We have the package "https://github.com/microsoft/azure-devops-node-api" installed
+It supports the "Advanced Security Alert" API.
+
+We have created azdo-xx-*.js script that uses EXCLUSIVELY the npm package to 
+
+1. Connect to Azure DevOps REST API
+2. Get information about the connection, about devops configuration
+3. List Azure DevOps Projects
+4. List Azure DevOps Projects' repositories
+5. Assert enablement (or lack of enablement) of Microsoft Advanced Security in Azure DevOps repositories
+6. List alerts in Azure DevOps Projects
+7. List alerts in Azure DevOps Projects by "category"
+8. Update security threats in Azure DevOps Projects (change categorization/status/severity/comment)
+9. Close alerts with a reason and structured comment (for metadata)
+10. out-of-scope
+11. out-of-scope
+
+Using this information create a script that displays all alerts of category "secret" in our entire organization.
+The script must use GetAlerts using filtering to retrieve Alerts of type "secret", and must use continuationToken to make sure that all matching alerts are displayed.
+For each alert, also provide the alert URL to permit inspection in AzDO's web interface
+
+script must use chalk for display. there must be no banner and no summary to the output. only the progress bar, then the list of alerts (or, in case of error, an exception)
+Display also the physicallocation of the alert (physicalLocation.Region), the Tool, the Dismissal
+
+PhysicalLocation has a rregion property with line and column details, they must be displayed as well next to each location
+PhysicalLocation has a versionControl property with the git ItemUrl and gitCommit hash, they must be displayed after each location
+
+add paramters to the script to allow display/hide some fields fields:
+--withLocation: if present print the Location field, otherwise, don't
+--withCommit: if present print the commit field, otherwise, don't
+--withGitUrl: if present print the Git URL, otherwise, don't
+
+
+Note: `labs` contains scripts that interact with the API:
+- you may inspect there code
+- You may run the `labs` scripts
+- You must NOT include any of the existing labs in the solution; we want a single self contained script.
+- You must use the existing .env 
+- You must use the client package to interact with AZDO
+- You must NEVER use direct REST API requests to interact with AZDO
+- You MUST use filtering  and rely on the npm client to retrieve secrets
+- You must rely on the documentation to find out how to identify secrets (e.g. using the AlertInterfaces.AlertType enum):
+  - https://github.com/microsoft/azure-devops-node-api/blob/master/api/interfaces/AlertInterfaces.ts
+  - https://github.com/microsoft/azure-devops-node-api/blob/master/api/AlertApi.ts
+  - https://learn.microsoft.com/en-us/rest/api/azure/devops/advancedsecurity/alerts/list?view=azure-devops-rest-7.2
+
+
+
+---
+
+We have the package "https://github.com/microsoft/azure-devops-node-api" installed
+It supports the "Advanced Security Alert" API.
+
+We have created azdo-xx-*.js script that uses EXCLUSIVELY the npm package to 
+
+1. Connect to Azure DevOps REST API
+2. Get information about the connection, about devops configuration
+3. List Azure DevOps Projects
+4. List Azure DevOps Projects' repositories
+5. Assert enablement (or lack of enablement) of Microsoft Advanced Security in Azure DevOps repositories
+6. List alerts in Azure DevOps Projects
+7. List alerts in Azure DevOps Projects by "category"
+8. Update security threats in Azure DevOps Projects (change categorization/status/severity/comment)
+9. Close alerts with a reason and structured comment (for metadata)
+10. out-of-scope
+11. out-of-scope
+12. list all alerts of type 'secret'
+
+Add a new script, based on the existing 12 (list secret) that lists all secrets in the organization.
+It queries each repository in each project in the organization for alert of type secret. But in a different way than 12:
+For each alert, it uses the gitApi's getBlobContent to retrieve the file's content with secrets (beware that the same file may be  referenced several times in one alert; we should  download each file only  once!)
+Then it extracts the impacted line from the bloc (line numbers can be extracted from the field PhysicalLocation.VersionControl.itemUrl.; that url has a line and a lineEnd parameter)
+The script then outputs, the Alert as follows:
+```
+## {Project}, {Repository}
+### {Alert Number[0]}, {Title[0]}
+{line number[0]}. {Lines[0]}
+{line number[1]}. {Lines[1]}
+
+### {Alert Number[1]}, {Title[1]}
+{line number[0]}. {Lines[0]}
+{line number[1]}. {Lines[1]}
+
+...
+```
+Output should be produced as soon as possible, without buffering.
+There should be no banner, no footer and no progress bar; script just prints the data as it it becomes available
+
+Note: `labs` contains scripts that interact with the API:
+- you may inspect there code
+- You may run the `labs` scripts
+- You must NOT include any of the existing labs in the solution; we want a single self contained script.
+- You must use the existing .env 
+- You must use the client package to interact with AZDO
+- You must NEVER use direct REST API requests to interact with AZDO
+- You MUST use filtering  and rely on the npm client to retrieve secrets
+- You must rely on the documentation to find out how to identify secrets (e.g. using the AlertInterfaces.AlertType enum):
+  - https://github.com/microsoft/azure-devops-node-api/blob/master/api/interfaces/AlertInterfaces.ts
+  - https://github.com/microsoft/azure-devops-node-api/blob/master/api/AlertApi.ts
+  - https://learn.microsoft.com/en-us/rest/api/azure/devops/advancedsecurity/alerts/list?view=azure-devops-rest-7.2
