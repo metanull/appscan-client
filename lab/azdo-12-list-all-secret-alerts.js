@@ -272,7 +272,12 @@ async function main() {
                 project: project.name,
                 repository: repo.name,
                 alert: alert,
-                url: buildAlertUrl(orgUrl, project.name, repo.id, alert.alertId),
+                url: buildAlertUrl(
+                  orgUrl,
+                  project.name,
+                  repo.id,
+                  alert.alertId
+                ),
               });
             }
           }
@@ -284,8 +289,10 @@ async function main() {
         const percentage = Math.round((processedRepos / totalRepos) * 100);
         const barLength = 40;
         const filledLength = Math.round((percentage / 100) * barLength);
-        const bar = chalk.cyan('█'.repeat(filledLength)) + chalk.gray('░'.repeat(barLength - filledLength));
-        
+        const bar =
+          chalk.cyan('█'.repeat(filledLength)) +
+          chalk.gray('░'.repeat(barLength - filledLength));
+
         process.stdout.write(
           `\r[${bar}] ${chalk.bold(percentage + '%')} | ${processedRepos}/${totalRepos} repos | ${chalk.yellow(totalSecretAlerts)} secrets found`
         );
@@ -305,11 +312,16 @@ async function main() {
       console.log(chalk.bold.cyan(`Alert #${alert.alertId}`));
       console.log(chalk.gray(`  Project: `) + chalk.white(project));
       console.log(chalk.gray(`  Repository: `) + chalk.white(repository));
-      console.log(chalk.gray(`  Title: `) + chalk.white(alert.title || '(no title)'));
+      console.log(
+        chalk.gray(`  Title: `) + chalk.white(alert.title || '(no title)')
+      );
       console.log(chalk.gray(`  State: `) + formatState(alert.state));
       console.log(chalk.gray(`  Severity: `) + formatSeverity(alert.severity));
-      console.log(chalk.gray(`  Confidence: `) + chalk.white(formatConfidence(alert.confidence)));
-      
+      console.log(
+        chalk.gray(`  Confidence: `) +
+          chalk.white(formatConfidence(alert.confidence))
+      );
+
       // Physical locations (file, line, column, and version control details)
       if (alert.physicalLocations && alert.physicalLocations.length > 0) {
         for (const location of alert.physicalLocations) {
@@ -317,11 +329,12 @@ async function main() {
             // Display location if flag is set
             if (options.withLocation) {
               let locationStr = chalk.blue(location.filePath);
-              
+
               // Add region details (line and column)
               if (location.region) {
-                const { startLine, endLine, startColumn, endColumn } = location.region;
-                
+                const { startLine, endLine, startColumn, endColumn } =
+                  location.region;
+
                 if (startLine !== undefined) {
                   // Line range
                   if (endLine !== undefined && endLine !== startLine) {
@@ -329,7 +342,7 @@ async function main() {
                   } else {
                     locationStr += chalk.gray(`:${startLine}`);
                   }
-                  
+
                   // Column range
                   if (startColumn !== undefined) {
                     if (endColumn !== undefined && endColumn !== startColumn) {
@@ -340,53 +353,79 @@ async function main() {
                   }
                 }
               }
-              
+
               console.log(chalk.gray(`  Location: `) + locationStr);
             }
-            
+
             // Add version control details (commit hash and item URL)
             if (location.versionControl) {
               if (options.withCommit && location.versionControl.commitHash) {
-                console.log(chalk.gray(`    Commit: `) + chalk.yellow(location.versionControl.commitHash));
+                console.log(
+                  chalk.gray(`    Commit: `) +
+                    chalk.yellow(location.versionControl.commitHash)
+                );
               }
               if (options.withGitUrl && location.versionControl.itemUrl) {
-                console.log(chalk.gray(`    URL: `) + chalk.underline.blue(location.versionControl.itemUrl));
+                console.log(
+                  chalk.gray(`    URL: `) +
+                    chalk.underline.blue(location.versionControl.itemUrl)
+                );
               }
             }
           }
         }
       }
-      
+
       // Tools
       if (alert.tools && alert.tools.length > 0) {
-        const toolNames = alert.tools.map(t => t.name).filter(Boolean).join(', ');
+        const toolNames = alert.tools
+          .map((t) => t.name)
+          .filter(Boolean)
+          .join(', ');
         if (toolNames) {
           console.log(chalk.gray(`  Tool: `) + chalk.white(toolNames));
         }
       }
-      
+
       // Dismissal information
       if (alert.dismissal) {
         console.log(chalk.gray(`  Dismissal:`));
         if (alert.dismissal.dismissedReason) {
-          console.log(chalk.gray(`    Reason: `) + chalk.white(formatDismissalType(alert.dismissal.dismissedReason)));
+          console.log(
+            chalk.gray(`    Reason: `) +
+              chalk.white(formatDismissalType(alert.dismissal.dismissedReason))
+          );
         }
         if (alert.dismissal.dismissedComment) {
-          console.log(chalk.gray(`    Comment: `) + chalk.white(alert.dismissal.dismissedComment));
+          console.log(
+            chalk.gray(`    Comment: `) +
+              chalk.white(alert.dismissal.dismissedComment)
+          );
         }
         if (alert.dismissal.dismissedDate) {
-          console.log(chalk.gray(`    Date: `) + chalk.white(new Date(alert.dismissal.dismissedDate).toISOString()));
+          console.log(
+            chalk.gray(`    Date: `) +
+              chalk.white(new Date(alert.dismissal.dismissedDate).toISOString())
+          );
         }
       }
-      
+
       if (alert.truncatedSecret) {
-        console.log(chalk.gray(`  Secret: `) + chalk.dim(alert.truncatedSecret));
+        console.log(
+          chalk.gray(`  Secret: `) + chalk.dim(alert.truncatedSecret)
+        );
       }
       if (alert.firstSeenDate) {
-        console.log(chalk.gray(`  First Seen: `) + chalk.white(new Date(alert.firstSeenDate).toISOString()));
+        console.log(
+          chalk.gray(`  First Seen: `) +
+            chalk.white(new Date(alert.firstSeenDate).toISOString())
+        );
       }
       if (alert.lastSeenDate) {
-        console.log(chalk.gray(`  Last Seen: `) + chalk.white(new Date(alert.lastSeenDate).toISOString()));
+        console.log(
+          chalk.gray(`  Last Seen: `) +
+            chalk.white(new Date(alert.lastSeenDate).toISOString())
+        );
       }
       console.log(chalk.gray(`  URL: `) + chalk.underline.blue(url));
       console.log();
