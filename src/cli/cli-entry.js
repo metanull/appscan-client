@@ -24,6 +24,15 @@ import { getIssueComments } from './commands/get-issue-comments.js';
 import { createJiraIssue } from './commands/create-jira-issue.js';
 import { setup } from './commands/setup.js';
 import { connectionCheck } from './commands/connection-check.js';
+import { getAzdoOrganization } from './commands/get-azdo-organization.js';
+import { listAzdoApplications } from './commands/list-azdo-applications.js';
+import { getAzdoApplication } from './commands/get-azdo-application.js';
+import { listAzdoRepositories } from './commands/list-azdo-repositories.js';
+import { getAzdoRepository } from './commands/get-azdo-repository.js';
+import { listAzdoIssues } from './commands/list-azdo-issues.js';
+import { listAzdoByApp } from './commands/list-azdo-by-app.js';
+import { getAzdoIssueDetail } from './commands/get-azdo-issue-detail.js';
+import { updateAzdoIssue } from './commands/update-azdo-issue.js';
 
 const packageJson = getPackageInfo();
 
@@ -612,6 +621,165 @@ Examples:
   $ appscan jira scan <scanId> --min-severity 4 --labels "security,critical"`
   )
   .action(createJiraIssue);
+
+// ========== Azure DevOps Commands ==========
+
+program
+  .command('get-azdo-organization')
+  .alias('azdo-org')
+  .description('Get Azure DevOps organization details')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan get-azdo-organization
+  $ appscan azdo-org --json`
+  )
+  .action(getAzdoOrganization);
+
+program
+  .command('list-azdo-applications')
+  .alias('azdo-apps')
+  .description('List all Azure DevOps projects (applications)')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan list-azdo-applications
+  $ appscan azdo-apps --json`
+  )
+  .action(listAzdoApplications);
+
+program
+  .command('get-azdo-application')
+  .alias('azdo-app')
+  .description('Get detailed information about an Azure DevOps project (application)')
+  .argument('<appId>', 'Project ID or name')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan get-azdo-application <project-id>
+  $ appscan azdo-app "MyProject" --json`
+  )
+  .action(getAzdoApplication);
+
+program
+  .command('list-azdo-repositories')
+  .alias('azdo-repos')
+  .description('List repositories in an Azure DevOps project')
+  .option('--appId <value>', 'Project ID or name (required)')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan list-azdo-repositories --appId <project-id>
+  $ appscan azdo-repos --appId "MyProject" --json`
+  )
+  .action(listAzdoRepositories);
+
+program
+  .command('get-azdo-repository')
+  .alias('azdo-repo')
+  .description('Get detailed information about an Azure DevOps repository')
+  .option('--appId <value>', 'Project ID or name (required)')
+  .option('--repositoryId <value>', 'Repository ID or name (required)')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan get-azdo-repository --appId <project-id> --repositoryId <repo-id>
+  $ appscan azdo-repo --appId "MyProject" --repositoryId "MyRepo" --json`
+  )
+  .action(getAzdoRepository);
+
+program
+  .command('list-azdo-issues')
+  .alias('azdo-issues')
+  .description('List alerts (issues) in an Azure DevOps repository')
+  .option('--appId <value>', 'Project ID or name (required)')
+  .option('--repositoryId <value>', 'Repository ID or name (required)')
+  .option('--type <value>', 'Filter by alert type (e.g., secret, dependency, code)')
+  .option('--severity <value>', 'Filter by severity (e.g., critical, high, medium, low)')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan list-azdo-issues --appId <project-id> --repositoryId <repo-id>
+  $ appscan azdo-issues --appId "MyProject" --repositoryId "MyRepo" --type secret
+  $ appscan azdo-issues --appId "MyProject" --repositoryId "MyRepo" --severity high --json`
+  )
+  .action(listAzdoIssues);
+
+program
+  .command('list-azdo-by-app')
+  .alias('azdo-app-issues')
+  .description('List alerts (issues) for all repositories in an Azure DevOps project')
+  .option('--appId <value>', 'Project ID or name (required)')
+  .option('--type <value>', 'Filter by alert type (e.g., secret, dependency, code)')
+  .option('--severity <value>', 'Filter by severity (e.g., critical, high, medium, low)')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan list-azdo-by-app --appId <project-id>
+  $ appscan azdo-app-issues --appId "MyProject" --type secret
+  $ appscan azdo-app-issues --appId "MyProject" --severity high --json`
+  )
+  .action(listAzdoByApp);
+
+program
+  .command('get-azdo-issue-detail')
+  .alias('azdo-issue')
+  .description('Get detailed information about a specific Azure DevOps alert (issue)')
+  .option('--appId <value>', 'Project ID or name (required)')
+  .option('--repositoryId <value>', 'Repository ID or name (required)')
+  .option('--issueId <value>', 'Alert ID (required)')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan get-azdo-issue-detail --appId <project-id> --repositoryId <repo-id> --issueId 123
+  $ appscan azdo-issue --appId "MyProject" --repositoryId "MyRepo" --issueId 123 --json`
+  )
+  .action(getAzdoIssueDetail);
+
+program
+  .command('update-azdo-issue')
+  .alias('azdo-update')
+  .description('Update an Azure DevOps alert (issue) status')
+  .option('--appId <value>', 'Project ID or name (required)')
+  .option('--repositoryId <value>', 'Repository ID or name (required)')
+  .option('--issueId <value>', 'Alert ID (required)')
+  .option('--status <value>', 'New state (Active, Dismissed, Fixed)')
+  .option('--comment <value>', 'Comment for dismissal/closure')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan update-azdo-issue --appId <project-id> --repositoryId <repo-id> --issueId 123 --status Fixed
+  $ appscan azdo-update --appId "MyProject" --repositoryId "MyRepo" --issueId 123 --status Dismissed --comment "False positive"
+  $ appscan azdo-update --appId "MyProject" --repositoryId "MyRepo" --issueId 123 --status Active --json`
+  )
+  .action(updateAzdoIssue);
 
 export function runCLI(argv = process.argv) {
   program.parse(argv);
