@@ -786,6 +786,10 @@ program
   .option('--repositoryId <value>', 'Repository ID or name (required)')
   .option('--issueId <value>', 'Alert ID (required)')
   .option('--status <value>', 'New state (Active, Dismissed, Fixed)')
+  .option(
+    '--reason <value>',
+    'Dismissal reason (Fixed, AcceptedRisk, FalsePositive, AgreedToGuidance, ToolUpgrade)'
+  )
   .option('--comment <value>', 'Comment for dismissal/closure')
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
@@ -794,7 +798,8 @@ program
     `
 Examples:
   $ appscan update-azdo-issue --appId <project-id> --repositoryId <repo-id> --issueId 123 --status Fixed
-  $ appscan azdo-update --appId "MyProject" --repositoryId "MyRepo" --issueId 123 --status Dismissed --comment "False positive"
+  $ appscan azdo-update --appId "MyProject" --repositoryId "MyRepo" --issueId 123 --status Dismissed --reason FalsePositive --comment "Not a real vulnerability"
+  $ appscan azdo-update --appId "MyProject" --repositoryId "MyRepo" --issueId 123 --status Dismissed --reason AcceptedRisk --comment "Known issue, accepting risk"
   $ appscan azdo-update --appId "MyProject" --repositoryId "MyRepo" --issueId 123 --status Active --json`
   )
   .action(updateAzdoIssue);

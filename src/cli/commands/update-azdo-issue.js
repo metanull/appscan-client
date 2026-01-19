@@ -28,12 +28,12 @@ function getStateValue(stateName) {
 }
 
 /**
- * Get dismissal type enum value from name
- * @param {string} typeName - Dismissal type name
+ * Get dismissal reason enum value from name
+ * @param {string} reasonName - Dismissal reason name
  * @returns {number}
  */
-function getDismissalTypeValue(typeName) {
-  const types = {
+function getDismissalReasonValue(reasonName) {
+  const reasons = {
     unknown: 0,
     fixed: 1,
     acceptedrisk: 2,
@@ -41,14 +41,15 @@ function getDismissalTypeValue(typeName) {
     agreedtoguidance: 4,
     toolupgrade: 5,
   };
-  const normalized = typeName.toLowerCase().replace(/[_-]/g, '');
-  if (!(normalized in types)) {
+  const normalized = reasonName.toLowerCase().replace(/[_-]/g, '');
+  if (!(normalized in reasons)) {
     throw new Error(
-      `Invalid dismissal type: ${typeName}. Valid values: Unknown, Fixed, AcceptedRisk, FalsePositive, AgreedToGuidance, ToolUpgrade`
+      `Invalid dismissal reason: ${reasonName}. Valid values: Unknown, Fixed, AcceptedRisk, FalsePositive, AgreedToGuidance, ToolUpgrade`
     );
   }
-  return types[normalized];
+  return reasons[normalized];
 }
+
 
 /**
  * Update an Azure DevOps alert (issue)
@@ -58,6 +59,7 @@ function getDismissalTypeValue(typeName) {
  * @param {number} options.issueId - Alert ID
  * @param {string} [options.severity] - New severity (not yet supported by API)
  * @param {string} [options.status] - New state
+ * @param {string} [options.reason] - Dismissal reason (when dismissing)
  * @param {string} [options.comment] - Comment for dismissal
  * @param {string} [options.config] - Path to config file
  * @param {boolean} [options.json] - Output in JSON format
@@ -114,11 +116,16 @@ export async function updateAzdoIssue(options) {
       // If closing/dismissing, we need to provide dismissal reason
       if (update.state === 2 || update.state === 4 || update.state === 8) {
         // Dismissed, Fixed, or AutoDismissed
-        // Default to appropriate dismissal reason based on state
-        if (update.state === 4) {
-          update.dismissedReason = 1; // Fixed
-        } else if (update.state === 2) {
-          update.dismissedReason = 2; // AcceptedRisk (default for Dismissed)
+        if (options.reason) {
+          // User provided explicit dismissal reason
+          update.dismissedReason = getDismissalReasonValue(options.reason);
+        } else {
+          // Default to appropriate dismissal reason based on state
+          if (update.state === 4) {
+            update.dismissedReason = 1; // Fixed
+          } else if (update.state === 2) {
+            update.dismissedReason = 2; // AcceptedRisk (default for Dismissed)
+          }
         }
 
         if (options.comment) {
