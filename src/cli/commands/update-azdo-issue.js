@@ -50,7 +50,6 @@ function getDismissalReasonValue(reasonName) {
   return reasons[normalized];
 }
 
-
 /**
  * Update an Azure DevOps alert (issue)
  * @param {Object} options - CLI options
