@@ -4,51 +4,11 @@ import {
   handleCommandError,
 } from '../../utils/cli-common.js';
 import cliOutput from '../../utils/cli-output.js';
-
-/**
- * Get state enum value from name
- * @param {string} stateName - State name
- * @returns {number}
- */
-function getStateValue(stateName) {
-  const states = {
-    unknown: 0,
-    active: 1,
-    dismissed: 2,
-    fixed: 4,
-    autodismissed: 8,
-  };
-  const normalized = stateName.toLowerCase();
-  if (!(normalized in states)) {
-    throw new Error(
-      `Invalid state: ${stateName}. Valid values: Unknown, Active, Dismissed, Fixed, AutoDismissed`
-    );
-  }
-  return states[normalized];
-}
-
-/**
- * Get dismissal reason enum value from name
- * @param {string} reasonName - Dismissal reason name
- * @returns {number}
- */
-function getDismissalReasonValue(reasonName) {
-  const reasons = {
-    unknown: 0,
-    fixed: 1,
-    acceptedrisk: 2,
-    falsepositive: 3,
-    agreedtoguidance: 4,
-    toolupgrade: 5,
-  };
-  const normalized = reasonName.toLowerCase().replace(/[_-]/g, '');
-  if (!(normalized in reasons)) {
-    throw new Error(
-      `Invalid dismissal reason: ${reasonName}. Valid values: Unknown, Fixed, AcceptedRisk, FalsePositive, AgreedToGuidance, ToolUpgrade`
-    );
-  }
-  return reasons[normalized];
-}
+import {
+  State,
+  getStateValue,
+  getDismissalTypeValue,
+} from '../../services/azdo-service.js';
 
 /**
  * Update an Azure DevOps alert (issue)
@@ -57,8 +17,8 @@ function getDismissalReasonValue(reasonName) {
  * @param {string} options.repositoryId - Repository ID or name
  * @param {number} options.issueId - Alert ID
  * @param {string} [options.severity] - New severity (not yet supported by API)
- * @param {string} [options.status] - New state
- * @param {string} [options.reason] - Dismissal reason (when dismissing)
+ * @param {string} [options.status] - New state. Valid values: 'unknown', 'active', 'dismissed', 'fixed', 'autodismissed'
+ * @param {string} [options.reason] - Dismissal reason. Valid values: 'unknown', 'fixed', 'acceptedrisk', 'falsepositive', 'agreedtoguidance', 'toolupgrade'
  * @param {string} [options.comment] - Comment for dismissal
  * @param {string} [options.config] - Path to config file
  * @param {boolean} [options.json] - Output in JSON format
@@ -113,17 +73,20 @@ export async function updateAzdoIssue(options) {
       update.state = getStateValue(options.status);
 
       // If closing/dismissing, we need to provide dismissal reason
-      if (update.state === 2 || update.state === 4 || update.state === 8) {
-        // Dismissed, Fixed, or AutoDismissed
+      if (
+        update.state === State.Dismissed ||
+        update.state === State.Fixed ||
+        update.state === State.AutoDismissed
+      ) {
         if (options.reason) {
           // User provided explicit dismissal reason
-          update.dismissedReason = getDismissalReasonValue(options.reason);
+          update.dismissedReason = getDismissalTypeValue(options.reason);
         } else {
           // Default to appropriate dismissal reason based on state
-          if (update.state === 4) {
-            update.dismissedReason = 1; // Fixed
-          } else if (update.state === 2) {
-            update.dismissedReason = 2; // AcceptedRisk (default for Dismissed)
+          if (update.state === State.Fixed) {
+            update.dismissedReason = 1; // DismissalType.Fixed
+          } else if (update.state === State.Dismissed) {
+            update.dismissedReason = 2; // DismissalType.AcceptedRisk (default for Dismissed)
           }
         }
 
