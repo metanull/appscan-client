@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { filterAlerts } from '../utils/azdo-issue-utils.js';
 
 /**
  * Global Azure DevOps application state store using Zustand
@@ -204,9 +205,6 @@ export const useAzdoStore = create((set, get) => ({
       searchText,
       sortBy,
     } = get();
-
-    // Import filterAlerts function
-    const { filterAlerts } = require('../utils/azdo-issue-utils.js');
 
     return filterAlerts(alerts, {
       state: filterState,

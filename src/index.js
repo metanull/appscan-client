@@ -30,11 +30,11 @@ const firstArg = args[0];
 if (firstArg === 'asoc' && args.length === 1) {
   // Launch ASoC TUI
   const { launchTUI } = await import('./tui/tui-entry.js');
-  await launchTUI({ config: null, mode: 'asoc' });
+  await launchTUI({ config: null });
 } else if (firstArg === 'azdo' && args.length === 1) {
   // Launch AzDO TUI
   const { launchAzdoTUI } = await import('./tui/tui-azdo-entry.js');
-  await launchAzdoTUI({ config: null, mode: 'azdo' });
+  await launchAzdoTUI({ config: null });
 } else {
   // Launch CLI (handles --help, commands, etc.)
   const { runCLI } = await import('./cli/cli-entry.js');
