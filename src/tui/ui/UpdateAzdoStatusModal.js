@@ -44,7 +44,6 @@ export const UpdateAzdoStatusModal = React.memo(
     onClose,
     onRequestTextInput,
     parseAlertMetadata,
-    buildCommentWithMetadata,
   }) => {
     const isInitialized = useRef(false);
 
@@ -101,7 +100,7 @@ export const UpdateAzdoStatusModal = React.memo(
 
       let existingComment = '';
       if (alerts && alerts.length === 1 && alerts[0].dismissal?.message) {
-        const metadata = parseAlertMetadata
+        const _metadata = parseAlertMetadata
           ? parseAlertMetadata(alerts[0])
           : {};
         const message = alerts[0].dismissal.message;

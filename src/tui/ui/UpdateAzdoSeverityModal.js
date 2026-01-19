@@ -40,7 +40,6 @@ export const UpdateAzdoSeverityModal = React.memo(
     };
 
     const [step, setStep] = useState('severity');
-    const [selectedSeverity, setSelectedSeverity] = useState(null);
     const [progress, setProgress] = useState({ current: 0, total: 0 });
     const [updateError, setUpdateError] = useState(null);
 
