@@ -28,7 +28,9 @@ export async function getAzdoApplication(appId, options) {
       cliOutput.result(`${chalk.bold('ID:')} ${project.id || 'N/A'}`);
 
       if (project.description) {
-        cliOutput.result(`${chalk.bold('Description:')} ${project.description}`);
+        cliOutput.result(
+          `${chalk.bold('Description:')} ${project.description}`
+        );
       }
 
       cliOutput.result(`${chalk.bold('State:')} ${project.state || 'N/A'}`);

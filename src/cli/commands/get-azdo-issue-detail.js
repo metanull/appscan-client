@@ -88,19 +88,13 @@ export async function getAzdoIssueDetail(options) {
       cliOutput.json(alert);
     } else {
       cliOutput.result(chalk.green('\n=== Alert Details ===\n'));
+      cliOutput.result(`${chalk.bold('Alert ID:')} ${alert.alertId || 'N/A'}`);
       cliOutput.result(
-        `${chalk.bold('Alert ID:')} ${alert.alertId || 'N/A'}`
+        `${chalk.bold('Title:')} ${alert.title || '(no title)'}`
       );
-      cliOutput.result(`${chalk.bold('Title:')} ${alert.title || '(no title)'}`);
-      cliOutput.result(
-        `${chalk.bold('Type:')} ${alert.alertType || 'N/A'}`
-      );
-      cliOutput.result(
-        `${chalk.bold('Severity:')} ${alert.severity || 'N/A'}`
-      );
-      cliOutput.result(
-        `${chalk.bold('State:')} ${getStateName(alert.state)}`
-      );
+      cliOutput.result(`${chalk.bold('Type:')} ${alert.alertType || 'N/A'}`);
+      cliOutput.result(`${chalk.bold('Severity:')} ${alert.severity || 'N/A'}`);
+      cliOutput.result(`${chalk.bold('State:')} ${getStateName(alert.state)}`);
 
       if (alert.confidence) {
         cliOutput.result(`${chalk.bold('Confidence:')} ${alert.confidence}`);

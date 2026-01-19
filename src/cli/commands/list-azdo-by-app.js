@@ -93,7 +93,9 @@ export async function listAzdoByApp(options) {
         // Display alerts grouped by repository
         for (const [repo, repoAlerts] of Object.entries(alertsByRepo)) {
           cliOutput.result(
-            chalk.cyan.bold(`\n--- Repository: ${repo} (${repoAlerts.length} alerts) ---\n`)
+            chalk.cyan.bold(
+              `\n--- Repository: ${repo} (${repoAlerts.length} alerts) ---\n`
+            )
           );
 
           repoAlerts.forEach((alert, index) => {

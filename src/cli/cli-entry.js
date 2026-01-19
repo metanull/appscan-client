@@ -657,7 +657,9 @@ Examples:
 program
   .command('get-azdo-application')
   .alias('azdo-app')
-  .description('Get detailed information about an Azure DevOps project (application)')
+  .description(
+    'Get detailed information about an Azure DevOps project (application)'
+  )
   .argument('<appId>', 'Project ID or name')
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
@@ -709,8 +711,14 @@ program
   .description('List alerts (issues) in an Azure DevOps repository')
   .option('--appId <value>', 'Project ID or name (required)')
   .option('--repositoryId <value>', 'Repository ID or name (required)')
-  .option('--type <value>', 'Filter by alert type (e.g., secret, dependency, code)')
-  .option('--severity <value>', 'Filter by severity (e.g., critical, high, medium, low)')
+  .option(
+    '--type <value>',
+    'Filter by alert type (e.g., secret, dependency, code)'
+  )
+  .option(
+    '--severity <value>',
+    'Filter by severity (e.g., critical, high, medium, low)'
+  )
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
   .addHelpText(
@@ -726,10 +734,18 @@ Examples:
 program
   .command('list-azdo-by-app')
   .alias('azdo-app-issues')
-  .description('List alerts (issues) for all repositories in an Azure DevOps project')
+  .description(
+    'List alerts (issues) for all repositories in an Azure DevOps project'
+  )
   .option('--appId <value>', 'Project ID or name (required)')
-  .option('--type <value>', 'Filter by alert type (e.g., secret, dependency, code)')
-  .option('--severity <value>', 'Filter by severity (e.g., critical, high, medium, low)')
+  .option(
+    '--type <value>',
+    'Filter by alert type (e.g., secret, dependency, code)'
+  )
+  .option(
+    '--severity <value>',
+    'Filter by severity (e.g., critical, high, medium, low)'
+  )
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
   .addHelpText(
@@ -745,7 +761,9 @@ Examples:
 program
   .command('get-azdo-issue-detail')
   .alias('azdo-issue')
-  .description('Get detailed information about a specific Azure DevOps alert (issue)')
+  .description(
+    'Get detailed information about a specific Azure DevOps alert (issue)'
+  )
   .option('--appId <value>', 'Project ID or name (required)')
   .option('--repositoryId <value>', 'Repository ID or name (required)')
   .option('--issueId <value>', 'Alert ID (required)')

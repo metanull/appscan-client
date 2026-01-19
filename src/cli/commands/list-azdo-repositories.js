@@ -38,8 +38,7 @@ export async function listAzdoRepositories(options) {
           );
 
           const details = [];
-          if (repo.defaultBranch)
-            details.push(`Branch: ${repo.defaultBranch}`);
+          if (repo.defaultBranch) details.push(`Branch: ${repo.defaultBranch}`);
           if (repo.size) details.push(`Size: ${repo.size} bytes`);
           if (repo.isDisabled) details.push('Disabled: Yes');
 

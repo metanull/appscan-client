@@ -75,7 +75,9 @@ export async function updateAzdoIssue(options) {
     }
 
     if (!options.status && !options.severity) {
-      throw new Error('At least one of --status or --severity must be provided');
+      throw new Error(
+        'At least one of --status or --severity must be provided'
+      );
     }
 
     if (options.severity) {
@@ -110,11 +112,7 @@ export async function updateAzdoIssue(options) {
       update.state = getStateValue(options.status);
 
       // If closing/dismissing, we need to provide dismissal reason
-      if (
-        update.state === 2 ||
-        update.state === 4 ||
-        update.state === 8
-      ) {
+      if (update.state === 2 || update.state === 4 || update.state === 8) {
         // Dismissed, Fixed, or AutoDismissed
         // Default to appropriate dismissal reason based on state
         if (update.state === 4) {

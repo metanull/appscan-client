@@ -56,8 +56,7 @@ export class AzdoService {
     }
 
     // Support multiple env var patterns
-    const orgUrlFromEnv =
-      process.env.AZDO_ORG_URL || process.env.AZDO_OR;
+    const orgUrlFromEnv = process.env.AZDO_ORG_URL || process.env.AZDO_OR;
 
     if (orgUrlFromEnv) {
       return orgUrlFromEnv;
@@ -194,7 +193,10 @@ export class AzdoService {
       }
       if (!next && pageAlerts.length > 0) {
         const firstAlert = pageAlerts[0];
-        if (firstAlert && (firstAlert.__continuation || firstAlert.continuationToken)) {
+        if (
+          firstAlert &&
+          (firstAlert.__continuation || firstAlert.continuationToken)
+        ) {
           next = firstAlert.__continuation || firstAlert.continuationToken;
         }
       }
