@@ -5,6 +5,147 @@
 
 import * as azdev from 'azure-devops-node-api';
 
+/**
+ * Alert Type enum mapping
+ * @see https://docs.microsoft.com/en-us/rest/api/azure/devops/alert/alerts/list
+ */
+export const AlertType = {
+  Unknown: 0,
+  Dependency: 1,
+  Secret: 2,
+  Code: 3,
+  License: 4,
+};
+
+/**
+ * Severity enum mapping
+ */
+export const Severity = {
+  Low: 0,
+  Medium: 1,
+  High: 2,
+  Critical: 3,
+  Note: 4,
+  Warning: 5,
+  Error: 6,
+  Undefined: 7,
+};
+
+/**
+ * State enum mapping
+ */
+export const State = {
+  Unknown: 0,
+  Active: 1,
+  Dismissed: 2,
+  Fixed: 4,
+  AutoDismissed: 8,
+};
+
+/**
+ * DismissalType enum mapping
+ */
+export const DismissalType = {
+  Unknown: 0,
+  Fixed: 1,
+  AcceptedRisk: 2,
+  FalsePositive: 3,
+  AgreedToGuidance: 4,
+  ToolUpgrade: 5,
+};
+
+/**
+ * Convert alert type name to numeric value
+ * @param {string} typeName - Alert type name (e.g., 'secret', 'dependency')
+ * @returns {number} Alert type enum value
+ */
+function getAlertTypeValue(typeName) {
+  const normalized = typeName.toLowerCase();
+  const typeMap = {
+    unknown: AlertType.Unknown,
+    dependency: AlertType.Dependency,
+    secret: AlertType.Secret,
+    code: AlertType.Code,
+    license: AlertType.License,
+  };
+  if (!(normalized in typeMap)) {
+    throw new Error(
+      `Invalid alert type: ${typeName}. Valid values: Unknown, Dependency, Secret, Code, License`
+    );
+  }
+  return typeMap[normalized];
+}
+
+/**
+ * Convert severity name to numeric value
+ * @param {string} severityName - Severity name (e.g., 'critical', 'high')
+ * @returns {number} Severity enum value
+ */
+function getSeverityValue(severityName) {
+  const normalized = severityName.toLowerCase();
+  const severityMap = {
+    low: Severity.Low,
+    medium: Severity.Medium,
+    high: Severity.High,
+    critical: Severity.Critical,
+    note: Severity.Note,
+    warning: Severity.Warning,
+    error: Severity.Error,
+    undefined: Severity.Undefined,
+  };
+  if (!(normalized in severityMap)) {
+    throw new Error(
+      `Invalid severity: ${severityName}. Valid values: Low, Medium, High, Critical, Note, Warning, Error, Undefined`
+    );
+  }
+  return severityMap[normalized];
+}
+
+/**
+ * Convert state name to numeric value
+ * @param {string} stateName - State name (e.g., 'active', 'dismissed')
+ * @returns {number} State enum value
+ */
+export function getStateValue(stateName) {
+  const normalized = stateName.toLowerCase();
+  const stateMap = {
+    unknown: State.Unknown,
+    active: State.Active,
+    dismissed: State.Dismissed,
+    fixed: State.Fixed,
+    autodismissed: State.AutoDismissed,
+  };
+  if (!(normalized in stateMap)) {
+    throw new Error(
+      `Invalid state: ${stateName}. Valid values: Unknown, Active, Dismissed, Fixed, AutoDismissed`
+    );
+  }
+  return stateMap[normalized];
+}
+
+/**
+ * Convert dismissal type name to numeric value
+ * @param {string} dismissalTypeName - Dismissal type name (e.g., 'falsepositive')
+ * @returns {number} DismissalType enum value
+ */
+export function getDismissalTypeValue(dismissalTypeName) {
+  const normalized = dismissalTypeName.toLowerCase().replace(/[_-]/g, '');
+  const dismissalMap = {
+    unknown: DismissalType.Unknown,
+    fixed: DismissalType.Fixed,
+    acceptedrisk: DismissalType.AcceptedRisk,
+    falsepositive: DismissalType.FalsePositive,
+    agreedtoguidance: DismissalType.AgreedToGuidance,
+    toolupgrade: DismissalType.ToolUpgrade,
+  };
+  if (!(normalized in dismissalMap)) {
+    throw new Error(
+      `Invalid dismissal type: ${dismissalTypeName}. Valid values: Unknown, Fixed, AcceptedRisk, FalsePositive, AgreedToGuidance, ToolUpgrade`
+    );
+  }
+  return dismissalMap[normalized];
+}
+
 export class AzdoService {
   /**
    * Create AzdoService instance
@@ -130,21 +271,23 @@ export class AzdoService {
    * @param {string} projectIdOrName - Project ID or name
    * @param {string} repositoryId - Repository ID
    * @param {Object} options - Filter options
-   * @param {string} [options.type] - Alert type filter
-   * @param {string} [options.severity] - Alert severity filter
+   * @param {string} [options.type] - Alert type filter. Valid values: 'unknown', 'dependency', 'secret', 'code', 'license'
+   * @param {string} [options.severity] - Severity filter. Valid values: 'low', 'medium', 'high', 'critical', 'note', 'warning', 'error', 'undefined'
    * @returns {Promise<Array>}
    */
   async listAlerts(projectIdOrName, repositoryId, options = {}) {
     await this.connect();
     const alertApi = await this.connection.getAlertApi();
 
-    // Build search criteria for API filtering (if supported)
+    // Build search criteria for API filtering
     const criteria = {};
     if (options.type) {
-      criteria.alertType = options.type;
+      // Convert type name to numeric enum value
+      criteria.alertType = getAlertTypeValue(options.type);
     }
     if (options.severity) {
-      criteria.severity = options.severity;
+      // Convert severity name to numeric enum value
+      criteria.severity = getSeverityValue(options.severity);
     }
 
     // Fetch ALL alerts using continuation tokens
@@ -203,31 +346,15 @@ export class AzdoService {
       continuation = next || undefined;
     } while (continuation);
 
-    // Apply client-side filters if criteria weren't supported by API
-    let filtered = allAlerts;
-
-    if (options.type) {
-      filtered = filtered.filter(
-        (alert) => alert.alertType?.toLowerCase() === options.type.toLowerCase()
-      );
-    }
-
-    if (options.severity) {
-      filtered = filtered.filter(
-        (alert) =>
-          alert.severity?.toLowerCase() === options.severity.toLowerCase()
-      );
-    }
-
-    return filtered;
+    return allAlerts;
   }
 
   /**
    * List alerts for all repositories in a project
    * @param {string} projectIdOrName - Project ID or name
    * @param {Object} options - Filter options
-   * @param {string} [options.type] - Alert type filter
-   * @param {string} [options.severity] - Alert severity filter
+   * @param {string} [options.type] - Alert type filter. Valid values: 'unknown', 'dependency', 'secret', 'code', 'license'
+   * @param {string} [options.severity] - Severity filter. Valid values: 'low', 'medium', 'high', 'critical', 'note', 'warning', 'error', 'undefined'
    * @returns {Promise<Array>}
    */
   async listAlertsByProject(projectIdOrName, options = {}) {

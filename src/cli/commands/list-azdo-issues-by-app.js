@@ -30,7 +30,7 @@ function getStateName(state) {
  * @param {string} [options.config] - Path to config file
  * @param {boolean} [options.json] - Output in JSON format
  */
-export async function listAzdoByApp(options) {
+export async function listAzdoIssuesByApp(options) {
   try {
     if (!options.appId) {
       throw new Error('--appId is required');
@@ -114,4 +114,4 @@ export async function listAzdoByApp(options) {
   }
 }
 
-export default listAzdoByApp;
+export default listAzdoIssuesByApp;

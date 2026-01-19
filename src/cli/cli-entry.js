@@ -30,7 +30,7 @@ import { getAzdoApplication } from './commands/get-azdo-application.js';
 import { listAzdoRepositories } from './commands/list-azdo-repositories.js';
 import { getAzdoRepository } from './commands/get-azdo-repository.js';
 import { listAzdoIssues } from './commands/list-azdo-issues.js';
-import { listAzdoByApp } from './commands/list-azdo-by-app.js';
+import { listAzdoIssuesByApp } from './commands/list-azdo-issues-by-app.js';
 import { getAzdoIssueDetail } from './commands/get-azdo-issue-detail.js';
 import { updateAzdoIssue } from './commands/update-azdo-issue.js';
 
@@ -713,11 +713,11 @@ program
   .option('--repositoryId <value>', 'Repository ID or name (required)')
   .option(
     '--type <value>',
-    'Filter by alert type (e.g., secret, dependency, code)'
+    'Filter by alert type: unknown, dependency, secret, code, license'
   )
   .option(
     '--severity <value>',
-    'Filter by severity (e.g., critical, high, medium, low)'
+    'Filter by severity: low, medium, high, critical, note, warning, error, undefined'
   )
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
@@ -732,7 +732,7 @@ Examples:
   .action(listAzdoIssues);
 
 program
-  .command('list-azdo-by-app')
+  .command('list-azdo-issues-by-app')
   .alias('azdo-app-issues')
   .description(
     'List alerts (issues) for all repositories in an Azure DevOps project'
@@ -740,11 +740,11 @@ program
   .option('--appId <value>', 'Project ID or name (required)')
   .option(
     '--type <value>',
-    'Filter by alert type (e.g., secret, dependency, code)'
+    'Filter by alert type: unknown, dependency, secret, code, license'
   )
   .option(
     '--severity <value>',
-    'Filter by severity (e.g., critical, high, medium, low)'
+    'Filter by severity: low, medium, high, critical, note, warning, error, undefined'
   )
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
@@ -752,11 +752,11 @@ program
     'after',
     `
 Examples:
-  $ appscan list-azdo-by-app --appId <project-id>
+  $ appscan list-azdo-issues-by-app --appId <project-id>
   $ appscan azdo-app-issues --appId "MyProject" --type secret
   $ appscan azdo-app-issues --appId "MyProject" --severity high --json`
   )
-  .action(listAzdoByApp);
+  .action(listAzdoIssuesByApp);
 
 program
   .command('get-azdo-issue-detail')
