@@ -42,6 +42,14 @@ export class Config {
     return !!(this.jiraHost && this.jiraEmail && this.jiraApiToken);
   }
 
+  isAzdoValid() {
+    const pat =
+      process.env.AZDO_PAT ||
+      process.env.AZDO_PERSONAL_ACCESS_TOKEN ||
+      process.env.AZURE_DEVOPS_PAT;
+    return !!(this.azureDevOpsOrg && pat);
+  }
+
   getApiKey() {
     return this.apiKey;
   }

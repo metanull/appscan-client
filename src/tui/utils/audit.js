@@ -154,6 +154,42 @@ class AuditService {
   }
 
   /**
+   * Log Azure DevOps alert update
+   * @param {string} status - 'success' or 'failure'
+   * @param {string} projectIdOrName - Project ID or name
+   * @param {string} repositoryId - Repository ID
+   * @param {Array<number>} alertIds - Alert IDs being updated
+   * @param {Object} updateData - Update data
+   * @param {Error} error - Error object if failed
+   * @returns {Object} Audit log entry
+   */
+  logAzdoUpdate(
+    status,
+    projectIdOrName,
+    repositoryId,
+    alertIds,
+    updateData,
+    error = null
+  ) {
+    return this.log(
+      'AZDO_ALERT_UPDATE',
+      {
+        project: projectIdOrName,
+        repository: repositoryId,
+        alertIds,
+        updateData,
+      },
+      {
+        success: status === 'success',
+        error: error ? error.message : undefined,
+      },
+      {
+        alertCount: alertIds.length,
+      }
+    );
+  }
+
+  /**
    * Get audit log file path
    * @returns {string} Absolute path to the audit log file
    */
