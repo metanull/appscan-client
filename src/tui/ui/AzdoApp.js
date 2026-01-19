@@ -20,7 +20,6 @@ import { ScrollableList } from './components/ScrollableList.js';
 import { DebugBar } from './components/DebugBar.js';
 import { KeyboardHint } from './components/KeyboardHint.js';
 import { HelpModal } from './components/HelpModal.js';
-import { FilterModal } from './FilterModal.js';
 import { SearchModal } from './SearchModal.js';
 import { AzdoService } from '../services/azdo.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
@@ -583,17 +582,6 @@ export const AzdoApp = ({ configPath }) => {
     sortBy,
   ]);
 
-  // Get selected alerts from IDs (unused for now, but will be needed for Jira operations)
-  // const selectedAlerts = useMemo(() => {
-  //   if (!alerts || alerts.length === 0) {
-  //     return currentAlert ? [currentAlert] : [];
-  //   }
-  //   if (selectedAlertIds.length === 0) {
-  //     return currentAlert ? [currentAlert] : [];
-  //   }
-  //   return alerts.filter((alert) => selectedAlertIds.includes(alert.alertId));
-  // }, [selectedAlertIds, alerts, currentAlert]);
-
   // Throttled cursor movement
   const pendingCursorMove = useRef(0);
   const flushTimeout = useRef(null);
@@ -716,14 +704,14 @@ export const AzdoApp = ({ configPath }) => {
         group: 'Selection',
       },
 
-      // Filtering
-      {
-        key: 'f',
-        action: () => alerts.length > 0 && setActiveModal('filter'),
-        description: 'Filter',
-        condition: () => alerts.length > 0,
-        group: 'Filtering',
-      },
+      // Filtering (disabled until FilterModal is adapted for AzDO)
+      // {
+      //   key: 'f',
+      //   action: () => alerts.length > 0 && setActiveModal('filter'),
+      //   description: 'Filter',
+      //   condition: () => alerts.length > 0,
+      //   group: 'Filtering',
+      // },
       {
         key: '/',
         action: () => setActiveModal('search'),
@@ -977,7 +965,8 @@ export const AzdoApp = ({ configPath }) => {
       {activeModal === 'help' && (
         <HelpModal view={view} onClose={() => setActiveModal(null)} />
       )}
-      {activeModal === 'filter' && (
+      {/* FilterModal needs to be adapted for Azure DevOps alert structure */}
+      {/* {activeModal === 'filter' && (
         <FilterModal
           issues={filteredAlerts}
           fixGroups={[]}
@@ -993,7 +982,7 @@ export const AzdoApp = ({ configPath }) => {
           }}
           onClose={() => setActiveModal(null)}
         />
-      )}
+      )} */}
       {activeModal === 'search' && (
         <SearchModal
           currentSearch={useAzdoStore.getState().searchText}

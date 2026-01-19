@@ -369,22 +369,3 @@ export function formatAlertForDisplay(alert) {
   return `${severity} ${state} ${type} - ${title} ${jira}`.trim();
 }
 
-export default {
-  groupAlertsBy,
-  calculateStats,
-  getSeverityBadge,
-  getStateBadge,
-  formatAlertForDisplay,
-  getAlertTypeName,
-  getSeverityName,
-  getStateName,
-  getDismissalTypeName,
-  parseAlertMetadata,
-  filterAlerts,
-  SEVERITY_ORDER,
-  SEVERITY_COLORS,
-  ALERT_TYPE_NAMES,
-  SEVERITY_NAMES,
-  STATE_NAMES,
-  DISMISSAL_TYPE_NAMES,
-};
