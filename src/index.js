@@ -17,26 +17,7 @@ const __dirname = path.dirname(__filename);
 process.env.DOTENV_CONFIG_QUIET = 'true';
 dotenv.config({ path: getEnvPath() });
 
-const args = process.argv.slice(2);
-
-// Route based on first argument:
-// - 'asoc' (no args after) → launch ASoC TUI
-// - 'azdo' (no args after) → launch AzDO TUI
-// - any other command → handled by CLI
-// - no args → show help (old behavior removed per requirements)
-
-const firstArg = args[0];
-
-if (firstArg === 'asoc' && args.length === 1) {
-  // Launch ASoC TUI
-  const { launchTUI } = await import('./tui/tui-entry.js');
-  await launchTUI({ config: null });
-} else if (firstArg === 'azdo' && args.length === 1) {
-  // Launch AzDO TUI
-  const { launchAzdoTUI } = await import('./tui/tui-azdo-entry.js');
-  await launchAzdoTUI({ config: null });
-} else {
-  // Launch CLI (handles --help, commands, etc.)
-  const { runCLI } = await import('./cli/cli-entry.js');
-  runCLI();
-}
+// All commands (including 'asoc' and 'azdo') are handled by CLI
+// No args → show help
+const { runCLI } = await import('./cli/cli-entry.js');
+runCLI();
