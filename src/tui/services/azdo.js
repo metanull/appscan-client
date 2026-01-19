@@ -267,7 +267,7 @@ export class AzdoService {
     try {
       const alerts = await this.listAlertsByProject(projectIdOrName, options);
       return alerts.length;
-    } catch (error) {
+    } catch {
       return 0;
     }
   }
@@ -281,7 +281,7 @@ export class AzdoService {
     try {
       const repos = await this.listRepositories(projectIdOrName);
       return repos.length;
-    } catch (error) {
+    } catch {
       return 0;
     }
   }
