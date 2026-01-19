@@ -21,6 +21,10 @@ import { DebugBar } from './components/DebugBar.js';
 import { KeyboardHint } from './components/KeyboardHint.js';
 import { HelpModal } from './components/HelpModal.js';
 import { SearchModal } from './SearchModal.js';
+import { FilterAzdoModal } from './FilterAzdoModal.js';
+import { UpdateAzdoStatusModal } from './UpdateAzdoStatusModal.js';
+import { UpdateAzdoSeverityModal } from './UpdateAzdoSeverityModal.js';
+import { TextInputPage } from './TextInputPage.js';
 import { AzdoService } from '../services/azdo.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts.js';
@@ -645,6 +649,70 @@ export const AzdoApp = ({ configPath }) => {
     }
   }, [selectedRepository, selectedProject, azdoService]);
 
+  // Handle bulk alert updates
+  const handleBulkUpdateAlerts = useCallback(
+    async (updateData) => {
+      const store = useAzdoStore.getState();
+      const alertsToUpdate = selectedAlertIds
+        .map((id) => alerts.find((a) => a.alertId === id))
+        .filter(Boolean);
+
+      if (alertsToUpdate.length === 0) {
+        return;
+      }
+
+      try {
+        store.setLoading(true);
+        setLoadingMessage(
+          `Updating ${alertsToUpdate.length} alert(s)...`
+        );
+
+        // Update alerts via service
+        const results = await azdoService.bulkUpdateAlertsChunked(
+          selectedProject.id,
+          selectedRepository.id,
+          selectedAlertIds,
+          updateData,
+          10,
+          (current, total) => {
+            setLoadingMessage(`Updating alerts: ${current}/${total}`);
+          }
+        );
+
+        // Check for failures
+        const failures = results.filter((r) => !r.success);
+        if (failures.length > 0) {
+          logger.error('Some alerts failed to update', { failures });
+          store.setError(
+            `${failures.length} alert(s) failed to update. Check logs for details.`
+          );
+        }
+
+        // Reload alerts to reflect changes
+        await reloadAlerts();
+
+        // Clear selection
+        store.clearSelection();
+
+        store.setLoading(false);
+        setLoadingMessage('Ready');
+      } catch (err) {
+        logger.error('Failed to update alerts', err);
+        store.setError(err.message);
+        store.setLoading(false);
+        setLoadingMessage('Ready');
+      }
+    },
+    [
+      selectedAlertIds,
+      alerts,
+      selectedProject,
+      selectedRepository,
+      azdoService,
+      reloadAlerts,
+    ]
+  );
+
   // Define keyboard shortcuts for alert-list view
   const alertListShortcuts = useMemo(
     () => [
@@ -704,14 +772,38 @@ export const AzdoApp = ({ configPath }) => {
         group: 'Selection',
       },
 
-      // Filtering (disabled until FilterModal is adapted for AzDO)
-      // {
-      //   key: 'f',
-      //   action: () => alerts.length > 0 && setActiveModal('filter'),
-      //   description: 'Filter',
-      //   condition: () => alerts.length > 0,
-      //   group: 'Filtering',
-      // },
+      // Update actions
+      {
+        key: 's',
+        action: () => {
+          if (selectedAlertIds.length > 0) {
+            setActiveModal('update-status');
+          }
+        },
+        description: 'Update State',
+        condition: () => selectedAlertIds.length > 0,
+        group: 'Update',
+      },
+      {
+        key: 'v',
+        action: () => {
+          if (selectedAlertIds.length > 0) {
+            setActiveModal('update-severity');
+          }
+        },
+        description: 'Update Severity',
+        condition: () => selectedAlertIds.length > 0,
+        group: 'Update',
+      },
+
+      // Filtering
+      {
+        key: 'f',
+        action: () => alerts.length > 0 && setActiveModal('filter'),
+        description: 'Filter',
+        condition: () => alerts.length > 0,
+        group: 'Filtering',
+      },
       {
         key: '/',
         action: () => setActiveModal('search'),
@@ -914,6 +1006,19 @@ export const AzdoApp = ({ configPath }) => {
     );
   }
 
+  if (standaloneWindow?.type === 'text-input') {
+    return (
+      <TextInputPage
+        {...standaloneWindow.config}
+        onComplete={(value) => {
+          standaloneWindow.config.onComplete(value);
+          setStandaloneWindow(null);
+        }}
+        onCancel={() => setStandaloneWindow(null)}
+      />
+    );
+  }
+
   // Main layout
   return (
     <Layout
@@ -965,11 +1070,9 @@ export const AzdoApp = ({ configPath }) => {
       {activeModal === 'help' && (
         <HelpModal view={view} onClose={() => setActiveModal(null)} />
       )}
-      {/* FilterModal needs to be adapted for Azure DevOps alert structure */}
-      {/* {activeModal === 'filter' && (
-        <FilterModal
-          issues={filteredAlerts}
-          fixGroups={[]}
+      {activeModal === 'filter' && (
+        <FilterAzdoModal
+          alerts={filteredAlerts}
           onSelect={(filterType, value) => {
             if (filterType === 'state')
               useAzdoStore.getState().setFilterState(value);
@@ -979,14 +1082,45 @@ export const AzdoApp = ({ configPath }) => {
               useAzdoStore.getState().setFilterAlertType(value);
             else if (filterType === 'jira')
               useAzdoStore.getState().setFilterJira(value);
+            setActiveModal(null);
           }}
           onClose={() => setActiveModal(null)}
         />
-      )} */}
+      )}
       {activeModal === 'search' && (
         <SearchModal
           currentSearch={useAzdoStore.getState().searchText}
           onSearch={(text) => useAzdoStore.getState().setSearchText(text)}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'update-status' && (
+        <UpdateAzdoStatusModal
+          alertCount={selectedAlertIds.length}
+          alerts={selectedAlerts}
+          onUpdate={(updateData) => {
+            handleBulkUpdateAlerts(updateData);
+            setActiveModal(null);
+          }}
+          onClose={() => setActiveModal(null)}
+          onRequestTextInput={(config) => {
+            setStandaloneWindow({
+              type: 'text-input',
+              config,
+            });
+            setActiveModal(null);
+          }}
+          parseAlertMetadata={parseAlertMetadata}
+        />
+      )}
+      {activeModal === 'update-severity' && (
+        <UpdateAzdoSeverityModal
+          alertCount={selectedAlertIds.length}
+          alerts={selectedAlerts}
+          onUpdate={(severity) => {
+            handleBulkUpdateAlerts({ severity });
+            setActiveModal(null);
+          }}
           onClose={() => setActiveModal(null)}
         />
       )}
