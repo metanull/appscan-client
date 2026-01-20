@@ -126,7 +126,11 @@ export const UpdateAzdoStatusModal = React.memo(
       });
     };
 
-    const handleSubmit = async (commentText = '', state = null, dismissalType = null) => {
+    const handleSubmit = async (
+      commentText = '',
+      state = null,
+      dismissalType = null
+    ) => {
       if (!alertCount || alertCount === 0) {
         return;
       }
