@@ -1452,7 +1452,12 @@ export const AzdoApp = ({ configPath }) => {
         <UpdateAzdoStatusModal
           alertCount={selectedAlertIds.length}
           alerts={selectedAlerts}
-          onUpdate={async (state, dismissalType, comment, _progressCallback) => {
+          onUpdate={async (
+            state,
+            dismissalType,
+            comment,
+            _progressCallback
+          ) => {
             const updateData = {
               state,
               dismissedReason: dismissalType,
