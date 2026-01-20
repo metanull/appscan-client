@@ -166,366 +166,373 @@ export const AlertDetailsModal = React.memo(
               <Box flexDirection="column" height="100%">
                 {/* Header section - fixed height, no growth */}
                 <Box flexDirection="column" flexShrink={0}>
-              <Box>
-                <Box width={18}>
-                  <Text bold color="cyan">
-                    Alert ID:
-                  </Text>
-                </Box>
-                <Text wrap="wrap">{alert.alertId || 'N/A'}</Text>
-              </Box>
-              <Box>
-                <Box width={18}>
-                  <Text bold color="cyan">
-                    Title:
-                  </Text>
-                </Box>
-                <Text wrap="wrap">
-                  {alert.title || alert.ruleName || 'N/A'}
-                </Text>
-              </Box>
-              <Box>
-                <Box width={18}>
-                  <Text bold color="cyan">
-                    Type:
-                  </Text>
-                </Box>
-                <Text wrap="wrap">{alertTypeName}</Text>
-              </Box>
-              <Box>
-                <Box width={18}>
-                  <Text bold color="cyan">
-                    Severity:
-                  </Text>
-                </Box>
-                <Text wrap="wrap" color={severityColor} bold>
-                  {severityName}
-                </Text>
-              </Box>
-              <Box>
-                <Box width={18}>
-                  <Text bold color="cyan">
-                    State:
-                  </Text>
-                </Box>
-                <Text wrap="wrap" color={alert.state === 1 ? 'red' : 'green'}>
-                  {stateName}
-                </Text>
-              </Box>
-
-              {/* Git ref */}
-              {alert.gitRef && (
-                <Box marginTop={1}>
-                  <Box width={18}>
-                    <Text bold color="cyan">
-                      Git Ref:
+                  <Box>
+                    <Box width={18}>
+                      <Text bold color="cyan">
+                        Alert ID:
+                      </Text>
+                    </Box>
+                    <Text wrap="wrap">{alert.alertId || 'N/A'}</Text>
+                  </Box>
+                  <Box>
+                    <Box width={18}>
+                      <Text bold color="cyan">
+                        Title:
+                      </Text>
+                    </Box>
+                    <Text wrap="wrap">
+                      {alert.title || alert.ruleName || 'N/A'}
                     </Text>
                   </Box>
-                  <Text wrap="wrap">{alert.gitRef}</Text>
-                </Box>
-              )}
-
-              {/* Trusted source flag */}
-              {alert.hasTrustedSourceOrigin !== undefined && (
-                <Box>
-                  <Box width={18}>
-                    <Text bold color="cyan">
-                      Trusted Source:
+                  <Box>
+                    <Box width={18}>
+                      <Text bold color="cyan">
+                        Type:
+                      </Text>
+                    </Box>
+                    <Text wrap="wrap">{alertTypeName}</Text>
+                  </Box>
+                  <Box>
+                    <Box width={18}>
+                      <Text bold color="cyan">
+                        Severity:
+                      </Text>
+                    </Box>
+                    <Text wrap="wrap" color={severityColor} bold>
+                      {severityName}
                     </Text>
                   </Box>
-                  <Text
-                    wrap="wrap"
-                    color={alert.hasTrustedSourceOrigin ? 'green' : 'yellow'}
-                  >
-                    {alert.hasTrustedSourceOrigin ? 'Yes' : 'No'}
-                  </Text>
-                </Box>
-              )}
-
-              {/* Project and repository info */}
-              {project && (
-                <Box marginTop={1}>
-                  <Box width={18}>
-                    <Text bold color="cyan">
-                      Project:
+                  <Box>
+                    <Box width={18}>
+                      <Text bold color="cyan">
+                        State:
+                      </Text>
+                    </Box>
+                    <Text
+                      wrap="wrap"
+                      color={alert.state === 1 ? 'red' : 'green'}
+                    >
+                      {stateName}
                     </Text>
                   </Box>
-                  <Text wrap="wrap">{project.name || 'N/A'}</Text>
-                </Box>
-              )}
-              {repository && (
-                <Box>
-                  <Box width={18}>
-                    <Text bold color="cyan">
-                      Repository:
-                    </Text>
-                  </Box>
-                  <Text wrap="wrap">{repository.name || 'N/A'}</Text>
-                </Box>
-              )}
 
-              {/* Jira information */}
-              {metadata.jiraId && (
-                <Box marginTop={1}>
-                  <Box width={18}>
-                    <Text bold color="cyan">
-                      Jira ID:
-                    </Text>
-                  </Box>
-                  <Text wrap="wrap" color="green">
-                    {metadata.jiraId}
-                  </Text>
-                </Box>
-              )}
-
-              <Text> </Text>
-
-              {/* Additional properties */}
-              {alert.ruleName && alert.ruleName !== alert.title && (
-                <Box>
-                  <Box width={18}>
-                    <Text bold color="cyan">
-                      Rule Name:
-                    </Text>
-                  </Box>
-                  <Text wrap="wrap">{alert.ruleName}</Text>
-                </Box>
-              )}
-
-              {alert.introducedDate && (
-                <Box>
-                  <Box width={18}>
-                    <Text bold color="cyan">
-                      Introduced:
-                    </Text>
-                  </Box>
-                  <Text wrap="wrap">
-                    {new Date(alert.introducedDate).toLocaleString()}
-                  </Text>
-                </Box>
-              )}
-
-              {alert.firstSeenDate && (
-                <Box>
-                  <Box width={18}>
-                    <Text bold color="cyan">
-                      First Seen:
-                    </Text>
-                  </Box>
-                  <Text wrap="wrap">
-                    {new Date(alert.firstSeenDate).toLocaleString()}
-                  </Text>
-                </Box>
-              )}
-
-              {alert.lastSeenDate && (
-                <Box>
-                  <Box width={18}>
-                    <Text bold color="cyan">
-                      Last Seen:
-                    </Text>
-                  </Box>
-                  <Text wrap="wrap">
-                    {new Date(alert.lastSeenDate).toLocaleString()}
-                  </Text>
-                </Box>
-              )}
-
-              {alert.fixedDate && (
-                <Box>
-                  <Box width={18}>
-                    <Text bold color="cyan">
-                      Fixed Date:
-                    </Text>
-                  </Box>
-                  <Text wrap="wrap" color="green">
-                    {new Date(alert.fixedDate).toLocaleString()}
-                  </Text>
-                </Box>
-              )}
-
-              {/* Repository URL */}
-              {alert.repositoryUrl && (
-                <Box marginTop={1}>
-                  <Box width={18}>
-                    <Text bold color="cyan">
-                      Repository URL:
-                    </Text>
-                  </Box>
-                  <Link url={alert.repositoryUrl}>
-                    <Text color="blue" underline wrap="truncate">
-                      {alert.repositoryUrl}
-                    </Text>
-                  </Link>
-                </Box>
-              )}
-            </Box>
-
-            {/* Content area - grows to fill available space */}
-            <Box flexDirection="column" flexGrow={1} minHeight={0}>
-              {/* Dismissal information */}
-              {alert.dismissal && (
-                <Box
-                  flexDirection="column"
-                  borderStyle="single"
-                  borderColor="yellow"
-                  paddingX={1}
-                  marginTop={1}
-                >
-                  <Text color="yellow" bold>
-                    Dismissal Information
-                  </Text>
-                  <Box marginTop={1} flexDirection="column">
-                    {alert.dismissal.message && (
-                      <Box marginBottom={1}>
-                        <Box width={18}>
-                          <Text bold>Message:</Text>
-                        </Box>
-                        <Text wrap="wrap">{alert.dismissal.message}</Text>
+                  {/* Git ref */}
+                  {alert.gitRef && (
+                    <Box marginTop={1}>
+                      <Box width={18}>
+                        <Text bold color="cyan">
+                          Git Ref:
+                        </Text>
                       </Box>
-                    )}
-                    {alert.dismissal.dismissedBy && (
-                      <Box>
-                        <Box width={18}>
-                          <Text bold>Dismissed By:</Text>
-                        </Box>
-                        <Text wrap="wrap">{alert.dismissal.dismissedBy}</Text>
+                      <Text wrap="wrap">{alert.gitRef}</Text>
+                    </Box>
+                  )}
+
+                  {/* Trusted source flag */}
+                  {alert.hasTrustedSourceOrigin !== undefined && (
+                    <Box>
+                      <Box width={18}>
+                        <Text bold color="cyan">
+                          Trusted Source:
+                        </Text>
                       </Box>
-                    )}
-                    {alert.dismissal.dismissedDate && (
-                      <Box>
+                      <Text
+                        wrap="wrap"
+                        color={
+                          alert.hasTrustedSourceOrigin ? 'green' : 'yellow'
+                        }
+                      >
+                        {alert.hasTrustedSourceOrigin ? 'Yes' : 'No'}
+                      </Text>
+                    </Box>
+                  )}
+
+                  {/* Project and repository info */}
+                  {project && (
+                    <Box marginTop={1}>
+                      <Box width={18}>
+                        <Text bold color="cyan">
+                          Project:
+                        </Text>
+                      </Box>
+                      <Text wrap="wrap">{project.name || 'N/A'}</Text>
+                    </Box>
+                  )}
+                  {repository && (
+                    <Box>
+                      <Box width={18}>
+                        <Text bold color="cyan">
+                          Repository:
+                        </Text>
+                      </Box>
+                      <Text wrap="wrap">{repository.name || 'N/A'}</Text>
+                    </Box>
+                  )}
+
+                  {/* Jira information */}
+                  {metadata.jiraId && (
+                    <Box marginTop={1}>
+                      <Box width={18}>
+                        <Text bold color="cyan">
+                          Jira ID:
+                        </Text>
+                      </Box>
+                      <Text wrap="wrap" color="green">
+                        {metadata.jiraId}
+                      </Text>
+                    </Box>
+                  )}
+
+                  <Text> </Text>
+
+                  {/* Additional properties */}
+                  {alert.ruleName && alert.ruleName !== alert.title && (
+                    <Box>
+                      <Box width={18}>
+                        <Text bold color="cyan">
+                          Rule Name:
+                        </Text>
+                      </Box>
+                      <Text wrap="wrap">{alert.ruleName}</Text>
+                    </Box>
+                  )}
+
+                  {alert.introducedDate && (
+                    <Box>
+                      <Box width={18}>
+                        <Text bold color="cyan">
+                          Introduced:
+                        </Text>
+                      </Box>
+                      <Text wrap="wrap">
+                        {new Date(alert.introducedDate).toLocaleString()}
+                      </Text>
+                    </Box>
+                  )}
+
+                  {alert.firstSeenDate && (
+                    <Box>
+                      <Box width={18}>
+                        <Text bold color="cyan">
+                          First Seen:
+                        </Text>
+                      </Box>
+                      <Text wrap="wrap">
+                        {new Date(alert.firstSeenDate).toLocaleString()}
+                      </Text>
+                    </Box>
+                  )}
+
+                  {alert.lastSeenDate && (
+                    <Box>
+                      <Box width={18}>
+                        <Text bold color="cyan">
+                          Last Seen:
+                        </Text>
+                      </Box>
+                      <Text wrap="wrap">
+                        {new Date(alert.lastSeenDate).toLocaleString()}
+                      </Text>
+                    </Box>
+                  )}
+
+                  {alert.fixedDate && (
+                    <Box>
+                      <Box width={18}>
+                        <Text bold color="cyan">
+                          Fixed Date:
+                        </Text>
+                      </Box>
+                      <Text wrap="wrap" color="green">
+                        {new Date(alert.fixedDate).toLocaleString()}
+                      </Text>
+                    </Box>
+                  )}
+
+                  {/* Repository URL */}
+                  {alert.repositoryUrl && (
+                    <Box marginTop={1}>
+                      <Box width={18}>
+                        <Text bold color="cyan">
+                          Repository URL:
+                        </Text>
+                      </Box>
+                      <Link url={alert.repositoryUrl}>
+                        <Text color="blue" underline wrap="truncate">
+                          {alert.repositoryUrl}
+                        </Text>
+                      </Link>
+                    </Box>
+                  )}
+                </Box>
+
+                {/* Content area - grows to fill available space */}
+                <Box flexDirection="column" flexGrow={1} minHeight={0}>
+                  {/* Dismissal information */}
+                  {alert.dismissal && (
+                    <Box
+                      flexDirection="column"
+                      borderStyle="single"
+                      borderColor="yellow"
+                      paddingX={1}
+                      marginTop={1}
+                    >
+                      <Text color="yellow" bold>
+                        Dismissal Information
+                      </Text>
+                      <Box marginTop={1} flexDirection="column">
+                        {alert.dismissal.message && (
+                          <Box marginBottom={1}>
+                            <Box width={18}>
+                              <Text bold>Message:</Text>
+                            </Box>
+                            <Text wrap="wrap">{alert.dismissal.message}</Text>
+                          </Box>
+                        )}
+                        {alert.dismissal.dismissedBy && (
+                          <Box>
+                            <Box width={18}>
+                              <Text bold>Dismissed By:</Text>
+                            </Box>
+                            <Text wrap="wrap">
+                              {alert.dismissal.dismissedBy}
+                            </Text>
+                          </Box>
+                        )}
+                        {alert.dismissal.dismissedDate && (
+                          <Box>
+                            <Box width={18}>
+                              <Text bold>Dismissed Date:</Text>
+                            </Box>
+                            <Text wrap="wrap">
+                              {new Date(
+                                alert.dismissal.dismissedDate
+                              ).toLocaleString()}
+                            </Text>
+                          </Box>
+                        )}
+                      </Box>
+                    </Box>
+                  )}
+
+                  {/* Description */}
+                  {alert.description && (
+                    <Box
+                      flexDirection="column"
+                      borderStyle="single"
+                      borderColor="cyan"
+                      paddingX={1}
+                      marginTop={1}
+                    >
+                      <Text color="cyan" bold>
+                        Description
+                      </Text>
+                      <Box marginTop={1}>
+                        <Text wrap="wrap">{alert.description}</Text>
+                      </Box>
+                    </Box>
+                  )}
+
+                  {/* Remediation/Fix Information */}
+                  {alert.fixReason && (
+                    <Box
+                      flexDirection="column"
+                      borderStyle="single"
+                      borderColor="green"
+                      paddingX={1}
+                      marginTop={1}
+                    >
+                      <Text color="green" bold>
+                        Fix Information
+                      </Text>
+                      <Box marginTop={1}>
+                        <Text wrap="wrap">{alert.fixReason}</Text>
+                      </Box>
+                    </Box>
+                  )}
+
+                  {/* Instances Count */}
+                  {alert.instancesCount !== undefined &&
+                    alert.instancesCount > 0 && (
+                      <Box marginTop={1}>
                         <Box width={18}>
-                          <Text bold>Dismissed Date:</Text>
+                          <Text bold color="cyan">
+                            Instances:
+                          </Text>
                         </Box>
-                        <Text wrap="wrap">
-                          {new Date(
-                            alert.dismissal.dismissedDate
-                          ).toLocaleString()}
+                        <Text wrap="wrap" color="yellow" bold>
+                          {alert.instancesCount} occurrence(s)
                         </Text>
                       </Box>
                     )}
-                  </Box>
-                </Box>
-              )}
 
-              {/* Description */}
-              {alert.description && (
-                <Box
-                  flexDirection="column"
-                  borderStyle="single"
-                  borderColor="cyan"
-                  paddingX={1}
-                  marginTop={1}
-                >
-                  <Text color="cyan" bold>
-                    Description
-                  </Text>
-                  <Box marginTop={1}>
-                    <Text wrap="wrap">{alert.description}</Text>
-                  </Box>
-                </Box>
-              )}
-
-              {/* Remediation/Fix Information */}
-              {alert.fixReason && (
-                <Box
-                  flexDirection="column"
-                  borderStyle="single"
-                  borderColor="green"
-                  paddingX={1}
-                  marginTop={1}
-                >
-                  <Text color="green" bold>
-                    Fix Information
-                  </Text>
-                  <Box marginTop={1}>
-                    <Text wrap="wrap">{alert.fixReason}</Text>
-                  </Box>
-                </Box>
-              )}
-
-              {/* Instances Count */}
-              {alert.instancesCount !== undefined &&
-                alert.instancesCount > 0 && (
-                  <Box marginTop={1}>
-                    <Box width={18}>
-                      <Text bold color="cyan">
-                        Instances:
+                  {/* Additional Properties */}
+                  {alert.additionalProperties && (
+                    <Box
+                      flexDirection="column"
+                      borderStyle="single"
+                      borderColor="magenta"
+                      paddingX={1}
+                      marginTop={1}
+                    >
+                      <Text color="magenta" bold>
+                        Additional Information
                       </Text>
-                    </Box>
-                    <Text wrap="wrap" color="yellow" bold>
-                      {alert.instancesCount} occurrence(s)
-                    </Text>
-                  </Box>
-                )}
+                      <Box marginTop={1} flexDirection="column">
+                        {(() => {
+                          try {
+                            const additionalData =
+                              typeof alert.additionalProperties === 'string'
+                                ? JSON.parse(alert.additionalProperties)
+                                : alert.additionalProperties;
 
-              {/* Additional Properties */}
-              {alert.additionalProperties && (
-                <Box
-                  flexDirection="column"
-                  borderStyle="single"
-                  borderColor="magenta"
-                  paddingX={1}
-                  marginTop={1}
-                >
-                  <Text color="magenta" bold>
-                    Additional Information
-                  </Text>
-                  <Box marginTop={1} flexDirection="column">
-                    {(() => {
-                      try {
-                        const additionalData =
-                          typeof alert.additionalProperties === 'string'
-                            ? JSON.parse(alert.additionalProperties)
-                            : alert.additionalProperties;
-
-                        return Object.entries(additionalData).map(
-                          ([key, value]) => (
-                            <Box key={key} marginY={0}>
-                              <Box width={20}>
-                                <Text bold dimColor>
-                                  {key}:
-                                </Text>
-                              </Box>
-                              <Text wrap="wrap">
-                                {typeof value === 'object'
-                                  ? JSON.stringify(value)
-                                  : String(value)}
+                            return Object.entries(additionalData).map(
+                              ([key, value]) => (
+                                <Box key={key} marginY={0}>
+                                  <Box width={20}>
+                                    <Text bold dimColor>
+                                      {key}:
+                                    </Text>
+                                  </Box>
+                                  <Text wrap="wrap">
+                                    {typeof value === 'object'
+                                      ? JSON.stringify(value)
+                                      : String(value)}
+                                  </Text>
+                                </Box>
+                              )
+                            );
+                          } catch {
+                            return (
+                              <Text wrap="wrap" dimColor>
+                                {typeof alert.additionalProperties === 'string'
+                                  ? alert.additionalProperties
+                                  : JSON.stringify(alert.additionalProperties)}
                               </Text>
-                            </Box>
-                          )
-                        );
-                      } catch {
-                        return (
-                          <Text wrap="wrap" dimColor>
-                            {typeof alert.additionalProperties === 'string'
-                              ? alert.additionalProperties
-                              : JSON.stringify(alert.additionalProperties)}
-                          </Text>
-                        );
-                      }
-                    })()}
-                  </Box>
-                </Box>
-              )}
+                            );
+                          }
+                        })()}
+                      </Box>
+                    </Box>
+                  )}
 
-              {/* External links */}
-              {alert.url && (
-                <Box marginTop={1}>
-                  <Link url={alert.url}>
-                    <Text color="blue" underline wrap="wrap">
-                      🔗 View in Azure DevOps
-                    </Text>
-                  </Link>
+                  {/* External links */}
+                  {alert.url && (
+                    <Box marginTop={1}>
+                      <Link url={alert.url}>
+                        <Text color="blue" underline wrap="wrap">
+                          🔗 View in Azure DevOps
+                        </Text>
+                      </Link>
+                    </Box>
+                  )}
                 </Box>
-              )}
-            </Box>
 
-            {/* Footer - fixed, no growth */}
-            <Box marginTop={1} flexShrink={0}>
-              <Text dimColor>←→: Switch tabs | ESC: Close</Text>
-            </Box>
-          </Box>
+                {/* Footer - fixed, no growth */}
+                <Box marginTop={1} flexShrink={0}>
+                  <Text dimColor>←→: Switch tabs | ESC: Close</Text>
+                </Box>
+              </Box>
             )}
 
             {viewMode === 'tools' && (
@@ -610,8 +617,8 @@ export const AlertDetailsModal = React.memo(
                                   </Box>
                                 )}
                                 {rule.additionalProperties &&
-                                  Object.keys(rule.additionalProperties).length >
-                                    0 && (
+                                  Object.keys(rule.additionalProperties)
+                                    .length > 0 && (
                                     <Box
                                       flexDirection="column"
                                       marginTop={1}
