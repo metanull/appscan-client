@@ -67,7 +67,9 @@ const ContextPane = React.memo(
             <Text bold color="green">
               Mode:{' '}
             </Text>
-            <Text color="green">Viewing all alerts across all repositories</Text>
+            <Text color="green">
+              Viewing all alerts across all repositories
+            </Text>
           </Box>
         )}
         {hintShortcuts.length > 0 && (
@@ -390,7 +392,12 @@ StatusBar.displayName = 'StatusBar';
 /**
  * Project Selection Window with search and keyboard navigation
  */
-const ProjectSelectionWindow = ({ projects, onSelect, onCancel, azdoService }) => {
+const ProjectSelectionWindow = ({
+  projects,
+  onSelect,
+  onCancel,
+  azdoService,
+}) => {
   const { height } = useTerminalSize();
   const [searchText, setSearchText] = React.useState('');
   const [debouncedSearchText, setDebouncedSearchText] = React.useState('');
@@ -406,12 +413,14 @@ const ProjectSelectionWindow = ({ projects, onSelect, onCancel, azdoService }) =
       const counts = {};
       for (const project of projects) {
         try {
-          counts[project.id] = await azdoService.getProjectAlertCount(project.id);
-        } catch (error) {
+          counts[project.id] = await azdoService.getProjectAlertCount(
+            project.id
+          );
+        } catch {
           counts[project.id] = 0;
         }
       }
-      
+
       if (isMounted) {
         setAlertCounts(counts);
         setLoadingCounts(false);
@@ -474,22 +483,25 @@ const ProjectSelectionWindow = ({ projects, onSelect, onCancel, azdoService }) =
     }
   });
 
-  const renderItem = React.useCallback((project, isSelected) => {
-    const alertCount = alertCounts[project.id];
-    const countDisplay = loadingCounts ? '...' : (alertCount || 0);
+  const renderItem = React.useCallback(
+    (project, isSelected) => {
+      const alertCount = alertCounts[project.id];
+      const countDisplay = loadingCounts ? '...' : alertCount || 0;
 
-    return (
-      <Box>
-        <Text color={isSelected ? 'cyan' : undefined} bold={isSelected}>
-          {isSelected ? '▶ ' : '  '}
-          {project.name}
-        </Text>
-        <Text dimColor> (</Text>
-        <Text color={alertCount > 0 ? 'red' : 'gray'}>{countDisplay}</Text>
-        <Text dimColor> alerts)</Text>
-      </Box>
-    );
-  }, [alertCounts, loadingCounts]);
+      return (
+        <Box>
+          <Text color={isSelected ? 'cyan' : undefined} bold={isSelected}>
+            {isSelected ? '▶ ' : '  '}
+            {project.name}
+          </Text>
+          <Text dimColor> (</Text>
+          <Text color={alertCount > 0 ? 'red' : 'gray'}>{countDisplay}</Text>
+          <Text dimColor> alerts)</Text>
+        </Box>
+      );
+    },
+    [alertCounts, loadingCounts]
+  );
 
   const visibleRows = Math.max(5, height - 12);
 
@@ -534,9 +546,7 @@ const ProjectSelectionWindow = ({ projects, onSelect, onCancel, azdoService }) =
         </Box>
 
         <Box marginTop={1}>
-          <Text dimColor>
-            ↑↓: Navigate | Enter: Select | ESC: Cancel
-          </Text>
+          <Text dimColor>↑↓: Navigate | Enter: Select | ESC: Cancel</Text>
         </Box>
       </Box>
     </Box>
@@ -547,7 +557,13 @@ ProjectSelectionWindow.displayName = 'ProjectSelectionWindow';
 /**
  * Repository Selection Window with search and keyboard navigation
  */
-const RepositorySelectionWindow = ({ repositories, onSelect, onCancel, azdoService, selectedProject }) => {
+const RepositorySelectionWindow = ({
+  repositories,
+  onSelect,
+  onCancel,
+  azdoService,
+  selectedProject,
+}) => {
   const { height } = useTerminalSize();
   const [searchText, setSearchText] = React.useState('');
   const [debouncedSearchText, setDebouncedSearchText] = React.useState('');
@@ -572,11 +588,11 @@ const RepositorySelectionWindow = ({ repositories, onSelect, onCancel, azdoServi
             selectedProject.id,
             repo.id
           );
-        } catch (error) {
+        } catch {
           counts[repo.id] = 0;
         }
       }
-      
+
       if (isMounted) {
         setAlertCounts(counts);
         setLoadingCounts(false);
@@ -639,22 +655,25 @@ const RepositorySelectionWindow = ({ repositories, onSelect, onCancel, azdoServi
     }
   });
 
-  const renderItem = React.useCallback((repo, isSelected) => {
-    const alertCount = alertCounts[repo.id];
-    const countDisplay = loadingCounts ? '...' : (alertCount || 0);
+  const renderItem = React.useCallback(
+    (repo, isSelected) => {
+      const alertCount = alertCounts[repo.id];
+      const countDisplay = loadingCounts ? '...' : alertCount || 0;
 
-    return (
-      <Box>
-        <Text color={isSelected ? 'cyan' : undefined} bold={isSelected}>
-          {isSelected ? '▶ ' : '  '}
-          {repo.name}
-        </Text>
-        <Text dimColor> (</Text>
-        <Text color={alertCount > 0 ? 'red' : 'gray'}>{countDisplay}</Text>
-        <Text dimColor> alerts)</Text>
-      </Box>
-    );
-  }, [alertCounts, loadingCounts]);
+      return (
+        <Box>
+          <Text color={isSelected ? 'cyan' : undefined} bold={isSelected}>
+            {isSelected ? '▶ ' : '  '}
+            {repo.name}
+          </Text>
+          <Text dimColor> (</Text>
+          <Text color={alertCount > 0 ? 'red' : 'gray'}>{countDisplay}</Text>
+          <Text dimColor> alerts)</Text>
+        </Box>
+      );
+    },
+    [alertCounts, loadingCounts]
+  );
 
   const visibleRows = Math.max(5, height - 12);
 
@@ -699,9 +718,7 @@ const RepositorySelectionWindow = ({ repositories, onSelect, onCancel, azdoServi
         </Box>
 
         <Box marginTop={1}>
-          <Text dimColor>
-            ↑↓: Navigate | Enter: Select | ESC: Cancel
-          </Text>
+          <Text dimColor>↑↓: Navigate | Enter: Select | ESC: Cancel</Text>
         </Box>
       </Box>
     </Box>
@@ -869,7 +886,8 @@ export const AzdoApp = ({ configPath }) => {
       store.setLoading(true);
 
       const isViewAll =
-        selectedRepository._isViewAll || selectedRepository.id === '__VIEW_ALL__';
+        selectedRepository._isViewAll ||
+        selectedRepository.id === '__VIEW_ALL__';
 
       let alertList;
       if (isViewAll && selectedProject?.id) {
@@ -908,9 +926,7 @@ export const AzdoApp = ({ configPath }) => {
 
       try {
         store.setLoading(true);
-        setLoadingMessage(
-          `Updating ${alertsToUpdate.length} alert(s)...`
-        );
+        setLoadingMessage(`Updating ${alertsToUpdate.length} alert(s)...`);
 
         // Update alerts via service
         const results = await azdoService.bulkUpdateAlertsChunked(

@@ -3,11 +3,7 @@ import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
 import { Modal } from './components/Modal.js';
 import { Panel } from './components/Panel.js';
-import {
-  State,
-  Severity,
-  AlertType,
-} from '../../services/azdo-service.js';
+import { State, Severity, AlertType } from '../../services/azdo-service.js';
 import {
   getStateName,
   getSeverityName,

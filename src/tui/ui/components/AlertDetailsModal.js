@@ -95,10 +95,7 @@ export const AlertDetailsModal = React.memo(
 
     return (
       <Modal width={90} height={80}>
-        <Panel
-          title={`Alert Details - ${alertTypeName}`}
-          borderColor="cyan"
-        >
+        <Panel title={`Alert Details - ${alertTypeName}`} borderColor="cyan">
           <Box flexDirection="column" height="100%">
             {/* Header section - fixed height, no growth */}
             <Box flexDirection="column" flexShrink={0}>
@@ -116,7 +113,9 @@ export const AlertDetailsModal = React.memo(
                     Title:
                   </Text>
                 </Box>
-                <Text wrap="wrap">{alert.title || alert.ruleName || 'N/A'}</Text>
+                <Text wrap="wrap">
+                  {alert.title || alert.ruleName || 'N/A'}
+                </Text>
               </Box>
               <Box>
                 <Box width={18}>
@@ -142,14 +141,11 @@ export const AlertDetailsModal = React.memo(
                     State:
                   </Text>
                 </Box>
-                <Text
-                  wrap="wrap"
-                  color={alert.state === 1 ? 'red' : 'green'}
-                >
+                <Text wrap="wrap" color={alert.state === 1 ? 'red' : 'green'}>
                   {stateName}
                 </Text>
               </Box>
-              
+
               {/* Location information */}
               {alert.physicalLocation?.filePath && (
                 <Box flexDirection="column" marginTop={1}>

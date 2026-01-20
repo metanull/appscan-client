@@ -4,10 +4,7 @@ import SelectInput from 'ink-select-input';
 import Spinner from 'ink-spinner';
 import { Modal } from './components/Modal.js';
 import { Panel } from './components/Panel.js';
-import {
-  State,
-  DismissalType,
-} from '../../services/azdo-service.js';
+import { State, DismissalType } from '../../services/azdo-service.js';
 
 const STATE_OPTIONS = [
   { label: 'Active', value: State.Active },
@@ -131,9 +128,10 @@ export const UpdateAzdoStatusModal = React.memo(
       setProgress({ current: 0, total: alertCount });
 
       try {
-        const comment = commentText && commentText.trim() !== '' 
-          ? commentText.trim() 
-          : undefined;
+        const comment =
+          commentText && commentText.trim() !== ''
+            ? commentText.trim()
+            : undefined;
 
         await onUpdate(
           selectedState,
@@ -161,9 +159,14 @@ export const UpdateAzdoStatusModal = React.memo(
               <Text>Select new state:</Text>
               {alerts.length > 0 && (
                 <Text dimColor>
-                  Current: {alerts[0].state === State.Active ? 'Active' : 
-                           alerts[0].state === State.Dismissed ? 'Dismissed' :
-                           alerts[0].state === State.Fixed ? 'Fixed' : 'Unknown'}
+                  Current:{' '}
+                  {alerts[0].state === State.Active
+                    ? 'Active'
+                    : alerts[0].state === State.Dismissed
+                      ? 'Dismissed'
+                      : alerts[0].state === State.Fixed
+                        ? 'Fixed'
+                        : 'Unknown'}
                 </Text>
               )}
               <SelectInput

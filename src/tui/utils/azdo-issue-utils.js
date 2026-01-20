@@ -368,4 +368,3 @@ export function formatAlertForDisplay(alert) {
 
   return `${severity} ${state} ${type} - ${title} ${jira}`.trim();
 }
-
