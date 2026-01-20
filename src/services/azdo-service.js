@@ -379,6 +379,7 @@ export class AzdoService {
    * @param {number} alertId - Alert ID
    * @param {Object} update - Update object
    * @param {number} [update.state] - New state
+   * @param {number} [update.severity] - New severity level
    * @param {number} [update.dismissedReason] - Dismissal reason
    * @param {string} [update.dismissedComment] - Dismissal comment
    * @returns {Promise<Object>}

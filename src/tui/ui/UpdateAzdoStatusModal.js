@@ -78,20 +78,27 @@ export const UpdateAzdoStatusModal = React.memo(
       setSelectedState(item.value);
 
       if (item.value === State.Dismissed) {
+        // Dismissed state requires user to choose dismissal reason
         setStep('dismissalType');
+      } else if (item.value === State.Fixed) {
+        // Fixed state automatically sets dismissalReason to Fixed (1)
+        setSelectedDismissalType(DismissalType.Fixed);
+        promptForComment(DismissalType.Fixed);
       } else {
-        promptForComment();
+        // Active state doesn't support comments in Azure DevOps API
+        // Submit directly without prompting for comment
+        handleSubmit('', item.value, null);
       }
     };
 
     const handleDismissalTypeSelect = (item) => {
       setSelectedDismissalType(item.value);
-      promptForComment();
+      promptForComment(item.value);
     };
 
-    const promptForComment = () => {
+    const promptForComment = (dismissalType) => {
       if (!onRequestTextInput) {
-        handleSubmit();
+        handleSubmit('', selectedState, dismissalType);
         return;
       }
 
@@ -114,12 +121,12 @@ export const UpdateAzdoStatusModal = React.memo(
         placeholder: 'Enter comment (optional)...',
         initialValue: existingComment,
         onComplete: (value) => {
-          handleSubmit(value);
+          handleSubmit(value, selectedState, dismissalType);
         },
       });
     };
 
-    const handleSubmit = async (commentText = '') => {
+    const handleSubmit = async (commentText = '', state = null, dismissalType = null) => {
       if (!alertCount || alertCount === 0) {
         return;
       }
@@ -134,8 +141,8 @@ export const UpdateAzdoStatusModal = React.memo(
             : undefined;
 
         await onUpdate(
-          selectedState,
-          selectedDismissalType,
+          state || selectedState,
+          dismissalType || selectedDismissalType,
           comment,
           (current, total) => {
             setProgress({ current, total });

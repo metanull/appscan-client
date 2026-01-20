@@ -1346,7 +1346,7 @@ export const AzdoApp = ({ configPath }) => {
     return (
       <TextInputPage
         {...standaloneWindow.config}
-        onComplete={(value) => {
+        onSubmit={(value) => {
           standaloneWindow.config.onComplete(value);
           setStandaloneWindow(null);
         }}
@@ -1452,8 +1452,13 @@ export const AzdoApp = ({ configPath }) => {
         <UpdateAzdoStatusModal
           alertCount={selectedAlertIds.length}
           alerts={selectedAlerts}
-          onUpdate={(updateData) => {
-            handleBulkUpdateAlerts(updateData);
+          onUpdate={async (state, dismissalType, comment, progressCallback) => {
+            const updateData = {
+              state,
+              dismissedReason: dismissalType,
+              dismissedComment: comment,
+            };
+            await handleBulkUpdateAlerts(updateData);
             setActiveModal(null);
           }}
           onClose={() => setActiveModal(null)}

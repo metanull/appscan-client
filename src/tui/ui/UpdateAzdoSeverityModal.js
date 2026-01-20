@@ -15,8 +15,6 @@ const SEVERITY_OPTIONS = [
 
 /**
  * Modal for updating Azure DevOps alert severity
- * Note: Azure DevOps API does not support severity updates directly
- * This component matches the ASoC pattern but may need backend API support
  * @param {Object} props - Component props
  * @param {number} props.alertCount - Number of alerts to update
  * @param {Array} props.alerts - Array of alerts with their current severity
@@ -40,6 +38,7 @@ export const UpdateAzdoSeverityModal = React.memo(
     };
 
     const [step, setStep] = useState('severity');
+    const [selectedSeverity, setSelectedSeverity] = useState(null);
     const [progress, setProgress] = useState({ current: 0, total: 0 });
     const [updateError, setUpdateError] = useState(null);
 
