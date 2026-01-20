@@ -337,18 +337,19 @@ export const AlertDetailsModal = React.memo(
               )}
 
               {/* Instances Count */}
-              {alert.instancesCount !== undefined && alert.instancesCount > 0 && (
-                <Box marginTop={1}>
-                  <Box width={18}>
-                    <Text bold color="cyan">
-                      Instances:
+              {alert.instancesCount !== undefined &&
+                alert.instancesCount > 0 && (
+                  <Box marginTop={1}>
+                    <Box width={18}>
+                      <Text bold color="cyan">
+                        Instances:
+                      </Text>
+                    </Box>
+                    <Text wrap="wrap" color="yellow" bold>
+                      {alert.instancesCount} occurrence(s)
                     </Text>
                   </Box>
-                  <Text wrap="wrap" color="yellow" bold>
-                    {alert.instancesCount} occurrence(s)
-                  </Text>
-                </Box>
-              )}
+                )}
 
               {/* Additional Properties */}
               {alert.additionalProperties && (
@@ -365,22 +366,27 @@ export const AlertDetailsModal = React.memo(
                   <Box marginTop={1} flexDirection="column">
                     {(() => {
                       try {
-                        const additionalData = typeof alert.additionalProperties === 'string'
-                          ? JSON.parse(alert.additionalProperties)
-                          : alert.additionalProperties;
-                        
-                        return Object.entries(additionalData).map(([key, value]) => (
-                          <Box key={key} marginY={0}>
-                            <Box width={20}>
-                              <Text bold dimColor>
-                                {key}:
+                        const additionalData =
+                          typeof alert.additionalProperties === 'string'
+                            ? JSON.parse(alert.additionalProperties)
+                            : alert.additionalProperties;
+
+                        return Object.entries(additionalData).map(
+                          ([key, value]) => (
+                            <Box key={key} marginY={0}>
+                              <Box width={20}>
+                                <Text bold dimColor>
+                                  {key}:
+                                </Text>
+                              </Box>
+                              <Text wrap="wrap">
+                                {typeof value === 'object'
+                                  ? JSON.stringify(value)
+                                  : String(value)}
                               </Text>
                             </Box>
-                            <Text wrap="wrap">
-                              {typeof value === 'object' ? JSON.stringify(value) : String(value)}
-                            </Text>
-                          </Box>
-                        ));
+                          )
+                        );
                       } catch {
                         return (
                           <Text wrap="wrap" dimColor>

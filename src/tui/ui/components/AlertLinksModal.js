@@ -48,7 +48,10 @@ export const AlertLinksModal = React.memo(
 
     // Repository link
     if (repository && project) {
-      const orgUrl = azdoService?.getOrgUrl() || config?.getAzureDevOpsBaseUrl?.() || 'https://dev.azure.com';
+      const orgUrl =
+        azdoService?.getOrgUrl() ||
+        config?.getAzureDevOpsBaseUrl?.() ||
+        'https://dev.azure.com';
       const repoUrl = `${orgUrl}/${encodeURIComponent(project.name)}/_git/${repository.id}`;
       links.push({
         label: '📁 View Repository',
@@ -59,15 +62,18 @@ export const AlertLinksModal = React.memo(
 
     // File location link (if available)
     if (alert.physicalLocation?.filePath && repository && project) {
-      const orgUrl = azdoService?.getOrgUrl() || config?.getAzureDevOpsBaseUrl?.() || 'https://dev.azure.com';
+      const orgUrl =
+        azdoService?.getOrgUrl() ||
+        config?.getAzureDevOpsBaseUrl?.() ||
+        'https://dev.azure.com';
       const filePath = alert.physicalLocation.filePath;
       const line = alert.physicalLocation.region?.startLine;
-      
+
       let fileUrl = `${orgUrl}/${encodeURIComponent(project.name)}/_git/${repository.id}?path=${encodeURIComponent(filePath)}`;
       if (line) {
         fileUrl += `&line=${line}`;
       }
-      
+
       links.push({
         label: '📄 View Source File',
         url: fileUrl,
@@ -77,7 +83,10 @@ export const AlertLinksModal = React.memo(
 
     // Project link
     if (project) {
-      const orgUrl = azdoService?.getOrgUrl() || config?.getAzureDevOpsBaseUrl?.() || 'https://dev.azure.com';
+      const orgUrl =
+        azdoService?.getOrgUrl() ||
+        config?.getAzureDevOpsBaseUrl?.() ||
+        'https://dev.azure.com';
       const projectUrl = `${orgUrl}/${encodeURIComponent(project.name)}`;
       links.push({
         label: '🏢 View Project',
@@ -102,10 +111,11 @@ export const AlertLinksModal = React.memo(
     // Additional properties links (if alert has additional data with URLs)
     if (alert.additionalProperties) {
       try {
-        const additionalData = typeof alert.additionalProperties === 'string' 
-          ? JSON.parse(alert.additionalProperties) 
-          : alert.additionalProperties;
-        
+        const additionalData =
+          typeof alert.additionalProperties === 'string'
+            ? JSON.parse(alert.additionalProperties)
+            : alert.additionalProperties;
+
         // Check for tool-specific URLs
         if (additionalData.toolUrl) {
           links.push({
@@ -129,19 +139,22 @@ export const AlertLinksModal = React.memo(
     }
 
     // Help URL based on alert type
-    if (alert.alertType === 2) { // Secret
+    if (alert.alertType === 2) {
+      // Secret
       links.push({
         label: '📚 Secret Scanning Documentation',
         url: 'https://docs.github.com/en/code-security/secret-scanning',
         description: 'Learn about secret scanning',
       });
-    } else if (alert.alertType === 3) { // Code
+    } else if (alert.alertType === 3) {
+      // Code
       links.push({
         label: '📚 Code Scanning Documentation',
         url: 'https://docs.github.com/en/code-security/code-scanning',
         description: 'Learn about code scanning with CodeQL',
       });
-    } else if (alert.alertType === 1) { // Dependency
+    } else if (alert.alertType === 1) {
+      // Dependency
       links.push({
         label: '📚 Dependency Scanning Documentation',
         url: 'https://docs.github.com/en/code-security/supply-chain-security',
