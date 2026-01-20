@@ -423,6 +423,195 @@ export class AzdoService {
       ? `${comment}\n\n[METADATA]${metadataJson}[/METADATA]`
       : `[METADATA]${metadataJson}[/METADATA]`;
   }
+
+  /**
+   * Link Jira ID to alerts by adding metadata to comments
+   * If alert is Active, sets it to Dismissed (FalsePositive)
+   * @param {string} projectIdOrName - Project ID or name
+   * @param {string} repositoryId - Repository ID
+   * @param {Array<number>} alertIds - Array of alert IDs
+   * @param {string} jiraId - Jira issue ID (e.g., 'SEC-123')
+   * @param {Function} onProgress - Progress callback (current, total)
+   * @returns {Promise<Array>} Array of update results
+   */
+  async linkJiraToAlerts(
+    projectIdOrName,
+    repositoryId,
+    alertIds,
+    jiraId,
+    onProgress = null
+  ) {
+    const results = [];
+    const total = alertIds.length;
+
+    logger.info('Linking Jira ID to alerts', {
+      project: projectIdOrName,
+      repository: repositoryId,
+      alertIds,
+      jiraId,
+    });
+
+    for (const alertId of alertIds) {
+      try {
+        // Get current alert to check state and preserve existing comment
+        const alert = await this.getAlert(
+          projectIdOrName,
+          repositoryId,
+          alertId
+        );
+
+        // Parse existing metadata to preserve custom fields
+        const existingMetadata = this.parseAlertMetadata(alert);
+
+        // Extract user comment (remove metadata tags if present)
+        let userComment = alert.dismissal?.message || '';
+        const metadataMatch = userComment.match(/\[METADATA\].*?\[\/METADATA\]/s);
+        if (metadataMatch) {
+          userComment = userComment.replace(metadataMatch[0], '').trim();
+        }
+
+        // Build new comment with Jira ID
+        const newComment = this.buildCommentWithMetadata(
+          userComment,
+          jiraId,
+          existingMetadata.customFields
+        );
+
+        // Determine update based on current state
+        const updateData = {
+          dismissedComment: newComment,
+        };
+
+        // If alert is Active, set to Dismissed (FalsePositive)
+        if (alert.state === 1) {
+          updateData.state = 2; // Dismissed
+          updateData.dismissedReason = 3; // FalsePositive
+        } else if (alert.state === 2 || alert.state === 8) {
+          // Already dismissed, keep existing dismissal reason
+          updateData.state = alert.state;
+          updateData.dismissedReason = alert.dismissal?.dismissalType || 3;
+        } else if (alert.state === 4) {
+          // Fixed state, keep it
+          updateData.state = 4;
+          updateData.dismissedReason = 1; // Fixed
+        }
+
+        const result = await this.updateAlert(
+          projectIdOrName,
+          repositoryId,
+          alertId,
+          updateData
+        );
+
+        results.push({ alertId, success: true, result });
+      } catch (error) {
+        logger.error('Failed to link Jira to alert', {
+          alertId,
+          error: error.message,
+        });
+        results.push({ alertId, success: false, error: error.message });
+      }
+
+      // Report progress
+      if (onProgress) {
+        onProgress(results.length, total);
+      }
+    }
+
+    logger.info('Jira linking completed', {
+      total,
+      successful: results.filter((r) => r.success).length,
+      failed: results.filter((r) => !r.success).length,
+    });
+
+    return results;
+  }
+
+  /**
+   * Unlink Jira ID from alerts by removing metadata
+   * This is done by temporarily setting state to Active (which clears comment),
+   * then restoring to original state without metadata
+   * @param {string} projectIdOrName - Project ID or name
+   * @param {string} repositoryId - Repository ID
+   * @param {Array<number>} alertIds - Array of alert IDs
+   * @param {Function} onProgress - Progress callback (current, total)
+   * @returns {Promise<Array>} Array of update results
+   */
+  async unlinkJiraFromAlerts(
+    projectIdOrName,
+    repositoryId,
+    alertIds,
+    onProgress = null
+  ) {
+    const results = [];
+    const total = alertIds.length;
+
+    logger.info('Unlinking Jira ID from alerts', {
+      project: projectIdOrName,
+      repository: repositoryId,
+      alertIds,
+    });
+
+    for (const alertId of alertIds) {
+      try {
+        // Get current alert to save original state
+        const alert = await this.getAlert(
+          projectIdOrName,
+          repositoryId,
+          alertId
+        );
+
+        const originalState = alert.state;
+        const originalDismissalType = alert.dismissal?.dismissalType;
+
+        // Step 1: Set to Active (this clears the comment)
+        await this.updateAlert(projectIdOrName, repositoryId, alertId, {
+          state: 1, // Active
+        });
+
+        // Wait a moment for the change to propagate
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        // Step 2: Restore original state (without the Jira metadata)
+        if (originalState === 1) {
+          // Was Active, leave it Active (no further action needed)
+        } else if (originalState === 2 || originalState === 8) {
+          // Was Dismissed, restore without comment
+          await this.updateAlert(projectIdOrName, repositoryId, alertId, {
+            state: originalState,
+            dismissedReason: originalDismissalType || 3, // Default to FalsePositive
+          });
+        } else if (originalState === 4) {
+          // Was Fixed, restore
+          await this.updateAlert(projectIdOrName, repositoryId, alertId, {
+            state: 4,
+            dismissedReason: 1, // Fixed
+          });
+        }
+
+        results.push({ alertId, success: true });
+      } catch (error) {
+        logger.error('Failed to unlink Jira from alert', {
+          alertId,
+          error: error.message,
+        });
+        results.push({ alertId, success: false, error: error.message });
+      }
+
+      // Report progress
+      if (onProgress) {
+        onProgress(results.length, total);
+      }
+    }
+
+    logger.info('Jira unlinking completed', {
+      total,
+      successful: results.filter((r) => r.success).length,
+      failed: results.filter((r) => !r.success).length,
+    });
+
+    return results;
+  }
 }
 
 export { State, DismissalType, getStateValue, getDismissalTypeValue };

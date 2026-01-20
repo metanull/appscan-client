@@ -23,6 +23,8 @@ import { KeyboardHint } from './components/KeyboardHint.js';
 import { HelpModal } from './components/HelpModal.js';
 import { AlertDetailsModal } from './components/AlertDetailsModal.js';
 import { AlertLinksModal } from './components/AlertLinksModal.js';
+import { LinkAzdoJiraModal } from './components/LinkAzdoJiraModal.js';
+import { UnlinkAzdoJiraModal } from './components/UnlinkAzdoJiraModal.js';
 import { SearchModal } from './SearchModal.js';
 import { FilterAzdoModal } from './FilterAzdoModal.js';
 import { UpdateAzdoStatusModal } from './UpdateAzdoStatusModal.js';
@@ -1066,6 +1068,30 @@ export const AzdoApp = ({ configPath }) => {
         group: 'Update',
       },
 
+      // Jira Integration
+      {
+        key: 'j',
+        action: () => {
+          if (selectedAlertIds.length > 0) {
+            setActiveModal('link-jira');
+          }
+        },
+        description: 'Link Jira',
+        condition: () => selectedAlertIds.length > 0,
+        group: 'Jira',
+      },
+      {
+        key: 'shift+j',
+        action: () => {
+          if (selectedAlertIds.length > 0) {
+            setActiveModal('unlink-jira');
+          }
+        },
+        description: 'Unlink Jira',
+        condition: () => selectedAlertIds.length > 0,
+        group: 'Jira',
+      },
+
       // Filtering
       {
         key: 'f',
@@ -1483,6 +1509,60 @@ export const AzdoApp = ({ configPath }) => {
           alerts={selectedAlerts}
           onUpdate={(severity) => {
             handleBulkUpdateAlerts({ severity });
+            setActiveModal(null);
+          }}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'link-jira' && selectedAlertIds.length > 0 && (
+        <LinkAzdoJiraModal
+          alertCount={selectedAlertIds.length}
+          onLink={async (jiraId) => {
+            // Link Jira ID to selected alerts
+            await azdoService.linkJiraToAlerts(
+              selectedProject.name,
+              selectedRepository.id,
+              selectedAlertIds,
+              jiraId,
+              null // Progress callback handled internally
+            );
+
+            logger.info('Alerts linked to Jira', {
+              alertCount: selectedAlertIds.length,
+              jiraId,
+            });
+
+            // Reload alerts to reflect updated metadata
+            await reloadAlerts();
+            setActiveModal(null);
+          }}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'unlink-jira' && selectedAlertIds.length > 0 && (
+        <UnlinkAzdoJiraModal
+          alertCount={selectedAlertIds.length}
+          jiraKeys={selectedAlerts
+            .map((alert) => {
+              const metadata = parseAlertMetadata(alert);
+              return metadata.jiraId;
+            })
+            .filter(Boolean)}
+          onUnlink={async () => {
+            // Unlink Jira IDs from selected alerts
+            await azdoService.unlinkJiraFromAlerts(
+              selectedProject.name,
+              selectedRepository.id,
+              selectedAlertIds,
+              null // Progress callback handled internally
+            );
+
+            logger.info('Alerts unlinked from Jira', {
+              alertCount: selectedAlertIds.length,
+            });
+
+            // Reload alerts to reflect removed metadata
+            await reloadAlerts();
             setActiveModal(null);
           }}
           onClose={() => setActiveModal(null)}
