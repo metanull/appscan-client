@@ -21,6 +21,7 @@ import { ScrollableList } from './components/ScrollableList.js';
 import { DebugBar } from './components/DebugBar.js';
 import { KeyboardHint } from './components/KeyboardHint.js';
 import { HelpModal } from './components/HelpModal.js';
+import { AlertDetailsModal } from './components/AlertDetailsModal.js';
 import { SearchModal } from './SearchModal.js';
 import { FilterAzdoModal } from './FilterAzdoModal.js';
 import { UpdateAzdoStatusModal } from './UpdateAzdoStatusModal.js';
@@ -819,6 +820,17 @@ export const AzdoApp = ({ configPath }) => {
     sortBy,
   ]);
 
+  // Get actual selected alerts from IDs
+  const selectedAlerts = useMemo(() => {
+    if (!alerts || alerts.length === 0) {
+      return currentAlert ? [currentAlert] : [];
+    }
+    if (selectedAlertIds.length === 0) {
+      return currentAlert ? [currentAlert] : [];
+    }
+    return alerts.filter((alert) => selectedAlertIds.includes(alert.alertId));
+  }, [selectedAlertIds, alerts, currentAlert]);
+
   // Throttled cursor movement
   const pendingCursorMove = useRef(0);
   const flushTimeout = useRef(null);
@@ -1303,6 +1315,14 @@ export const AzdoApp = ({ configPath }) => {
       </Box>
 
       {/* Modals */}
+      {activeModal === 'details' && currentAlert && (
+        <AlertDetailsModal
+          alert={currentAlert}
+          project={selectedProject}
+          repository={selectedRepository}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
       {activeModal === 'help' && (
         <HelpModal view={view} onClose={() => setActiveModal(null)} />
       )}
