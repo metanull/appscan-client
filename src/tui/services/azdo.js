@@ -426,7 +426,8 @@ export class AzdoService {
 
   /**
    * Link Jira ID to alerts by adding metadata to comments
-   * If alert is Active, sets it to Dismissed (FalsePositive)
+   * For Active alerts: sets to Dismissed (Unknown)
+   * For non-Active alerts: temporarily sets to Active (clears comment), then restores with metadata
    * @param {string} projectIdOrName - Project ID or name
    * @param {string} repositoryId - Repository ID
    * @param {Array<number>} alertIds - Array of alert IDs
@@ -477,33 +478,35 @@ export class AzdoService {
           existingMetadata.customFields
         );
 
-        // Determine update based on current state
-        const updateData = {
-          dismissedComment: newComment,
-        };
+        const originalState = alert.state;
+        const originalDismissalType = alert.dismissal?.dismissalType;
 
-        // If alert is Active, set to Dismissed (FalsePositive)
-        if (alert.state === 1) {
-          updateData.state = 2; // Dismissed
-          updateData.dismissedReason = 3; // FalsePositive
-        } else if (alert.state === 2 || alert.state === 8) {
-          // Already dismissed, keep existing dismissal reason
-          updateData.state = alert.state;
-          updateData.dismissedReason = alert.dismissal?.dismissalType || 3;
-        } else if (alert.state === 4) {
-          // Fixed state, keep it
-          updateData.state = 4;
-          updateData.dismissedReason = 1; // Fixed
+        // If alert is Active, set to Dismissed (Unknown)
+        if (originalState === 1) {
+          await this.updateAlert(projectIdOrName, repositoryId, alertId, {
+            state: 2, // Dismissed
+            dismissedReason: 0, // Unknown
+            dismissedComment: newComment,
+          });
+        } else {
+          // For non-Active alerts: temporarily set to Active to clear comment, then restore
+          // Step 1: Set to Active (clears comment)
+          await this.updateAlert(projectIdOrName, repositoryId, alertId, {
+            state: 1, // Active
+          });
+
+          // Wait for change to propagate
+          await new Promise((resolve) => setTimeout(resolve, 500));
+
+          // Step 2: Restore original state with new comment
+          await this.updateAlert(projectIdOrName, repositoryId, alertId, {
+            state: originalState,
+            dismissedReason: originalDismissalType || 0,
+            dismissedComment: newComment,
+          });
         }
 
-        const result = await this.updateAlert(
-          projectIdOrName,
-          repositoryId,
-          alertId,
-          updateData
-        );
-
-        results.push({ alertId, success: true, result });
+        results.push({ alertId, success: true });
       } catch (error) {
         logger.error('Failed to link Jira to alert', {
           alertId,
@@ -529,8 +532,8 @@ export class AzdoService {
 
   /**
    * Unlink Jira ID from alerts by removing metadata
-   * This is done by temporarily setting state to Active (which clears comment),
-   * then restoring to original state without metadata
+   * For Active alerts: no action needed (no comment/metadata when Active)
+   * For non-Active alerts: temporarily sets to Active (clears comment), then restores without metadata
    * @param {string} projectIdOrName - Project ID or name
    * @param {string} repositoryId - Repository ID
    * @param {Array<number>} alertIds - Array of alert IDs
@@ -564,22 +567,30 @@ export class AzdoService {
         const originalState = alert.state;
         const originalDismissalType = alert.dismissal?.dismissalType;
 
+        // If Active, no action needed (no comment/metadata when Active)
+        if (originalState === 1) {
+          results.push({ alertId, success: true, skipped: true });
+          if (onProgress) {
+            onProgress(results.length, total);
+          }
+          continue;
+        }
+
+        // For non-Active alerts: clear metadata by setting to Active then restoring
         // Step 1: Set to Active (this clears the comment)
         await this.updateAlert(projectIdOrName, repositoryId, alertId, {
           state: 1, // Active
         });
 
-        // Wait a moment for the change to propagate
+        // Wait for change to propagate
         await new Promise((resolve) => setTimeout(resolve, 500));
 
         // Step 2: Restore original state (without the Jira metadata)
-        if (originalState === 1) {
-          // Was Active, leave it Active (no further action needed)
-        } else if (originalState === 2 || originalState === 8) {
+        if (originalState === 2 || originalState === 8) {
           // Was Dismissed, restore without comment
           await this.updateAlert(projectIdOrName, repositoryId, alertId, {
             state: originalState,
-            dismissedReason: originalDismissalType || 3, // Default to FalsePositive
+            dismissedReason: originalDismissalType || 0, // Unknown if not set
           });
         } else if (originalState === 4) {
           // Was Fixed, restore
@@ -608,6 +619,7 @@ export class AzdoService {
       total,
       successful: results.filter((r) => r.success).length,
       failed: results.filter((r) => !r.success).length,
+      skipped: results.filter((r) => r.skipped).length,
     });
 
     return results;

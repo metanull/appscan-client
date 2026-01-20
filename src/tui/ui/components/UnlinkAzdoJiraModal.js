@@ -72,13 +72,13 @@ export const UnlinkAzdoJiraModal = React.memo(
           <Box flexDirection="column" marginTop={1} paddingX={1}>
             <Text color="yellow">⚠️ How unlinking works:</Text>
             <Text dimColor>
-              1. Alert temporarily set to Active (clears comment)
+              • Active alerts: No action needed (no comment when Active)
             </Text>
             <Text dimColor>
-              2. Alert restored to original state
+              • Non-Active alerts: Temporarily set to Active (clears comment)
             </Text>
             <Text dimColor>
-              3. Jira metadata removed
+              • Then restored to original state without metadata
             </Text>
             <Text dimColor marginTop={1}>
               Note: User comments will be lost in the process

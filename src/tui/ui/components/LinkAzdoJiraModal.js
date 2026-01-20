@@ -65,10 +65,13 @@ export const LinkAzdoJiraModal = React.memo(
           <Box flexDirection="column" marginTop={1} paddingX={1}>
             <Text color="yellow">⚠️ Important:</Text>
             <Text dimColor>
-              • Alerts will be set to Dismissed (FalsePositive) if Active
+              • Active alerts: Set to Dismissed (Unknown)
             </Text>
             <Text dimColor>
-              • Existing comments will be preserved
+              • Non-Active alerts: Temporarily set to Active, then restored
+            </Text>
+            <Text dimColor>
+              • Existing comments preserved when possible
             </Text>
             <Text dimColor>
               • Jira ID stored as metadata in comment field
