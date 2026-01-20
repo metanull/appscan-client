@@ -28,6 +28,7 @@ import { UpdateAzdoStatusModal } from './UpdateAzdoStatusModal.js';
 import { UpdateAzdoSeverityModal } from './UpdateAzdoSeverityModal.js';
 import { TextInputPage } from './TextInputPage.js';
 import { AzdoService } from '../services/azdo.js';
+import { useCurrentAlert } from '../hooks/useCurrentAlert.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts.js';
 import logger from '../../utils/logger.js';
@@ -811,11 +812,8 @@ export const AzdoApp = ({ configPath }) => {
     }
   }, [projects.length, view]);
 
-  // Get current alert
-  const currentAlert = useMemo(() => {
-    if (!alerts || alerts.length === 0) return null;
-    return alerts[listCursor] || null;
-  }, [alerts, listCursor]);
+  // Get current alert from filtered list using hook (same pattern as ASoC TUI)
+  const currentAlert = useCurrentAlert();
 
   // Filtered alerts
   const filteredAlerts = useMemo(() => {
