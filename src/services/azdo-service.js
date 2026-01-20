@@ -300,9 +300,10 @@ export class AzdoService {
         projectIdOrName,
         repositoryId,
         pageTop,
-        undefined,
-        Object.keys(criteria).length > 0 ? criteria : undefined,
-        continuation
+        undefined, // orderBy
+        Object.keys(criteria).length > 0 ? criteria : undefined, // criteria
+        undefined, // expand
+        continuation // continuationToken
       );
 
       // Extract alerts from response (handle different response shapes)
