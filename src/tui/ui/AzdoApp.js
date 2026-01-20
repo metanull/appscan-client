@@ -22,6 +22,7 @@ import { DebugBar } from './components/DebugBar.js';
 import { KeyboardHint } from './components/KeyboardHint.js';
 import { HelpModal } from './components/HelpModal.js';
 import { AlertDetailsModal } from './components/AlertDetailsModal.js';
+import { AlertLinksModal } from './components/AlertLinksModal.js';
 import { SearchModal } from './SearchModal.js';
 import { FilterAzdoModal } from './FilterAzdoModal.js';
 import { UpdateAzdoStatusModal } from './UpdateAzdoStatusModal.js';
@@ -1002,6 +1003,16 @@ export const AzdoApp = ({ configPath }) => {
         group: 'Navigation',
       },
 
+      // Actions
+      {
+        key: 'l',
+        action: () => currentAlert && setActiveModal('links'),
+        description: 'Links',
+        condition: () => !!currentAlert,
+        group: 'Actions',
+        hint: true,
+      },
+
       // Selection
       {
         key: 'space',
@@ -1078,6 +1089,69 @@ export const AzdoApp = ({ configPath }) => {
         },
         description: 'Clear Filters',
         group: 'Filtering',
+      },
+
+      // Filter Presets - State
+      {
+        key: '1',
+        action: () => {
+          useAzdoStore.getState().setFilterState(1); // Active
+        },
+        description: 'Active State',
+        condition: () => !!selectedRepository,
+        group: 'Filter Presets',
+        hint: true,
+      },
+      {
+        key: '2',
+        action: () => {
+          useAzdoStore.getState().setFilterState(2); // Dismissed
+        },
+        description: 'Dismissed State',
+        condition: () => !!selectedRepository,
+        group: 'Filter Presets',
+        hint: true,
+      },
+      {
+        key: '3',
+        action: () => {
+          useAzdoStore.getState().setFilterState(4); // Fixed
+        },
+        description: 'Fixed State',
+        condition: () => !!selectedRepository,
+        group: 'Filter Presets',
+        hint: true,
+      },
+      // Filter Presets - Severity
+      {
+        key: '4',
+        action: () => {
+          useAzdoStore.getState().setFilterSeverity(1); // Medium
+        },
+        description: 'Medium Severity',
+        condition: () => !!selectedRepository,
+        group: 'Filter Presets',
+        hint: true,
+      },
+      {
+        key: '5',
+        action: () => {
+          useAzdoStore.getState().setFilterSeverity(2); // High
+        },
+        description: 'High Severity',
+        condition: () => !!selectedRepository,
+        group: 'Filter Presets',
+        hint: true,
+      },
+      {
+        key: '6',
+        action: () => {
+          useAzdoStore.getState().setFilterSeverity(3); // Critical
+        },
+        description: 'Critical Severity',
+        condition: () => !!selectedRepository,
+        group: 'Filter Presets',
+        hint: true,
       },
 
       // Sorting
@@ -1334,6 +1408,16 @@ export const AzdoApp = ({ configPath }) => {
           alert={currentAlert}
           project={selectedProject}
           repository={selectedRepository}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'links' && currentAlert && (
+        <AlertLinksModal
+          alert={currentAlert}
+          project={selectedProject}
+          repository={selectedRepository}
+          config={azdoService.getConfig()}
+          azdoService={azdoService}
           onClose={() => setActiveModal(null)}
         />
       )}
