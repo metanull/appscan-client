@@ -1334,7 +1334,7 @@ export const AzdoApp = ({ configPath }) => {
               useAzdoStore.getState().setFilterState(value);
             else if (filterType === 'severity')
               useAzdoStore.getState().setFilterSeverity(value);
-            else if (filterType === 'type')
+            else if (filterType === 'alertType')
               useAzdoStore.getState().setFilterAlertType(value);
             else if (filterType === 'jira')
               useAzdoStore.getState().setFilterJira(value);
