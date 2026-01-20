@@ -49,7 +49,7 @@ export const AlertLinksModal = React.memo(
     // Repository link
     if (repository && project) {
       const orgUrl =
-        azdoService?.getOrgUrl() ||
+        azdoService?.getBaseUrl() ||
         config?.getAzureDevOpsBaseUrl?.() ||
         'https://dev.azure.com';
       const repoUrl = `${orgUrl}/${encodeURIComponent(project.name)}/_git/${repository.id}`;
@@ -63,7 +63,7 @@ export const AlertLinksModal = React.memo(
     // File location link (if available)
     if (alert.physicalLocation?.filePath && repository && project) {
       const orgUrl =
-        azdoService?.getOrgUrl() ||
+        azdoService?.getBaseUrl() ||
         config?.getAzureDevOpsBaseUrl?.() ||
         'https://dev.azure.com';
       const filePath = alert.physicalLocation.filePath;
@@ -84,7 +84,7 @@ export const AlertLinksModal = React.memo(
     // Project link
     if (project) {
       const orgUrl =
-        azdoService?.getOrgUrl() ||
+        azdoService?.getBaseUrl() ||
         config?.getAzureDevOpsBaseUrl?.() ||
         'https://dev.azure.com';
       const projectUrl = `${orgUrl}/${encodeURIComponent(project.name)}`;
