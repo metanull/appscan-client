@@ -46,8 +46,17 @@ export const AlertLinksModal = React.memo(
       });
     }
 
-    // Repository link
-    if (repository && project) {
+    // Repository URL from alert data (always include if present)
+    if (alert.repositoryUrl) {
+      links.push({
+        label: '📁 Repository URL',
+        url: alert.repositoryUrl,
+        description: 'Direct repository link from alert',
+      });
+    }
+
+    // Repository link (constructed) - only if repositoryUrl not available
+    if (repository && project && !alert.repositoryUrl) {
       const orgUrl =
         azdoService?.getBaseUrl() ||
         config?.getAzureDevOpsBaseUrl?.() ||
@@ -60,24 +69,55 @@ export const AlertLinksModal = React.memo(
       });
     }
 
-    // File location link (if available)
-    if (alert.physicalLocation?.filePath && repository && project) {
-      const orgUrl =
-        azdoService?.getBaseUrl() ||
-        config?.getAzureDevOpsBaseUrl?.() ||
-        'https://dev.azure.com';
-      const filePath = alert.physicalLocation.filePath;
-      const line = alert.physicalLocation.region?.startLine;
+    // Physical locations with version control URLs
+    if (alert.physicalLocations && alert.physicalLocations.length > 0) {
+      alert.physicalLocations.forEach((loc, idx) => {
+        if (loc.versionControl?.itemUrl) {
+          links.push({
+            label: `📄 Source File ${alert.physicalLocations.length > 1 ? `(${idx + 1})` : ''}`,
+            url: loc.versionControl.itemUrl,
+            description: loc.filePath
+              ? `File: ${loc.filePath}${loc.region?.startLine ? ` (line ${loc.region.startLine})` : ''}`
+              : 'View source file in version control',
+          });
+        } else if (loc.filePath && repository && project) {
+          // Construct file URL if not provided
+          const orgUrl =
+            azdoService?.getBaseUrl() ||
+            config?.getAzureDevOpsBaseUrl?.() ||
+            'https://dev.azure.com';
+          const line = loc.region?.startLine;
 
-      let fileUrl = `${orgUrl}/${encodeURIComponent(project.name)}/_git/${repository.id}?path=${encodeURIComponent(filePath)}`;
-      if (line) {
-        fileUrl += `&line=${line}`;
-      }
+          let fileUrl = `${orgUrl}/${encodeURIComponent(project.name)}/_git/${repository.id}?path=${encodeURIComponent(loc.filePath)}`;
+          if (line) {
+            fileUrl += `&line=${line}`;
+          }
 
-      links.push({
-        label: '📄 View Source File',
-        url: fileUrl,
-        description: `File: ${filePath}${line ? ` (line ${line})` : ''}`,
+          links.push({
+            label: `📄 Source File ${alert.physicalLocations.length > 1 ? `(${idx + 1})` : ''}`,
+            url: fileUrl,
+            description: `File: ${loc.filePath}${line ? ` (line ${line})` : ''}`,
+          });
+        }
+      });
+    }
+
+    // Tool rules with resources
+    if (alert.tools && alert.tools.length > 0) {
+      alert.tools.forEach((tool) => {
+        if (tool.rules && tool.rules.length > 0) {
+          tool.rules.forEach((rule) => {
+            if (rule.resources) {
+              links.push({
+                label: `📚 ${rule.friendlyName || 'Rule'} - Resources`,
+                url: rule.resources,
+                description: rule.description
+                  ? rule.description.substring(0, 100) + '...'
+                  : 'View rule resources and documentation',
+              });
+            }
+          });
+        }
       });
     }
 
