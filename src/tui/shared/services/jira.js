@@ -377,6 +377,290 @@ export class JiraService {
   isConfigured() {
     return this.config.isJiraValid();
   }
+
+  /**
+   * Creates a single Jira issue from Azure DevOps alerts
+   * @param {string} projectKey - Jira project key
+   * @param {string} summary - Issue summary/title
+   * @param {Array<Object>} alerts - Array of Azure DevOps alert objects
+   * @param {Object|null} project - Optional Azure DevOps project object
+   * @param {Object|null} repository - Optional Azure DevOps repository object
+   * @param {string|null} parentEpic - Optional parent epic key
+   * @returns {Promise<Object>} Created Jira issue object
+   */
+  async createJiraIssueFromAlerts(
+    projectKey,
+    summary,
+    alerts,
+    project = null,
+    repository = null,
+    parentEpic = null
+  ) {
+    this.initialize();
+
+    try {
+      logger.info('Creating Jira issue from Azure DevOps alerts', {
+        projectKey,
+        summary,
+        alertCount: alerts.length,
+        parentEpic,
+      });
+
+      const description = this.buildAlertsDescription(
+        alerts,
+        project,
+        repository
+      );
+
+      const fields = {
+        project: { key: projectKey },
+        summary: summary,
+        description: this.service.convertToADF(description),
+        issuetype: { name: 'Story' },
+        labels: ['azuredevops', 'security'],
+        assignee: null,
+      };
+
+      if (parentEpic) {
+        fields.parent = { key: parentEpic };
+      }
+
+      const jiraIssue = await this.service.client.issues.createIssue({
+        fields,
+      });
+
+      logger.info('Jira issue created successfully from alerts', {
+        jiraKey: jiraIssue.key,
+      });
+
+      auditService.logJiraCreate(projectKey, summary, alerts.length, {
+        success: true,
+        jiraKey: jiraIssue.key,
+        jiraId: jiraIssue.id,
+      });
+
+      return jiraIssue;
+    } catch (error) {
+      logger.error('Failed to create Jira issue from alerts', error, {
+        projectKey,
+        summary,
+        alertCount: alerts.length,
+      });
+
+      auditService.logJiraCreate(projectKey, summary, alerts.length, {
+        success: false,
+        error: error.message,
+      });
+
+      throw error;
+    }
+  }
+
+  /**
+   * Creates one or more Jira issues from Azure DevOps alerts with optional grouping
+   * @param {string} projectKey - Jira project key
+   * @param {string} groupBy - Grouping strategy ('type', 'severity', or 'none')
+   * @param {Array<Object>} alerts - Array of Azure DevOps alert objects
+   * @param {Object|null} project - Optional Azure DevOps project object
+   * @param {Object|null} repository - Optional Azure DevOps repository object
+   * @param {string|null} parentEpic - Optional parent epic key
+   * @param {string|null} projectName - Optional project name for summary prefix
+   * @returns {Promise<Array<Object>>} Array of created Jira issue objects with alert IDs
+   */
+  async createIssuesFromAlerts(
+    projectKey,
+    groupBy,
+    alerts,
+    project = null,
+    repository = null,
+    parentEpic = null,
+    projectName = null
+  ) {
+    this.initialize();
+
+    try {
+      logger.info('Creating Jira issues from Azure DevOps alerts', {
+        projectKey,
+        groupBy,
+        alertCount: alerts.length,
+        parentEpic,
+        projectName,
+      });
+
+      // Group alerts if needed
+      let grouped;
+      if (groupBy === 'type') {
+        grouped = alerts.reduce((acc, alert) => {
+          const type = this.getAlertTypeName(alert.alertType) || 'Unknown';
+          if (!acc[type]) acc[type] = [];
+          acc[type].push(alert);
+          return acc;
+        }, {});
+      } else if (groupBy === 'severity') {
+        grouped = alerts.reduce((acc, alert) => {
+          const severity = this.getSeverityName(alert.severity) || 'Unknown';
+          if (!acc[severity]) acc[severity] = [];
+          acc[severity].push(alert);
+          return acc;
+        }, {});
+      } else {
+        // No grouping - one Jira per alert
+        grouped = Object.fromEntries(
+          alerts.map((a, idx) => [`Alert ${idx + 1}`, [a]])
+        );
+      }
+
+      const results = [];
+      for (const [groupName, groupAlerts] of Object.entries(grouped)) {
+        const prefix = projectName || 'Security';
+        const summary = `${prefix}: ${groupName} (${groupAlerts.length} alert${groupAlerts.length > 1 ? 's' : ''})`;
+        const jiraIssue = await this.createJiraIssueFromAlerts(
+          projectKey,
+          summary,
+          groupAlerts,
+          project,
+          repository,
+          parentEpic
+        );
+        results.push({
+          jiraIssue,
+          alerts: groupAlerts,
+          alertIds: groupAlerts.map((a) => a.alertId),
+        });
+      }
+
+      logger.info('Jira issues created successfully from alerts', {
+        count: results.length,
+      });
+      return results;
+    } catch (error) {
+      logger.error('Failed to create Jira issues from alerts', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Build markdown description for Azure DevOps alerts
+   * @private
+   */
+  buildAlertsDescription(alerts, project, repository) {
+    let description = '';
+
+    if (project) {
+      description += `**Project:** ${project.name}\n\n`;
+    }
+
+    if (repository && !repository._isViewAll) {
+      description += `**Repository:** ${repository.name}\n\n`;
+    }
+
+    if (description) {
+      description += '---\n\n';
+    }
+
+    // Group by alert type
+    const grouped = alerts.reduce((acc, alert) => {
+      const type = alert.ruleName || 'Unknown';
+      if (!acc[type]) acc[type] = [];
+      acc[type].push(alert);
+      return acc;
+    }, {});
+
+    for (const [type, typeAlerts] of Object.entries(grouped)) {
+      const highestSeverity = this.getHighestSeverity(
+        typeAlerts.map((a) => a.severity)
+      );
+      description += `# ${type} (${highestSeverity})\n\n`;
+
+      for (let i = 0; i < typeAlerts.length; i++) {
+        const alert = typeAlerts[i];
+        const alertNumber = i + 1;
+        const location = alert.locations?.[0]?.logicalLocation || 'Unknown';
+
+        description += `## ${alertNumber}. ${location}\n\n`;
+        description += `- **Severity:** ${this.getSeverityName(alert.severity)}\n`;
+        description += `- **State:** ${this.getStateName(alert.state)}\n`;
+        description += `- **Alert ID:** ${alert.alertId}\n`;
+
+        if (alert.title) {
+          description += `\n**Title:** ${alert.title}\n\n`;
+        }
+
+        description += '\n';
+      }
+    }
+
+    return description;
+  }
+
+  /**
+   * Get highest severity from array of severity values
+   * @private
+   */
+  getHighestSeverity(severities) {
+    const severityOrder = {
+      critical: 5,
+      high: 4,
+      medium: 3,
+      low: 2,
+      warning: 1,
+      note: 0,
+    };
+
+    let highest = 'note';
+    let highestValue = 0;
+
+    for (const sev of severities) {
+      const sevName = this.getSeverityName(sev)?.toLowerCase() || 'note';
+      const value = severityOrder[sevName] || 0;
+      if (value > highestValue) {
+        highestValue = value;
+        highest = sevName;
+      }
+    }
+
+    return highest.charAt(0).toUpperCase() + highest.slice(1);
+  }
+
+  /**
+   * Get alert type name
+   * @private
+   */
+  getAlertTypeName(alertType) {
+    const typeMap = {
+      1: 'Dependency',
+      2: 'Secret',
+      3: 'Code',
+    };
+    return typeMap[alertType] || 'Unknown';
+  }
+
+  /**
+   * Get severity name
+   * @private
+   */
+  getSeverityName(severity) {
+    const severityMap = {
+      1: 'Low',
+      2: 'Medium',
+      3: 'High',
+      4: 'Critical',
+    };
+    return severityMap[severity] || 'Unknown';
+  }
+
+  /**
+   * Get state name
+   * @private
+   */
+  getStateName(state) {
+    const stateMap = {
+      1: 'Active',
+      2: 'Dismissed',
+      3: 'Fixed',
+    };
+    return stateMap[state] || 'Unknown';
+  }
 }
 
 export default JiraService;

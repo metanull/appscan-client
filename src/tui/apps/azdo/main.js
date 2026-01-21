@@ -22,6 +22,7 @@ import { KeyboardHint } from '../../shared/components/KeyboardHint.js';
 import { HelpModal } from '../../shared/components/HelpModal.js';
 import { IssueModal } from './components/IssueModal.js';
 import { LinksModal } from './components/LinksModal.js';
+import { CreateJiraModal } from './modals/CreateJiraModal.js';
 import { LinkJiraModal } from './modals/LinkJiraModal.js';
 import { UnlinkJiraModal } from './modals/UnlinkJiraModal.js';
 import { RootSelectionWindow } from './components/RootSelectionWindow.js';
@@ -32,6 +33,7 @@ import { UpdateStatusModal } from './modals/UpdateStatusModal.js';
 import { UpdateSeverityModal } from './modals/UpdateSeverityModal.js';
 import { TextInputPage } from '../../shared/components/TextInputPage.js';
 import { AzdoService } from '../../shared/services/azdo.js';
+import { JiraService } from '../../shared/services/jira.js';
 import { useCurrentIssue } from './hooks/useCurrentIssue.js';
 import { useTerminalSize } from '../../shared/hooks/useTerminalSize.js';
 import { useKeyboardShortcuts } from '../../shared/hooks/useKeyboardShortcuts.js';
@@ -404,6 +406,7 @@ export const App = ({ configPath }) => {
 
   // Services
   const [azdoService] = useState(() => new AzdoService(configPath));
+  const [jiraService] = useState(() => new JiraService(azdoService.config));
 
   // Zustand state - ONLY subscribe to data, never to setters
   const selectedProject = useStore((state) => state.selectedProject);
@@ -853,9 +856,9 @@ export const App = ({ configPath }) => {
       },
       {
         key: 'j',
-        action: () => currentAlert && setActiveModal('jira'),
-        description: 'Jira',
-        condition: () => !!currentAlert,
+        action: () => setActiveModal('create-jira'),
+        description: 'Create Jira',
+        condition: () => selectedAlertIds.length > 0,
         group: 'Actions',
       },
       {
@@ -1392,6 +1395,53 @@ export const App = ({ configPath }) => {
             // Reload alerts to reflect updated metadata
             await reloadAlerts();
             setActiveModal(null);
+          }}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+      {activeModal === 'create-jira' && selectedAlertIds.length > 0 && (
+        <CreateJiraModal
+          alerts={selectedAlerts}
+          defaultProjectKey={jiraService.getProjectKey()}
+          projectName={selectedProject?.name}
+          onCreate={async (
+            projectKey,
+            groupBy,
+            alerts,
+            parentEpic,
+            projectName
+          ) => {
+            // Create Jira issues and link alert IDs
+            const results = await jiraService.createIssuesFromAlerts(
+              projectKey,
+              groupBy,
+              alerts,
+              selectedProject,
+              selectedRepository,
+              parentEpic,
+              projectName
+            );
+
+            logger.info('Jira issues created from alerts', {
+              count: results.length,
+            });
+
+            // Link each alert to its corresponding Jira issue
+            for (const result of results) {
+              await azdoService.linkJiraToAlerts(
+                selectedProject.name,
+                selectedRepository.id,
+                result.alertIds,
+                result.jiraIssue.key,
+                null
+              );
+            }
+
+            logger.info('Alerts linked to created Jira issues');
+
+            // Reload alerts and clear selection
+            await reloadAlerts();
+            useStore.getState().clearSelection();
           }}
           onClose={() => setActiveModal(null)}
         />

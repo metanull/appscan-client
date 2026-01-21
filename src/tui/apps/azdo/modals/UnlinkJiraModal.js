@@ -70,18 +70,8 @@ export const UnlinkJiraModal = React.memo(
           </Box>
 
           <Box flexDirection="column" marginTop={1} paddingX={1}>
-            <Text color="yellow">⚠️ How unlinking works:</Text>
-            <Text dimColor>
-              • Active alerts: No action needed (no comment when Active)
-            </Text>
-            <Text dimColor>
-              • Non-Active alerts: Temporarily set to Active (clears comment)
-            </Text>
-            <Text dimColor>
-              • Then restored to original state without metadata
-            </Text>
             <Text dimColor marginTop={1}>
-              Note: User comments will be lost in the process
+              ⚠️ Note: User comments may be lost in the process
             </Text>
           </Box>
 
