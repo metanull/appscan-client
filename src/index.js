@@ -17,16 +17,7 @@ const __dirname = path.dirname(__filename);
 process.env.DOTENV_CONFIG_QUIET = 'true';
 dotenv.config({ path: getEnvPath() });
 
-const args = process.argv.slice(2);
-
-// No args → launch TUI
-// Any command → handled by CLI
-if (args.length === 0) {
-  // Launch TUI
-  const { launchTUI } = await import('./tui/tui-entry.js');
-  await launchTUI({ config: null });
-} else {
-  // Launch CLI (handles --help, commands, etc.)
-  const { runCLI } = await import('./cli/cli-entry.js');
-  runCLI();
-}
+// All commands (including 'asoc' and 'azdo') are handled by CLI
+// No args → show help
+const { runCLI } = await import('./cli/cli-entry.js');
+runCLI();

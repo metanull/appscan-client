@@ -3,7 +3,7 @@ import {
   loadParentEpics,
   saveParentEpic,
   getLastUsedEpic,
-} from '../../../src/tui/services/parentEpicCache.js';
+} from '../../../src/tui/shared/services/parentEpicCache.js';
 
 // The cache module preserves state across imports so ensure we start clean
 beforeEach(() => {

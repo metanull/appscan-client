@@ -273,6 +273,7 @@ export class AzdoService {
    * @param {Object} options - Filter options
    * @param {string} [options.type] - Alert type filter. Valid values: 'unknown', 'dependency', 'secret', 'code', 'license'
    * @param {string} [options.severity] - Severity filter. Valid values: 'low', 'medium', 'high', 'critical', 'note', 'warning', 'error', 'undefined'
+   * @param {number} [options.top=10000] - Maximum number of alerts to return. Azure DevOps supports up to 10,000 items per request.
    * @returns {Promise<Array>}
    */
   async listAlerts(projectIdOrName, repositoryId, options = {}) {
@@ -290,63 +291,35 @@ export class AzdoService {
       criteria.severity = getSeverityValue(options.severity);
     }
 
-    // Fetch ALL alerts using continuation tokens
-    const pageTop = 100; // Default page size
-    const allAlerts = [];
-    let continuation = undefined;
+    // NOTE: The azure-devops-node-api package does NOT expose the continuation token
+    // from the x-ms-continuationtoken HTTP header. The only way to get all alerts
+    // is to use a large 'top' value. Azure DevOps supports up to 10,000 items per request.
+    const top = options.top !== undefined ? options.top : 10000;
 
-    do {
-      const page = await alertApi.getAlerts(
-        projectIdOrName,
-        repositoryId,
-        pageTop,
-        undefined,
-        Object.keys(criteria).length > 0 ? criteria : undefined,
-        continuation
-      );
+    const page = await alertApi.getAlerts(
+      projectIdOrName,
+      repositoryId,
+      top,
+      undefined, // orderBy
+      Object.keys(criteria).length > 0 ? criteria : undefined, // criteria
+      undefined, // expand
+      undefined // continuationToken
+    );
 
-      // Extract alerts from response (handle different response shapes)
-      let pageAlerts = [];
-      if (!page) {
-        pageAlerts = [];
-      } else if (Array.isArray(page)) {
-        pageAlerts = page;
-      } else if (Array.isArray(page.value)) {
-        pageAlerts = page.value;
-      } else if (Array.isArray(page.result)) {
-        pageAlerts = page.result;
-      } else {
-        pageAlerts = Array.isArray(page) ? page : [];
-      }
-
-      allAlerts.push(...pageAlerts);
-
-      // Extract continuation token from response
-      let next = null;
-      if (page) {
-        next =
-          page.continuationToken ||
-          (page.__continuation &&
-            (page.__continuation.continuationToken ||
-              page.__continuation.token)) ||
-          null;
-      }
-      if (!next && Array.isArray(page) && page.continuationToken) {
-        next = page.continuationToken;
-      }
-      if (!next && pageAlerts.length > 0) {
-        const firstAlert = pageAlerts[0];
-        if (
-          firstAlert &&
-          (firstAlert.__continuation || firstAlert.continuationToken)
-        ) {
-          next = firstAlert.__continuation || firstAlert.continuationToken;
-        }
-      }
-      continuation = next || undefined;
-    } while (continuation);
-
-    return allAlerts;
+    // Extract alerts from response (handle different response shapes)
+    if (!page) {
+      return [];
+    }
+    if (Array.isArray(page)) {
+      return page;
+    }
+    if (Array.isArray(page.value)) {
+      return page.value;
+    }
+    if (Array.isArray(page.result)) {
+      return page.result;
+    }
+    return [];
   }
 
   /**
@@ -406,6 +379,7 @@ export class AzdoService {
    * @param {number} alertId - Alert ID
    * @param {Object} update - Update object
    * @param {number} [update.state] - New state
+   * @param {number} [update.severity] - New severity level
    * @param {number} [update.dismissedReason] - Dismissal reason
    * @param {string} [update.dismissedComment] - Dismissal comment
    * @returns {Promise<Object>}

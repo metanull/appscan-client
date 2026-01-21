@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { AppScanService } from '../../src/tui/services/appscan.js';
+import { AppScanService } from '../../src/tui/shared/services/asoc.js';
 import * as AppScanUrls from '../../src/utils/appscan-urls.js';
 
 describe('TUI AppScanService helpers', () => {

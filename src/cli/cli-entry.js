@@ -804,6 +804,35 @@ Examples:
   )
   .action(updateAzdoIssue);
 
+// TUI Launchers
+program
+  .command('asoc')
+  .description('Launch interactive TUI for AppScan on Cloud')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan asoc`
+  )
+  .action(async () => {
+    const { launchTUI } = await import('../tui/asoc-entry.js');
+    await launchTUI({ config: null });
+  });
+
+program
+  .command('azdo')
+  .description('Launch interactive TUI for Azure DevOps')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan azdo`
+  )
+  .action(async () => {
+    const { launchAzdoTUI } = await import('../tui/azdo-entry.js');
+    await launchAzdoTUI({ config: null });
+  });
+
 export function runCLI(argv = process.argv) {
   program.parse(argv);
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useStore } from '../../src/tui/state/AppContext.js';
+import { useStore } from '../../src/tui/apps/asoc/state/AppContext.js';
 
 // Helper to reset the store to known state before each test
 beforeEach(() => {

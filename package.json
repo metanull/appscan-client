@@ -1,6 +1,6 @@
 {
   "name": "@metanull/appscan-client",
-  "version": "4.5.1",
+  "version": "5.2.0",
   "description": "Utility to work with HCL AppScan Cloud API",
   "main": "src/index.js",
   "type": "module",

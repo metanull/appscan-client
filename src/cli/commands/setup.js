@@ -1,205 +1,210 @@
-import { input, confirm, password } from '@inquirer/prompts';
+import { input, password } from '@inquirer/prompts';
 import chalk from 'chalk';
 import cliOutput from '../../utils/cli-output.js';
-import { writeFileSync, existsSync } from 'fs';
+import { writeFileSync, existsSync, readFileSync } from 'fs';
 import { getEnvPath } from '../../utils/config-paths.js';
+
+const FIELDS = [
+  {
+    key: 'APPSCAN_API_KEY',
+    label: 'AppScan API Key',
+    secret: true,
+    default: '',
+    hint: 'Your AppScan API key',
+  },
+  {
+    key: 'APPSCAN_API_SECRET',
+    label: 'AppScan API Secret',
+    secret: true,
+    default: '',
+    hint: 'Your AppScan API secret key',
+  },
+  {
+    key: 'APPSCAN_BASE_URL',
+    label: 'AppScan Base URL',
+    secret: false,
+    default: 'https://eu.cloud.appscan.com',
+    hint: 'Base URL of your AppScan instance, e.g., https://cloud.appscan.com or https://eu.cloud.appscan.com',
+  },
+  {
+    key: 'AZURE_DEVOPS_ORG',
+    label: 'Azure DevOps Organization',
+    secret: false,
+    default: '',
+    hint: 'Your Azure DevOps organization name (e.g., https://dev.azure.com/{organization})',
+  },
+  {
+    key: 'AZURE_DEVOPS_PAT',
+    label: 'Azure DevOps Personal Access Token',
+    secret: true,
+    default: '',
+    hint: 'Generate at: https://dev.azure.com/{organization}/_usersSettings/tokens\nRequired scopes: Build (read), Release (read), Code (read)',
+  },
+  {
+    key: 'AZURE_DEVOPS_BASE_URL',
+    label: 'Azure DevOps Base URL',
+    secret: false,
+    default: 'https://dev.azure.com',
+    hint: 'Base URL of your Azure DevOps instance',
+  },
+  {
+    key: 'JIRA_HOST',
+    label: 'JIRA Host',
+    secret: false,
+    default: 'https://your-domain.atlassian.net',
+    hint: 'Base URL of your JIRA instance',
+  },
+  {
+    key: 'JIRA_EMAIL',
+    label: 'JIRA Email',
+    secret: false,
+    default: '',
+    hint: 'Email address associated with your JIRA account',
+  },
+  {
+    key: 'JIRA_API_TOKEN',
+    label: 'JIRA API Token',
+    secret: true,
+    default: '',
+    hint: 'Generate at: https://id.atlassian.com/manage-profile/security/api-tokens',
+  },
+  {
+    key: 'JIRA_PROJECT_KEY',
+    label: 'JIRA Project Key',
+    secret: false,
+    default: 'PROJ',
+    hint: 'The key of the project where issues will be created (e.g., PROJ)',
+  },
+  {
+    key: 'CONFLUENCE_HOST',
+    label: 'Confluence Host (optional)',
+    secret: false,
+    default: 'https://your-domain.atlassian.net/wiki',
+    hint: 'Base URL of your Confluence instance',
+  },
+  {
+    key: 'CONFLUENCE_OWASP_ASVS_URL',
+    label: 'Confluence OWASP ASVS URL (optional)',
+    secret: false,
+    default: '',
+    hint: 'URL to the OWASP ASVS page in your Confluence (e.g., https://your-domain.atlassian.net/wiki/spaces/ASVS/pages/123456789/OWASP+ASVS)',
+  },
+];
+
+/**
+ * Parse existing .env file
+ */
+const parseExistingEnv = (envPath) => {
+  try {
+    if (!existsSync(envPath)) {
+      return {};
+    }
+    const content = readFileSync(envPath, 'utf8');
+    const config = {};
+    content.split('\n').forEach((line) => {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith('#')) {
+        const [key, ...valueParts] = trimmed.split('=');
+        if (key) {
+          config[key.trim()] = valueParts
+            .join('=')
+            .trim()
+            .replace(/^["']|["']$/g, '');
+        }
+      }
+    });
+    return config;
+  } catch {
+    return {};
+  }
+};
+
+/**
+ * Mask secret values for display
+ */
+const maskValue = (value) => {
+  if (!value) return '';
+  return '***';
+};
 
 /**
  * Interactive setup wizard to configure AppScan client credentials and integrations
  * @param {Object} options - CLI options
- * @param {boolean} [options.force] - Skip confirmation prompt if .env file exists
  */
-export async function setup(options) {
+export async function setup(_options) {
   try {
     cliOutput.status(chalk.blue.bold('\n🔧 AppScan Client Setup\n'));
-    cliOutput.status(
-      chalk.gray('This wizard will help you configure your .env file.\n')
-    );
 
     const envPath = getEnvPath();
-    if (existsSync(envPath) && !options.force) {
-      const overwrite = await confirm({
-        message: '.env file already exists. Do you want to overwrite it?',
-        default: false,
-      });
+    const existingConfig = parseExistingEnv(envPath);
+    const newConfig = { ...existingConfig };
 
-      if (!overwrite) {
-        cliOutput.warning(
-          chalk.yellow(
-            '\n⚠️  Setup cancelled. Use --force to skip this prompt.\n'
-          )
-        );
-        return;
+    // Process each field
+    for (const field of FIELDS) {
+      const existingValue = existingConfig[field.key];
+      const displayValue = field.secret
+        ? maskValue(existingValue)
+        : existingValue || chalk.dim('(empty)');
+
+      // Build single-line prompt
+      let promptMsg = chalk.cyan(field.label);
+      if (field.hint) {
+        promptMsg += chalk.gray(` (${field.hint})`);
+      }
+      if (existingValue) {
+        promptMsg += chalk.yellow(`: ${displayValue}`);
+      }
+
+      // Prompt for new value (Enter = keep existing, type = new value)
+      let newValue;
+      if (field.secret) {
+        newValue = await password({
+          message: promptMsg,
+          mask: '*',
+        });
+      } else {
+        newValue = await input({
+          message: promptMsg,
+          default: '',
+        });
+      }
+
+      // If empty input and we have existing value, keep existing
+      // Otherwise use the new value (which could be empty string)
+      if (newValue === '' && existingValue) {
+        newConfig[field.key] = existingValue;
+      } else {
+        newConfig[field.key] = newValue;
       }
     }
 
-    cliOutput.status(chalk.cyan.bold('\n📡 AppScan API Configuration\n'));
+    // Build .env content dynamically from FIELDS
+    const lines = ['# AppScan Client Configuration', ''];
 
-    const apiKey = await input({
-      message: 'Enter your AppScan API Key:',
-      required: true,
-      validate: (value) => {
-        if (!value || value.trim().length === 0) {
-          return 'API Key is required';
+    // Group fields by category
+    const categories = [
+      { name: 'AppScan API Configuration', prefix: 'APPSCAN_' },
+      { name: 'Azure DevOps Configuration', prefix: 'AZURE_DEVOPS_' },
+      { name: 'JIRA Configuration', prefix: 'JIRA_' },
+      { name: 'Confluence Configuration', prefix: 'CONFLUENCE_' },
+    ];
+
+    for (const category of categories) {
+      const categoryFields = FIELDS.filter((f) =>
+        f.key.startsWith(category.prefix)
+      );
+      if (categoryFields.length > 0) {
+        lines.push(`# ${category.name}`);
+        for (const field of categoryFields) {
+          lines.push(
+            `${field.key}=${newConfig[field.key] || field.default || ''}`
+          );
         }
-        return true;
-      },
-    });
-
-    const apiSecret = await password({
-      message: 'Enter your AppScan API Secret:',
-      required: true,
-      mask: '*',
-      validate: (value) => {
-        if (!value || value.trim().length === 0) {
-          return 'API Secret is required';
-        }
-        return true;
-      },
-    });
-
-    const baseUrl = await input({
-      message: 'Enter AppScan Base URL:',
-      default: 'https://cloud.appscan.com',
-    });
-
-    cliOutput.status(chalk.cyan.bold('\n🎫 JIRA Configuration (Optional)\n'));
-    cliOutput.status(
-      chalk.gray(
-        'Configure JIRA to create issues from vulnerability reports.\n'
-      )
-    );
-
-    const configureJira = await confirm({
-      message: 'Do you want to configure JIRA integration?',
-      default: false,
-    });
-
-    let jiraHost = '';
-    let jiraEmail = '';
-    let jiraApiToken = '';
-    let jiraProjectKey = '';
-
-    if (configureJira) {
-      jiraHost = await input({
-        message:
-          'Enter your JIRA Host (e.g., https://yourcompany.atlassian.net):',
-        validate: (value) => {
-          if (value && !value.startsWith('http')) {
-            return 'JIRA Host must start with http:// or https://';
-          }
-          return true;
-        },
-      });
-
-      jiraEmail = await input({
-        message: 'Enter your JIRA Email:',
-        validate: (value) => {
-          if (value && !value.includes('@')) {
-            return 'Please enter a valid email address';
-          }
-          return true;
-        },
-      });
-
-      jiraApiToken = await password({
-        message: 'Enter your JIRA API Token:',
-        mask: '*',
-      });
-
-      jiraProjectKey = await input({
-        message: 'Enter your JIRA Project Key (e.g., SEC):',
-      });
+        lines.push('');
+      }
     }
 
-    cliOutput.status(
-      chalk.cyan.bold('\n📚 Confluence Configuration (Optional)\n')
-    );
-    cliOutput.status(
-      chalk.gray(
-        'Configure Confluence for documentation and OWASP ASVS links.\n'
-      )
-    );
-
-    const configureConfluence = await confirm({
-      message: 'Do you want to configure Confluence integration?',
-      default: false,
-    });
-
-    let confluenceHost = '';
-    let confluenceBaseUrl = '';
-
-    if (configureConfluence) {
-      confluenceHost = await input({
-        message:
-          'Enter your Confluence Host (e.g., https://yourcompany.atlassian.net):',
-        validate: (value) => {
-          if (value && !value.startsWith('http')) {
-            return 'Confluence Host must start with http:// or https://';
-          }
-          return true;
-        },
-      });
-
-      confluenceBaseUrl = await input({
-        message: 'Enter your Confluence OWASP ASVS Base URL (optional):',
-        default: '',
-      });
-    }
-
-    cliOutput.status(
-      chalk.cyan.bold('\n⚙️ Azure DevOps Configuration (Optional)\n')
-    );
-    cliOutput.status(
-      chalk.gray('Configure Azure DevOps for project and repository links.\n')
-    );
-
-    const configureAzureDevOps = await confirm({
-      message: 'Do you want to configure Azure DevOps integration?',
-      default: false,
-    });
-
-    let azureDevOpsOrg = '';
-    let azureDevOpsBaseUrl = 'https://dev.azure.com';
-
-    if (configureAzureDevOps) {
-      azureDevOpsOrg = await input({
-        message: 'Enter your Azure DevOps Organization name:',
-        validate: (value) => {
-          if (!value || value.trim().length === 0) {
-            return 'Organization name is required for Azure DevOps integration';
-          }
-          return true;
-        },
-      });
-
-      azureDevOpsBaseUrl = await input({
-        message: 'Enter Azure DevOps Base URL:',
-        default: 'https://dev.azure.com',
-      });
-    }
-
-    const envContent = `# AppScan API Configuration
-APPSCAN_API_KEY=${apiKey}
-APPSCAN_API_SECRET=${apiSecret}
-APPSCAN_BASE_URL=${baseUrl}
-
-# JIRA Configuration (optional)
-${jiraHost ? `JIRA_HOST=${jiraHost}` : '# JIRA_HOST=https://yourcompany.atlassian.net'}
-${jiraEmail ? `JIRA_EMAIL=${jiraEmail}` : '# JIRA_EMAIL=your-email@company.com'}
-${jiraApiToken ? `JIRA_API_TOKEN=${jiraApiToken}` : '# JIRA_API_TOKEN=your-api-token'}
-${jiraProjectKey ? `JIRA_PROJECT_KEY=${jiraProjectKey}` : '# JIRA_PROJECT_KEY=SEC'}
-
-# Azure DevOps Configuration (optional)
-${azureDevOpsOrg ? `AZURE_DEVOPS_ORG=${azureDevOpsOrg}` : '# AZURE_DEVOPS_ORG=your-organization'}
-${azureDevOpsBaseUrl && azureDevOpsOrg ? `AZURE_DEVOPS_BASE_URL=${azureDevOpsBaseUrl}` : '# AZURE_DEVOPS_BASE_URL=https://dev.azure.com'}
-
-# Confluence Configuration (optional)
-${confluenceHost ? `CONFLUENCE_HOST=${confluenceHost}` : '# CONFLUENCE_HOST=https://yourcompany.atlassian.net'}
-${confluenceBaseUrl ? `CONFLUENCE_OWASP_ASVS_URL=${confluenceBaseUrl}` : '# CONFLUENCE_OWASP_ASVS_URL=https://confluence.company.com/display/SEC/OWASP-ASVS'}
-`;
-
-    writeFileSync(envPath, envContent, 'utf8');
+    writeFileSync(envPath, lines.join('\n'), 'utf8');
 
     cliOutput.success(chalk.green.bold('\n✅ Setup complete!\n'));
     cliOutput.status(chalk.gray(`Configuration saved to: ${envPath}\n`));

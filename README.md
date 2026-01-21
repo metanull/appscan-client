@@ -69,32 +69,60 @@ Configuration file location:
 Create `.env` file:
 
 ```env
+# AppScan on Cloud (ASoC) Configuration
 APPSCAN_API_KEY=your_api_key_here
 APPSCAN_API_SECRET=your_api_secret_here
 APPSCAN_BASE_URL=https://cloud.appscan.com
 
+# Azure DevOps (AzDO) Configuration
+AZURE_DEVOPS_ORG=your-organization
+AZURE_DEVOPS_BASE_URL=https://dev.azure.com
+AZDO_PAT=your_personal_access_token_here
+
+# Jira Integration (Optional, for both ASoC and AzDO)
 JIRA_HOST=https://your-domain.atlassian.net
 JIRA_EMAIL=your_email@example.com
 JIRA_API_TOKEN=your_jira_api_token_here
 JIRA_PROJECT_KEY=PROJ
 
-AZURE_DEVOPS_ORG=your-organization
-AZURE_DEVOPS_BASE_URL=https://dev.azure.com
-
+# Confluence (Optional)
 CONFLUENCE_HOST=https://your-domain.atlassian.net
 ```
+
+**Azure DevOps Setup:**
+
+To use the Azure DevOps TUI, you need:
+1. An Azure DevOps organization with GitHub Advanced Security (GHAS) enabled
+2. A Personal Access Token (PAT) with appropriate permissions:
+   - `Advanced Security: Read` - to read alerts
+   - `Advanced Security: Write` - to update alert states
+   - `Code: Read` - to access repositories
+   - `Project and Team: Read` - to list projects
+
+Generate a PAT at: `https://dev.azure.com/{your-org}/_usersSettings/tokens`
+
 
 ## Usage
 
 ### Interactive TUI Mode
 
-Launch terminal UI for vulnerability triage:
+#### AppScan on Cloud (ASoC) TUI
+
+Launch terminal UI for AppScan vulnerability triage:
 
 ```bash
-appscan
+appscan asoc
 ```
 
-**Keyboard Shortcuts:**
+#### Azure DevOps (AzDO) TUI
+
+Launch terminal UI for Azure DevOps GHAS alert triage:
+
+```bash
+appscan azdo
+```
+
+**Keyboard Shortcuts (ASoC):**
 - `↑/↓` - Navigate list
 - `Enter` - View details (open details modal)
 - `Space` - Toggle selection (moves to next item)
@@ -123,6 +151,25 @@ appscan
 - `d` - Toggle details pane
 - `h` / `?` - Help
 - `Ctrl+D` / `Alt+D` - Enable / Disable debug mode
+- `Ctrl+Q` - Quit
+
+**Keyboard Shortcuts (AzDO):**
+- `↑/↓` - Navigate list
+- `Space` - Toggle alert selection
+- `Ctrl+A` - Select all alerts
+- `Alt+A` - Clear selection
+- `Ctrl+O` - Open project selector
+- `Ctrl+W` - Open repository selector
+- `s` - Update alert state (Active/Dismissed/Fixed)
+- `v` - Update alert severity
+- `f` - Open filter modal (by state, severity, type)
+- `/` - Open search modal
+- `Alt+F` - Clear filters
+- `o` - Sort (severity, name, state, type)
+- `c` - Toggle context pane
+- `d` - Toggle details pane
+- `r` - Reload alerts
+- `h` / `?` - Help
 - `Ctrl+Q` - Quit
 
 ### CLI Commands
@@ -201,6 +248,67 @@ appscan generate-markdown-api-report Scan <scanId>
 # Yearly summary
 appscan yearly-summary [year]
 ```
+
+### Azure DevOps CLI Commands
+
+#### Organization & Projects
+
+```bash
+# Get organization details
+appscan get-azdo-organization
+appscan azdo-org --json
+
+# List projects
+appscan list-azdo-applications
+appscan azdo-apps --json
+
+# Get project details
+appscan get-azdo-application <projectId>
+appscan azdo-app "MyProject" --json
+```
+
+#### Repositories
+
+```bash
+# List repositories in a project
+appscan list-azdo-repositories --appId <projectId>
+appscan azdo-repos --appId "MyProject"
+
+# Get repository details
+appscan get-azdo-repository --appId <projectId> --repositoryId <repoId>
+appscan azdo-repo --appId "MyProject" --repositoryId "MyRepo"
+```
+
+#### Alerts (Security Issues)
+
+```bash
+# List alerts in a repository
+appscan list-azdo-issues --appId <projectId> --repositoryId <repoId>
+appscan azdo-issues --appId "MyProject" --repositoryId "MyRepo" --type secret
+appscan azdo-issues --appId "MyProject" --repositoryId "MyRepo" --severity high
+
+# List all alerts in a project (across all repositories)
+appscan list-azdo-issues-by-app --appId <projectId>
+appscan azdo-app-issues --appId "MyProject" --type code --severity critical
+
+# Get alert details
+appscan get-azdo-issue-detail --appId <projectId> --repositoryId <repoId> --issueId 123
+appscan azdo-issue --appId "MyProject" --repositoryId "MyRepo" --issueId 123 --json
+
+# Update alert
+appscan update-azdo-issue --appId <projectId> --repositoryId <repoId> --issueId 123 --status Dismissed --reason FalsePositive --comment "Not a real vulnerability"
+appscan azdo-update --appId "MyProject" --repositoryId "MyRepo" --issueId 123 --status Fixed
+appscan azdo-update --appId "MyProject" --repositoryId "MyRepo" --issueId 123 --status Active
+
+# Valid states: Active, Dismissed, Fixed
+# Valid dismissal reasons: Fixed, AcceptedRisk, FalsePositive, AgreedToGuidance, ToolUpgrade
+```
+
+#### Filtering Options (Azure DevOps)
+
+- `--type <value>` - Filter by alert type: `unknown`, `dependency`, `secret`, `code`, `license`
+- `--severity <value>` - Filter by severity: `low`, `medium`, `high`, `critical`, `note`, `warning`, `error`
+- `--json` - JSON output
 
 #### Advanced Triage
 

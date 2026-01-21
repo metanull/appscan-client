@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fs from 'fs';
-import { auditService } from '../../src/tui/utils/audit.js';
+import { auditService } from '../../src/tui/shared/utils/audit.js';
 
 describe('AuditService', () => {
   let appendSpy;

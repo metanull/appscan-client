@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { JiraService } from '../../../src/tui/services/jira.js';
+import { JiraService } from '../../../src/tui/shared/services/jira.js';
 
 function makeJiraService() {
   const config = {

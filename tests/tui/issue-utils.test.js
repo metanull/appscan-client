@@ -6,7 +6,7 @@ import {
   getStatusBadge,
   filterIssues,
   formatIssueForDisplay,
-} from '../../src/tui/utils/issue-utils.js';
+} from '../../src/tui/apps/asoc/utils/issue.js';
 
 const sampleIssues = [
   {
