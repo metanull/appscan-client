@@ -1161,7 +1161,18 @@ export const AzdoApp = ({ configPath }) => {
           }}
           onClose={() => setActiveModal(null)}
           onRequestTextInput={(config) => {
-            setTextInputConfig(config);
+            setTextInputConfig({
+              ...config,
+              onComplete: (value) => {
+                // Return to modal and trigger submit
+                setTextInputConfig(null);
+                config.onComplete(value);
+              },
+              onCancel: () => {
+                // Return to modal
+                setTextInputConfig(null);
+              },
+            });
             setActiveModal(null);
           }}
           parseAlertMetadata={parseAlertMetadata}
