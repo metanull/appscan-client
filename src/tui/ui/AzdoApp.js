@@ -4,8 +4,7 @@
  */
 
 import React, { useState, useCallback, useMemo, useRef } from 'react';
-import { Box, Text, useApp, useInput } from 'ink';
-import TextInput from 'ink-text-input';
+import { Box, Text, useApp } from 'ink';
 import Spinner from 'ink-spinner';
 import { useAzdoStore } from '../state/AppContextAzdo.js';
 import {
@@ -25,6 +24,8 @@ import { AlertDetailsModal } from './components/AlertDetailsModal.js';
 import { AlertLinksModal } from './components/AlertLinksModal.js';
 import { LinkAzdoJiraModal } from './components/LinkAzdoJiraModal.js';
 import { UnlinkAzdoJiraModal } from './components/UnlinkAzdoJiraModal.js';
+import { ProjectSelectionWindow } from './components/ProjectSelectionWindow.js';
+import { RepositorySelectionWindow } from './components/RepositorySelectionWindow.js';
 import { SearchModal } from './SearchModal.js';
 import { FilterAzdoModal } from './FilterAzdoModal.js';
 import { UpdateAzdoStatusModal } from './UpdateAzdoStatusModal.js';
@@ -394,343 +395,6 @@ const StatusBar = React.memo(({ error, loading, message }) => {
 StatusBar.displayName = 'StatusBar';
 
 /**
- * Project Selection Window with search and keyboard navigation
- */
-const ProjectSelectionWindow = ({
-  projects,
-  onSelect,
-  onCancel,
-  azdoService,
-}) => {
-  const { height } = useTerminalSize();
-  const [searchText, setSearchText] = React.useState('');
-  const [debouncedSearchText, setDebouncedSearchText] = React.useState('');
-  const [cursor, setCursor] = React.useState(0);
-  const [alertCounts, setAlertCounts] = React.useState({});
-  const [loadingCounts, setLoadingCounts] = React.useState(true);
-
-  // Load alert counts for all projects on mount
-  React.useEffect(() => {
-    let isMounted = true;
-
-    const loadCounts = async () => {
-      const counts = {};
-      for (const project of projects) {
-        try {
-          counts[project.id] = await azdoService.getProjectAlertCount(
-            project.id
-          );
-        } catch {
-          counts[project.id] = 0;
-        }
-      }
-
-      if (isMounted) {
-        setAlertCounts(counts);
-        setLoadingCounts(false);
-      }
-    };
-
-    loadCounts();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [projects, azdoService]);
-
-  // Debounce search text to avoid filtering on every keystroke
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchText(searchText);
-    }, 200);
-
-    return () => clearTimeout(timer);
-  }, [searchText]);
-
-  // Filter projects based on search text
-  const filteredProjects = React.useMemo(() => {
-    if (!debouncedSearchText) return projects;
-
-    const search = debouncedSearchText.toLowerCase();
-    return projects.filter(
-      (project) =>
-        project.name?.toLowerCase().includes(search) ||
-        project.description?.toLowerCase().includes(search)
-    );
-  }, [projects, debouncedSearchText]);
-
-  // Reset cursor when filtered list changes
-  React.useEffect(() => {
-    setCursor(0);
-  }, [filteredProjects.length]);
-
-  // Keyboard input handler
-  useInput((input, key) => {
-    if (key.escape) {
-      onCancel();
-      return;
-    }
-
-    if (key.return && filteredProjects[cursor]) {
-      onSelect(filteredProjects[cursor]);
-      return;
-    }
-
-    if (key.upArrow) {
-      setCursor((prev) => Math.max(0, prev - 1));
-      return;
-    }
-
-    if (key.downArrow) {
-      setCursor((prev) => Math.min(filteredProjects.length - 1, prev + 1));
-      return;
-    }
-  });
-
-  const renderItem = React.useCallback(
-    (project, isSelected) => {
-      const alertCount = alertCounts[project.id];
-      const countDisplay = loadingCounts ? '...' : alertCount || 0;
-
-      return (
-        <Box>
-          <Text color={isSelected ? 'cyan' : undefined} bold={isSelected}>
-            {isSelected ? '▶ ' : '  '}
-            {project.name}
-          </Text>
-          <Text dimColor> (</Text>
-          <Text color={alertCount > 0 ? 'red' : 'gray'}>{countDisplay}</Text>
-          <Text dimColor> alerts)</Text>
-        </Box>
-      );
-    },
-    [alertCounts, loadingCounts]
-  );
-
-  const visibleRows = Math.max(5, height - 12);
-
-  return (
-    <Box flexDirection="column" padding={2}>
-      <Box
-        borderStyle="round"
-        borderColor="cyan"
-        flexDirection="column"
-        padding={1}
-      >
-        <Text bold color="cyan">
-          Select Azure DevOps Project
-        </Text>
-
-        {/* Search box */}
-        <Box flexDirection="column" marginTop={1} marginBottom={1}>
-          <Text dimColor>Search: </Text>
-          <TextInput
-            value={searchText}
-            onChange={setSearchText}
-            placeholder="Type to search..."
-          />
-        </Box>
-
-        {/* List */}
-        <Box marginTop={1}>
-          <ScrollableList
-            items={filteredProjects}
-            cursor={cursor}
-            renderItem={renderItem}
-            visibleRows={visibleRows}
-            emptyMessage="No projects found"
-          />
-        </Box>
-
-        {/* Footer */}
-        <Box marginTop={1}>
-          <Text dimColor>
-            {filteredProjects.length} of {projects.length} projects
-          </Text>
-        </Box>
-
-        <Box marginTop={1}>
-          <Text dimColor>↑↓: Navigate | Enter: Select | ESC: Cancel</Text>
-        </Box>
-      </Box>
-    </Box>
-  );
-};
-ProjectSelectionWindow.displayName = 'ProjectSelectionWindow';
-
-/**
- * Repository Selection Window with search and keyboard navigation
- */
-const RepositorySelectionWindow = ({
-  repositories,
-  onSelect,
-  onCancel,
-  azdoService,
-  selectedProject,
-}) => {
-  const { height } = useTerminalSize();
-  const [searchText, setSearchText] = React.useState('');
-  const [debouncedSearchText, setDebouncedSearchText] = React.useState('');
-  const [cursor, setCursor] = React.useState(0);
-  const [alertCounts, setAlertCounts] = React.useState({});
-  const [loadingCounts, setLoadingCounts] = React.useState(true);
-
-  // Load alert counts for all repositories on mount
-  React.useEffect(() => {
-    let isMounted = true;
-
-    const loadCounts = async () => {
-      if (!selectedProject?.id) {
-        setLoadingCounts(false);
-        return;
-      }
-
-      const counts = {};
-      for (const repo of repositories) {
-        try {
-          counts[repo.id] = await azdoService.getRepositoryAlertCount(
-            selectedProject.id,
-            repo.id
-          );
-        } catch {
-          counts[repo.id] = 0;
-        }
-      }
-
-      if (isMounted) {
-        setAlertCounts(counts);
-        setLoadingCounts(false);
-      }
-    };
-
-    loadCounts();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [repositories, azdoService, selectedProject]);
-
-  // Debounce search text to avoid filtering on every keystroke
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchText(searchText);
-    }, 200);
-
-    return () => clearTimeout(timer);
-  }, [searchText]);
-
-  // Filter repositories based on search text
-  const filteredRepositories = React.useMemo(() => {
-    if (!debouncedSearchText) return repositories;
-
-    const search = debouncedSearchText.toLowerCase();
-    return repositories.filter(
-      (repo) =>
-        repo.name?.toLowerCase().includes(search) ||
-        repo.description?.toLowerCase().includes(search)
-    );
-  }, [repositories, debouncedSearchText]);
-
-  // Reset cursor when filtered list changes
-  React.useEffect(() => {
-    setCursor(0);
-  }, [filteredRepositories.length]);
-
-  // Keyboard input handler
-  useInput((input, key) => {
-    if (key.escape) {
-      onCancel();
-      return;
-    }
-
-    if (key.return && filteredRepositories[cursor]) {
-      onSelect(filteredRepositories[cursor]);
-      return;
-    }
-
-    if (key.upArrow) {
-      setCursor((prev) => Math.max(0, prev - 1));
-      return;
-    }
-
-    if (key.downArrow) {
-      setCursor((prev) => Math.min(filteredRepositories.length - 1, prev + 1));
-      return;
-    }
-  });
-
-  const renderItem = React.useCallback(
-    (repo, isSelected) => {
-      const alertCount = alertCounts[repo.id];
-      const countDisplay = loadingCounts ? '...' : alertCount || 0;
-
-      return (
-        <Box>
-          <Text color={isSelected ? 'cyan' : undefined} bold={isSelected}>
-            {isSelected ? '▶ ' : '  '}
-            {repo.name}
-          </Text>
-          <Text dimColor> (</Text>
-          <Text color={alertCount > 0 ? 'red' : 'gray'}>{countDisplay}</Text>
-          <Text dimColor> alerts)</Text>
-        </Box>
-      );
-    },
-    [alertCounts, loadingCounts]
-  );
-
-  const visibleRows = Math.max(5, height - 12);
-
-  return (
-    <Box flexDirection="column" padding={2}>
-      <Box
-        borderStyle="round"
-        borderColor="cyan"
-        flexDirection="column"
-        padding={1}
-      >
-        <Text bold color="cyan">
-          Select Repository
-        </Text>
-
-        {/* Search box */}
-        <Box flexDirection="column" marginTop={1} marginBottom={1}>
-          <Text dimColor>Search: </Text>
-          <TextInput
-            value={searchText}
-            onChange={setSearchText}
-            placeholder="Type to search..."
-          />
-        </Box>
-
-        {/* List */}
-        <Box marginTop={1}>
-          <ScrollableList
-            items={filteredRepositories}
-            cursor={cursor}
-            renderItem={renderItem}
-            visibleRows={visibleRows}
-            emptyMessage="No repositories found"
-          />
-        </Box>
-
-        {/* Footer */}
-        <Box marginTop={1}>
-          <Text dimColor>
-            {filteredRepositories.length} of {repositories.length} repositories
-          </Text>
-        </Box>
-
-        <Box marginTop={1}>
-          <Text dimColor>↑↓: Navigate | Enter: Select | ESC: Cancel</Text>
-        </Box>
-      </Box>
-    </Box>
-  );
-};
-RepositorySelectionWindow.displayName = 'RepositorySelectionWindow';
-
-/**
  * Main TUI application component with 3-pane layout
  */
 export const AzdoApp = ({ configPath }) => {
@@ -751,6 +415,7 @@ export const AzdoApp = ({ configPath }) => {
   const [showContextPane, setShowContextPane] = useState(true);
   const [showDetailsPane, setShowDetailsPane] = useState(true);
   const [activeModal, setActiveModal] = useState(null);
+  const [textInputConfig, setTextInputConfig] = useState(null);
   const [standaloneWindow, setStandaloneWindow] = useState(null);
   const [debugMode] = useState(false);
   const [debugMessage, setDebugMessage] = useState('');
@@ -1267,7 +932,7 @@ export const AzdoApp = ({ configPath }) => {
 
   // Register general shortcuts (always enabled)
   useKeyboardShortcuts('general', generalShortcuts, {
-    enabled: !activeModal && !standaloneWindow,
+    enabled: !activeModal && !standaloneWindow && !textInputConfig,
   });
 
   // Register alert-list shortcuts
@@ -1368,15 +1033,17 @@ export const AzdoApp = ({ configPath }) => {
     );
   }
 
-  if (standaloneWindow?.type === 'text-input') {
+  // If text input page is active, render ONLY that (no Layout, no other components)
+  if (textInputConfig) {
     return (
       <TextInputPage
-        {...standaloneWindow.config}
-        onSubmit={(value) => {
-          standaloneWindow.config.onComplete(value);
-          setStandaloneWindow(null);
-        }}
-        onCancel={() => setStandaloneWindow(null)}
+        title={textInputConfig.title}
+        subtitle={textInputConfig.subtitle}
+        borderColor={textInputConfig.borderColor}
+        placeholder={textInputConfig.placeholder}
+        initialValue={textInputConfig.initialValue}
+        onSubmit={textInputConfig.onComplete}
+        onCancel={textInputConfig.onCancel}
       />
     );
   }
@@ -1494,10 +1161,7 @@ export const AzdoApp = ({ configPath }) => {
           }}
           onClose={() => setActiveModal(null)}
           onRequestTextInput={(config) => {
-            setStandaloneWindow({
-              type: 'text-input',
-              config,
-            });
+            setTextInputConfig(config);
             setActiveModal(null);
           }}
           parseAlertMetadata={parseAlertMetadata}
