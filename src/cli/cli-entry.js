@@ -815,7 +815,7 @@ Examples:
   $ appscan asoc`
   )
   .action(async () => {
-    const { launchTUI } = await import('../tui/tui-entry.js');
+    const { launchTUI } = await import('../tui/asoc-entry.js');
     await launchTUI({ config: null });
   });
 
@@ -829,7 +829,7 @@ Examples:
   $ appscan azdo`
   )
   .action(async () => {
-    const { launchAzdoTUI } = await import('../tui/tui-azdo-entry.js');
+    const { launchAzdoTUI } = await import('../tui/azdo-entry.js');
     await launchAzdoTUI({ config: null });
   });
 

@@ -12,6 +12,7 @@ import { KeyboardProvider } from './shared/utils/KeyboardManager.js';
 import { ErrorBoundary } from './shared/components/ErrorBoundary.js';
 import logger from '../utils/logger.js';
 import { getEnvPath } from '../utils/config-paths.js';
+import chalk from 'chalk';
 
 /**
  * Launch the Azure DevOps TUI application
@@ -20,11 +21,22 @@ import { getEnvPath } from '../utils/config-paths.js';
  */
 export async function launchAzdoTUI(options = {}) {
   // Enable TUI mode FIRST to disable console output
-  logger.setTuiMode(true);
+  logger.setTuiMode(false); // Temporarily disable for error messages
 
   const envPath = getEnvPath();
   if (fs.existsSync(envPath)) {
     dotenv.config({ path: envPath });
+  }
+
+  // Check for required environment variables
+  if (!process.env.AZURE_DEVOPS_ORG || !process.env.AZURE_DEVOPS_PAT) {
+    console.error(chalk.red('\n❌ Missing required environment variables!\n'));
+    console.error(chalk.yellow('Required variables:'));
+    console.error(chalk.white('  - AZURE_DEVOPS_ORG'));
+    console.error(chalk.white('  - AZURE_DEVOPS_PAT\n'));
+    console.error(chalk.cyan('Please run the setup wizard first:'));
+    console.error(chalk.white('  ' + chalk.yellow('appscan setup') + '\n'));
+    process.exit(1);
   }
 
   // Log effective environment detection for debugging
@@ -35,6 +47,7 @@ export async function launchAzdoTUI(options = {}) {
     tokenPresent: !!process.env.AZURE_DEVOPS_PAT,
   });
 
+  logger.setTuiMode(true); // Enable TUI mode now
   logger.info('Starting Azure DevOps Ink TUI application');
   render(
     React.createElement(

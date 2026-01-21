@@ -1,0 +1,83 @@
+/**
+ * Modal wrapper component
+ * Centralizes modal rendering, overlay, and keyboard handling
+ */
+
+import React, { useEffect } from 'react';
+import { Box } from 'ink';
+import {
+  useKeyboardManager,
+  KeyboardMode,
+} from '../../shared/utils/KeyboardManager.js';
+
+/**
+ * Centered modal dialog wrapper with automatic keyboard mode management
+ * Automatically switches to MODAL keyboard mode when mounted
+ *
+ * @param {Object} props
+ * @param {JSX.Element} props.children - Modal content
+ * @param {Function} [props.onClose] - Close handler (currently unused)
+ * @param {boolean} [props.showOverlay=false] - Show dark overlay behind modal (causes text input lag if true)
+ * @param {number} [props.width=80] - Modal width percentage
+ * @param {number} [props.height=80] - Modal height percentage
+ * @returns {JSX.Element}
+ */
+export const Modal = ({
+  children,
+  onClose: _onClose,
+  showOverlay = false,
+  width = 80,
+  height = 80,
+}) => {
+  const { setKeyboardMode } = useKeyboardManager();
+
+  // Set keyboard mode to MODAL when mounted
+  useEffect(() => {
+    setKeyboardMode(KeyboardMode.MODAL);
+
+    return () => {
+      // Restore normal mode when unmounted
+      setKeyboardMode(KeyboardMode.NORMAL);
+    };
+  }, [setKeyboardMode]);
+
+  return (
+    <Box
+      position="absolute"
+      width="100%"
+      height="100%"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+    >
+      {/* Background overlay */}
+      {showOverlay && (
+        <Box
+          position="absolute"
+          width="100%"
+          height="100%"
+          backgroundColor="black"
+        >
+          {/* filler to ensure overlay shows on all terminals */}
+          <Box width="100%" height="100%" />
+        </Box>
+      )}
+
+      {/* Modal content */}
+      <Box
+        flexDirection="column"
+        width={`${width}%`}
+        maxHeight={`${height}%`}
+        borderStyle="double"
+        borderColor="cyan"
+        paddingX={2}
+        paddingY={1}
+        backgroundColor="black"
+      >
+        {children}
+      </Box>
+    </Box>
+  );
+};
+
+export default Modal;

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fs from 'fs';
-import * as ct from '../../src/tui/services/commentTemplates.js';
+import * as ct from '../../src/tui/shared/services/commentTemplates.js';
 
 const sampleContent = `# Comment Templates\n# Format: [IssueType]|Comment text\n\nSQLi|Remember to sanitize inputs\nXSS|Encode output\nInvalidLineWithoutSep\nSQLi|Use prepared statements\n`;
 
