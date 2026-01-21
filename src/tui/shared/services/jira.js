@@ -560,7 +560,7 @@ export class JiraService {
 
     // Group by alert type
     const grouped = alerts.reduce((acc, alert) => {
-      const type = alert.ruleName || 'Unknown';
+      const type = alert.ruleName || alert.title || 'Unknown';
       if (!acc[type]) acc[type] = [];
       acc[type].push(alert);
       return acc;
@@ -575,18 +575,69 @@ export class JiraService {
       for (let i = 0; i < typeAlerts.length; i++) {
         const alert = typeAlerts[i];
         const alertNumber = i + 1;
-        const location = alert.locations?.[0]?.logicalLocation || 'Unknown';
 
-        description += `## ${alertNumber}. ${location}\n\n`;
+        description += `## Alert ${alertNumber} (ID: ${alert.alertId})\n\n`;
         description += `- **Severity:** ${this.getSeverityName(alert.severity)}\n`;
         description += `- **State:** ${this.getStateName(alert.state)}\n`;
-        description += `- **Alert ID:** ${alert.alertId}\n`;
+        description += `- **Type:** ${this.getAlertTypeName(alert.alertType)}\n`;
 
-        if (alert.title) {
-          description += `\n**Title:** ${alert.title}\n\n`;
+        if (alert.title && alert.title !== type) {
+          description += `- **Title:** ${alert.title}\n`;
         }
 
-        description += '\n';
+        // Add truncated secret for secret alerts
+        if (alert.truncatedSecret) {
+          description += `- **Truncated Secret:** \`${alert.truncatedSecret}\`\n`;
+        }
+
+        // Add physical locations summary
+        if (alert.physicalLocations && alert.physicalLocations.length > 0) {
+          const distinctFiles = new Set(
+            alert.physicalLocations.map((loc) => loc.filePath)
+          );
+          description += `- **Locations:** ${alert.physicalLocations.length} occurrence(s) in ${distinctFiles.size} file(s)\n`;
+
+          // List distinct files
+          if (distinctFiles.size > 0) {
+            description += `\n**Affected Files:**\n`;
+            for (const filePath of distinctFiles) {
+              const occurrencesInFile = alert.physicalLocations.filter(
+                (loc) => loc.filePath === filePath
+              ).length;
+              description += `- \`${filePath}\` (${occurrencesInFile} occurrence${occurrencesInFile > 1 ? 's' : ''})\n`;
+            }
+          }
+        }
+
+        // Add tools/remediation information
+        if (alert.tools && alert.tools.length > 0) {
+          description += `\n**Remediation Information:**\n\n`;
+          for (const tool of alert.tools) {
+            if (tool.rules && tool.rules.length > 0) {
+              for (const rule of tool.rules) {
+                if (rule.description) {
+                  description += `**Description:** ${rule.description}\n\n`;
+                }
+                if (rule.helpMessage) {
+                  description += `**Remediation Steps:**\n\n${rule.helpMessage}\n\n`;
+                }
+                if (rule.resources) {
+                  description += `**Resources:** ${rule.resources}\n\n`;
+                }
+              }
+            }
+          }
+        }
+
+        // Add dates
+        if (alert.introducedDate) {
+          description += `\n**Introduced:** ${new Date(alert.introducedDate).toLocaleString()}\n`;
+        }
+        if (alert.firstSeenDate) {
+          description += `**First Seen:** ${new Date(alert.firstSeenDate).toLocaleString()}\n`;
+        }
+
+        description += '\n---\n\n';
       }
     }
 

@@ -466,6 +466,83 @@ export const IssueModal = React.memo(
                       </Box>
                     )}
 
+                  {/* Locations Summary */}
+                  {alert.physicalLocations &&
+                    alert.physicalLocations.length > 0 && (
+                      <Box
+                        flexDirection="column"
+                        borderStyle="single"
+                        borderColor="cyan"
+                        paddingX={1}
+                        marginTop={1}
+                      >
+                        <Text color="cyan" bold>
+                          Locations Summary
+                        </Text>
+                        <Box marginTop={1}>
+                          <Box width={18}>
+                            <Text bold>Total Locations:</Text>
+                          </Box>
+                          <Text wrap="wrap" color="yellow" bold>
+                            {alert.physicalLocations.length}
+                          </Text>
+                        </Box>
+                        <Box>
+                          <Box width={18}>
+                            <Text bold>Distinct Files:</Text>
+                          </Box>
+                          <Text wrap="wrap" color="yellow" bold>
+                            {
+                              new Set(
+                                alert.physicalLocations.map(
+                                  (loc) => loc.filePath
+                                )
+                              ).size
+                            }
+                          </Text>
+                        </Box>
+                        <Box marginTop={1}>
+                          <Text dimColor>
+                            View the [Locations] tab for details
+                          </Text>
+                        </Box>
+                      </Box>
+                    )}
+
+                  {/* Tools/Remediation Preview */}
+                  {alert.tools && alert.tools.length > 0 && (
+                    <Box
+                      flexDirection="column"
+                      borderStyle="single"
+                      borderColor="magenta"
+                      paddingX={1}
+                      marginTop={1}
+                    >
+                      <Text color="magenta" bold>
+                        Remediation Information
+                      </Text>
+                      {alert.tools[0]?.rules?.[0]?.helpMessage && (
+                        <Box marginTop={1} flexDirection="column">
+                          <Text wrap="wrap">
+                            {alert.tools[0].rules[0].helpMessage.substring(
+                              0,
+                              200
+                            )}
+                            {alert.tools[0].rules[0].helpMessage.length > 200
+                              ? '...'
+                              : ''}
+                          </Text>
+                          {alert.tools[0].rules[0].helpMessage.length > 200 && (
+                            <Text dimColor marginTop={1}>
+                              View the [Tools] tab for complete remediation
+                              steps
+                            </Text>
+                          )}
+                        </Box>
+                      )}
+                    </Box>
+                  )}
+
                   {/* Additional Properties */}
                   {alert.additionalProperties && (
                     <Box
