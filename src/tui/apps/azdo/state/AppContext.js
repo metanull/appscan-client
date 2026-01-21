@@ -39,6 +39,8 @@ export const useStore = create((set, get) => ({
   repositorySearchText: null,
   repositoryFilterType: null,
   hideEmptyRepositories: true,
+  filterPreset: null, // 'active' | 'inactive' | 'dismissed-unknown' | 'fixed-or-known' | 'unassigned' | 'assigned' | 'low' | 'medium' | 'high'
+  excludeFalsePositive: false,
 
   // UI state
   loading: false,
@@ -162,6 +164,8 @@ export const useStore = create((set, get) => ({
   setRepositorySearchText: (text) => set({ repositorySearchText: text }),
   setRepositoryFilterType: (type) => set({ repositoryFilterType: type }),
   setHideEmptyRepositories: (hide) => set({ hideEmptyRepositories: hide }),
+  setFilterPreset: (preset) => set({ filterPreset: preset }),
+  setExcludeFalsePositive: (exclude) => set({ excludeFalsePositive: exclude }),
 
   clearFilters: () =>
     set({
@@ -173,7 +177,27 @@ export const useStore = create((set, get) => ({
       repositorySearchText: null,
       repositoryFilterType: null,
       selectedAlertIds: [],
+      filterPreset: null,
+      excludeFalsePositive: false,
     }),
+
+  // Check if any filters are active
+  hasActiveFilters: () => {
+    const {
+      filterState,
+      filterSeverity,
+      filterAlertType,
+      filterJira,
+      searchText,
+    } = get();
+    return !!(
+      filterState ||
+      filterSeverity ||
+      filterAlertType ||
+      filterJira ||
+      searchText
+    );
+  },
 
   // Actions - UI
   setLoading: (loading) => set({ loading }),
@@ -268,6 +292,8 @@ export const useStore = create((set, get) => ({
       repositorySearchText: null,
       repositoryFilterType: null,
       hideEmptyRepositories: true,
+      filterPreset: null,
+      excludeFalsePositive: false,
       loading: false,
       error: null,
       showHelp: false,

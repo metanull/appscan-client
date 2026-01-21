@@ -37,6 +37,7 @@ import { useTerminalSize } from '../../shared/hooks/useTerminalSize.js';
 import { useKeyboardShortcuts } from '../../shared/hooks/useKeyboardShortcuts.js';
 import logger from '../../../utils/logger.js';
 import { getPackageInfo } from '../../../utils/package-info.js';
+import open from 'open';
 
 /**
  * Context pane displaying selected project and repository information
@@ -435,6 +436,7 @@ export const App = ({ configPath }) => {
   const searchText = useStore((state) => state.searchText);
   const sortBy = useStore((state) => state.sortBy);
   const selectedAlertIds = useStore((state) => state.selectedAlertIds);
+  const excludeFalsePositive = useStore((state) => state.excludeFalsePositive);
 
   // Setup logger debug callback on mount
   React.useEffect(() => {
@@ -640,6 +642,50 @@ export const App = ({ configPath }) => {
     ]
   );
 
+  // Apply filter presets
+  const applyFilterPreset = useCallback((preset) => {
+    const store = useStore.getState();
+    store.clearFilters();
+    store.setFilterPreset(preset);
+
+    switch (preset) {
+      case 'active':
+        store.setFilterState(1); // Active
+        break;
+      case 'inactive':
+        // Dismissed (2 or 8) OR Fixed (4)
+        store.setFilterState([2, 8, 4]);
+        break;
+      case 'dismissed-unknown':
+        // Dismissed with DismissalType = Unknown (0)
+        store.setFilterState(2);
+        // Note: Additional filtering for DismissalType needs to be done in filterIssues
+        break;
+      case 'fixed-or-known':
+        // Fixed (4) OR (Dismissed with DismissalType != Unknown)
+        // This requires special handling in filterIssues
+        store.setFilterState([2, 8, 4]);
+        break;
+      case 'unassigned':
+        store.setFilterJira('without');
+        break;
+      case 'assigned':
+        store.setFilterJira('with');
+        break;
+      case 'low':
+        store.setFilterSeverity(1);
+        break;
+      case 'medium':
+        store.setFilterSeverity(2);
+        break;
+      case 'high':
+        store.setFilterSeverity(3);
+        break;
+      default:
+        break;
+    }
+  }, []);
+
   // Define keyboard shortcuts for alert-list view
   const alertListShortcuts = useMemo(
     () => [
@@ -669,14 +715,88 @@ export const App = ({ configPath }) => {
         condition: () => !!currentAlert,
         group: 'Navigation',
       },
-
-      // Actions
       {
-        key: 'l',
-        action: () => currentAlert && setActiveModal('links'),
-        description: 'Links',
-        condition: () => !!currentAlert,
-        group: 'Actions',
+        key: 'leftarrow',
+        action: () => {
+          if (currentAlert && currentAlert.url) {
+            open(currentAlert.url).catch(() => {
+              // Silently fail if we can't open the link
+            });
+          }
+        },
+        description: 'Open Alert',
+        condition: () => !!currentAlert && !!currentAlert.url,
+        group: 'Navigation',
+        hint: true,
+      },
+      {
+        key: 'rightarrow',
+        action: () => {
+          if (
+            currentAlert &&
+            currentAlert.physicalLocations &&
+            currentAlert.physicalLocations.length > 0
+          ) {
+            const location = currentAlert.physicalLocations[0];
+            if (location.versionControl?.itemUrl) {
+              open(location.versionControl.itemUrl).catch(() => {
+                // Silently fail if we can't open the link
+              });
+            }
+          }
+        },
+        description: 'Open Code',
+        condition: () => {
+          if (
+            !currentAlert ||
+            !currentAlert.physicalLocations ||
+            currentAlert.physicalLocations.length === 0
+          ) {
+            return false;
+          }
+          const location = currentAlert.physicalLocations[0];
+          return !!location.versionControl?.itemUrl;
+        },
+        group: 'Navigation',
+        hint: true,
+      },
+      {
+        key: 'ctrl+rightarrow',
+        action: () => {
+          const metadata = parseAlertMetadata(currentAlert);
+          if (metadata.jiraId && azdoService) {
+            const jiraHost = azdoService.getConfig().getJiraHost();
+            if (jiraHost) {
+              const jiraUrl = `${jiraHost}/browse/${metadata.jiraId}`;
+              open(jiraUrl).catch(() => {
+                // Silently fail if we can't open the link
+              });
+            }
+          }
+        },
+        description: 'Open Jira',
+        condition: () => {
+          if (!currentAlert) return false;
+          const metadata = parseAlertMetadata(currentAlert);
+          return !!metadata.jiraId && !!azdoService?.getConfig().getJiraHost();
+        },
+        group: 'Navigation',
+        hint: true,
+      },
+      {
+        key: 'ctrl+leftarrow',
+        action: () => {
+          if (selectedRepository && selectedProject) {
+            const orgUrl = azdoService?.getBaseUrl() || 'https://dev.azure.com';
+            const repoUrl = `${orgUrl}/${encodeURIComponent(selectedProject.name)}/_git/${selectedRepository.id}`;
+            open(repoUrl).catch(() => {
+              // Silently fail if we can't open the link
+            });
+          }
+        },
+        description: 'Open Repository',
+        condition: () => !!selectedRepository && !!selectedProject,
+        group: 'Navigation',
         hint: true,
       },
 
@@ -709,52 +829,53 @@ export const App = ({ configPath }) => {
         group: 'Selection',
       },
 
-      // Update actions
+      // Actions
+      {
+        key: 'l',
+        action: () => currentAlert && setActiveModal('links'),
+        description: 'Links',
+        condition: () => !!currentAlert,
+        group: 'Actions',
+      },
+      {
+        key: 'u',
+        action: () => currentAlert && setActiveModal('update-status'),
+        description: 'Update State',
+        condition: () => !!currentAlert,
+        group: 'Actions',
+      },
       {
         key: 's',
-        action: () => {
-          if (selectedAlertIds.length > 0) {
-            setActiveModal('update-status');
-          }
-        },
-        description: 'Update State',
-        condition: () => selectedAlertIds.length > 0,
-        group: 'Update',
+        action: () => currentAlert && setActiveModal('update-severity'),
+        description: 'Update Severity',
+        condition: () => !!currentAlert,
+        group: 'Actions',
       },
       {
-        key: 'v',
-        action: () => {
-          if (selectedAlertIds.length > 0) {
-            setActiveModal('update-severity');
-          }
-        },
-        description: 'Update Severity',
-        condition: () => selectedAlertIds.length > 0,
-        group: 'Update',
+        key: 'j',
+        action: () => currentAlert && setActiveModal('jira'),
+        description: 'Jira',
+        condition: () => !!currentAlert,
+        group: 'Actions',
       },
-
-      // Jira Integration
       {
         key: 'ctrl+k',
-        action: () => {
-          if (selectedAlertIds.length > 0) {
-            setActiveModal('link-jira');
-          }
-        },
+        action: () => setActiveModal('link-jira'),
         description: 'Link Jira',
         condition: () => selectedAlertIds.length > 0,
-        group: 'Jira',
+        group: 'Actions',
       },
       {
         key: 'alt+k',
-        action: () => {
-          if (selectedAlertIds.length > 0) {
-            setActiveModal('unlink-jira');
-          }
-        },
+        action: () => setActiveModal('unlink-jira'),
         description: 'Unlink Jira',
-        condition: () => selectedAlertIds.length > 0,
-        group: 'Jira',
+        condition: () =>
+          selectedAlertIds.length > 0 &&
+          selectedAlerts.some((alert) => {
+            const metadata = parseAlertMetadata(alert);
+            return !!metadata.jiraId;
+          }),
+        group: 'Actions',
       },
 
       // Filtering
@@ -771,77 +892,115 @@ export const App = ({ configPath }) => {
         description: 'Search',
         group: 'Filtering',
       },
-      {
-        key: 'alt+f',
-        action: async () => {
-          const store = useStore.getState();
-          store.clearFilters();
-          await reloadAlerts();
-        },
-        description: 'Clear Filters',
-        group: 'Filtering',
-      },
-
-      // Filter Presets - State
+      // Filter Presets - Status
       {
         key: '1',
-        action: () => {
-          useStore.getState().setFilterState(1); // Active
-        },
-        description: 'Active State',
+        action: () => applyFilterPreset('active'),
+        description: 'Active Status',
         condition: () => !!selectedRepository,
         group: 'Filter Presets',
-        hint: true,
+      },
+      {
+        key: 'alt+1',
+        action: () => applyFilterPreset('inactive'),
+        description: 'Inactive Status',
+        condition: () => !!selectedRepository,
+        group: 'Filter Presets',
       },
       {
         key: '2',
-        action: () => {
-          useStore.getState().setFilterState(2); // Dismissed
-        },
-        description: 'Dismissed State',
+        action: () => applyFilterPreset('dismissed-unknown'),
+        description: 'Dismissed Unknown',
         condition: () => !!selectedRepository,
         group: 'Filter Presets',
-        hint: true,
       },
       {
-        key: '3',
-        action: () => {
-          useStore.getState().setFilterState(4); // Fixed
-        },
-        description: 'Fixed State',
+        key: 'alt+2',
+        action: () => applyFilterPreset('fixed-or-known'),
+        description: 'Fixed/Known',
         condition: () => !!selectedRepository,
         group: 'Filter Presets',
-        hint: true,
+      },
+      // Filter Presets - Jira
+      {
+        key: '3',
+        action: () => applyFilterPreset('unassigned'),
+        description: 'Jira Unassigned',
+        condition: () => !!selectedRepository,
+        group: 'Filter Presets',
+      },
+      {
+        key: 'alt+3',
+        action: () => applyFilterPreset('assigned'),
+        description: 'Jira Assigned',
+        condition: () => !!selectedRepository,
+        group: 'Filter Presets',
       },
       // Filter Presets - Severity
       {
         key: '4',
-        action: () => {
-          useStore.getState().setFilterSeverity(1); // Medium
-        },
-        description: 'Medium Severity',
+        action: () => applyFilterPreset('low'),
+        description: 'Low Severity',
         condition: () => !!selectedRepository,
         group: 'Filter Presets',
-        hint: true,
       },
       {
         key: '5',
-        action: () => {
-          useStore.getState().setFilterSeverity(2); // High
-        },
-        description: 'High Severity',
+        action: () => applyFilterPreset('medium'),
+        description: 'Medium Severity',
         condition: () => !!selectedRepository,
         group: 'Filter Presets',
-        hint: true,
       },
       {
         key: '6',
-        action: () => {
-          useStore.getState().setFilterSeverity(3); // Critical
-        },
-        description: 'Critical Severity',
+        action: () => applyFilterPreset('high'),
+        description: 'High Severity',
         condition: () => !!selectedRepository,
         group: 'Filter Presets',
+      },
+      {
+        key: 'alt+f',
+        action: async () => {
+          const store = useStore.getState();
+          const hasFilters = store.hasActiveFilters() || store.filterPreset;
+          if (hasFilters && selectedRepository?.id) {
+            store.clearFilters();
+            await reloadAlerts();
+          }
+        },
+        description: 'Clear Filters',
+        condition: () => {
+          const store = useStore.getState();
+          return store.hasActiveFilters() || store.filterPreset;
+        },
+        group: 'Filtering',
+      },
+      {
+        key: 'x',
+        action: async () => {
+          const store = useStore.getState();
+          if (!store.excludeFalsePositive) {
+            store.setExcludeFalsePositive(true);
+            await reloadAlerts();
+          }
+        },
+        description: 'Exclude False Positives',
+        condition: () => !!selectedRepository && !excludeFalsePositive,
+        group: 'Filtering',
+        hint: true,
+      },
+      {
+        key: 'alt+x',
+        action: async () => {
+          const store = useStore.getState();
+          if (store.excludeFalsePositive) {
+            store.setExcludeFalsePositive(false);
+            await reloadAlerts();
+          }
+        },
+        description: 'Include All',
+        condition: () => !!selectedRepository && excludeFalsePositive,
+        group: 'Filtering',
         hint: true,
       },
 
@@ -892,15 +1051,38 @@ export const App = ({ configPath }) => {
         group: 'General',
         hint: true,
       },
+      {
+        key: 'ctrl+d',
+        action: () => {
+          setDebugMode(true);
+          setDebugMessage('[DEBUG MODE ENABLED]');
+        },
+        description: 'Enable Debug',
+        group: 'Debug',
+      },
+      {
+        key: 'alt+d',
+        action: () => {
+          setDebugMode(false);
+          setDebugMessage('');
+        },
+        description: 'Disable Debug',
+        group: 'Debug',
+      },
     ],
     [
       currentAlert,
+      selectedAlerts,
       filteredAlerts.length,
       selectedAlertIds.length,
       selectedRepository,
+      selectedProject,
+      azdoService,
       flushCursorMove,
+      applyFilterPreset,
       reloadAlerts,
       alerts.length,
+      excludeFalsePositive,
     ]
   );
 
@@ -1143,7 +1325,7 @@ export const App = ({ configPath }) => {
       )}
       {activeModal === 'update-status' && (
         <UpdateStatusModal
-          alertCount={selectedAlertIds.length}
+          alertCount={selectedAlertIds.length > 0 ? selectedAlertIds.length : 1}
           alerts={selectedAlerts}
           onUpdate={async (
             state,
@@ -1180,7 +1362,7 @@ export const App = ({ configPath }) => {
       )}
       {activeModal === 'update-severity' && (
         <UpdateSeverityModal
-          alertCount={selectedAlertIds.length}
+          alertCount={selectedAlertIds.length > 0 ? selectedAlertIds.length : 1}
           alerts={selectedAlerts}
           onUpdate={(severity) => {
             handleBulkUpdateAlerts({ severity });
@@ -1214,6 +1396,59 @@ export const App = ({ configPath }) => {
           onClose={() => setActiveModal(null)}
         />
       )}
+      {activeModal === 'jira' &&
+        currentAlert &&
+        (() => {
+          const metadata = parseAlertMetadata(currentAlert);
+          const hasJira = !!metadata.jiraId;
+
+          if (hasJira) {
+            // Show unlink modal for single alert
+            return (
+              <UnlinkJiraModal
+                alertCount={1}
+                jiraKeys={[metadata.jiraId]}
+                onUnlink={async () => {
+                  await azdoService.unlinkJiraFromAlerts(
+                    selectedProject.name,
+                    selectedRepository.id,
+                    [currentAlert.alertId],
+                    null
+                  );
+                  logger.info('Alert unlinked from Jira', {
+                    alertId: currentAlert.alertId,
+                  });
+                  await reloadAlerts();
+                  setActiveModal(null);
+                }}
+                onClose={() => setActiveModal(null)}
+              />
+            );
+          } else {
+            // Show link modal for single alert
+            return (
+              <LinkJiraModal
+                alertCount={1}
+                onLink={async (jiraId) => {
+                  await azdoService.linkJiraToAlerts(
+                    selectedProject.name,
+                    selectedRepository.id,
+                    [currentAlert.alertId],
+                    jiraId,
+                    null
+                  );
+                  logger.info('Alert linked to Jira', {
+                    alertId: currentAlert.alertId,
+                    jiraId,
+                  });
+                  await reloadAlerts();
+                  setActiveModal(null);
+                }}
+                onClose={() => setActiveModal(null)}
+              />
+            );
+          }
+        })()}
       {activeModal === 'unlink-jira' && selectedAlertIds.length > 0 && (
         <UnlinkJiraModal
           alertCount={selectedAlertIds.length}
