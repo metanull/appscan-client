@@ -216,6 +216,20 @@ export const IssueModal = React.memo(
                     </Text>
                   </Box>
 
+                  {/* Truncated Secret for secret alerts */}
+                  {alert.truncatedSecret && (
+                    <Box>
+                      <Box width={18}>
+                        <Text bold color="cyan">
+                          Truncated Secret:
+                        </Text>
+                      </Box>
+                      <Text wrap="wrap" color="yellow" backgroundColor="black">
+                        {alert.truncatedSecret}
+                      </Text>
+                    </Box>
+                  )}
+
                   {/* Git ref */}
                   {alert.gitRef && (
                     <Box marginTop={1}>
