@@ -18,7 +18,9 @@ export class JiraDescriptionBuilder {
     this.app = app;
     this.scan = scan;
     this.sections = [];
-    this.maxBytes = 30000; // Leave some buffer under 32KB
+    // Jira description limit is ~32KB for ADF, but ADF is 3-5x larger than markdown
+    // Using 16KB markdown limit to ensure ADF stays under Jira's limit
+    this.maxBytes = 16000;
   }
 
   /**

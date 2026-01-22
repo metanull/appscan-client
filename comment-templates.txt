@@ -52,3 +52,6 @@ Cross-Site Scripting|In compliance with CyberSecurity Policy, only CRITICAL+HIGH
 Reflected Cross Site Scripting|False Positive
 Cross-Site Scripting|False Positive
 Azure DevOps legacy personal access token (PAT)|Example token, not an actual secret
+Log entries created from user input (cs/log-forging)|File no more in the repository
+Missing X-Frame-Options HTTP header (cs/web/missing-x-frame-options)|File no more in the repository
+Missing function level access control (cs/web/missing-function-level-access-control)|File no more in the repository
