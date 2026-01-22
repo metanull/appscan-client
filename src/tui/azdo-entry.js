@@ -30,12 +30,19 @@ export async function launchAzdoTUI(options = {}) {
 
   // Check for required environment variables
   if (!process.env.AZURE_DEVOPS_ORG || !process.env.AZURE_DEVOPS_PAT) {
-    console.error(chalk.red('\n❌ Missing required environment variables!\n'));
-    console.error(chalk.yellow('Required variables:'));
-    console.error(chalk.white('  - AZURE_DEVOPS_ORG'));
-    console.error(chalk.white('  - AZURE_DEVOPS_PAT\n'));
-    console.error(chalk.cyan('Please run the setup wizard first:'));
-    console.error(chalk.white('  ' + chalk.yellow('appscan setup') + '\n'));
+    const errorMsg = [
+      chalk.red('\n❌ Missing required environment variables!\n'),
+      chalk.yellow('Required variables:'),
+      chalk.white('  - AZURE_DEVOPS_ORG'),
+      chalk.white('  - AZURE_DEVOPS_PAT\n'),
+      chalk.cyan('Please run the setup wizard first:'),
+      chalk.white('  ' + chalk.yellow('appscan setup') + '\n'),
+    ].join('\n');
+    logger.error('Missing required Azure DevOps environment variables', null, {
+      AZURE_DEVOPS_ORG: !!process.env.AZURE_DEVOPS_ORG,
+      AZURE_DEVOPS_PAT: !!process.env.AZURE_DEVOPS_PAT,
+    }, { fileOnly: true });
+    process.stderr.write(errorMsg);
     process.exit(1);
   }
 

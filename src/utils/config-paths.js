@@ -34,8 +34,9 @@ export function getConfigDir() {
         mkdirSync(configDir, { recursive: true });
       }
     } catch (err) {
-      // Intentionally use stderr so that interactive runs surface the problem
-      console.error(`Failed to create config dir ${configDir}: ${err.message}`);
+      // Use stderr directly - cannot import logger due to circular dependency
+      // (logger depends on getLogsDir which depends on getConfigDir)
+      process.stderr.write(`Failed to create config dir ${configDir}: ${err.message}\n`);
     }
 
     return configDir;

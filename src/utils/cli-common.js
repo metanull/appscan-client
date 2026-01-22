@@ -7,6 +7,7 @@ import { Config } from './config.js';
 import { AppScanService } from '../services/appscan-service.js';
 import { JiraService } from '../services/jira-service.js';
 import { AzdoService } from '../services/azdo-service.js';
+import cliOutput from './cli-output.js';
 
 /**
  * Initialize AppScanService with config
@@ -57,10 +58,7 @@ export async function initializeAzdoService(configPath) {
  * @param {string} context - Optional context message
  */
 export function handleCommandError(error, context = 'Command failed') {
-  console.error(`❌ ${context}:`, error.message);
-  if (process.env.DEBUG) {
-    console.error(error);
-  }
+  cliOutput.error(`${context}: ${error.message}`, error);
   process.exit(1);
 }
 
@@ -74,11 +72,11 @@ export function handleCommandError(error, context = 'Command failed') {
  */
 export function outputData(data, jsonFormat, formatFunction = null) {
   if (jsonFormat) {
-    console.log(JSON.stringify(data, null, 2));
+    cliOutput.json(data);
   } else if (formatFunction) {
     formatFunction(data);
   } else {
-    console.log(data);
+    cliOutput.result(data);
   }
 }
 

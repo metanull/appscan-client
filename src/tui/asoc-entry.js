@@ -30,12 +30,19 @@ export async function launchTUI(options = {}) {
 
   // Check for required environment variables
   if (!process.env.APPSCAN_API_KEY || !process.env.APPSCAN_API_SECRET) {
-    console.error(chalk.red('\n❌ Missing required environment variables!\n'));
-    console.error(chalk.yellow('Required variables:'));
-    console.error(chalk.white('  - APPSCAN_API_KEY'));
-    console.error(chalk.white('  - APPSCAN_API_SECRET\n'));
-    console.error(chalk.cyan('Please run the setup wizard first:'));
-    console.error(chalk.white('  ' + chalk.yellow('appscan setup') + '\n'));
+    const errorMsg = [
+      chalk.red('\n❌ Missing required environment variables!\n'),
+      chalk.yellow('Required variables:'),
+      chalk.white('  - APPSCAN_API_KEY'),
+      chalk.white('  - APPSCAN_API_SECRET\n'),
+      chalk.cyan('Please run the setup wizard first:'),
+      chalk.white('  ' + chalk.yellow('appscan setup') + '\n'),
+    ].join('\n');
+    logger.error('Missing required AppScan environment variables', null, {
+      APPSCAN_API_KEY: !!process.env.APPSCAN_API_KEY,
+      APPSCAN_API_SECRET: !!process.env.APPSCAN_API_SECRET,
+    }, { fileOnly: true });
+    process.stderr.write(errorMsg);
     process.exit(1);
   }
 
