@@ -12,6 +12,7 @@ import {
   getStateName,
   getSeverityName,
   getAlertTypeName,
+  getDismissalTypeName,
   parseAlertMetadata,
 } from './utils/issue.js';
 import { Layout } from '../../shared/components/Layout.js';
@@ -116,6 +117,8 @@ ContextPane.displayName = 'ContextPane';
 const AlertRow = React.memo(({ alert, isSelected, isMultiSelected }) => {
   const severityName = getSeverityName(alert.severity);
   const stateName = getStateName(alert.state);
+  const dismissalType = alert.dismissal?.dismissalType;
+  const dismissalTypeName = dismissalType !== undefined ? getDismissalTypeName(dismissalType) : null;
   const title = alert.title || alert.ruleName || 'Unknown';
   const metadata = parseAlertMetadata(alert);
   const jiraRef = metadata.jiraId || '';
@@ -146,8 +149,10 @@ const AlertRow = React.memo(({ alert, isSelected, isMultiSelected }) => {
           {severityName}
         </Text>
       </Box>
-      <Box width={13} justifyContent="flex-start" marginRight={1}>
-        <Text color={isSelected ? 'cyan' : undefined}>{stateName}</Text>
+      <Box width={20} justifyContent="flex-start" marginRight={1}>
+        <Text color={isSelected ? 'cyan' : undefined}>
+          {stateName}{dismissalTypeName ? ` (${dismissalTypeName})` : ''}
+        </Text>
       </Box>
       <Box width={14} justifyContent="flex-start" marginRight={1}>
         <Text color={jiraRef ? 'green' : 'dimColor'}>{jiraRef || '-'}</Text>
@@ -314,6 +319,9 @@ const DetailsPreviewPanel = React.memo(
           </Text>
           <Text>
             <Text bold>State:</Text> {getStateName(alert.state)}
+            {alert.dismissal?.dismissalType !== undefined && (
+              <Text dimColor> ({getDismissalTypeName(alert.dismissal.dismissalType)})</Text>
+            )}
           </Text>
           {alert.physicalLocation?.filePath && (
             <Text wrap="truncate">

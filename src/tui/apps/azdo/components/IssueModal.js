@@ -56,6 +56,23 @@ function getStateName(state) {
 }
 
 /**
+ * Helper function to get dismissal type display name
+ * @param {number} dismissalType - Dismissal type code
+ * @returns {string} Dismissal type name
+ */
+function getDismissalTypeName(dismissalType) {
+  const types = {
+    0: 'Unknown',
+    1: 'Fixed',
+    2: 'AcceptedRisk',
+    3: 'FalsePositive',
+    4: 'AgreedToGuidance',
+    5: 'ToolUpgrade',
+  };
+  return types[dismissalType] || 'Unknown';
+}
+
+/**
  * Helper function to get logical location kind name
  * @param {number} kind - Kind code
  * @returns {string} Kind name
@@ -214,6 +231,11 @@ export const IssueModal = React.memo(
                     >
                       {stateName}
                     </Text>
+                    {alert.dismissal?.dismissalType !== undefined && (
+                      <Text wrap="wrap" dimColor>
+                        {' '}({getDismissalTypeName(alert.dismissal.dismissalType)})
+                      </Text>
+                    )}
                   </Box>
 
                   {/* Truncated Secret for secret alerts */}
@@ -395,6 +417,16 @@ export const IssueModal = React.memo(
                         Dismissal Information
                       </Text>
                       <Box marginTop={1} flexDirection="column">
+                        {alert.dismissal.dismissalType !== undefined && (
+                          <Box marginBottom={1}>
+                            <Box width={18}>
+                              <Text bold>Reason:</Text>
+                            </Box>
+                            <Text wrap="wrap" color="yellow">
+                              {getDismissalTypeName(alert.dismissal.dismissalType)}
+                            </Text>
+                          </Box>
+                        )}
                         {alert.dismissal.message && (
                           <Box marginBottom={1}>
                             <Box width={18}>
