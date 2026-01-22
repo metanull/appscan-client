@@ -1392,11 +1392,30 @@ export const App = ({ configPath }) => {
         <UpdateSeverityModal
           alertCount={selectedAlertIds.length > 0 ? selectedAlertIds.length : 1}
           alerts={selectedAlerts}
-          onUpdate={(severity) => {
-            handleBulkUpdateAlerts({ severity });
+          onUpdate={async (severity, comment, _progressCallback) => {
+            const updateData = { severity };
+            if (comment) {
+              updateData.dismissedComment = comment;
+            }
+            await handleBulkUpdateAlerts(updateData);
             setActiveModal(null);
           }}
           onClose={() => setActiveModal(null)}
+          onRequestTextInput={(config) => {
+            setTextInputConfig({
+              ...config,
+              onComplete: (value) => {
+                // Return to modal and trigger submit
+                setTextInputConfig(null);
+                config.onComplete(value);
+              },
+              onCancel: () => {
+                // Return to modal
+                setTextInputConfig(null);
+              },
+            });
+            setActiveModal(null);
+          }}
         />
       )}
       {activeModal === 'link-jira' && selectedAlertIds.length > 0 && (

@@ -51,3 +51,4 @@ Insertion of Sensitive Information into Log File|Confirmed
 Cross-Site Scripting|In compliance with CyberSecurity Policy, only CRITICAL+HIGH risk are currently in scope
 Reflected Cross Site Scripting|False Positive
 Cross-Site Scripting|False Positive
+Azure DevOps legacy personal access token (PAT)|Example token, not an actual secret
