@@ -30,6 +30,7 @@ export const useStore = create((set, get) => ({
   selectedAlertIds: [],
 
   // Filter state
+  filterStatus: null, // 'Open' | 'InProgress' | 'Passed' | 'Noise' | 'Fixed' | null
   filterState: null, // 1=Active, 2=Dismissed, 4=Fixed, etc.
   filterSeverity: null, // 0=Low, 1=Medium, 2=High, 3=Critical, etc.
   filterAlertType: null, // 0=Unknown, 1=Dependency, 2=Secret, 3=Code, 4=License
@@ -153,6 +154,7 @@ export const useStore = create((set, get) => ({
   clearSelection: () => set({ selectedAlertIds: [] }),
 
   // Actions - Filters
+  setFilterStatus: (status) => set({ filterStatus: status, selectedAlertIds: [] }),
   setFilterState: (state) => set({ filterState: state, selectedAlertIds: [] }),
   setFilterSeverity: (severity) =>
     set({ filterSeverity: severity, selectedAlertIds: [] }),
@@ -169,6 +171,7 @@ export const useStore = create((set, get) => ({
 
   clearFilters: () =>
     set({
+      filterStatus: null,
       filterState: null,
       filterSeverity: null,
       filterAlertType: null,
@@ -184,6 +187,7 @@ export const useStore = create((set, get) => ({
   // Check if any filters are active
   hasActiveFilters: () => {
     const {
+      filterStatus,
       filterState,
       filterSeverity,
       filterAlertType,
@@ -191,6 +195,7 @@ export const useStore = create((set, get) => ({
       searchText,
     } = get();
     return !!(
+      filterStatus ||
       filterState ||
       filterSeverity ||
       filterAlertType ||
@@ -222,6 +227,7 @@ export const useStore = create((set, get) => ({
   getFilteredAlerts: () => {
     const {
       alerts,
+      filterStatus,
       filterState,
       filterSeverity,
       filterAlertType,
@@ -231,6 +237,7 @@ export const useStore = create((set, get) => ({
     } = get();
 
     return filterIssues(alerts, {
+      status: filterStatus,
       state: filterState,
       severity: filterSeverity,
       alertType: filterAlertType,
@@ -283,6 +290,7 @@ export const useStore = create((set, get) => ({
       alertDetails: null,
       alertCache: {},
       selectedAlertIds: [],
+      filterStatus: null,
       filterState: null,
       filterSeverity: null,
       filterAlertType: null,

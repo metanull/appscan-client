@@ -13,6 +13,8 @@ import {
   getSeverityName,
   getAlertTypeName,
   getDismissalTypeName,
+  getComputedStatus,
+  COMPUTED_STATUS_COLORS,
   parseAlertMetadata,
 } from './utils/issue.js';
 import { Layout } from '../../shared/components/Layout.js';
@@ -119,6 +121,7 @@ const AlertRow = React.memo(({ alert, isSelected, isMultiSelected }) => {
   const stateName = getStateName(alert.state);
   const dismissalType = alert.dismissal?.dismissalType;
   const dismissalTypeName = dismissalType !== undefined ? getDismissalTypeName(dismissalType) : null;
+  const computedStatus = getComputedStatus(alert);
   const title = alert.title || alert.ruleName || 'Unknown';
   const metadata = parseAlertMetadata(alert);
   const jiraRef = metadata.jiraId || '';
@@ -149,6 +152,11 @@ const AlertRow = React.memo(({ alert, isSelected, isMultiSelected }) => {
           {severityName}
         </Text>
       </Box>
+      <Box width={12} justifyContent="flex-start" marginRight={1}>
+        <Text color={COMPUTED_STATUS_COLORS[computedStatus] || 'white'}>
+          {computedStatus || '-'}
+        </Text>
+      </Box>
       <Box width={20} justifyContent="flex-start" marginRight={1}>
         <Text color={isSelected ? 'cyan' : undefined}>
           {stateName}{dismissalTypeName ? ` (${dismissalTypeName})` : ''}
@@ -175,6 +183,7 @@ const AlertListPanel = React.memo(
     alerts,
     cursor,
     selectedAlertIds,
+    filterStatus,
     filterState,
     filterSeverity,
     filterAlertType,
@@ -199,6 +208,8 @@ const AlertListPanel = React.memo(
 
     // Build filter display text
     const activeFilters = [];
+    if (filterStatus !== null && filterStatus !== undefined)
+      activeFilters.push(`Status:${filterStatus}`);
     if (filterState !== null && filterState !== undefined)
       activeFilters.push(`State:${getStateName(filterState)}`);
     if (filterSeverity !== null && filterSeverity !== undefined)
@@ -440,6 +451,7 @@ export const App = ({ configPath }) => {
   const alerts = useStore((state) => state.alerts);
 
   // Filter state
+  const filterStatus = useStore((state) => state.filterStatus);
   const filterState = useStore((state) => state.filterState);
   const filterSeverity = useStore((state) => state.filterSeverity);
   const filterAlertType = useStore((state) => state.filterAlertType);
@@ -499,6 +511,7 @@ export const App = ({ configPath }) => {
   // Filtered alerts
   const filteredAlerts = useMemo(() => {
     return filterIssues(alerts, {
+      status: filterStatus,
       state: filterState,
       severity: filterSeverity,
       alertType: filterAlertType,
@@ -508,6 +521,7 @@ export const App = ({ configPath }) => {
     });
   }, [
     alerts,
+    filterStatus,
     filterState,
     filterSeverity,
     filterAlertType,
@@ -1270,6 +1284,7 @@ export const App = ({ configPath }) => {
           alerts={filteredAlerts}
           cursor={listCursor}
           selectedAlertIds={selectedAlertIds}
+          filterStatus={filterStatus}
           filterState={filterState}
           filterSeverity={filterSeverity}
           filterAlertType={filterAlertType}
@@ -1314,7 +1329,9 @@ export const App = ({ configPath }) => {
         <FilterModal
           alerts={filteredAlerts}
           onSelect={(filterType, value) => {
-            if (filterType === 'state')
+            if (filterType === 'status')
+              useStore.getState().setFilterStatus(value);
+            else if (filterType === 'state')
               useStore.getState().setFilterState(value);
             else if (filterType === 'severity')
               useStore.getState().setFilterSeverity(value);

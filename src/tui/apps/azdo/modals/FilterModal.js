@@ -12,14 +12,26 @@ import {
   getStateName,
   getSeverityName,
   getAlertTypeName,
+  getComputedStatus,
+  COMPUTED_STATUS,
 } from '../utils/issue.js';
 
 const FILTER_TYPES = [
+  { label: 'Status Filter', value: 'status' },
   { label: 'State Filter', value: 'state' },
   { label: 'Severity Filter', value: 'severity' },
   { label: 'Alert Type Filter', value: 'alertType' },
   { label: 'Jira Filter', value: 'jira' },
   { label: 'Cancel', value: 'cancel' },
+];
+
+const STATUS_OPTIONS = [
+  { label: 'All Statuses', value: null },
+  { label: 'Open', value: COMPUTED_STATUS.Open },
+  { label: 'InProgress', value: COMPUTED_STATUS.InProgress },
+  { label: 'Passed', value: COMPUTED_STATUS.Passed },
+  { label: 'Noise', value: COMPUTED_STATUS.Noise },
+  { label: 'Fixed', value: COMPUTED_STATUS.Fixed },
 ];
 
 const STATE_OPTIONS = [
@@ -142,6 +154,24 @@ export const FilterModal = ({ alerts = [], onSelect, onClose }) => {
     });
   };
 
+  const getStatusOptionsWithCounts = () => {
+    const counts = {};
+    alerts.forEach((alert) => {
+      const status = getComputedStatus(alert);
+      if (status) {
+        counts[status] = (counts[status] || 0) + 1;
+      }
+    });
+
+    return STATUS_OPTIONS.map((opt) => {
+      if (opt.value === null) {
+        return { ...opt, label: `${opt.label} (${alerts.length})` };
+      }
+      const count = counts[opt.value] || 0;
+      return { ...opt, label: `${opt.label} (${count})` };
+    });
+  };
+
   return (
     <Modal width={50} height={60}>
       <Panel title="🔍 Filter Alerts" borderColor="yellow">
@@ -149,6 +179,16 @@ export const FilterModal = ({ alerts = [], onSelect, onClose }) => {
           <Box flexDirection="column" marginTop={1}>
             <Text>Select filter type:</Text>
             <SelectInput items={FILTER_TYPES} onSelect={handleTypeSelect} />
+          </Box>
+        )}
+
+        {step === 'status' && (
+          <Box flexDirection="column" marginTop={1}>
+            <Text>Select status:</Text>
+            <SelectInput
+              items={getStatusOptionsWithCounts()}
+              onSelect={handleFilterSelect}
+            />
           </Box>
         )}
 
