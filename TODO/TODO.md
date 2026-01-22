@@ -29,4 +29,8 @@ Our codebase is lacking test completelly. We only have 'lab' scripts (small apps
 2. Add tests systematically, following our instructions file, for all CLI commands (assert  proper business logic)
 3. Add tests systematically, following our instructions file, for the TUI app navigation (assert proper business logic: right page shown with the right data; data visibility in the layout...)
 4. Add tests systematically, following our instructions file, for the TUI app business logic (assert proper business logic: right apis called at the right time)
-  
+
+## Task 4. Scan (trivy) folders (different track than appscan unless if we can upload) => look for secrets
+## Task 6. Retrieve AzDO latest builds (time boxed) => add to "Applications"
+## Task 5. Scan (Appscan standard + SAST) latest-build + upload => look for secrets/SAST
+
