@@ -89,6 +89,41 @@ const FIELDS = [
     default: '',
     hint: 'URL to the OWASP ASVS page in your Confluence (e.g., https://your-domain.atlassian.net/wiki/spaces/ASVS/pages/123456789/OWASP+ASVS)',
   },
+  {
+    key: 'HTTP_PROXY',
+    label: 'HTTP Proxy (optional)',
+    secret: false,
+    default: '',
+    hint: 'HTTP proxy URL (e.g., http://proxy.example.com:8080)',
+  },
+  {
+    key: 'HTTPS_PROXY',
+    label: 'HTTPS Proxy (optional)',
+    secret: false,
+    default: '',
+    hint: 'HTTPS proxy URL (e.g., http://proxy.example.com:8080)',
+  },
+  {
+    key: 'NO_PROXY',
+    label: 'No Proxy (optional)',
+    secret: false,
+    default: 'localhost,127.0.0.1',
+    hint: 'Comma-separated list of hosts to bypass proxy',
+  },
+  {
+    key: 'PROXY_REJECT_UNAUTHORIZED',
+    label: 'Disable TLS verification (optional)',
+    secret: false,
+    default: '',
+    hint: 'Set to "false" to disable TLS certificate verification (for self-signed proxy certs)',
+  },
+  {
+    key: 'PROXY_CA_CERT',
+    label: 'Custom CA Certificate path (optional)',
+    secret: false,
+    default: '',
+    hint: 'Path to a PEM file with additional CA certificates to trust (e.g., /path/to/ca-bundle.crt)',
+  },
 ];
 
 /**
@@ -187,12 +222,13 @@ export async function setup(_options) {
       { name: 'Azure DevOps Configuration', prefix: 'AZURE_DEVOPS_' },
       { name: 'JIRA Configuration', prefix: 'JIRA_' },
       { name: 'Confluence Configuration', prefix: 'CONFLUENCE_' },
+      { name: 'HTTP Proxy Configuration', keys: ['HTTP_PROXY', 'HTTPS_PROXY', 'NO_PROXY', 'PROXY_REJECT_UNAUTHORIZED'] },
     ];
 
     for (const category of categories) {
-      const categoryFields = FIELDS.filter((f) =>
-        f.key.startsWith(category.prefix)
-      );
+      const categoryFields = category.keys
+        ? FIELDS.filter((f) => category.keys.includes(f.key))
+        : FIELDS.filter((f) => f.key.startsWith(category.prefix));
       if (categoryFields.length > 0) {
         lines.push(`# ${category.name}`);
         for (const field of categoryFields) {

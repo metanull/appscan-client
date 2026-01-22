@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { marked } from 'marked';
 import { markdownToADF } from '../utils/markdown-to-adf.js';
 import * as AppScanUrls from '../utils/appscan-urls.js';
+import logger from '../utils/logger.js';
 
 let Version3Client;
 
@@ -44,6 +45,13 @@ export class JiraService {
       );
     }
 
+    const baseRequestConfig = {};
+    if (globalThis.__PROXY_HTTPS_AGENT || globalThis.__PROXY_HTTP_AGENT) {
+      baseRequestConfig.httpsAgent = globalThis.__PROXY_HTTPS_AGENT;
+      baseRequestConfig.httpAgent = globalThis.__PROXY_HTTP_AGENT;
+      baseRequestConfig.proxy = false;
+    }
+
     this.client = new Version3Client({
       host: this.config.jiraHost,
       authentication: {
@@ -52,6 +60,7 @@ export class JiraService {
           apiToken: this.config.jiraApiToken,
         },
       },
+      baseRequestConfig,
     });
 
     return this.client;
@@ -66,8 +75,7 @@ export class JiraService {
       const tokens = marked.lexer(markdownText);
       return markdownToADF(tokens);
     } catch (error) {
-      console.error('Failed to convert markdown to ADF:', error);
-      // Fallback to simple paragraph
+      logger.error('Failed to convert markdown to ADF', { error: error.message });
       return {
         type: 'doc',
         version: 1,

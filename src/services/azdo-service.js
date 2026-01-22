@@ -4,6 +4,7 @@
  */
 
 import * as azdev from 'azure-devops-node-api';
+import { getAzdoProxyOptions } from '../utils/proxy-config.js';
 
 /**
  * Alert Type enum mapping
@@ -178,7 +179,8 @@ export class AzdoService {
 
     const orgUrl = this.getOrgUrl();
     const authHandler = azdev.getPersonalAccessTokenHandler(pat);
-    this.connection = new azdev.WebApi(orgUrl, authHandler);
+    const proxyOptions = await getAzdoProxyOptions();
+    this.connection = new azdev.WebApi(orgUrl, authHandler, proxyOptions);
     await this.connection.connect();
   }
 
