@@ -311,49 +311,87 @@ const DetailsPreviewPanel = React.memo(
     }
 
     const metadata = parseAlertMetadata(alert);
+    const computedStatus = getComputedStatus(alert);
+    const statusColor = COMPUTED_STATUS_COLORS[computedStatus] || 'white';
+    const severityName = getSeverityName(alert.severity);
+    const severityColor = {
+      Critical: 'red',
+      High: 'red',
+      Medium: 'yellow',
+      Low: 'blue',
+      Note: 'gray',
+    }[severityName] || 'white';
+
+    const firstFilePath = alert.physicalLocations?.[0]?.filePath;
+    const occurrencesCount = alert.physicalLocations?.filter(
+      (loc) => loc.versionControl?.itemUrl
+    ).length || 0;
 
     return (
       <Panel title="Details [d to toggle]" borderColor="magenta" width={80}>
         <Box flexDirection="column">
           <Text> </Text>
           <Text>
-            <Text bold>Alert ID:</Text> {alert.alertId || 'N/A'}
+            <Text bold color="cyan">Alert ID:</Text> {alert.alertId || 'N/A'}
           </Text>
           <Text>
-            <Text bold>Title:</Text> {alert.title || alert.ruleName || 'N/A'}
+            <Text bold color="cyan">Title:</Text> {alert.title || alert.ruleName || 'N/A'}
           </Text>
           <Text>
-            <Text bold>Type:</Text> {getAlertTypeName(alert.alertType)}
+            <Text bold color="cyan">Type:</Text> {getAlertTypeName(alert.alertType)}
+          </Text>
+          {alert.truncatedSecret && (
+            <Text wrap="truncate">
+              <Text bold color="cyan">Secret:</Text>{' '}
+              <Text color="yellow" backgroundColor="black">{alert.truncatedSecret}</Text>
+            </Text>
+          )}
+          <Text>
+            <Text bold color="cyan">Severity:</Text>{' '}
+            <Text color={severityColor} bold>{severityName}</Text>
           </Text>
           <Text>
-            <Text bold>Severity:</Text> {getSeverityName(alert.severity)}
-          </Text>
-          <Text>
-            <Text bold>State:</Text> {getStateName(alert.state)}
+            <Text bold color="cyan">State:</Text>{' '}
+            <Text color={alert.state === 1 ? 'red' : 'green'}>{getStateName(alert.state)}</Text>
             {alert.dismissal?.dismissalType !== undefined && (
               <Text dimColor> ({getDismissalTypeName(alert.dismissal.dismissalType)})</Text>
             )}
           </Text>
+          {computedStatus && (
+            <Text>
+              <Text bold color="cyan">Status:</Text> <Text color={statusColor}>{computedStatus}</Text>
+            </Text>
+          )}
+          {firstFilePath && (
+            <Text wrap="truncate">
+              <Text bold color="cyan">File:</Text> {firstFilePath}
+            </Text>
+          )}
+          {occurrencesCount > 0 && (
+            <Text>
+              <Text bold color="cyan">Occurrences:</Text> <Text color="yellow" bold>{occurrencesCount}</Text>
+            </Text>
+          )}
           {alert.physicalLocation?.filePath && (
             <Text wrap="truncate">
-              <Text bold>Location:</Text> {alert.physicalLocation.filePath}
+              <Text bold color="cyan">Location:</Text> {alert.physicalLocation.filePath}
               {alert.physicalLocation.region?.startLine &&
                 `:${alert.physicalLocation.region.startLine}`}
             </Text>
           )}
           {project && (
             <Text wrap="truncate">
-              <Text bold>Project:</Text> {project.name || 'N/A'}
+              <Text bold color="cyan">Project:</Text> {project.name || 'N/A'}
             </Text>
           )}
           {metadata.jiraId && (
             <Text wrap="truncate">
-              <Text bold>Jira ID:</Text> {metadata.jiraId}
+              <Text bold color="cyan">Jira ID:</Text> <Text color="green">{metadata.jiraId}</Text>
             </Text>
           )}
           {alert.dismissal && (
             <Box flexDirection="column" marginTop={1}>
-              <Text bold>Dismissal:</Text>
+              <Text bold color="cyan">Dismissal:</Text>
               <Box
                 borderStyle="single"
                 borderColor="gray"

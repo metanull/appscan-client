@@ -400,6 +400,20 @@ export const IssueModal = React.memo(
                       </Link>
                     </Box>
                   )}
+
+                  {/* File Path from physicalLocations */}
+                  {alert.physicalLocations?.[0]?.filePath && (
+                    <Box>
+                      <Box width={18}>
+                        <Text bold color="cyan">
+                          File Path:
+                        </Text>
+                      </Box>
+                      <Text wrap="truncate">
+                        {alert.physicalLocations[0].filePath}
+                      </Text>
+                    </Box>
+                  )}
                 </Box>
 
                 {/* Content area - grows to fill available space */}
@@ -547,6 +561,35 @@ export const IssueModal = React.memo(
                             }
                           </Text>
                         </Box>
+                        {/* First 10 itemUrls */}
+                        {(() => {
+                          const itemUrls = alert.physicalLocations
+                            .filter((loc) => loc.versionControl?.itemUrl)
+                            .map((loc) => loc.versionControl.itemUrl)
+                            .slice(0, 10);
+                          if (itemUrls.length > 0) {
+                            return (
+                              <Box flexDirection="column" marginTop={1}>
+                                <Text bold dimColor>File Links:</Text>
+                                {itemUrls.map((url, idx) => (
+                                  <Box key={idx}>
+                                    <Link url={url}>
+                                      <Text color="blue" underline wrap="truncate">
+                                        {url.length > 150 ? url.substring(0, 147) + '...' : url}
+                                      </Text>
+                                    </Link>
+                                  </Box>
+                                ))}
+                                {alert.physicalLocations.filter((loc) => loc.versionControl?.itemUrl).length > 10 && (
+                                  <Text dimColor>
+                                    ...and {alert.physicalLocations.filter((loc) => loc.versionControl?.itemUrl).length - 10} more
+                                  </Text>
+                                )}
+                              </Box>
+                            );
+                          }
+                          return null;
+                        })()}
                         <Box marginTop={1}>
                           <Text dimColor>
                             View the [Locations] tab for details
