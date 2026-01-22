@@ -21,7 +21,11 @@ let customCACert;
 function configureTlsVerification() {
   if (shouldDisableCertVerification()) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-    logger.info('TLS certificate verification is DISABLED', {}, { fileOnly: true });
+    logger.info(
+      'TLS certificate verification is DISABLED',
+      {},
+      { fileOnly: true }
+    );
   }
 }
 
@@ -37,15 +41,25 @@ function configureCustomCACert() {
       if (!options.ca) {
         options = { ...options, ca: [...tls.rootCertificates, customCACert] };
       } else {
-        const existingCA = Array.isArray(options.ca) ? options.ca : [options.ca];
+        const existingCA = Array.isArray(options.ca)
+          ? options.ca
+          : [options.ca];
         options = { ...options, ca: [...existingCA, customCACert] };
       }
       return origCreateSecureContext.call(this, options);
     };
 
-    logger.debug('Custom CA certificate configured globally', { path: certPath }, { fileOnly: true });
+    logger.debug(
+      'Custom CA certificate configured globally',
+      { path: certPath },
+      { fileOnly: true }
+    );
   } catch (error) {
-    logger.warn('Failed to load custom CA certificate', { path: certPath, error: error.message }, { fileOnly: true });
+    logger.warn(
+      'Failed to load custom CA certificate',
+      { path: certPath, error: error.message },
+      { fileOnly: true }
+    );
   }
 }
 
@@ -54,17 +68,20 @@ async function configureAxiosProxy() {
   if (!config) return;
 
   try {
-    const [axiosModule, { HttpsProxyAgent }, { HttpProxyAgent }] = await Promise.all([
-      import('axios'),
-      import('https-proxy-agent'),
-      import('http-proxy-agent'),
-    ]);
+    const [axiosModule, { HttpsProxyAgent }, { HttpProxyAgent }] =
+      await Promise.all([
+        import('axios'),
+        import('https-proxy-agent'),
+        import('http-proxy-agent'),
+      ]);
 
     const axios = axiosModule.default;
     const rejectUnauthorized = !shouldDisableCertVerification();
 
     if (config.httpsProxy) {
-      const httpsAgent = new HttpsProxyAgent(config.httpsProxy, { rejectUnauthorized });
+      const httpsAgent = new HttpsProxyAgent(config.httpsProxy, {
+        rejectUnauthorized,
+      });
       axios.defaults.httpsAgent = httpsAgent;
       globalThis.__PROXY_HTTPS_AGENT = httpsAgent;
     }
@@ -78,7 +95,11 @@ async function configureAxiosProxy() {
     axios.defaults.proxy = false;
     logger.debug('Axios proxy agents configured', {}, { fileOnly: true });
   } catch (error) {
-    logger.warn('Could not configure axios proxy agents', { error: error.message }, { fileOnly: true });
+    logger.warn(
+      'Could not configure axios proxy agents',
+      { error: error.message },
+      { fileOnly: true }
+    );
   }
 }
 
@@ -91,7 +112,11 @@ async function initializeProxy() {
   }
 
   await configureAxiosProxy();
-  logger.info('Proxy enabled', { config: getProxyConfigSummary() }, { fileOnly: true });
+  logger.info(
+    'Proxy enabled',
+    { config: getProxyConfigSummary() },
+    { fileOnly: true }
+  );
 }
 
 await initializeProxy();

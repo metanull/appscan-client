@@ -36,7 +36,9 @@ export function getConfigDir() {
     } catch (err) {
       // Use stderr directly - cannot import logger due to circular dependency
       // (logger depends on getLogsDir which depends on getConfigDir)
-      process.stderr.write(`Failed to create config dir ${configDir}: ${err.message}\n`);
+      process.stderr.write(
+        `Failed to create config dir ${configDir}: ${err.message}\n`
+      );
     }
 
     return configDir;

@@ -38,10 +38,15 @@ export async function launchTUI(options = {}) {
       chalk.cyan('Please run the setup wizard first:'),
       chalk.white('  ' + chalk.yellow('appscan setup') + '\n'),
     ].join('\n');
-    logger.error('Missing required AppScan environment variables', null, {
-      APPSCAN_API_KEY: !!process.env.APPSCAN_API_KEY,
-      APPSCAN_API_SECRET: !!process.env.APPSCAN_API_SECRET,
-    }, { fileOnly: true });
+    logger.error(
+      'Missing required AppScan environment variables',
+      null,
+      {
+        APPSCAN_API_KEY: !!process.env.APPSCAN_API_KEY,
+        APPSCAN_API_SECRET: !!process.env.APPSCAN_API_SECRET,
+      },
+      { fileOnly: true }
+    );
     process.stderr.write(errorMsg);
     process.exit(1);
   }

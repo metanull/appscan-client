@@ -38,10 +38,15 @@ export async function launchAzdoTUI(options = {}) {
       chalk.cyan('Please run the setup wizard first:'),
       chalk.white('  ' + chalk.yellow('appscan setup') + '\n'),
     ].join('\n');
-    logger.error('Missing required Azure DevOps environment variables', null, {
-      AZURE_DEVOPS_ORG: !!process.env.AZURE_DEVOPS_ORG,
-      AZURE_DEVOPS_PAT: !!process.env.AZURE_DEVOPS_PAT,
-    }, { fileOnly: true });
+    logger.error(
+      'Missing required Azure DevOps environment variables',
+      null,
+      {
+        AZURE_DEVOPS_ORG: !!process.env.AZURE_DEVOPS_ORG,
+        AZURE_DEVOPS_PAT: !!process.env.AZURE_DEVOPS_PAT,
+      },
+      { fileOnly: true }
+    );
     process.stderr.write(errorMsg);
     process.exit(1);
   }
