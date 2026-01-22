@@ -441,15 +441,27 @@ export class JiraService {
 
       return jiraIssue;
     } catch (error) {
-      logger.error('Failed to create Jira issue from alerts', error, {
+      // Extract detailed error information for logging
+      const errorDetails = {
         projectKey,
         summary,
         alertCount: alerts.length,
-      });
+        statusCode: error.status || error.statusCode || error.response?.status,
+        errorMessage: error.message,
+        errorBody: error.response?.data || error.body || error.data,
+        errorName: error.name,
+      };
+
+      logger.error(
+        'Failed to create Jira issue from alerts',
+        error,
+        errorDetails
+      );
 
       auditService.logJiraCreate(projectKey, summary, alerts.length, {
         success: false,
         error: error.message,
+        statusCode: errorDetails.statusCode,
       });
 
       throw error;
@@ -534,16 +546,35 @@ export class JiraService {
       });
       return results;
     } catch (error) {
-      logger.error('Failed to create Jira issues from alerts', error);
+      // Extract detailed error information for logging
+      const errorDetails = {
+        projectKey,
+        groupBy,
+        alertCount: alerts.length,
+        statusCode: error.status || error.statusCode || error.response?.status,
+        errorMessage: error.message,
+        errorBody: error.response?.data || error.body || error.data,
+        errorName: error.name,
+      };
+
+      logger.error(
+        'Failed to create Jira issues from alerts',
+        error,
+        errorDetails
+      );
       throw error;
     }
   }
 
   /**
    * Build markdown description for Azure DevOps alerts
+   * Ensures descriptions stay under 32KB limit (same as ASOC)
    * @private
    */
   buildAlertsDescription(alerts, project, repository) {
+    // Jira description limit is ~32KB for ADF, but ADF is 3-5x larger than markdown
+    // Using 16KB markdown limit to ensure ADF stays under Jira's limit
+    const maxBytes = 16000;
     let description = '';
 
     if (project) {
@@ -572,6 +603,34 @@ export class JiraService {
       );
       description += `# ${type} (${highestSeverity})\n\n`;
 
+      // Collect remediation info from first alert (to add once after all alerts of this type)
+      let remediationInfo = '';
+      const firstAlert = typeAlerts[0];
+      if (firstAlert?.tools && firstAlert.tools.length > 0) {
+        for (const tool of firstAlert.tools) {
+          if (tool.rules && tool.rules.length > 0) {
+            for (const rule of tool.rules) {
+              if (rule.description) {
+                remediationInfo += `**Description:** ${rule.description}\n\n`;
+              }
+              if (rule.helpMessage) {
+                remediationInfo += `**Remediation Steps:**\n\n${rule.helpMessage}\n\n`;
+              }
+              if (rule.resources) {
+                remediationInfo += `**Resources:** ${rule.resources}\n\n`;
+              }
+            }
+          }
+        }
+      }
+
+      // Add remediation info once after all alerts of this type (same pattern as ASOC)
+      if (remediationInfo) {
+        description += `## Remediation\n\n`;
+        description += remediationInfo;
+        description += '---\n\n';
+      }
+
       for (let i = 0; i < typeAlerts.length; i++) {
         const alert = typeAlerts[i];
         const alertNumber = i + 1;
@@ -583,11 +642,6 @@ export class JiraService {
 
         if (alert.title && alert.title !== type) {
           description += `- **Title:** ${alert.title}\n`;
-        }
-
-        // Add truncated secret for secret alerts
-        if (alert.truncatedSecret) {
-          description += `- **Truncated Secret:** \`${alert.truncatedSecret}\`\n`;
         }
 
         // Add physical locations summary
@@ -609,24 +663,9 @@ export class JiraService {
           }
         }
 
-        // Add tools/remediation information
-        if (alert.tools && alert.tools.length > 0) {
-          description += `\n**Remediation Information:**\n\n`;
-          for (const tool of alert.tools) {
-            if (tool.rules && tool.rules.length > 0) {
-              for (const rule of tool.rules) {
-                if (rule.description) {
-                  description += `**Description:** ${rule.description}\n\n`;
-                }
-                if (rule.helpMessage) {
-                  description += `**Remediation Steps:**\n\n${rule.helpMessage}\n\n`;
-                }
-                if (rule.resources) {
-                  description += `**Resources:** ${rule.resources}\n\n`;
-                }
-              }
-            }
-          }
+        // Add repository URL if available
+        if (alert.repositoryUrl) {
+          description += `- **Repository URL:** ${alert.repositoryUrl}\n`;
         }
 
         // Add dates
@@ -639,6 +678,34 @@ export class JiraService {
 
         description += '\n---\n\n';
       }
+    }
+
+    // Check size and truncate if needed (same logic as ASOC JiraDescriptionBuilder)
+    const byteSize = Buffer.byteLength(description, 'utf8');
+
+    if (byteSize > maxBytes) {
+      const truncateMsg =
+        '\n\n_Description truncated due to size limits. See Azure DevOps for full details._\n';
+
+      // Binary search for correct truncation point
+      let low = 0;
+      let high = description.length;
+      let result = description;
+
+      while (low <= high) {
+        const mid = Math.floor((low + high) / 2);
+        const candidate = description.substring(0, mid) + truncateMsg;
+        const size = Buffer.byteLength(candidate, 'utf8');
+
+        if (size <= maxBytes) {
+          result = candidate;
+          low = mid + 1;
+        } else {
+          high = mid - 1;
+        }
+      }
+
+      description = result;
     }
 
     return description;

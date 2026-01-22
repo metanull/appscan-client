@@ -12,6 +12,9 @@ import {
   getStateName,
   getSeverityName,
   getAlertTypeName,
+  getDismissalTypeName,
+  getComputedStatus,
+  COMPUTED_STATUS_COLORS,
   parseAlertMetadata,
 } from './utils/issue.js';
 import { Layout } from '../../shared/components/Layout.js';
@@ -116,6 +119,10 @@ ContextPane.displayName = 'ContextPane';
 const AlertRow = React.memo(({ alert, isSelected, isMultiSelected }) => {
   const severityName = getSeverityName(alert.severity);
   const stateName = getStateName(alert.state);
+  const dismissalType = alert.dismissal?.dismissalType;
+  const dismissalTypeName =
+    dismissalType !== undefined ? getDismissalTypeName(dismissalType) : null;
+  const computedStatus = getComputedStatus(alert);
   const title = alert.title || alert.ruleName || 'Unknown';
   const metadata = parseAlertMetadata(alert);
   const jiraRef = metadata.jiraId || '';
@@ -146,8 +153,16 @@ const AlertRow = React.memo(({ alert, isSelected, isMultiSelected }) => {
           {severityName}
         </Text>
       </Box>
-      <Box width={13} justifyContent="flex-start" marginRight={1}>
-        <Text color={isSelected ? 'cyan' : undefined}>{stateName}</Text>
+      <Box width={12} justifyContent="flex-start" marginRight={1}>
+        <Text color={COMPUTED_STATUS_COLORS[computedStatus] || 'white'}>
+          {computedStatus || '-'}
+        </Text>
+      </Box>
+      <Box width={20} justifyContent="flex-start" marginRight={1}>
+        <Text color={isSelected ? 'cyan' : undefined}>
+          {stateName}
+          {dismissalTypeName ? ` (${dismissalTypeName})` : ''}
+        </Text>
       </Box>
       <Box width={14} justifyContent="flex-start" marginRight={1}>
         <Text color={jiraRef ? 'green' : 'dimColor'}>{jiraRef || '-'}</Text>
@@ -170,6 +185,7 @@ const AlertListPanel = React.memo(
     alerts,
     cursor,
     selectedAlertIds,
+    filterStatus,
     filterState,
     filterSeverity,
     filterAlertType,
@@ -194,6 +210,8 @@ const AlertListPanel = React.memo(
 
     // Build filter display text
     const activeFilters = [];
+    if (filterStatus !== null && filterStatus !== undefined)
+      activeFilters.push(`Status:${filterStatus}`);
     if (filterState !== null && filterState !== undefined)
       activeFilters.push(`State:${getStateName(filterState)}`);
     if (filterSeverity !== null && filterSeverity !== undefined)
@@ -295,46 +313,134 @@ const DetailsPreviewPanel = React.memo(
     }
 
     const metadata = parseAlertMetadata(alert);
+    const computedStatus = getComputedStatus(alert);
+    const statusColor = COMPUTED_STATUS_COLORS[computedStatus] || 'white';
+    const severityName = getSeverityName(alert.severity);
+    const severityColor =
+      {
+        Critical: 'red',
+        High: 'red',
+        Medium: 'yellow',
+        Low: 'blue',
+        Note: 'gray',
+      }[severityName] || 'white';
+
+    const firstFilePath = alert.physicalLocations?.[0]?.filePath;
+    const occurrencesCount =
+      alert.physicalLocations?.filter((loc) => loc.versionControl?.itemUrl)
+        .length || 0;
 
     return (
       <Panel title="Details [d to toggle]" borderColor="magenta" width={80}>
         <Box flexDirection="column">
           <Text> </Text>
           <Text>
-            <Text bold>Alert ID:</Text> {alert.alertId || 'N/A'}
+            <Text bold color="cyan">
+              Alert ID:
+            </Text>{' '}
+            {alert.alertId || 'N/A'}
           </Text>
           <Text>
-            <Text bold>Title:</Text> {alert.title || alert.ruleName || 'N/A'}
+            <Text bold color="cyan">
+              Title:
+            </Text>{' '}
+            {alert.title || alert.ruleName || 'N/A'}
           </Text>
           <Text>
-            <Text bold>Type:</Text> {getAlertTypeName(alert.alertType)}
+            <Text bold color="cyan">
+              Type:
+            </Text>{' '}
+            {getAlertTypeName(alert.alertType)}
+          </Text>
+          {alert.truncatedSecret && (
+            <Text wrap="truncate">
+              <Text bold color="cyan">
+                Secret:
+              </Text>{' '}
+              <Text color="yellow" backgroundColor="black">
+                {alert.truncatedSecret}
+              </Text>
+            </Text>
+          )}
+          <Text>
+            <Text bold color="cyan">
+              Severity:
+            </Text>{' '}
+            <Text color={severityColor} bold>
+              {severityName}
+            </Text>
           </Text>
           <Text>
-            <Text bold>Severity:</Text> {getSeverityName(alert.severity)}
+            <Text bold color="cyan">
+              State:
+            </Text>{' '}
+            <Text color={alert.state === 1 ? 'red' : 'green'}>
+              {getStateName(alert.state)}
+            </Text>
+            {alert.dismissal?.dismissalType !== undefined && (
+              <Text dimColor>
+                {' '}
+                ({getDismissalTypeName(alert.dismissal.dismissalType)})
+              </Text>
+            )}
           </Text>
-          <Text>
-            <Text bold>State:</Text> {getStateName(alert.state)}
-          </Text>
+          {computedStatus && (
+            <Text>
+              <Text bold color="cyan">
+                Status:
+              </Text>{' '}
+              <Text color={statusColor}>{computedStatus}</Text>
+            </Text>
+          )}
+          {firstFilePath && (
+            <Text wrap="truncate">
+              <Text bold color="cyan">
+                File:
+              </Text>{' '}
+              {firstFilePath}
+            </Text>
+          )}
+          {occurrencesCount > 0 && (
+            <Text>
+              <Text bold color="cyan">
+                Occurrences:
+              </Text>{' '}
+              <Text color="yellow" bold>
+                {occurrencesCount}
+              </Text>
+            </Text>
+          )}
           {alert.physicalLocation?.filePath && (
             <Text wrap="truncate">
-              <Text bold>Location:</Text> {alert.physicalLocation.filePath}
+              <Text bold color="cyan">
+                Location:
+              </Text>{' '}
+              {alert.physicalLocation.filePath}
               {alert.physicalLocation.region?.startLine &&
                 `:${alert.physicalLocation.region.startLine}`}
             </Text>
           )}
           {project && (
             <Text wrap="truncate">
-              <Text bold>Project:</Text> {project.name || 'N/A'}
+              <Text bold color="cyan">
+                Project:
+              </Text>{' '}
+              {project.name || 'N/A'}
             </Text>
           )}
           {metadata.jiraId && (
             <Text wrap="truncate">
-              <Text bold>Jira ID:</Text> {metadata.jiraId}
+              <Text bold color="cyan">
+                Jira ID:
+              </Text>{' '}
+              <Text color="green">{metadata.jiraId}</Text>
             </Text>
           )}
           {alert.dismissal && (
             <Box flexDirection="column" marginTop={1}>
-              <Text bold>Dismissal:</Text>
+              <Text bold color="cyan">
+                Dismissal:
+              </Text>
               <Box
                 borderStyle="single"
                 borderColor="gray"
@@ -432,6 +538,7 @@ export const App = ({ configPath }) => {
   const alerts = useStore((state) => state.alerts);
 
   // Filter state
+  const filterStatus = useStore((state) => state.filterStatus);
   const filterState = useStore((state) => state.filterState);
   const filterSeverity = useStore((state) => state.filterSeverity);
   const filterAlertType = useStore((state) => state.filterAlertType);
@@ -491,6 +598,7 @@ export const App = ({ configPath }) => {
   // Filtered alerts
   const filteredAlerts = useMemo(() => {
     return filterIssues(alerts, {
+      status: filterStatus,
       state: filterState,
       severity: filterSeverity,
       alertType: filterAlertType,
@@ -500,6 +608,7 @@ export const App = ({ configPath }) => {
     });
   }, [
     alerts,
+    filterStatus,
     filterState,
     filterSeverity,
     filterAlertType,
@@ -1262,6 +1371,7 @@ export const App = ({ configPath }) => {
           alerts={filteredAlerts}
           cursor={listCursor}
           selectedAlertIds={selectedAlertIds}
+          filterStatus={filterStatus}
           filterState={filterState}
           filterSeverity={filterSeverity}
           filterAlertType={filterAlertType}
@@ -1306,7 +1416,9 @@ export const App = ({ configPath }) => {
         <FilterModal
           alerts={filteredAlerts}
           onSelect={(filterType, value) => {
-            if (filterType === 'state')
+            if (filterType === 'status')
+              useStore.getState().setFilterStatus(value);
+            else if (filterType === 'state')
               useStore.getState().setFilterState(value);
             else if (filterType === 'severity')
               useStore.getState().setFilterSeverity(value);
@@ -1367,11 +1479,30 @@ export const App = ({ configPath }) => {
         <UpdateSeverityModal
           alertCount={selectedAlertIds.length > 0 ? selectedAlertIds.length : 1}
           alerts={selectedAlerts}
-          onUpdate={(severity) => {
-            handleBulkUpdateAlerts({ severity });
+          onUpdate={async (severity, comment, _progressCallback) => {
+            const updateData = { severity };
+            if (comment) {
+              updateData.dismissedComment = comment;
+            }
+            await handleBulkUpdateAlerts(updateData);
             setActiveModal(null);
           }}
           onClose={() => setActiveModal(null)}
+          onRequestTextInput={(config) => {
+            setTextInputConfig({
+              ...config,
+              onComplete: (value) => {
+                // Return to modal and trigger submit
+                setTextInputConfig(null);
+                config.onComplete(value);
+              },
+              onCancel: () => {
+                // Return to modal
+                setTextInputConfig(null);
+              },
+            });
+            setActiveModal(null);
+          }}
         />
       )}
       {activeModal === 'link-jira' && selectedAlertIds.length > 0 && (

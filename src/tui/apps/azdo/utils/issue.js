@@ -61,6 +61,71 @@ export const DISMISSAL_TYPE_NAMES = {
 };
 
 /**
+ * Computed status values mapping Azure DevOps state+dismissalType to ASOC-like status
+ */
+export const COMPUTED_STATUS = {
+  Open: 'Open',
+  InProgress: 'InProgress',
+  Passed: 'Passed',
+  Noise: 'Noise',
+  Fixed: 'Fixed',
+};
+
+export const COMPUTED_STATUS_COLORS = {
+  Open: 'red',
+  InProgress: 'yellow',
+  Passed: 'green',
+  Noise: 'gray',
+  Fixed: 'green',
+};
+
+/**
+ * Compute ASOC-equivalent status from Azure DevOps state and dismissalType
+ * Mapping:
+ * - Active + null => "Open"
+ * - Dismissed + Unknown (0) => "InProgress"
+ * - Dismissed + AcceptedRisk (2) => "Passed"
+ * - Dismissed + FalsePositive (3) => "Noise"
+ * - Dismissed + Fixed (1) or ToolUpgrade (5) or AgreedToGuidance (4) => "Fixed"
+ * - Fixed + null => "Fixed"
+ * - Anything else => ""
+ * @param {Object} alert - Alert object with state and dismissal properties
+ * @returns {string} Computed status name
+ */
+export function getComputedStatus(alert) {
+  const state = alert.state;
+  const dismissalType = alert.dismissal?.dismissalType;
+
+  // State 1 = Active
+  if (state === 1) {
+    return COMPUTED_STATUS.Open;
+  }
+
+  // State 2 = Dismissed
+  if (state === 2) {
+    if (dismissalType === 0) {
+      return COMPUTED_STATUS.InProgress;
+    }
+    if (dismissalType === 2) {
+      return COMPUTED_STATUS.Passed;
+    }
+    if (dismissalType === 3) {
+      return COMPUTED_STATUS.Noise;
+    }
+    if (dismissalType === 1 || dismissalType === 4 || dismissalType === 5) {
+      return COMPUTED_STATUS.Fixed;
+    }
+  }
+
+  // State 4 = Fixed
+  if (state === 4) {
+    return COMPUTED_STATUS.Fixed;
+  }
+
+  return '';
+}
+
+/**
  * Get human-readable alert type name
  * @param {number} alertType - Alert type enum value
  * @returns {string} Alert type name
@@ -267,9 +332,15 @@ export function filterIssues(alerts, filters = {}) {
     jira,
     searchText,
     sortBy = 'severity',
+    status,
   } = filters;
 
   let filtered = [...alerts];
+
+  // Filter by computed status first (if specified)
+  if (status !== undefined && status !== null) {
+    filtered = filtered.filter((a) => getComputedStatus(a) === status);
+  }
 
   if (state !== undefined && state !== null) {
     const stateValue = typeof state === 'number' ? state : parseInt(state, 10);

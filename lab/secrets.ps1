@@ -47,7 +47,7 @@ try {
         $dirs |? {$_} |% {
             $dir = $_
             $issues = node --no-deprecation dist/index.js azdo-issues --appId $app.id --repositoryId $dir.id --json | ConvertFrom-Json
-            $issues |? {$_} |? {$_.alertType -eq 2} |% {
+            $issues |? {$_} |? {$_.alertType -eq 2} |? {$_.state -le 1} % { # 0 = unknown, 1 = active, 2 = dismissed, 4 = fixed, 8 = auto-dismissed
                 $issue = $_
 
                 [pscustomobject] @{

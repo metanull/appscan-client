@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import Link from 'ink-link';
+import open from 'open';
 import { Modal } from '../../../shared/components/Modal.js';
 import { Panel } from '../../../shared/components/Panel.js';
 import { parseAlertMetadata } from '../utils/issue.js';
@@ -217,56 +218,60 @@ export const LinksModal = React.memo(
         setCursor((prev) => Math.min(links.length - 1, prev + 1));
         return;
       }
+
+      if (key.return && links[cursor]) {
+        // Open the selected link in default browser
+        const selectedLink = links[cursor];
+        open(selectedLink.url).catch(() => {
+          // Silently fail if we can't open the link
+          // The terminal-based link should still be clickable
+        });
+        return;
+      }
     });
 
-    return (
-      <Modal width={80} height={60}>
-        <Panel title="Related Links" borderColor="cyan">
-          <Box flexDirection="column">
-            <Box marginBottom={1}>
-              <Text dimColor>
-                Navigate: ↑↓ | Click links to open | ESC: Close
-              </Text>
-            </Box>
-
-            {links.length === 0 && (
+    if (links.length === 0) {
+      return (
+        <Modal width={60} height={30}>
+          <Panel title="Links" borderColor="cyan">
+            <Box flexDirection="column">
+              <Text dimColor>No links available for this alert</Text>
               <Box marginTop={1}>
-                <Text color="yellow">No links available for this alert.</Text>
+                <Text dimColor>Press ESC to close</Text>
               </Box>
-            )}
+            </Box>
+          </Panel>
+        </Modal>
+      );
+    }
 
-            {links.map((link, index) => (
-              <Box
-                key={index}
-                flexDirection="column"
-                marginY={1}
-                borderStyle={cursor === index ? 'bold' : 'single'}
-                borderColor={cursor === index ? 'cyan' : 'gray'}
-                paddingX={1}
-              >
-                <Box>
+    return (
+      <Modal width={70} height={50}>
+        <Panel title="Links" borderColor="cyan">
+          <Box flexDirection="column">
+            <Text dimColor>Click a link to open in browser:</Text>
+
+            <Box flexDirection="column" marginTop={1}>
+              {links.map((link, index) => (
+                <Box key={index} marginY={0}>
+                  <Text
+                    color={cursor === index ? 'cyan' : undefined}
+                    bold={cursor === index}
+                  >
+                    {cursor === index ? '▶ ' : '  '}
+                  </Text>
                   <Link url={link.url}>
-                    <Text
-                      color={cursor === index ? 'cyan' : 'blue'}
-                      bold={cursor === index}
-                      underline
-                    >
+                    <Text color={cursor === index ? 'cyan' : 'blue'} underline>
                       {link.label}
                     </Text>
                   </Link>
                 </Box>
-                <Box marginTop={0}>
-                  <Text dimColor wrap="wrap">
-                    {link.description}
-                  </Text>
-                </Box>
-                <Box marginTop={0}>
-                  <Text dimColor wrap="truncate">
-                    {link.url}
-                  </Text>
-                </Box>
-              </Box>
-            ))}
+              ))}
+            </Box>
+
+            <Box marginTop={2}>
+              <Text dimColor>↑/↓: Navigate | ENTER: Open | ESC: Close</Text>
+            </Box>
           </Box>
         </Panel>
       </Modal>

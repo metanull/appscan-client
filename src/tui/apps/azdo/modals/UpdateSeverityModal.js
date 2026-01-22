@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
 import Spinner from 'ink-spinner';
+import {
+  getTemplatesForType,
+  saveTemplate,
+} from '../../../shared/services/commentTemplates.js';
 import { Modal } from '../../../shared/components/Modal.js';
 import { Panel } from '../../../shared/components/Panel.js';
 import { Severity } from '../../../../services/azdo-service.js';
@@ -14,16 +18,34 @@ const SEVERITY_OPTIONS = [
 ];
 
 /**
- * Modal for updating Azure DevOps alert severity
+ * Get human-readable severity name from enum value
+ * @param {number} value - Severity enum value
+ * @returns {string} Severity name
+ */
+const getSeverityName = (value) => {
+  if (value === Severity.Low) return 'Low';
+  if (value === Severity.Medium) return 'Medium';
+  if (value === Severity.High) return 'High';
+  if (value === Severity.Critical) return 'Critical';
+  if (value === Severity.Note) return 'Note';
+  if (value === Severity.Warning) return 'Warning';
+  if (value === Severity.Error) return 'Error';
+  return 'Unknown';
+};
+
+/**
+ * Modal for updating Azure DevOps alert severity with optional comments
+ * Supports single and bulk updates with comment templates
  * @param {Object} props - Component props
  * @param {number} props.alertCount - Number of alerts to update
  * @param {Array} props.alerts - Array of alerts with their current severity
- * @param {Function} props.onUpdate - Callback with severity to update alerts
+ * @param {Function} props.onUpdate - Callback with severity and comment to update alerts
  * @param {Function} props.onClose - Callback when modal is closed
+ * @param {Function} props.onRequestTextInput - Callback to request text input from parent
  * @returns {JSX.Element}
  */
 export const UpdateSeverityModal = React.memo(
-  ({ alertCount, alerts = [], onUpdate, onClose }) => {
+  ({ alertCount, alerts = [], onUpdate, onClose, onRequestTextInput }) => {
     const isInitialized = useRef(false);
 
     const getInitialIndex = () => {
@@ -37,7 +59,10 @@ export const UpdateSeverityModal = React.memo(
       return 0;
     };
 
-    const [step, setStep] = useState('severity');
+    const [step, setStep] = useState('severity'); // 'severity' | 'template' | 'progress'
+    const [selectedSeverity, setSelectedSeverity] = useState(null);
+    const [templates, setTemplates] = useState([]);
+    const [alertTypes, setAlertTypes] = useState([]);
     const [progress, setProgress] = useState({ current: 0, total: 0 });
     const [updateError, setUpdateError] = useState(null);
 
@@ -46,7 +71,19 @@ export const UpdateSeverityModal = React.memo(
         return;
       }
       isInitialized.current = true;
-    }, []);
+
+      if (alerts && alerts.length > 0) {
+        const types = [
+          ...new Set(alerts.map((a) => a.ruleName || a.title || 'Unknown')),
+        ];
+        setAlertTypes(types);
+
+        if (types.length > 0) {
+          const loadedTemplates = getTemplatesForType(types[0]);
+          setTemplates(loadedTemplates);
+        }
+      }
+    }, [alerts]);
 
     useInput((input, key) => {
       if (key.escape) {
@@ -55,21 +92,72 @@ export const UpdateSeverityModal = React.memo(
     });
 
     const handleSeveritySelect = (item) => {
-      handleSubmit(item.value);
+      setSelectedSeverity(item.value);
+
+      if (templates.length > 0) {
+        setStep('template');
+      } else if (onRequestTextInput) {
+        onRequestTextInput({
+          title: '⚠️  Update Severity - Add Comment',
+          subtitle: `Updating ${alertCount} alert(s) to: ${getSeverityName(item.value)}`,
+          borderColor: 'yellow',
+          placeholder: 'Enter comment (optional)...',
+          initialValue: '',
+          onComplete: (value) => {
+            handleSubmit(value);
+          },
+        });
+      } else {
+        handleSubmit();
+      }
     };
 
-    const handleSubmit = async (severity) => {
+    const handleTemplateSelect = (item) => {
+      if (item.value === 'custom') {
+        if (onRequestTextInput) {
+          onRequestTextInput({
+            title: '⚠️  Update Severity - Add Comment',
+            subtitle: `Updating ${alertCount} alert(s) to: ${getSeverityName(selectedSeverity)}`,
+            borderColor: 'yellow',
+            placeholder: 'Enter comment...',
+            initialValue: '',
+            onComplete: (value) => {
+              handleSubmit(value);
+            },
+          });
+        }
+      } else if (item.value === 'no-comment') {
+        handleSubmit();
+      } else {
+        handleSubmit(item.value);
+      }
+    };
+
+    const handleSubmit = async (commentText = undefined) => {
       if (!alertCount || alertCount === 0) {
         return;
+      }
+
+      if (
+        commentText &&
+        commentText.trim() !== '' &&
+        !templates.includes(commentText) &&
+        alertTypes.length > 0
+      ) {
+        saveTemplate(alertTypes[0], commentText.trim());
       }
 
       setStep('progress');
       setProgress({ current: 0, total: alertCount });
 
       try {
-        await onUpdate(severity, (current, total) => {
-          setProgress({ current, total });
-        });
+        await onUpdate(
+          selectedSeverity,
+          commentText && commentText.trim() !== '' ? commentText : undefined,
+          (current, total) => {
+            setProgress({ current, total });
+          }
+        );
         setTimeout(() => {
           onClose();
         }, 500);
@@ -78,15 +166,23 @@ export const UpdateSeverityModal = React.memo(
       }
     };
 
-    const getSeverityName = (value) => {
-      if (value === Severity.Low) return 'Low';
-      if (value === Severity.Medium) return 'Medium';
-      if (value === Severity.High) return 'High';
-      if (value === Severity.Critical) return 'Critical';
-      if (value === Severity.Note) return 'Note';
-      if (value === Severity.Warning) return 'Warning';
-      if (value === Severity.Error) return 'Error';
-      return 'Unknown';
+    const firstAlertHasComments =
+      alerts &&
+      alerts.length > 0 &&
+      alerts[0].dismissal?.message &&
+      alerts[0].dismissal.message.trim() !== '';
+
+    const templateOptions = [
+      { label: "🚫 Don't add a comment", value: 'no-comment' },
+      { label: '✏️  Custom message...', value: 'custom' },
+      ...templates.map((t) => ({
+        label: t.length > 60 ? t.substring(0, 57) + '...' : t,
+        value: t,
+      })),
+    ];
+
+    const getInitialTemplateIndex = () => {
+      return firstAlertHasComments ? 0 : 1;
     };
 
     return (
@@ -106,6 +202,20 @@ export const UpdateSeverityModal = React.memo(
                 items={SEVERITY_OPTIONS}
                 initialIndex={getInitialIndex()}
                 onSelect={handleSeveritySelect}
+              />
+            </Box>
+          )}
+
+          {step === 'template' && (
+            <Box flexDirection="column" marginTop={1}>
+              <Text>Select comment template:</Text>
+              {alertTypes.length > 0 && (
+                <Text dimColor>For: {alertTypes[0]}</Text>
+              )}
+              <SelectInput
+                items={templateOptions}
+                initialIndex={getInitialTemplateIndex()}
+                onSelect={handleTemplateSelect}
               />
             </Box>
           )}

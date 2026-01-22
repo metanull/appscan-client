@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
 import Spinner from 'ink-spinner';
+import {
+  getTemplatesForType,
+  saveTemplate,
+} from '../../../shared/services/commentTemplates.js';
 import { Modal } from '../../../shared/components/Modal.js';
 import { Panel } from '../../../shared/components/Panel.js';
 import { State, DismissalType } from '../../../../services/azdo-service.js';
@@ -22,7 +26,7 @@ const DISMISSAL_TYPE_OPTIONS = [
 
 /**
  * Modal for updating Azure DevOps alert state with optional dismissal type and comments
- * Supports single and bulk updates with metadata preservation
+ * Supports single and bulk updates with comment templates and metadata preservation
  * @param {Object} props - Component props
  * @param {number} props.alertCount - Number of alerts to update
  * @param {Array} props.alerts - Array of alerts with their current state
@@ -55,9 +59,11 @@ export const UpdateStatusModal = React.memo(
       return 0;
     };
 
-    const [step, setStep] = useState('state');
+    const [step, setStep] = useState('state'); // 'state' | 'dismissalType' | 'template' | 'progress'
     const [selectedState, setSelectedState] = useState(null);
     const [selectedDismissalType, setSelectedDismissalType] = useState(null);
+    const [templates, setTemplates] = useState([]);
+    const [alertTypes, setAlertTypes] = useState([]);
     const [progress, setProgress] = useState({ current: 0, total: 0 });
     const [updateError, setUpdateError] = useState(null);
 
@@ -66,7 +72,19 @@ export const UpdateStatusModal = React.memo(
         return;
       }
       isInitialized.current = true;
-    }, []);
+
+      if (alerts && alerts.length > 0) {
+        const types = [
+          ...new Set(alerts.map((a) => a.ruleName || a.title || 'Unknown')),
+        ];
+        setAlertTypes(types);
+
+        if (types.length > 0) {
+          const loadedTemplates = getTemplatesForType(types[0]);
+          setTemplates(loadedTemplates);
+        }
+      }
+    }, [alerts]);
 
     useInput((input, key) => {
       if (key.escape) {
@@ -83,7 +101,7 @@ export const UpdateStatusModal = React.memo(
       } else if (item.value === State.Fixed) {
         // Fixed state automatically sets dismissalReason to Fixed (1)
         setSelectedDismissalType(DismissalType.Fixed);
-        promptForComment(DismissalType.Fixed);
+        promptForCommentWithTemplate(DismissalType.Fixed);
       } else {
         // Active state doesn't support comments in Azure DevOps API
         // Submit directly without prompting for comment
@@ -93,7 +111,25 @@ export const UpdateStatusModal = React.memo(
 
     const handleDismissalTypeSelect = (item) => {
       setSelectedDismissalType(item.value);
-      promptForComment(item.value);
+      promptForCommentWithTemplate(item.value);
+    };
+
+    const promptForCommentWithTemplate = (dismissalType) => {
+      if (templates.length > 0) {
+        setStep('template');
+      } else {
+        promptForComment(dismissalType);
+      }
+    };
+
+    const handleTemplateSelect = (item) => {
+      if (item.value === 'custom') {
+        promptForComment(selectedDismissalType);
+      } else if (item.value === 'no-comment') {
+        handleSubmit('', selectedState, selectedDismissalType);
+      } else {
+        handleSubmit(item.value, selectedState, selectedDismissalType);
+      }
     };
 
     const promptForComment = (dismissalType) => {
@@ -135,6 +171,16 @@ export const UpdateStatusModal = React.memo(
         return;
       }
 
+      // Save new comment as template if it's a new custom comment
+      if (
+        commentText &&
+        commentText.trim() !== '' &&
+        !templates.includes(commentText) &&
+        alertTypes.length > 0
+      ) {
+        saveTemplate(alertTypes[0], commentText.trim());
+      }
+
       setStep('progress');
       setProgress({ current: 0, total: alertCount });
 
@@ -158,6 +204,25 @@ export const UpdateStatusModal = React.memo(
       } catch (error) {
         setUpdateError(error.message || 'Failed to update alerts');
       }
+    };
+
+    const firstAlertHasComments =
+      alerts &&
+      alerts.length > 0 &&
+      alerts[0].dismissal?.message &&
+      alerts[0].dismissal.message.trim() !== '';
+
+    const templateOptions = [
+      { label: "🚫 Don't add a comment", value: 'no-comment' },
+      { label: '✏️  Custom message...', value: 'custom' },
+      ...templates.map((t) => ({
+        label: t.length > 60 ? t.substring(0, 57) + '...' : t,
+        value: t,
+      })),
+    ];
+
+    const getInitialTemplateIndex = () => {
+      return firstAlertHasComments ? 0 : 1;
     };
 
     return (
@@ -194,6 +259,20 @@ export const UpdateStatusModal = React.memo(
               <SelectInput
                 items={DISMISSAL_TYPE_OPTIONS}
                 onSelect={handleDismissalTypeSelect}
+              />
+            </Box>
+          )}
+
+          {step === 'template' && (
+            <Box flexDirection="column" marginTop={1}>
+              <Text>Select comment template:</Text>
+              {alertTypes.length > 0 && (
+                <Text dimColor>For: {alertTypes[0]}</Text>
+              )}
+              <SelectInput
+                items={templateOptions}
+                initialIndex={getInitialTemplateIndex()}
+                onSelect={handleTemplateSelect}
               />
             </Box>
           )}
