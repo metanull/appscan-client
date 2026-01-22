@@ -585,11 +585,6 @@ export class JiraService {
           description += `- **Title:** ${alert.title}\n`;
         }
 
-        // Add truncated secret for secret alerts
-        if (alert.truncatedSecret) {
-          description += `- **Truncated Secret:** \`${alert.truncatedSecret}\`\n`;
-        }
-
         // Add physical locations summary
         if (alert.physicalLocations && alert.physicalLocations.length > 0) {
           const distinctFiles = new Set(
@@ -607,6 +602,11 @@ export class JiraService {
               description += `- \`${filePath}\` (${occurrencesInFile} occurrence${occurrencesInFile > 1 ? 's' : ''})\n`;
             }
           }
+        }
+
+        // Add repository URL if available
+        if (alert.repositoryUrl) {
+          description += `- **Repository URL:** ${alert.repositoryUrl}\n`;
         }
 
         // Add tools/remediation information
