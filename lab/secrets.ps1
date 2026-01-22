@@ -1,4 +1,6 @@
-﻿# Objective => identify distinct files where credentials have been found in scans from both AppScan on Cloud and Azure DevOps repos
+﻿# . .\lab\secrets.ps1 2>$null | tee-object -Variable Secrets4 | Select-Object src,type,severity,@{n='Location';e={$_.location | Select-Object -Unique}},@{n='locationCount';e={$_.location.count}},fingerprint,@{n='url';e={$_.url|Select-Object -First 1}},dirId,dirName,dirUrl,appId,appName,appUrl,custom,data
+
+# Objective => identify distinct files where credentials have been found in scans from both AppScan on Cloud and Azure DevOps repos
 
 # Suppress Node.js deprecation warnings (url.parse() in azure-devops-node-api)
 $env:NODE_NO_WARNINGS = 1
