@@ -74,7 +74,9 @@ export const UpdateStatusModal = React.memo(
       isInitialized.current = true;
 
       if (alerts && alerts.length > 0) {
-        const types = [...new Set(alerts.map((a) => a.ruleName || a.title || 'Unknown'))];
+        const types = [
+          ...new Set(alerts.map((a) => a.ruleName || a.title || 'Unknown')),
+        ];
         setAlertTypes(types);
 
         if (types.length > 0) {

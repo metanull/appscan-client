@@ -452,7 +452,11 @@ export class JiraService {
         errorName: error.name,
       };
 
-      logger.error('Failed to create Jira issue from alerts', error, errorDetails);
+      logger.error(
+        'Failed to create Jira issue from alerts',
+        error,
+        errorDetails
+      );
 
       auditService.logJiraCreate(projectKey, summary, alerts.length, {
         success: false,
@@ -553,7 +557,11 @@ export class JiraService {
         errorName: error.name,
       };
 
-      logger.error('Failed to create Jira issues from alerts', error, errorDetails);
+      logger.error(
+        'Failed to create Jira issues from alerts',
+        error,
+        errorDetails
+      );
       throw error;
     }
   }

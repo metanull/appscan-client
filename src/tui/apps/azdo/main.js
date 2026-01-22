@@ -120,7 +120,8 @@ const AlertRow = React.memo(({ alert, isSelected, isMultiSelected }) => {
   const severityName = getSeverityName(alert.severity);
   const stateName = getStateName(alert.state);
   const dismissalType = alert.dismissal?.dismissalType;
-  const dismissalTypeName = dismissalType !== undefined ? getDismissalTypeName(dismissalType) : null;
+  const dismissalTypeName =
+    dismissalType !== undefined ? getDismissalTypeName(dismissalType) : null;
   const computedStatus = getComputedStatus(alert);
   const title = alert.title || alert.ruleName || 'Unknown';
   const metadata = parseAlertMetadata(alert);
@@ -159,7 +160,8 @@ const AlertRow = React.memo(({ alert, isSelected, isMultiSelected }) => {
       </Box>
       <Box width={20} justifyContent="flex-start" marginRight={1}>
         <Text color={isSelected ? 'cyan' : undefined}>
-          {stateName}{dismissalTypeName ? ` (${dismissalTypeName})` : ''}
+          {stateName}
+          {dismissalTypeName ? ` (${dismissalTypeName})` : ''}
         </Text>
       </Box>
       <Box width={14} justifyContent="flex-start" marginRight={1}>
@@ -314,84 +316,131 @@ const DetailsPreviewPanel = React.memo(
     const computedStatus = getComputedStatus(alert);
     const statusColor = COMPUTED_STATUS_COLORS[computedStatus] || 'white';
     const severityName = getSeverityName(alert.severity);
-    const severityColor = {
-      Critical: 'red',
-      High: 'red',
-      Medium: 'yellow',
-      Low: 'blue',
-      Note: 'gray',
-    }[severityName] || 'white';
+    const severityColor =
+      {
+        Critical: 'red',
+        High: 'red',
+        Medium: 'yellow',
+        Low: 'blue',
+        Note: 'gray',
+      }[severityName] || 'white';
 
     const firstFilePath = alert.physicalLocations?.[0]?.filePath;
-    const occurrencesCount = alert.physicalLocations?.filter(
-      (loc) => loc.versionControl?.itemUrl
-    ).length || 0;
+    const occurrencesCount =
+      alert.physicalLocations?.filter((loc) => loc.versionControl?.itemUrl)
+        .length || 0;
 
     return (
       <Panel title="Details [d to toggle]" borderColor="magenta" width={80}>
         <Box flexDirection="column">
           <Text> </Text>
           <Text>
-            <Text bold color="cyan">Alert ID:</Text> {alert.alertId || 'N/A'}
+            <Text bold color="cyan">
+              Alert ID:
+            </Text>{' '}
+            {alert.alertId || 'N/A'}
           </Text>
           <Text>
-            <Text bold color="cyan">Title:</Text> {alert.title || alert.ruleName || 'N/A'}
+            <Text bold color="cyan">
+              Title:
+            </Text>{' '}
+            {alert.title || alert.ruleName || 'N/A'}
           </Text>
           <Text>
-            <Text bold color="cyan">Type:</Text> {getAlertTypeName(alert.alertType)}
+            <Text bold color="cyan">
+              Type:
+            </Text>{' '}
+            {getAlertTypeName(alert.alertType)}
           </Text>
           {alert.truncatedSecret && (
             <Text wrap="truncate">
-              <Text bold color="cyan">Secret:</Text>{' '}
-              <Text color="yellow" backgroundColor="black">{alert.truncatedSecret}</Text>
+              <Text bold color="cyan">
+                Secret:
+              </Text>{' '}
+              <Text color="yellow" backgroundColor="black">
+                {alert.truncatedSecret}
+              </Text>
             </Text>
           )}
           <Text>
-            <Text bold color="cyan">Severity:</Text>{' '}
-            <Text color={severityColor} bold>{severityName}</Text>
+            <Text bold color="cyan">
+              Severity:
+            </Text>{' '}
+            <Text color={severityColor} bold>
+              {severityName}
+            </Text>
           </Text>
           <Text>
-            <Text bold color="cyan">State:</Text>{' '}
-            <Text color={alert.state === 1 ? 'red' : 'green'}>{getStateName(alert.state)}</Text>
+            <Text bold color="cyan">
+              State:
+            </Text>{' '}
+            <Text color={alert.state === 1 ? 'red' : 'green'}>
+              {getStateName(alert.state)}
+            </Text>
             {alert.dismissal?.dismissalType !== undefined && (
-              <Text dimColor> ({getDismissalTypeName(alert.dismissal.dismissalType)})</Text>
+              <Text dimColor>
+                {' '}
+                ({getDismissalTypeName(alert.dismissal.dismissalType)})
+              </Text>
             )}
           </Text>
           {computedStatus && (
             <Text>
-              <Text bold color="cyan">Status:</Text> <Text color={statusColor}>{computedStatus}</Text>
+              <Text bold color="cyan">
+                Status:
+              </Text>{' '}
+              <Text color={statusColor}>{computedStatus}</Text>
             </Text>
           )}
           {firstFilePath && (
             <Text wrap="truncate">
-              <Text bold color="cyan">File:</Text> {firstFilePath}
+              <Text bold color="cyan">
+                File:
+              </Text>{' '}
+              {firstFilePath}
             </Text>
           )}
           {occurrencesCount > 0 && (
             <Text>
-              <Text bold color="cyan">Occurrences:</Text> <Text color="yellow" bold>{occurrencesCount}</Text>
+              <Text bold color="cyan">
+                Occurrences:
+              </Text>{' '}
+              <Text color="yellow" bold>
+                {occurrencesCount}
+              </Text>
             </Text>
           )}
           {alert.physicalLocation?.filePath && (
             <Text wrap="truncate">
-              <Text bold color="cyan">Location:</Text> {alert.physicalLocation.filePath}
+              <Text bold color="cyan">
+                Location:
+              </Text>{' '}
+              {alert.physicalLocation.filePath}
               {alert.physicalLocation.region?.startLine &&
                 `:${alert.physicalLocation.region.startLine}`}
             </Text>
           )}
           {project && (
             <Text wrap="truncate">
-              <Text bold color="cyan">Project:</Text> {project.name || 'N/A'}
+              <Text bold color="cyan">
+                Project:
+              </Text>{' '}
+              {project.name || 'N/A'}
             </Text>
           )}
           {metadata.jiraId && (
             <Text wrap="truncate">
-              <Text bold color="cyan">Jira ID:</Text> <Text color="green">{metadata.jiraId}</Text>
+              <Text bold color="cyan">
+                Jira ID:
+              </Text>{' '}
+              <Text color="green">{metadata.jiraId}</Text>
             </Text>
           )}
           {alert.dismissal && (
             <Box flexDirection="column" marginTop={1}>
-              <Text bold color="cyan">Dismissal:</Text>
+              <Text bold color="cyan">
+                Dismissal:
+              </Text>
               <Box
                 borderStyle="single"
                 borderColor="gray"

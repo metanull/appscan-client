@@ -233,7 +233,8 @@ export const IssueModal = React.memo(
                     </Text>
                     {alert.dismissal?.dismissalType !== undefined && (
                       <Text wrap="wrap" dimColor>
-                        {' '}({getDismissalTypeName(alert.dismissal.dismissalType)})
+                        {' '}
+                        ({getDismissalTypeName(alert.dismissal.dismissalType)})
                       </Text>
                     )}
                   </Box>
@@ -437,7 +438,9 @@ export const IssueModal = React.memo(
                               <Text bold>Reason:</Text>
                             </Box>
                             <Text wrap="wrap" color="yellow">
-                              {getDismissalTypeName(alert.dismissal.dismissalType)}
+                              {getDismissalTypeName(
+                                alert.dismissal.dismissalType
+                              )}
                             </Text>
                           </Box>
                         )}
@@ -570,19 +573,33 @@ export const IssueModal = React.memo(
                           if (itemUrls.length > 0) {
                             return (
                               <Box flexDirection="column" marginTop={1}>
-                                <Text bold dimColor>File Links:</Text>
+                                <Text bold dimColor>
+                                  File Links:
+                                </Text>
                                 {itemUrls.map((url, idx) => (
                                   <Box key={idx}>
                                     <Link url={url}>
-                                      <Text color="blue" underline wrap="truncate">
-                                        {url.length > 150 ? url.substring(0, 147) + '...' : url}
+                                      <Text
+                                        color="blue"
+                                        underline
+                                        wrap="truncate"
+                                      >
+                                        {url.length > 150
+                                          ? url.substring(0, 147) + '...'
+                                          : url}
                                       </Text>
                                     </Link>
                                   </Box>
                                 ))}
-                                {alert.physicalLocations.filter((loc) => loc.versionControl?.itemUrl).length > 10 && (
+                                {alert.physicalLocations.filter(
+                                  (loc) => loc.versionControl?.itemUrl
+                                ).length > 10 && (
                                   <Text dimColor>
-                                    ...and {alert.physicalLocations.filter((loc) => loc.versionControl?.itemUrl).length - 10} more
+                                    ...and{' '}
+                                    {alert.physicalLocations.filter(
+                                      (loc) => loc.versionControl?.itemUrl
+                                    ).length - 10}{' '}
+                                    more
                                   </Text>
                                 )}
                               </Box>

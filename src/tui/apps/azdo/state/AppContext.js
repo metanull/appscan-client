@@ -154,7 +154,8 @@ export const useStore = create((set, get) => ({
   clearSelection: () => set({ selectedAlertIds: [] }),
 
   // Actions - Filters
-  setFilterStatus: (status) => set({ filterStatus: status, selectedAlertIds: [] }),
+  setFilterStatus: (status) =>
+    set({ filterStatus: status, selectedAlertIds: [] }),
   setFilterState: (state) => set({ filterState: state, selectedAlertIds: [] }),
   setFilterSeverity: (severity) =>
     set({ filterSeverity: severity, selectedAlertIds: [] }),
