@@ -222,7 +222,15 @@ export async function setup(_options) {
       { name: 'Azure DevOps Configuration', prefix: 'AZURE_DEVOPS_' },
       { name: 'JIRA Configuration', prefix: 'JIRA_' },
       { name: 'Confluence Configuration', prefix: 'CONFLUENCE_' },
-      { name: 'HTTP Proxy Configuration', keys: ['HTTP_PROXY', 'HTTPS_PROXY', 'NO_PROXY', 'PROXY_REJECT_UNAUTHORIZED'] },
+      {
+        name: 'HTTP Proxy Configuration',
+        keys: [
+          'HTTP_PROXY',
+          'HTTPS_PROXY',
+          'NO_PROXY',
+          'PROXY_REJECT_UNAUTHORIZED',
+        ],
+      },
     ];
 
     for (const category of categories) {

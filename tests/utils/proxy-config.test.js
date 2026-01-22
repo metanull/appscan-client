@@ -71,7 +71,9 @@ describe('proxy-config', () => {
     });
 
     it('handles URL-encoded credentials', () => {
-      const result = parseProxyUrl('http://user%40domain:p%40ss%3Aword@proxy.example.com:8080');
+      const result = parseProxyUrl(
+        'http://user%40domain:p%40ss%3Aword@proxy.example.com:8080'
+      );
       expect(result.auth).toEqual({
         username: 'user@domain',
         password: 'p@ss:word',
@@ -123,7 +125,12 @@ describe('proxy-config', () => {
       process.env.HTTPS_PROXY = 'http://proxy.example.com:8080';
       process.env.NO_PROXY = 'localhost, 127.0.0.1, .local, *.internal.corp';
       const config = getProxyConfig();
-      expect(config.noProxyList).toEqual(['localhost', '127.0.0.1', '.local', '*.internal.corp']);
+      expect(config.noProxyList).toEqual([
+        'localhost',
+        '127.0.0.1',
+        '.local',
+        '*.internal.corp',
+      ]);
     });
 
     it('handles empty NO_PROXY', () => {
@@ -159,9 +166,15 @@ describe('proxy-config', () => {
     });
 
     it('matches wildcard domain pattern', () => {
-      expect(shouldBypassProxy('api.internal.corp', ['*.internal.corp'])).toBe(true);
-      expect(shouldBypassProxy('internal.corp', ['*.internal.corp'])).toBe(true);
-      expect(shouldBypassProxy('external.com', ['*.internal.corp'])).toBe(false);
+      expect(shouldBypassProxy('api.internal.corp', ['*.internal.corp'])).toBe(
+        true
+      );
+      expect(shouldBypassProxy('internal.corp', ['*.internal.corp'])).toBe(
+        true
+      );
+      expect(shouldBypassProxy('external.com', ['*.internal.corp'])).toBe(
+        false
+      );
     });
 
     it('matches subdomain of exact host', () => {
@@ -198,7 +211,9 @@ describe('proxy-config', () => {
 
     it('includes HTTPS proxy in summary', () => {
       process.env.HTTPS_PROXY = 'http://proxy.example.com:8080';
-      expect(getProxyConfigSummary()).toContain('HTTPS: http://proxy.example.com:8080');
+      expect(getProxyConfigSummary()).toContain(
+        'HTTPS: http://proxy.example.com:8080'
+      );
     });
 
     it('includes bypass list in summary', () => {

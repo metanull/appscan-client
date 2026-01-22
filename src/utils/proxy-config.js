@@ -18,9 +18,16 @@ export function parseProxyUrl(proxyUrl) {
     return {
       protocol: url.protocol.replace(':', ''),
       host: url.hostname,
-      port: url.port ? parseInt(url.port, 10) : url.protocol === 'https:' ? 443 : 80,
+      port: url.port
+        ? parseInt(url.port, 10)
+        : url.protocol === 'https:'
+          ? 443
+          : 80,
       auth: url.username
-        ? { username: decodeURIComponent(url.username), password: decodeURIComponent(url.password || '') }
+        ? {
+            username: decodeURIComponent(url.username),
+            password: decodeURIComponent(url.password || ''),
+          }
         : undefined,
     };
   } catch {
@@ -34,8 +41,12 @@ export function parseProxyUrl(proxyUrl) {
  */
 export function getProxyConfig() {
   const httpsProxy =
-    process.env.HTTPS_PROXY || process.env.https_proxy || process.env.HTTP_PROXY || process.env.http_proxy;
-  const httpProxy = process.env.HTTP_PROXY || process.env.http_proxy || httpsProxy;
+    process.env.HTTPS_PROXY ||
+    process.env.https_proxy ||
+    process.env.HTTP_PROXY ||
+    process.env.http_proxy;
+  const httpProxy =
+    process.env.HTTP_PROXY || process.env.http_proxy || httpsProxy;
   const noProxy = process.env.NO_PROXY || process.env.no_proxy || '';
 
   if (!httpsProxy && !httpProxy) return undefined;
@@ -133,7 +144,9 @@ export async function getAxiosProxyConfig() {
     const rejectUnauthorized = !shouldDisableCertVerification();
 
     if (config.httpsProxy) {
-      result.httpsAgent = new HttpsProxyAgent(config.httpsProxy, { rejectUnauthorized });
+      result.httpsAgent = new HttpsProxyAgent(config.httpsProxy, {
+        rejectUnauthorized,
+      });
     }
     if (config.httpProxy) {
       result.httpAgent = new HttpProxyAgent(config.httpProxy);
@@ -141,7 +154,9 @@ export async function getAxiosProxyConfig() {
 
     return result;
   } catch (error) {
-    logger.warn('Proxy agents not available, proxy may not work for HTTPS', { error: error.message });
+    logger.warn('Proxy agents not available, proxy may not work for HTTPS', {
+      error: error.message,
+    });
     return {};
   }
 }
@@ -191,8 +206,10 @@ export function getProxyConfigSummary() {
 
   const parts = [];
   if (config.httpsProxy) parts.push(`HTTPS: ${config.httpsProxy}`);
-  if (config.httpProxy && config.httpProxy !== config.httpsProxy) parts.push(`HTTP: ${config.httpProxy}`);
-  if (config.noProxyList.length > 0) parts.push(`Bypass: ${config.noProxyList.join(', ')}`);
+  if (config.httpProxy && config.httpProxy !== config.httpsProxy)
+    parts.push(`HTTP: ${config.httpProxy}`);
+  if (config.noProxyList.length > 0)
+    parts.push(`Bypass: ${config.noProxyList.join(', ')}`);
   if (shouldDisableCertVerification()) parts.push('TLS verification: DISABLED');
   const caCert = getCustomCACert();
   if (caCert) parts.push(`Custom CA: ${caCert}`);

@@ -75,7 +75,9 @@ export class JiraService {
       const tokens = marked.lexer(markdownText);
       return markdownToADF(tokens);
     } catch (error) {
-      logger.error('Failed to convert markdown to ADF', { error: error.message });
+      logger.error('Failed to convert markdown to ADF', {
+        error: error.message,
+      });
       return {
         type: 'doc',
         version: 1,

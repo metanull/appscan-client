@@ -11,7 +11,9 @@ import { JiraService } from '../src/services/jira-service.js';
 const { JIRA_HOST, JIRA_EMAIL, JIRA_API_TOKEN } = process.env;
 
 if (!JIRA_HOST || !JIRA_EMAIL || !JIRA_API_TOKEN) {
-  console.error('Missing JIRA_HOST, JIRA_EMAIL, or JIRA_API_TOKEN in environment');
+  console.error(
+    'Missing JIRA_HOST, JIRA_EMAIL, or JIRA_API_TOKEN in environment'
+  );
   process.exit(1);
 }
 
@@ -28,15 +30,23 @@ try {
   jiraService.initialize();
 
   console.log('Fetching SEC-509...');
-  const issue = await jiraService.client.issues.getIssue({ issueIdOrKey: 'SEC-509' });
+  const issue = await jiraService.client.issues.getIssue({
+    issueIdOrKey: 'SEC-509',
+  });
 
   console.log('Success!');
-  console.log(JSON.stringify({
-    key: issue.key,
-    summary: issue.fields.summary,
-    status: issue.fields.status?.name,
-    assignee: issue.fields.assignee?.displayName,
-  }, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        key: issue.key,
+        summary: issue.fields.summary,
+        status: issue.fields.status?.name,
+        assignee: issue.fields.assignee?.displayName,
+      },
+      null,
+      2
+    )
+  );
 } catch (error) {
   console.error('Failed:', error.message);
   if (error.stack) console.error(error.stack);
