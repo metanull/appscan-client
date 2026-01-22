@@ -1,5 +1,6 @@
 import { Api, HttpClient } from '../generated/Api.js';
 import { Config } from '../utils/config.js';
+import { getAxiosProxyConfig } from '../utils/proxy-config.js';
 
 // Predefined filter combinations
 const FILTER_PRESETS = {
@@ -87,8 +88,11 @@ export class AppScanService {
     }
 
     try {
+      const proxyConfig = await getAxiosProxyConfig();
+
       const httpClient = new HttpClient({
         baseURL: this.config.getBaseUrl(),
+        ...proxyConfig,
       });
       this.api = new Api(httpClient);
 
@@ -105,12 +109,12 @@ export class AppScanService {
 
       this.token = response.Token;
 
-      // Update API instance with authorization token
       const authenticatedHttpClient = new HttpClient({
         baseURL: this.config.getBaseUrl(),
         headers: {
           Authorization: `Bearer ${this.token}`,
         },
+        ...proxyConfig,
       });
       this.api = new Api(authenticatedHttpClient);
 

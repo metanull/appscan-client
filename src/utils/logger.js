@@ -72,8 +72,13 @@ class Logger {
 
   /**
    * Log error - always logged to file and console
+   * @param {string} message - Error message
+   * @param {Error} [error] - Optional error object
+   * @param {Object} [context] - Additional context
+   * @param {Object} [options] - Logging options
+   * @param {boolean} [options.fileOnly] - If true, only write to file, not console
    */
-  error(message, error = null, context = {}) {
+  error(message, error = null, context = {}, options = {}) {
     const errorDetails = error
       ? {
           message: error.message,
@@ -88,8 +93,8 @@ class Logger {
       errorDetails
     );
 
-    // Only write to console if not in TUI mode
-    if (!this.tuiMode) {
+    // Only write to console if not in TUI mode and not fileOnly
+    if (!this.tuiMode && !options.fileOnly) {
       console.error(formattedMessage);
     }
     this._writeToFile(formattedMessage);
@@ -99,12 +104,16 @@ class Logger {
 
   /**
    * Log warning - always logged to file and console
+   * @param {string} message - Warning message
+   * @param {Object} [context] - Additional context
+   * @param {Object} [options] - Logging options
+   * @param {boolean} [options.fileOnly] - If true, only write to file, not console
    */
-  warn(message, context = {}) {
+  warn(message, context = {}, options = {}) {
     const formattedMessage = this._format(LOG_LEVELS.WARN, message, context);
 
-    // Only write to console if not in TUI mode
-    if (!this.tuiMode) {
+    // Only write to console if not in TUI mode and not fileOnly
+    if (!this.tuiMode && !options.fileOnly) {
       console.warn(formattedMessage);
     }
     this._writeToFile(formattedMessage);
@@ -114,13 +123,17 @@ class Logger {
 
   /**
    * Log info - logged based on log level
+   * @param {string} message - Info message
+   * @param {Object} [context] - Additional context
+   * @param {Object} [options] - Logging options
+   * @param {boolean} [options.fileOnly] - If true, only write to file, not console
    */
-  info(message, context = {}) {
+  info(message, context = {}, options = {}) {
     if (this._shouldLog(LOG_LEVELS.INFO)) {
       const formattedMessage = this._format(LOG_LEVELS.INFO, message, context);
 
-      // Only write to console if not in TUI mode
-      if (!this.tuiMode) {
+      // Only write to console if not in TUI mode and not fileOnly
+      if (!this.tuiMode && !options.fileOnly) {
         console.log(formattedMessage);
       }
       this._writeToFile(formattedMessage);
@@ -131,8 +144,12 @@ class Logger {
 
   /**
    * Log debug - logged based on log level, but always calls debug callback
+   * @param {string} message - Debug message
+   * @param {Object} [context] - Additional context
+   * @param {Object} [options] - Logging options
+   * @param {boolean} [options.fileOnly] - If true, only write to file, not console
    */
-  debug(message, context = {}) {
+  debug(message, context = {}, options = {}) {
     const formattedMessage = this._format(LOG_LEVELS.DEBUG, message, context);
 
     // Always send to debug callback if registered (for UI debug bar)
@@ -146,8 +163,8 @@ class Logger {
 
     // Only log to file/console if log level allows
     if (this._shouldLog(LOG_LEVELS.DEBUG)) {
-      // Only write to console if not in TUI mode
-      if (!this.tuiMode) {
+      // Only write to console if not in TUI mode and not fileOnly
+      if (!this.tuiMode && !options.fileOnly) {
         console.debug(formattedMessage);
       }
       this._writeToFile(formattedMessage);
