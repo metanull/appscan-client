@@ -108,6 +108,52 @@ export const useStore = create((set, get) => ({
   setAlertDetails: (alertDetails) => set({ alertDetails }),
 
   /**
+   * Refresh alerts while preserving cursor position
+   * Finds the previously selected alert by ID and positions cursor accordingly
+   * If the alert is no longer in the list, cursor stays at current position (clamped to bounds)
+   * Uses internal filter state to correctly position cursor in filtered results
+   * @param {Array} newAlerts - New alerts array from server
+   */
+  refreshAlerts: (newAlerts) =>
+    set((state) => {
+      // Build filter options from current state
+      const filterOptions = {
+        status: state.filterStatus,
+        state: state.filterState,
+        severity: state.filterSeverity,
+        alertType: state.filterAlertType,
+        jira: state.filterJira,
+        searchText: state.searchText,
+        sortBy: state.sortBy,
+      };
+
+      // Get current alert ID from filtered list at current cursor
+      const filteredAlerts = filterIssues(state.alerts, filterOptions);
+      const currentAlertId = filteredAlerts[state.listCursor]?.alertId;
+
+      // Find the same alert in the new filtered list
+      const newFilteredAlerts = filterIssues(newAlerts, filterOptions);
+
+      let newCursor = 0;
+      if (currentAlertId) {
+        const idx = newFilteredAlerts.findIndex(
+          (a) => a.alertId === currentAlertId
+        );
+        if (idx !== -1) {
+          newCursor = idx;
+        } else {
+          // Alert no longer in filtered list, clamp to valid range
+          newCursor = Math.min(
+            state.listCursor,
+            Math.max(0, newFilteredAlerts.length - 1)
+          );
+        }
+      }
+
+      return { alerts: newAlerts, listCursor: newCursor };
+    }),
+
+  /**
    * Update a single alert with detailed data (e.g., from getAlert with expand option)
    * Merges new data with existing alert data
    * @param {number} alertId - Alert ID to update

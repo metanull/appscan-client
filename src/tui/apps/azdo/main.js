@@ -722,7 +722,7 @@ export const App = ({ configPath }) => {
     }, 16);
   }, [filteredAlertsLength]);
 
-  // Reload alerts helper
+  // Reload alerts helper (preserves cursor position)
   const reloadAlerts = useCallback(async () => {
     if (!selectedRepository?.id) return;
 
@@ -749,7 +749,8 @@ export const App = ({ configPath }) => {
         );
       }
 
-      store.setAlerts(alertList || []);
+      // Use refreshAlerts to preserve cursor position
+      store.refreshAlerts(alertList || []);
       store.setLoading(false);
     } catch (err) {
       logger.error('Failed to reload alerts', err);
