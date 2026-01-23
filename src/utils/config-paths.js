@@ -80,6 +80,14 @@ export function getCommentTemplatesPath() {
 }
 
 /**
+ * Get the path to the alert count cache file
+ * @returns {string} Full path to alert-count-cache.json file
+ */
+export function getAlertCountCachePath() {
+  return join(getConfigDir(), 'alert-count-cache.json');
+}
+
+/**
  * Check if running from an installed package
  * @returns {boolean} True if running from installed package
  */

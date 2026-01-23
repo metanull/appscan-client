@@ -60,3 +60,5 @@ LDAP query built from user-controlled sources (cs/ldap-injection)|Not directly c
 Missing X-Frame-Options HTTP header (cs/web/missing-x-frame-options)|Downgraded the MEDIUM severity
 Cookie security: persistent cookie (cs/web/persistent-cookie)|Cookie consent cookie, not impacted by this rule
 Log entries created from user input (cs/log-forging)|By design - logger used properly to trace errors
+URL redirection from remote source (cs/web/unvalidated-url-redirection)|In compliance with CyberSecurity Policy, only CRITICAL+HIGH risk are currently in scope
+Log injection (js/log-injection)|In compliance with CyberSecurity Policy, only CRITICAL+HIGH risk are currently in scope

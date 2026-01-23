@@ -14,6 +14,7 @@ import { filterIssues } from '../utils/issue.js';
 export function useCurrentIssue() {
   const listCursor = useStore((state) => state.listCursor);
   const alerts = useStore((state) => state.alerts);
+  const filterStatus = useStore((state) => state.filterStatus);
   const filterState = useStore((state) => state.filterState);
   const filterSeverity = useStore((state) => state.filterSeverity);
   const filterAlertType = useStore((state) => state.filterAlertType);
@@ -23,6 +24,7 @@ export function useCurrentIssue() {
 
   const currentAlert = useMemo(() => {
     const filteredAlerts = filterIssues(alerts, {
+      status: filterStatus,
       state: filterState,
       severity: filterSeverity,
       alertType: filterAlertType,
@@ -34,6 +36,7 @@ export function useCurrentIssue() {
   }, [
     listCursor,
     alerts,
+    filterStatus,
     filterState,
     filterSeverity,
     filterAlertType,
