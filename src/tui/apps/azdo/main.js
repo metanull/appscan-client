@@ -19,6 +19,8 @@ import {
   getValidityResultName,
   getValidityResultColor,
   getDistinctFilePaths,
+  getMostRecentFingerprint,
+  parseFingerprintJson,
 } from './utils/issue.js';
 import { Layout } from '../../shared/components/Layout.js';
 import { Panel } from '../../shared/components/Panel.js';
@@ -41,7 +43,7 @@ import { TextInputPage } from '../../shared/components/TextInputPage.js';
 import { AzdoService } from '../../shared/services/azdo.js';
 import { JiraService } from '../../shared/services/jira.js';
 import { useCurrentIssue } from './hooks/useCurrentIssue.js';
-import { useDetailedEntityLoader } from './hooks/useDetailedEntityLoader.js';
+import { useDetailedEntityLoader, useDetailedAlertLoader } from './hooks/useDetailedEntityLoader.js';
 import { useTerminalSize } from '../../shared/hooks/useTerminalSize.js';
 import { useKeyboardShortcuts } from '../../shared/hooks/useKeyboardShortcuts.js';
 import logger from '../../../utils/logger.js';
@@ -340,9 +342,10 @@ const DetailsPreviewPanel = React.memo(
         ? azdoService?.buildAlertWebUrl(project.name, repository.id, alert.alertId)
         : alert.url;
 
-    // Get validation fingerprint info (for secret alerts)
-    const fingerprint = alert.validationFingerprints?.[0];
+    // Get most recent validation fingerprint (for secret alerts)
+    const fingerprint = getMostRecentFingerprint(alert);
     const validityResult = fingerprint?.validityResult;
+    const fingerprintData = parseFingerprintJson(fingerprint);
 
     return (
       <Panel title="Details [d to toggle]" borderColor="magenta" width={80}>
@@ -384,16 +387,27 @@ const DetailsPreviewPanel = React.memo(
               </Text>
             </Text>
           )}
-          {/* Validation fingerprint indicator for secrets */}
-          {validityResult !== undefined && (
-            <Text>
-              <Text bold color="cyan">
-                Validity:
-              </Text>{' '}
-              <Text color={getValidityResultColor(validityResult)} bold>
-                {getValidityResultName(validityResult)}
+          {/* Validation fingerprint for secrets */}
+          {fingerprint && (
+            <Box flexDirection="column" marginTop={1}>
+              <Text>
+                <Text bold color="cyan">
+                  Validity:
+                </Text>{' '}
+                <Text color={getValidityResultColor(validityResult)} bold>
+                  {getValidityResultName(validityResult)}
+                </Text>
               </Text>
-            </Text>
+              {fingerprintData && (
+                <Box flexDirection="column">
+                  {Object.entries(fingerprintData).map(([key, value]) => (
+                    <Text key={key} wrap="truncate" dimColor>
+                      • {key}: {String(value)}
+                    </Text>
+                  ))}
+                </Box>
+              )}
+            </Box>
           )}
           <Text>
             <Text bold color="cyan">
@@ -636,6 +650,9 @@ export const App = ({ configPath }) => {
 
   // Get current alert from filtered list using hook (same pattern as ASoC TUI)
   const currentAlert = useCurrentIssue();
+
+  // Load detailed alert data (with fingerprints) when current alert changes
+  useDetailedAlertLoader(azdoService, currentAlert);
 
   // Filtered alerts
   const filteredAlerts = useMemo(() => {

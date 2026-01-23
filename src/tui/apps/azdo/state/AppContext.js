@@ -108,6 +108,19 @@ export const useStore = create((set, get) => ({
   setAlertDetails: (alertDetails) => set({ alertDetails }),
 
   /**
+   * Update a single alert with detailed data (e.g., from getAlert with expand option)
+   * Merges new data with existing alert data
+   * @param {number} alertId - Alert ID to update
+   * @param {Object} alertData - New alert data to merge
+   */
+  updateAlert: (alertId, alertData) =>
+    set((state) => ({
+      alerts: state.alerts.map((a) =>
+        a.alertId === alertId ? { ...a, ...alertData } : a
+      ),
+    })),
+
+  /**
    * Update a single project with detailed data (e.g., from getProject)
    * Merges new data with existing project data
    * @param {string} projectId - Project ID to update

@@ -13,6 +13,8 @@ import {
   getValidityResultName,
   getValidityResultColor,
   getDistinctFilePaths,
+  getMostRecentFingerprint,
+  parseFingerprintJson,
 } from '../utils/issue.js';
 
 /**
@@ -284,63 +286,61 @@ export const IssueModal = React.memo(
                   )}
 
                   {/* Validation Fingerprint Information (for secret alerts) */}
-                  {alert.validationFingerprints && alert.validationFingerprints.length > 0 && (
-                    <Box
-                      flexDirection="column"
-                      borderStyle="single"
-                      borderColor="magenta"
-                      paddingX={1}
-                      marginTop={1}
-                    >
-                      <Text color="magenta" bold>
-                        Validation Fingerprint
-                      </Text>
-                      <Box marginTop={1} flexDirection="column">
-                        {alert.validationFingerprints.map((fp, idx) => (
-                          <Box key={idx} flexDirection="column">
-                            {fp.validityResult !== undefined && (
-                              <Box marginBottom={1}>
-                                <Box width={18}>
-                                  <Text bold>Validity:</Text>
-                                </Box>
-                                <Text wrap="wrap" color={getValidityResultColor(fp.validityResult)} bold>
-                                  {getValidityResultName(fp.validityResult)}
-                                </Text>
+                  {(() => {
+                    const fingerprint = getMostRecentFingerprint(alert);
+                    if (!fingerprint) return null;
+                    
+                    const fingerprintData = parseFingerprintJson(fingerprint);
+                    
+                    return (
+                      <Box
+                        flexDirection="column"
+                        borderStyle="single"
+                        borderColor="magenta"
+                        paddingX={1}
+                        marginTop={1}
+                      >
+                        <Text color="magenta" bold>
+                          Validation Fingerprint
+                        </Text>
+                        <Box marginTop={1} flexDirection="column">
+                          {fingerprint.validityResult !== undefined && (
+                            <Box marginBottom={1}>
+                              <Box width={18}>
+                                <Text bold>Validity:</Text>
                               </Box>
-                            )}
-                            {fp.validationFingerprintHash && (
-                              <Box marginBottom={1}>
-                                <Box width={18}>
-                                  <Text bold>Hash:</Text>
+                              <Text wrap="wrap" color={getValidityResultColor(fingerprint.validityResult)} bold>
+                                {getValidityResultName(fingerprint.validityResult)}
+                              </Text>
+                            </Box>
+                          )}
+                          {fingerprintData && (
+                            <Box flexDirection="column" marginTop={1}>
+                              <Text bold dimColor>Fingerprint Data:</Text>
+                              {Object.entries(fingerprintData).map(([key, value]) => (
+                                <Box key={key}>
+                                  <Box width={18}>
+                                    <Text dimColor>{key}:</Text>
+                                  </Box>
+                                  <Text wrap="truncate">{String(value)}</Text>
                                 </Box>
-                                <Text wrap="truncate" dimColor>
-                                  {fp.validationFingerprintHash}
-                                </Text>
+                              ))}
+                            </Box>
+                          )}
+                          {fingerprint.validityLastUpdatedDate && (
+                            <Box marginTop={1}>
+                              <Box width={18}>
+                                <Text bold dimColor>Last Checked:</Text>
                               </Box>
-                            )}
-                            {fp.c3Id && (
-                              <Box marginBottom={1}>
-                                <Box width={18}>
-                                  <Text bold>C3 ID:</Text>
-                                </Box>
-                                <Text wrap="wrap">{fp.c3Id}</Text>
-                              </Box>
-                            )}
-                            {fp.validityLastUpdatedDate && (
-                              <Box>
-                                <Box width={18}>
-                                  <Text bold>Last Checked:</Text>
-                                </Box>
-                                <Text wrap="wrap" dimColor>
-                                  {new Date(fp.validityLastUpdatedDate).toLocaleString()}
-                                </Text>
-                              </Box>
-                            )}
-                          </Box>
-                        ))}
+                              <Text wrap="wrap" dimColor>
+                                {new Date(fingerprint.validityLastUpdatedDate).toLocaleString()}
+                              </Text>
+                            </Box>
+                          )}
+                        </Box>
                       </Box>
-                    </Box>
-                  )}
+                    );
+                  })()}
 
                   {/* Git ref */}
                   {alert.gitRef && (

@@ -113,4 +113,79 @@ export function useDetailedEntityLoader(azdoService) {
   useDetailedRepositoryLoader(azdoService);
 }
 
+/**
+ * Loads detailed alert data (with validationFingerprints) when current alert changes
+ * Updates the store when detailed data is available (for secret alerts)
+ * @param {Object} azdoService - Azure DevOps service instance
+ * @param {Object} currentAlert - Current alert object
+ */
+export function useDetailedAlertLoader(azdoService, currentAlert) {
+  const selectedProject = useStore((state) => state.selectedProject);
+  const selectedRepository = useStore((state) => state.selectedRepository);
+  const loadedAlertIds = useRef(new Set());
+
+  useEffect(() => {
+    // Debug logging
+    logger.info('useDetailedAlertLoader check', {
+      hasCurrentAlert: !!currentAlert,
+      alertId: currentAlert?.alertId,
+      alertType: currentAlert?.alertType,
+      hasFingerprints: !!currentAlert?.validationFingerprints,
+      hasProject: !!selectedProject,
+      projectName: selectedProject?.name,
+      hasRepo: !!selectedRepository,
+      repoId: selectedRepository?.id,
+      alertRepoId: currentAlert?.repositoryId,
+      alreadyLoaded: loadedAlertIds.current.has(currentAlert?.alertId),
+    });
+
+    if (!currentAlert || !selectedProject || !azdoService) return;
+    // Only load detailed data for secret alerts (type 2) that don't already have fingerprints
+    if (currentAlert.alertType !== 2) return;
+    if (currentAlert.validationFingerprints) return; // Already has fingerprint data
+    if (loadedAlertIds.current.has(currentAlert.alertId)) return;
+
+    // Get the repository ID - from alert or selected repository
+    const repoId = currentAlert.repositoryId || selectedRepository?.id;
+    if (!repoId) {
+      logger.warn('Cannot load alert details - no repository ID available');
+      return;
+    }
+
+    const loadDetailedAlert = async () => {
+      try {
+        loadedAlertIds.current.add(currentAlert.alertId);
+        logger.debug('Loading detailed alert data with fingerprint', {
+          alertId: currentAlert.alertId,
+          projectName: selectedProject.name,
+          repositoryId: repoId,
+        });
+
+        const detailedAlert = await azdoService.getAlert(
+          selectedProject.name,
+          repoId,
+          currentAlert.alertId,
+          { includeFingerprint: true }
+        );
+
+        if (detailedAlert) {
+          useStore.getState().updateAlert(currentAlert.alertId, detailedAlert);
+          logger.debug('Alert details with fingerprint loaded', {
+            alertId: currentAlert.alertId,
+            hasFingerprints: !!detailedAlert.validationFingerprints,
+          });
+        }
+      } catch (err) {
+        logger.warn('Failed to load detailed alert data', {
+          alertId: currentAlert.alertId,
+          error: err.message,
+        });
+        // Don't set error state - this is background loading
+      }
+    };
+
+    loadDetailedAlert();
+  }, [currentAlert?.alertId, selectedProject?.name, selectedRepository?.id, azdoService]);
+}
+
 export default useDetailedEntityLoader;
