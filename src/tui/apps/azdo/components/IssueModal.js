@@ -203,7 +203,11 @@ export const IssueModal = React.memo(
                   {(() => {
                     const alertWebUrl =
                       repository && project && alert.alertId
-                        ? azdoService?.buildAlertWebUrl(project.name, repository.id, alert.alertId)
+                        ? azdoService?.buildAlertWebUrl(
+                            project.name,
+                            repository.id,
+                            alert.alertId
+                          )
                         : alert.url;
                     if (alertWebUrl) {
                       return (
@@ -289,9 +293,9 @@ export const IssueModal = React.memo(
                   {(() => {
                     const fingerprint = getMostRecentFingerprint(alert);
                     if (!fingerprint) return null;
-                    
+
                     const fingerprintData = parseFingerprintJson(fingerprint);
-                    
+
                     return (
                       <Box
                         flexDirection="column"
@@ -309,31 +313,47 @@ export const IssueModal = React.memo(
                               <Box width={18}>
                                 <Text bold>Validity:</Text>
                               </Box>
-                              <Text wrap="wrap" color={getValidityResultColor(fingerprint.validityResult)} bold>
-                                {getValidityResultName(fingerprint.validityResult)}
+                              <Text
+                                wrap="wrap"
+                                color={getValidityResultColor(
+                                  fingerprint.validityResult
+                                )}
+                                bold
+                              >
+                                {getValidityResultName(
+                                  fingerprint.validityResult
+                                )}
                               </Text>
                             </Box>
                           )}
                           {fingerprintData && (
                             <Box flexDirection="column" marginTop={1}>
-                              <Text bold dimColor>Fingerprint Data:</Text>
-                              {Object.entries(fingerprintData).map(([key, value]) => (
-                                <Box key={key}>
-                                  <Box width={18}>
-                                    <Text dimColor>{key}:</Text>
+                              <Text bold dimColor>
+                                Fingerprint Data:
+                              </Text>
+                              {Object.entries(fingerprintData).map(
+                                ([key, value]) => (
+                                  <Box key={key}>
+                                    <Box width={18}>
+                                      <Text dimColor>{key}:</Text>
+                                    </Box>
+                                    <Text wrap="truncate">{String(value)}</Text>
                                   </Box>
-                                  <Text wrap="truncate">{String(value)}</Text>
-                                </Box>
-                              ))}
+                                )
+                              )}
                             </Box>
                           )}
                           {fingerprint.validityLastUpdatedDate && (
                             <Box marginTop={1}>
                               <Box width={18}>
-                                <Text bold dimColor>Last Checked:</Text>
+                                <Text bold dimColor>
+                                  Last Checked:
+                                </Text>
                               </Box>
                               <Text wrap="wrap" dimColor>
-                                {new Date(fingerprint.validityLastUpdatedDate).toLocaleString()}
+                                {new Date(
+                                  fingerprint.validityLastUpdatedDate
+                                ).toLocaleString()}
                               </Text>
                             </Box>
                           )}
@@ -656,16 +676,19 @@ export const IssueModal = React.memo(
                                 <Text bold dimColor>
                                   Files:
                                 </Text>
-                                {distinctFiles.slice(0, 10).map((filePath, idx) => (
-                                  <Box key={idx}>
-                                    <Text wrap="truncate" dimColor>
-                                      • {filePath}
-                                    </Text>
-                                  </Box>
-                                ))}
+                                {distinctFiles
+                                  .slice(0, 10)
+                                  .map((filePath, idx) => (
+                                    <Box key={idx}>
+                                      <Text wrap="truncate" dimColor>
+                                        • {filePath}
+                                      </Text>
+                                    </Box>
+                                  ))}
                                 {distinctFiles.length > 10 && (
                                   <Text dimColor>
-                                    ...and {distinctFiles.length - 10} more files
+                                    ...and {distinctFiles.length - 10} more
+                                    files
                                   </Text>
                                 )}
                               </Box>

@@ -34,7 +34,9 @@ export function useDetailedProjectLoader(azdoService) {
         );
 
         if (detailedProject) {
-          useStore.getState().updateProject(selectedProject.id, detailedProject);
+          useStore
+            .getState()
+            .updateProject(selectedProject.id, detailedProject);
           logger.debug('Project details loaded', {
             projectId: selectedProject.id,
             hasLinks: !!detailedProject._links,
@@ -185,7 +187,12 @@ export function useDetailedAlertLoader(azdoService, currentAlert) {
     };
 
     loadDetailedAlert();
-  }, [currentAlert?.alertId, selectedProject?.name, selectedRepository?.id, azdoService]);
+  }, [
+    currentAlert?.alertId,
+    selectedProject?.name,
+    selectedRepository?.id,
+    azdoService,
+  ]);
 }
 
 export default useDetailedEntityLoader;

@@ -114,10 +114,14 @@ function highlightFields(alert, alertWebUrl) {
         console.log(`   Validity Last Updated: ${fp.validityLastUpdatedDate}`);
       }
       if (fp.assetFingerprint) {
-        console.log(`   Asset Fingerprint: ${JSON.stringify(fp.assetFingerprint)}`);
+        console.log(
+          `   Asset Fingerprint: ${JSON.stringify(fp.assetFingerprint)}`
+        );
       }
       if (fp.validationFingerprintJson) {
-        console.log(`   ⚠️  Fingerprint JSON (MAY CONTAIN UNENCRYPTED SECRET):`);
+        console.log(
+          `   ⚠️  Fingerprint JSON (MAY CONTAIN UNENCRYPTED SECRET):`
+        );
         console.log(`   ${fp.validationFingerprintJson}`);
       }
     }
@@ -204,7 +208,9 @@ Example:
         throw new Error('No projects found');
       }
       projectName = projects[0].name;
-      console.log(`ℹ️  No project specified, using first project: ${projectName}`);
+      console.log(
+        `ℹ️  No project specified, using first project: ${projectName}`
+      );
     }
 
     const project = await coreApi.getProject(projectName);
@@ -218,9 +224,7 @@ Example:
     let repo;
 
     if (repoName) {
-      repo = repos.find(
-        (r) => r.name === repoName || r.id === repoName
-      );
+      repo = repos.find((r) => r.name === repoName || r.id === repoName);
       if (!repo) {
         throw new Error(`Repository "${repoName}" not found`);
       }
@@ -267,7 +271,9 @@ Example:
         throw new Error('No secret alerts found in this repository');
       }
       alertId = alerts[0].alertId;
-      console.log(`ℹ️  No alertId specified, using first secret alert: ${alertId}`);
+      console.log(
+        `ℹ️  No alertId specified, using first secret alert: ${alertId}`
+      );
     }
 
     console.log(`🔔 Alert ID: ${alertId}`);
@@ -284,7 +290,12 @@ Example:
     );
 
     // Build web URL
-    const alertWebUrl = buildAlertWebUrl(orgUrl, project.name, repo.id, alertId);
+    const alertWebUrl = buildAlertWebUrl(
+      orgUrl,
+      project.name,
+      repo.id,
+      alertId
+    );
 
     // Output the full JSON response
     console.log('📄 FULL JSON RESPONSE:');

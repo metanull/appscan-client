@@ -43,7 +43,10 @@ import { TextInputPage } from '../../shared/components/TextInputPage.js';
 import { AzdoService } from '../../shared/services/azdo.js';
 import { JiraService } from '../../shared/services/jira.js';
 import { useCurrentIssue } from './hooks/useCurrentIssue.js';
-import { useDetailedEntityLoader, useDetailedAlertLoader } from './hooks/useDetailedEntityLoader.js';
+import {
+  useDetailedEntityLoader,
+  useDetailedAlertLoader,
+} from './hooks/useDetailedEntityLoader.js';
 import { useTerminalSize } from '../../shared/hooks/useTerminalSize.js';
 import { useKeyboardShortcuts } from '../../shared/hooks/useKeyboardShortcuts.js';
 import logger from '../../../utils/logger.js';
@@ -339,7 +342,11 @@ const DetailsPreviewPanel = React.memo(
     // Build alert web URL
     const alertWebUrl =
       repository && project && alert.alertId
-        ? azdoService?.buildAlertWebUrl(project.name, repository.id, alert.alertId)
+        ? azdoService?.buildAlertWebUrl(
+            project.name,
+            repository.id,
+            alert.alertId
+          )
         : alert.url;
 
     // Get most recent validation fingerprint (for secret alerts)
@@ -907,7 +914,8 @@ export const App = ({ configPath }) => {
           }
         },
         description: 'Open Alert URL',
-        condition: () => !!currentAlert && (!!currentAlert.alertId || !!currentAlert.url),
+        condition: () =>
+          !!currentAlert && (!!currentAlert.alertId || !!currentAlert.url),
         group: 'Navigation',
         hint: true,
       },

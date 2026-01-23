@@ -146,7 +146,14 @@ function displayAlert(alert, label = 'Alert') {
   }
 }
 
-async function testUpdate(alertApi, project, repo, alertId, updateData, description) {
+async function testUpdate(
+  alertApi,
+  project,
+  repo,
+  alertId,
+  updateData,
+  description
+) {
   console.log(`\n${'─'.repeat(70)}`);
   console.log(`📝 TEST: ${description}`);
   console.log(`${'─'.repeat(70)}`);
@@ -178,12 +185,16 @@ async function main() {
     console.log('═'.repeat(70));
     console.log('\nPurpose: Determine what updates are allowed by the API');
     console.log('\nAPI Documentation Reference:');
-    console.log('https://learn.microsoft.com/en-us/rest/api/azure/devops/advancedsecurity/alerts/update');
+    console.log(
+      'https://learn.microsoft.com/en-us/rest/api/azure/devops/advancedsecurity/alerts/update'
+    );
     console.log('\nAlertStateUpdate request body supports ONLY:');
     console.log('  - state: State enum');
     console.log('  - dismissedReason: DismissalType enum');
     console.log('  - dismissedComment: string');
-    console.log('\n⚠️  SEVERITY is NOT part of AlertStateUpdate - it is read-only!');
+    console.log(
+      '\n⚠️  SEVERITY is NOT part of AlertStateUpdate - it is read-only!'
+    );
 
     const conn = await getAzdoClient();
     console.log('\n✅ Connected to Azure DevOps\n');
@@ -493,7 +504,10 @@ async function main() {
     console.log('═'.repeat(35));
 
     const restoreData = { state: originalState };
-    if (originalState === State.Dismissed && originalDismissalType !== undefined) {
+    if (
+      originalState === State.Dismissed &&
+      originalDismissalType !== undefined
+    ) {
       restoreData.dismissedReason = originalDismissalType;
       if (originalDismissalMessage) {
         restoreData.dismissedComment = originalDismissalMessage;
@@ -522,12 +536,17 @@ async function main() {
     console.log('   • Changing severity (read-only, computed by service)');
     console.log('   • Updating comment without changing state');
     console.log('\n📖 Documentation Reference:');
-    console.log('   https://learn.microsoft.com/en-us/rest/api/azure/devops/advancedsecurity/alerts/update');
+    console.log(
+      '   https://learn.microsoft.com/en-us/rest/api/azure/devops/advancedsecurity/alerts/update'
+    );
     console.log('\n💡 RECOMMENDATION:');
-    console.log('   The TUI should remove or disable the "Update Severity" feature');
-    console.log('   for Azure DevOps alerts, as severity cannot be changed via the API.');
+    console.log(
+      '   The TUI should remove or disable the "Update Severity" feature'
+    );
+    console.log(
+      '   for Azure DevOps alerts, as severity cannot be changed via the API.'
+    );
     console.log('═'.repeat(70));
-
   } catch (err) {
     console.error('\n❌ Error:', err.message);
     if (err.stack) {

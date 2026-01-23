@@ -228,17 +228,24 @@ export function getDistinctFilePaths(alert) {
  * @returns {Object|null} Most recent fingerprint or null
  */
 export function getMostRecentFingerprint(alert) {
-  if (!alert?.validationFingerprints || alert.validationFingerprints.length === 0) {
+  if (
+    !alert?.validationFingerprints ||
+    alert.validationFingerprints.length === 0
+  ) {
     return null;
   }
-  
+
   // Sort by validityLastUpdatedDate descending and return the first one
   const sorted = [...alert.validationFingerprints].sort((a, b) => {
-    const dateA = a.validityLastUpdatedDate ? new Date(a.validityLastUpdatedDate).getTime() : 0;
-    const dateB = b.validityLastUpdatedDate ? new Date(b.validityLastUpdatedDate).getTime() : 0;
+    const dateA = a.validityLastUpdatedDate
+      ? new Date(a.validityLastUpdatedDate).getTime()
+      : 0;
+    const dateB = b.validityLastUpdatedDate
+      ? new Date(b.validityLastUpdatedDate).getTime()
+      : 0;
     return dateB - dateA;
   });
-  
+
   return sorted[0];
 }
 
@@ -251,7 +258,7 @@ export function parseFingerprintJson(fingerprint) {
   if (!fingerprint?.validationFingerprintJson) {
     return null;
   }
-  
+
   try {
     return JSON.parse(fingerprint.validationFingerprintJson);
   } catch {

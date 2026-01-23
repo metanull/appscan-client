@@ -42,7 +42,11 @@ export const LinksModal = React.memo(
     // Build URL using service if available, fallback to alert.url
     const alertWebUrl =
       repository && project && alert.alertId && azdoService
-        ? azdoService.buildAlertWebUrl(project.name, repository.id, alert.alertId)
+        ? azdoService.buildAlertWebUrl(
+            project.name,
+            repository.id,
+            alert.alertId
+          )
         : alert.url;
 
     if (alertWebUrl) {

@@ -109,7 +109,12 @@ export class AzdoService {
    * @returns {Promise<Object>} Alert details object
    */
   async getAlert(projectIdOrName, repositoryId, alertId, options = {}) {
-    return this.service.getAlert(projectIdOrName, repositoryId, alertId, options);
+    return this.service.getAlert(
+      projectIdOrName,
+      repositoryId,
+      alertId,
+      options
+    );
   }
 
   /**

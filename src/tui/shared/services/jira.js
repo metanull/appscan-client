@@ -531,7 +531,9 @@ export class JiraService {
           }
         }
 
-        const prefix = (projectName || 'Security') + (repository ? `: ${repository.name}` : '');
+        const prefix =
+          (projectName || 'Security') +
+          (repository ? `: ${repository.name}` : '');
         const summary = `${prefix}: ${groupName} (${groupAlerts.length} alert${groupAlerts.length > 1 ? 's' : ''}, ${distinctFiles.size} file${distinctFiles.size !== 1 ? 's' : ''})`;
         const jiraIssue = await this.createJiraIssueFromAlerts(
           projectKey,
