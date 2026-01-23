@@ -38,6 +38,7 @@ import { TextInputPage } from '../../shared/components/TextInputPage.js';
 import { AzdoService } from '../../shared/services/azdo.js';
 import { JiraService } from '../../shared/services/jira.js';
 import { useCurrentIssue } from './hooks/useCurrentIssue.js';
+import { useDetailedEntityLoader } from './hooks/useDetailedEntityLoader.js';
 import { useTerminalSize } from '../../shared/hooks/useTerminalSize.js';
 import { useKeyboardShortcuts } from '../../shared/hooks/useKeyboardShortcuts.js';
 import logger from '../../../utils/logger.js';
@@ -547,6 +548,9 @@ export const App = ({ configPath }) => {
   const sortBy = useStore((state) => state.sortBy);
   const selectedAlertIds = useStore((state) => state.selectedAlertIds);
   const excludeFalsePositive = useStore((state) => state.excludeFalsePositive);
+
+  // Load detailed project/repository data in background when selected
+  useDetailedEntityLoader(azdoService);
 
   // Setup logger debug callback on mount
   React.useEffect(() => {

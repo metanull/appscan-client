@@ -524,8 +524,15 @@ export class JiraService {
 
       const results = [];
       for (const [groupName, groupAlerts] of Object.entries(grouped)) {
-        const prefix = projectName || 'Security';
-        const summary = `${prefix}: ${groupName} (${groupAlerts.length} alert${groupAlerts.length > 1 ? 's' : ''})`;
+        const distinctFiles = new Set();
+        for (const alert of groupAlerts) {
+          for (const loc of alert.physicalLocations) {
+            distinctFiles.add(loc.filePath);
+          }
+        }
+
+        const prefix = (projectName || 'Security') + (repository ? `: ${repository.name}` : '');
+        const summary = `${prefix}: ${groupName} (${groupAlerts.length} alert${groupAlerts.length > 1 ? 's' : ''}, ${distinctFiles.size} file${distinctFiles.size !== 1 ? 's' : ''})`;
         const jiraIssue = await this.createJiraIssueFromAlerts(
           projectKey,
           summary,
@@ -577,12 +584,34 @@ export class JiraService {
     const maxBytes = 16000;
     let description = '';
 
+    const baseUrl = this.config.getAzureDevOpsBaseUrl();
+    const org = this.config.getAzureDevOpsOrg();
+
     if (project) {
-      description += `**Project:** ${project.name}\n\n`;
+      description += `**Project:** ${project.name}`;
+      const projectUrl =
+        project._links?.web?.href ||
+        AppScanUrls.getAzureDevOpsProjectUrl(baseUrl, org, project.name);
+      if (projectUrl) {
+        description += ` [${projectUrl}](${projectUrl})`;
+      }
+      description += `\n\n`;
     }
 
     if (repository && !repository._isViewAll) {
-      description += `**Repository:** ${repository.name}\n\n`;
+      description += `**Repository:** ${repository.name}`;
+      const repoUrl =
+        repository._links?.web?.href ||
+        AppScanUrls.getAzureDevOpsRepoUrl(
+          baseUrl,
+          org,
+          project?.name,
+          repository.name
+        );
+      if (repoUrl) {
+        description += ` [${repoUrl}](${repoUrl})`;
+      }
+      description += `\n\n`;
     }
 
     if (description) {
@@ -665,7 +694,7 @@ export class JiraService {
 
         // Add repository URL if available
         if (alert.repositoryUrl) {
-          description += `- **Repository URL:** ${alert.repositoryUrl}\n`;
+          description += `\n**Repository URL:** ${alert.repositoryUrl}\n`;
         }
 
         // Add dates
