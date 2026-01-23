@@ -7,6 +7,7 @@
 import fs from 'fs';
 import { getAlertCountCachePath } from '../../../utils/config-paths.js';
 import logger from '../../../utils/logger.js';
+import { getComputedStatus, COMPUTED_STATUS } from '../../apps/azdo/utils/issue.js';
 
 const CACHE_FILE = getAlertCountCachePath();
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
@@ -189,15 +190,10 @@ export function calculateCountsFromAlerts(alerts) {
   let inProgress = 0;
 
   for (const alert of alerts) {
-    // state = 1 (Active) => open
-    if (alert.state === 1 || alert.state === 'Active') {
+    const status = getComputedStatus(alert);
+    if (status === COMPUTED_STATUS.Open) {
       open++;
-    }
-    // state = 2 (Dismissed) + dismissedReason = 0 (Unknown) => in progress
-    else if (
-      (alert.state === 2 || alert.state === 'Dismissed') &&
-      (alert.dismissedReason === 0 || alert.dismissedReason === 'Unknown')
-    ) {
+    } else if (status === COMPUTED_STATUS.InProgress) {
       inProgress++;
     }
   }
