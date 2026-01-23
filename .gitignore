@@ -1,3 +1,6 @@
+# cache
+alert-count-cache.json
+
 # Logs
 logs
 *.log

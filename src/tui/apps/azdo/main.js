@@ -1323,6 +1323,7 @@ export const App = ({ configPath }) => {
       <RootSelectionWindow
         projects={projects}
         azdoService={azdoService}
+        selectedProject={selectedProject}
         onSelect={async (project) => {
           setStandaloneWindow(null);
           useStore.getState().setSelectedProject(project);
@@ -1364,6 +1365,7 @@ export const App = ({ configPath }) => {
         repositories={repositories}
         azdoService={azdoService}
         selectedProject={selectedProject}
+        selectedRepository={selectedRepository}
         onSelect={async (repository) => {
           setStandaloneWindow(null);
           useStore.getState().setSelectedRepository(repository);

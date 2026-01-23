@@ -3,11 +3,24 @@
  * Standalone window for selecting an Azure DevOps project with search and keyboard navigation
  */
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
 import { ScrollableList } from '../../../shared/components/ScrollableList.js';
 import { useTerminalSize } from '../../../shared/hooks/useTerminalSize.js';
+import {
+  getAllProjectCounts,
+  setProjectCounts,
+  calculateCountsFromAlerts,
+} from '../../../shared/services/alertCountCache.js';
+
+const BATCH_SIZE = 5;
 
 /**
  * Full-screen project selection window with search and alert counts
@@ -17,43 +30,85 @@ import { useTerminalSize } from '../../../shared/hooks/useTerminalSize.js';
  * @param {Function} props.onSelect - Callback when a project is selected
  * @param {Function} props.onCancel - Callback when selection is cancelled
  * @param {Object} props.azdoService - Service for Azure DevOps operations
+ * @param {Object} [props.selectedProject] - Currently selected project (for initial cursor positioning)
  * @returns {JSX.Element}
  */
 export const RootSelectionWindow = React.memo(
-  ({ projects, onSelect, onCancel, azdoService }) => {
+  ({ projects, onSelect, onCancel, azdoService, selectedProject }) => {
     const { height } = useTerminalSize();
     const [searchText, setSearchText] = useState('');
     const [debouncedSearchText, setDebouncedSearchText] = useState('');
-    const [cursor, setCursor] = useState(0);
-    const [alertCounts, setAlertCounts] = useState({});
-    const [loadingCounts, setLoadingCounts] = useState(true);
+    // Initialize cursor to current project index if available
+    const initialCursor = useMemo(() => {
+      if (!selectedProject?.id) return 0;
+      const index = projects.findIndex((p) => p.id === selectedProject.id);
+      return index >= 0 ? index : 0;
+    }, []);
+    const [cursor, setCursor] = useState(initialCursor);
+    // Initialize with cached counts
+    const [alertCounts, setAlertCounts] = useState(() => getAllProjectCounts());
+    const [loadingProjects, setLoadingProjects] = useState(
+      () => new Set(projects.map((p) => p.id))
+    );
+    const isMountedRef = useRef(true);
+    const isInitialRenderRef = useRef(true);
 
-    // Load alert counts for all projects on mount
+    // Load alert counts in parallel batches
     useEffect(() => {
-      let isMounted = true;
+      isMountedRef.current = true;
 
-      const loadCounts = async () => {
-        const counts = {};
-        for (const project of projects) {
-          try {
-            counts[project.id] = await azdoService.getProjectAlertCount(
-              project.id
-            );
-          } catch {
-            counts[project.id] = 0;
+      const loadCountsInBatches = async () => {
+        const projectIds = projects.map((p) => p.id);
+
+        for (let i = 0; i < projectIds.length; i += BATCH_SIZE) {
+          if (!isMountedRef.current) break;
+
+          const batch = projectIds.slice(i, i + BATCH_SIZE);
+          const promises = batch.map(async (projectId) => {
+            try {
+              const alerts = await azdoService.listAlertsByProject(
+                projectId,
+                {}
+              );
+              const counts = calculateCountsFromAlerts(alerts);
+              setProjectCounts(projectId, counts);
+              return { projectId, counts };
+            } catch {
+              const counts = {
+                open: 0,
+                inProgress: 0,
+                total: 0,
+                timestamp: Date.now(),
+              };
+              return { projectId, counts };
+            }
+          });
+
+          const results = await Promise.all(promises);
+
+          if (isMountedRef.current) {
+            setAlertCounts((prev) => {
+              const updated = { ...prev };
+              for (const { projectId, counts } of results) {
+                updated[projectId] = counts;
+              }
+              return updated;
+            });
+            setLoadingProjects((prev) => {
+              const updated = new Set(prev);
+              for (const { projectId } of results) {
+                updated.delete(projectId);
+              }
+              return updated;
+            });
           }
-        }
-
-        if (isMounted) {
-          setAlertCounts(counts);
-          setLoadingCounts(false);
         }
       };
 
-      loadCounts();
+      loadCountsInBatches();
 
       return () => {
-        isMounted = false;
+        isMountedRef.current = false;
       };
     }, [projects, azdoService]);
 
@@ -78,8 +133,12 @@ export const RootSelectionWindow = React.memo(
       );
     }, [projects, debouncedSearchText]);
 
-    // Reset cursor when filtered list changes
+    // Reset cursor when filtered list changes (skip initial render to preserve initial cursor)
     useEffect(() => {
+      if (isInitialRenderRef.current) {
+        isInitialRenderRef.current = false;
+        return;
+      }
       setCursor(0);
     }, [filteredProjects.length]);
 
@@ -108,8 +167,32 @@ export const RootSelectionWindow = React.memo(
 
     const renderItem = useCallback(
       (project, isSelected) => {
-        const alertCount = alertCounts[project.id];
-        const countDisplay = loadingCounts ? '...' : alertCount || 0;
+        const counts = alertCounts[project.id];
+        const isLoading = loadingProjects.has(project.id);
+
+        // Display format: (inProgress | open | total) - same as ASOC
+        let countDisplay;
+        if (!counts && isLoading) {
+          countDisplay = <Text dimColor>...</Text>;
+        } else if (counts) {
+          countDisplay = (
+            <>
+              <Text dimColor>(</Text>
+              <Text color={counts.inProgress > 0 ? 'green' : 'gray'}>
+                {counts.inProgress}
+              </Text>
+              <Text dimColor> | </Text>
+              <Text color={counts.open > 0 ? 'red' : 'gray'}>
+                {counts.open}
+              </Text>
+              <Text dimColor> | </Text>
+              <Text color="gray">{counts.total}</Text>
+              <Text dimColor>)</Text>
+            </>
+          );
+        } else {
+          countDisplay = <Text dimColor>(0 | 0 | 0)</Text>;
+        }
 
         return (
           <Box>
@@ -117,16 +200,15 @@ export const RootSelectionWindow = React.memo(
               {isSelected ? '▶ ' : '  '}
               {project.name}
             </Text>
-            <Text dimColor> (</Text>
-            <Text color={alertCount > 0 ? 'red' : 'gray'}>{countDisplay}</Text>
-            <Text dimColor> alerts)</Text>
+            <Text dimColor> </Text>
+            {countDisplay}
           </Box>
         );
       },
-      [alertCounts, loadingCounts]
+      [alertCounts, loadingProjects]
     );
 
-    const visibleRows = Math.max(5, height - 12);
+    const visibleRows = Math.max(5, height - 14);
 
     return (
       <Box flexDirection="column" padding={2}>
@@ -148,6 +230,17 @@ export const RootSelectionWindow = React.memo(
               onChange={setSearchText}
               placeholder="Type to search..."
             />
+          </Box>
+
+          {/* Legend */}
+          <Box marginBottom={1}>
+            <Text dimColor>(</Text>
+            <Text color="green">in-progress</Text>
+            <Text dimColor> | </Text>
+            <Text color="red">open</Text>
+            <Text dimColor> | </Text>
+            <Text color="gray">total</Text>
+            <Text dimColor>)</Text>
           </Box>
 
           {/* List */}
