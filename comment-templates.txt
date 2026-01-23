@@ -57,3 +57,6 @@ Missing X-Frame-Options HTTP header (cs/web/missing-x-frame-options)|File no mor
 Missing function level access control (cs/web/missing-function-level-access-control)|File no more in the repository
 Clear text storage of sensitive information (cs/cleartext-storage-of-sensitive-information)|Not sensitive (cookie name)
 LDAP query built from user-controlled sources (cs/ldap-injection)|Not directly controlled by the user
+Missing X-Frame-Options HTTP header (cs/web/missing-x-frame-options)|Downgraded the MEDIUM severity
+Cookie security: persistent cookie (cs/web/persistent-cookie)|Cookie consent cookie, not impacted by this rule
+Log entries created from user input (cs/log-forging)|By design - logger used properly to trace errors
