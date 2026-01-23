@@ -8,7 +8,12 @@ import { Box, Text, useInput } from 'ink';
 import Link from 'ink-link';
 import { Modal } from '../../../shared/components/Modal.js';
 import { Panel } from '../../../shared/components/Panel.js';
-import { parseAlertMetadata } from '../utils/issue.js';
+import {
+  parseAlertMetadata,
+  getValidityResultName,
+  getValidityResultColor,
+  getDistinctFilePaths,
+} from '../utils/issue.js';
 
 /**
  * Helper function to get alert type display name
@@ -97,11 +102,12 @@ function getLogicalLocationKind(kind) {
  * @param {Object} props.alert - Alert object with details
  * @param {Object} props.project - Project object
  * @param {Object} props.repository - Repository object
+ * @param {Object} props.azdoService - Azure DevOps service for URL generation
  * @param {Function} props.onClose - Callback when modal is closed
  * @returns {JSX.Element|null}
  */
 export const IssueModal = React.memo(
-  ({ alert, project, repository, onClose }) => {
+  ({ alert, project, repository, azdoService, onClose }) => {
     const [viewMode, setViewMode] = useState('overview');
 
     useInput((input, key) => {
@@ -191,6 +197,30 @@ export const IssueModal = React.memo(
                     </Box>
                     <Text wrap="wrap">{alert.alertId || 'N/A'}</Text>
                   </Box>
+                  {/* Alert Web URL */}
+                  {(() => {
+                    const alertWebUrl =
+                      repository && project && alert.alertId
+                        ? azdoService?.buildAlertWebUrl(project.name, repository.id, alert.alertId)
+                        : alert.url;
+                    if (alertWebUrl) {
+                      return (
+                        <Box>
+                          <Box width={18}>
+                            <Text bold color="cyan">
+                              Alert URL:
+                            </Text>
+                          </Box>
+                          <Link url={alertWebUrl}>
+                            <Text color="blue" underline wrap="truncate">
+                              {alertWebUrl}
+                            </Text>
+                          </Link>
+                        </Box>
+                      );
+                    }
+                    return null;
+                  })()}
                   <Box>
                     <Box width={18}>
                       <Text bold color="cyan">
@@ -250,6 +280,65 @@ export const IssueModal = React.memo(
                       <Text wrap="wrap" color="yellow" backgroundColor="black">
                         {alert.truncatedSecret}
                       </Text>
+                    </Box>
+                  )}
+
+                  {/* Validation Fingerprint Information (for secret alerts) */}
+                  {alert.validationFingerprints && alert.validationFingerprints.length > 0 && (
+                    <Box
+                      flexDirection="column"
+                      borderStyle="single"
+                      borderColor="magenta"
+                      paddingX={1}
+                      marginTop={1}
+                    >
+                      <Text color="magenta" bold>
+                        Validation Fingerprint
+                      </Text>
+                      <Box marginTop={1} flexDirection="column">
+                        {alert.validationFingerprints.map((fp, idx) => (
+                          <Box key={idx} flexDirection="column">
+                            {fp.validityResult !== undefined && (
+                              <Box marginBottom={1}>
+                                <Box width={18}>
+                                  <Text bold>Validity:</Text>
+                                </Box>
+                                <Text wrap="wrap" color={getValidityResultColor(fp.validityResult)} bold>
+                                  {getValidityResultName(fp.validityResult)}
+                                </Text>
+                              </Box>
+                            )}
+                            {fp.validationFingerprintHash && (
+                              <Box marginBottom={1}>
+                                <Box width={18}>
+                                  <Text bold>Hash:</Text>
+                                </Box>
+                                <Text wrap="truncate" dimColor>
+                                  {fp.validationFingerprintHash}
+                                </Text>
+                              </Box>
+                            )}
+                            {fp.c3Id && (
+                              <Box marginBottom={1}>
+                                <Box width={18}>
+                                  <Text bold>C3 ID:</Text>
+                                </Box>
+                                <Text wrap="wrap">{fp.c3Id}</Text>
+                              </Box>
+                            )}
+                            {fp.validityLastUpdatedDate && (
+                              <Box>
+                                <Box width={18}>
+                                  <Text bold>Last Checked:</Text>
+                                </Box>
+                                <Text wrap="wrap" dimColor>
+                                  {new Date(fp.validityLastUpdatedDate).toLocaleString()}
+                                </Text>
+                              </Box>
+                            )}
+                          </Box>
+                        ))}
+                      </Box>
                     </Box>
                   )}
 
@@ -529,7 +618,7 @@ export const IssueModal = React.memo(
                       </Box>
                     )}
 
-                  {/* Locations Summary */}
+                  {/* Locations Summary - Distinct Files */}
                   {alert.physicalLocations &&
                     alert.physicalLocations.length > 0 && (
                       <Box
@@ -540,72 +629,48 @@ export const IssueModal = React.memo(
                         marginTop={1}
                       >
                         <Text color="cyan" bold>
-                          Locations Summary
+                          Files Summary
                         </Text>
-                        <Box marginTop={1}>
-                          <Box width={18}>
-                            <Text bold>Total Locations:</Text>
-                          </Box>
-                          <Text wrap="wrap" color="yellow" bold>
-                            {alert.physicalLocations.length}
-                          </Text>
-                        </Box>
-                        <Box>
-                          <Box width={18}>
-                            <Text bold>Distinct Files:</Text>
-                          </Box>
-                          <Text wrap="wrap" color="yellow" bold>
-                            {
-                              new Set(
-                                alert.physicalLocations.map(
-                                  (loc) => loc.filePath
-                                )
-                              ).size
-                            }
-                          </Text>
-                        </Box>
-                        {/* First 10 itemUrls */}
                         {(() => {
-                          const itemUrls = alert.physicalLocations
-                            .filter((loc) => loc.versionControl?.itemUrl)
-                            .map((loc) => loc.versionControl.itemUrl)
-                            .slice(0, 10);
-                          if (itemUrls.length > 0) {
-                            return (
+                          const distinctFiles = getDistinctFilePaths(alert);
+                          return (
+                            <>
+                              <Box marginTop={1}>
+                                <Box width={18}>
+                                  <Text bold>Distinct Files:</Text>
+                                </Box>
+                                <Text wrap="wrap" color="yellow" bold>
+                                  {distinctFiles.length}
+                                </Text>
+                              </Box>
+                              <Box>
+                                <Box width={18}>
+                                  <Text bold>Total Locations:</Text>
+                                </Box>
+                                <Text wrap="wrap" dimColor>
+                                  {alert.physicalLocations.length}
+                                </Text>
+                              </Box>
+                              {/* File list with first 10 */}
                               <Box flexDirection="column" marginTop={1}>
                                 <Text bold dimColor>
-                                  File Links:
+                                  Files:
                                 </Text>
-                                {itemUrls.map((url, idx) => (
+                                {distinctFiles.slice(0, 10).map((filePath, idx) => (
                                   <Box key={idx}>
-                                    <Link url={url}>
-                                      <Text
-                                        color="blue"
-                                        underline
-                                        wrap="truncate"
-                                      >
-                                        {url.length > 150
-                                          ? url.substring(0, 147) + '...'
-                                          : url}
-                                      </Text>
-                                    </Link>
+                                    <Text wrap="truncate" dimColor>
+                                      • {filePath}
+                                    </Text>
                                   </Box>
                                 ))}
-                                {alert.physicalLocations.filter(
-                                  (loc) => loc.versionControl?.itemUrl
-                                ).length > 10 && (
+                                {distinctFiles.length > 10 && (
                                   <Text dimColor>
-                                    ...and{' '}
-                                    {alert.physicalLocations.filter(
-                                      (loc) => loc.versionControl?.itemUrl
-                                    ).length - 10}{' '}
-                                    more
+                                    ...and {distinctFiles.length - 10} more files
                                   </Text>
                                 )}
                               </Box>
-                            );
-                          }
-                          return null;
+                            </>
+                          );
                         })()}
                         <Box marginTop={1}>
                           <Text dimColor>

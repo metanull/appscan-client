@@ -16,6 +16,9 @@ import {
   getComputedStatus,
   COMPUTED_STATUS_COLORS,
   parseAlertMetadata,
+  getValidityResultName,
+  getValidityResultColor,
+  getDistinctFilePaths,
 } from './utils/issue.js';
 import { Layout } from '../../shared/components/Layout.js';
 import { Panel } from '../../shared/components/Panel.js';
@@ -304,7 +307,7 @@ AlertListPanel.displayName = 'AlertListPanel';
  * Panel displaying detailed preview of selected alert
  */
 const DetailsPreviewPanel = React.memo(
-  ({ alert, project, repository: _repository }) => {
+  ({ alert, project, repository, azdoService }) => {
     if (!alert) {
       return (
         <Panel title="Details" borderColor="magenta" width={80}>
@@ -326,10 +329,20 @@ const DetailsPreviewPanel = React.memo(
         Note: 'gray',
       }[severityName] || 'white';
 
-    const firstFilePath = alert.physicalLocations?.[0]?.filePath;
+    const distinctFiles = getDistinctFilePaths(alert);
     const occurrencesCount =
       alert.physicalLocations?.filter((loc) => loc.versionControl?.itemUrl)
         .length || 0;
+
+    // Build alert web URL
+    const alertWebUrl =
+      repository && project && alert.alertId
+        ? azdoService?.buildAlertWebUrl(project.name, repository.id, alert.alertId)
+        : alert.url;
+
+    // Get validation fingerprint info (for secret alerts)
+    const fingerprint = alert.validationFingerprints?.[0];
+    const validityResult = fingerprint?.validityResult;
 
     return (
       <Panel title="Details [d to toggle]" borderColor="magenta" width={80}>
@@ -341,6 +354,14 @@ const DetailsPreviewPanel = React.memo(
             </Text>{' '}
             {alert.alertId || 'N/A'}
           </Text>
+          {alertWebUrl && (
+            <Text wrap="truncate">
+              <Text bold color="cyan">
+                Alert URL:
+              </Text>{' '}
+              <Text color="blue">{alertWebUrl}</Text>
+            </Text>
+          )}
           <Text>
             <Text bold color="cyan">
               Title:
@@ -360,6 +381,17 @@ const DetailsPreviewPanel = React.memo(
               </Text>{' '}
               <Text color="yellow" backgroundColor="black">
                 {alert.truncatedSecret}
+              </Text>
+            </Text>
+          )}
+          {/* Validation fingerprint indicator for secrets */}
+          {validityResult !== undefined && (
+            <Text>
+              <Text bold color="cyan">
+                Validity:
+              </Text>{' '}
+              <Text color={getValidityResultColor(validityResult)} bold>
+                {getValidityResultName(validityResult)}
               </Text>
             </Text>
           )}
@@ -393,15 +425,39 @@ const DetailsPreviewPanel = React.memo(
               <Text color={statusColor}>{computedStatus}</Text>
             </Text>
           )}
-          {firstFilePath && (
+          {project && (
             <Text wrap="truncate">
               <Text bold color="cyan">
-                File:
+                Project:
               </Text>{' '}
-              {firstFilePath}
+              {project.name || 'N/A'}
             </Text>
           )}
-          {occurrencesCount > 0 && (
+          {repository && !repository._isViewAll && (
+            <Text wrap="truncate">
+              <Text bold color="cyan">
+                Repository:
+              </Text>{' '}
+              {repository.name || 'N/A'}
+            </Text>
+          )}
+          {/* Distinct file list */}
+          {distinctFiles.length > 0 && (
+            <Box flexDirection="column" marginTop={1}>
+              <Text bold color="cyan">
+                Files ({distinctFiles.length}):
+              </Text>
+              {distinctFiles.slice(0, 3).map((filePath, idx) => (
+                <Text key={idx} wrap="truncate" dimColor>
+                  • {filePath}
+                </Text>
+              ))}
+              {distinctFiles.length > 3 && (
+                <Text dimColor>...and {distinctFiles.length - 3} more</Text>
+              )}
+            </Box>
+          )}
+          {occurrencesCount > 0 && distinctFiles.length === 0 && (
             <Text>
               <Text bold color="cyan">
                 Occurrences:
@@ -409,24 +465,6 @@ const DetailsPreviewPanel = React.memo(
               <Text color="yellow" bold>
                 {occurrencesCount}
               </Text>
-            </Text>
-          )}
-          {alert.physicalLocation?.filePath && (
-            <Text wrap="truncate">
-              <Text bold color="cyan">
-                Location:
-              </Text>{' '}
-              {alert.physicalLocation.filePath}
-              {alert.physicalLocation.region?.startLine &&
-                `:${alert.physicalLocation.region.startLine}`}
-            </Text>
-          )}
-          {project && (
-            <Text wrap="truncate">
-              <Text bold color="cyan">
-                Project:
-              </Text>{' '}
-              {project.name || 'N/A'}
             </Text>
           )}
           {metadata.jiraId && (
@@ -834,14 +872,25 @@ export const App = ({ configPath }) => {
       {
         key: 'leftarrow',
         action: () => {
-          if (currentAlert && currentAlert.url) {
+          if (currentAlert && selectedRepository && selectedProject) {
+            // Build the Alert Web URL
+            const alertWebUrl = azdoService.buildAlertWebUrl(
+              selectedProject.name,
+              selectedRepository.id,
+              currentAlert.alertId
+            );
+            open(alertWebUrl).catch(() => {
+              // Silently fail if we can't open the link
+            });
+          } else if (currentAlert && currentAlert.url) {
+            // Fallback to alert.url if we can't build the URL
             open(currentAlert.url).catch(() => {
               // Silently fail if we can't open the link
             });
           }
         },
-        description: 'Open Alert',
-        condition: () => !!currentAlert && !!currentAlert.url,
+        description: 'Open Alert URL',
+        condition: () => !!currentAlert && (!!currentAlert.alertId || !!currentAlert.url),
         group: 'Navigation',
         hint: true,
       },
@@ -1390,6 +1439,7 @@ export const App = ({ configPath }) => {
             alert={currentAlert}
             project={selectedProject}
             repository={selectedRepository}
+            azdoService={azdoService}
           />
         )}
       </Box>
@@ -1400,6 +1450,7 @@ export const App = ({ configPath }) => {
           alert={currentAlert}
           project={selectedProject}
           repository={selectedRepository}
+          azdoService={azdoService}
           onClose={() => setActiveModal(null)}
         />
       )}

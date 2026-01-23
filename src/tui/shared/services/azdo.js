@@ -104,10 +104,24 @@ export class AzdoService {
    * @param {string} projectIdOrName - Project ID or name
    * @param {string} repositoryId - Repository ID
    * @param {number} alertId - Alert ID
+   * @param {Object} [options] - Optional parameters
+   * @param {boolean} [options.includeFingerprint=true] - Include validation fingerprint (for secret alerts)
    * @returns {Promise<Object>} Alert details object
    */
-  async getAlert(projectIdOrName, repositoryId, alertId) {
-    return this.service.getAlert(projectIdOrName, repositoryId, alertId);
+  async getAlert(projectIdOrName, repositoryId, alertId, options = {}) {
+    return this.service.getAlert(projectIdOrName, repositoryId, alertId, options);
+  }
+
+  /**
+   * Build the web URL to view an alert in Azure DevOps browser
+   * @param {string} projectName - Project name
+   * @param {string} repoId - Repository ID
+   * @param {number} alertId - Alert ID
+   * @returns {string} Alert web URL
+   */
+  buildAlertWebUrl(projectName, repoId, alertId) {
+    const orgUrl = this.service.getOrgUrl();
+    return `${orgUrl}/${encodeURIComponent(projectName)}/_git/${repoId}/alerts/${alertId}`;
   }
 
   // ==========================================
