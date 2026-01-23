@@ -107,6 +107,53 @@ export const useStore = create((set, get) => ({
   setAlerts: (alerts) => set({ alerts, listCursor: 0 }),
   setAlertDetails: (alertDetails) => set({ alertDetails }),
 
+  /**
+   * Update a single alert with detailed data (e.g., from getAlert with expand option)
+   * Merges new data with existing alert data
+   * @param {number} alertId - Alert ID to update
+   * @param {Object} alertData - New alert data to merge
+   */
+  updateAlert: (alertId, alertData) =>
+    set((state) => ({
+      alerts: state.alerts.map((a) =>
+        a.alertId === alertId ? { ...a, ...alertData } : a
+      ),
+    })),
+
+  /**
+   * Update a single project with detailed data (e.g., from getProject)
+   * Merges new data with existing project data
+   * @param {string} projectId - Project ID to update
+   * @param {Object} projectData - New project data to merge
+   */
+  updateProject: (projectId, projectData) =>
+    set((state) => ({
+      projects: state.projects.map((p) =>
+        p.id === projectId ? { ...p, ...projectData } : p
+      ),
+      selectedProject:
+        state.selectedProject?.id === projectId
+          ? { ...state.selectedProject, ...projectData }
+          : state.selectedProject,
+    })),
+
+  /**
+   * Update a single repository with detailed data (e.g., from getRepository)
+   * Merges new data with existing repository data
+   * @param {string} repositoryId - Repository ID to update
+   * @param {Object} repositoryData - New repository data to merge
+   */
+  updateRepository: (repositoryId, repositoryData) =>
+    set((state) => ({
+      repositories: state.repositories.map((r) =>
+        r.id === repositoryId ? { ...r, ...repositoryData } : r
+      ),
+      selectedRepository:
+        state.selectedRepository?.id === repositoryId
+          ? { ...state.selectedRepository, ...repositoryData }
+          : state.selectedRepository,
+    })),
+
   // Actions - Cache
   setAlertCache: (alertId, content) =>
     set((state) => ({

@@ -524,8 +524,17 @@ export class JiraService {
 
       const results = [];
       for (const [groupName, groupAlerts] of Object.entries(grouped)) {
-        const prefix = projectName || 'Security';
-        const summary = `${prefix}: ${groupName} (${groupAlerts.length} alert${groupAlerts.length > 1 ? 's' : ''})`;
+        const distinctFiles = new Set();
+        for (const alert of groupAlerts) {
+          for (const loc of alert.physicalLocations) {
+            distinctFiles.add(loc.filePath);
+          }
+        }
+
+        const prefix =
+          (projectName || 'Security') +
+          (repository ? `: ${repository.name}` : '');
+        const summary = `${prefix}: ${groupName} (${groupAlerts.length} alert${groupAlerts.length > 1 ? 's' : ''}, ${distinctFiles.size} file${distinctFiles.size !== 1 ? 's' : ''})`;
         const jiraIssue = await this.createJiraIssueFromAlerts(
           projectKey,
           summary,
@@ -577,12 +586,47 @@ export class JiraService {
     const maxBytes = 16000;
     let description = '';
 
+    const baseUrl = this.config.getAzureDevOpsBaseUrl();
+    const org = this.config.getAzureDevOpsOrg();
+
+    // Add Alert Web URLs at the top (before project and repository)
+    if (alerts.length > 0 && project && repository && !repository._isViewAll) {
+      description += `**Alert URLs:**\n`;
+      for (const alert of alerts.slice(0, 10)) {
+        const alertWebUrl = `${baseUrl}/${org}/${encodeURIComponent(project.name)}/_git/${repository.id}/alerts/${alert.alertId}`;
+        description += `- [Alert ${alert.alertId}](${alertWebUrl})\n`;
+      }
+      if (alerts.length > 10) {
+        description += `- _...and ${alerts.length - 10} more alerts_\n`;
+      }
+      description += `\n`;
+    }
+
     if (project) {
-      description += `**Project:** ${project.name}\n\n`;
+      description += `**Project:** ${project.name}`;
+      const projectUrl =
+        project._links?.web?.href ||
+        AppScanUrls.getAzureDevOpsProjectUrl(baseUrl, org, project.name);
+      if (projectUrl) {
+        description += ` [${projectUrl}](${projectUrl})`;
+      }
+      description += `\n\n`;
     }
 
     if (repository && !repository._isViewAll) {
-      description += `**Repository:** ${repository.name}\n\n`;
+      description += `**Repository:** ${repository.name}`;
+      const repoUrl =
+        repository._links?.web?.href ||
+        AppScanUrls.getAzureDevOpsRepoUrl(
+          baseUrl,
+          org,
+          project?.name,
+          repository.name
+        );
+      if (repoUrl) {
+        description += ` [${repoUrl}](${repoUrl})`;
+      }
+      description += `\n\n`;
     }
 
     if (description) {
@@ -635,7 +679,16 @@ export class JiraService {
         const alert = typeAlerts[i];
         const alertNumber = i + 1;
 
+        // Build alert web URL if we have project and repository info
+        let alertWebUrl = null;
+        if (project && repository && !repository._isViewAll && alert.alertId) {
+          alertWebUrl = `${baseUrl}/${org}/${encodeURIComponent(project.name)}/_git/${repository.id}/alerts/${alert.alertId}`;
+        }
+
         description += `## Alert ${alertNumber} (ID: ${alert.alertId})\n\n`;
+        if (alertWebUrl) {
+          description += `**Alert URL:** [View in Azure DevOps](${alertWebUrl})\n\n`;
+        }
         description += `- **Severity:** ${this.getSeverityName(alert.severity)}\n`;
         description += `- **State:** ${this.getStateName(alert.state)}\n`;
         description += `- **Type:** ${this.getAlertTypeName(alert.alertType)}\n`;
@@ -665,7 +718,7 @@ export class JiraService {
 
         // Add repository URL if available
         if (alert.repositoryUrl) {
-          description += `- **Repository URL:** ${alert.repositoryUrl}\n`;
+          description += `\n**Repository URL:** ${alert.repositoryUrl}\n`;
         }
 
         // Add dates

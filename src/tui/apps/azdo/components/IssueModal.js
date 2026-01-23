@@ -8,7 +8,14 @@ import { Box, Text, useInput } from 'ink';
 import Link from 'ink-link';
 import { Modal } from '../../../shared/components/Modal.js';
 import { Panel } from '../../../shared/components/Panel.js';
-import { parseAlertMetadata } from '../utils/issue.js';
+import {
+  parseAlertMetadata,
+  getValidityResultName,
+  getValidityResultColor,
+  getDistinctFilePaths,
+  getMostRecentFingerprint,
+  parseFingerprintJson,
+} from '../utils/issue.js';
 
 /**
  * Helper function to get alert type display name
@@ -97,11 +104,12 @@ function getLogicalLocationKind(kind) {
  * @param {Object} props.alert - Alert object with details
  * @param {Object} props.project - Project object
  * @param {Object} props.repository - Repository object
+ * @param {Object} props.azdoService - Azure DevOps service for URL generation
  * @param {Function} props.onClose - Callback when modal is closed
  * @returns {JSX.Element|null}
  */
 export const IssueModal = React.memo(
-  ({ alert, project, repository, onClose }) => {
+  ({ alert, project, repository, azdoService, onClose }) => {
     const [viewMode, setViewMode] = useState('overview');
 
     useInput((input, key) => {
@@ -191,6 +199,34 @@ export const IssueModal = React.memo(
                     </Box>
                     <Text wrap="wrap">{alert.alertId || 'N/A'}</Text>
                   </Box>
+                  {/* Alert Web URL */}
+                  {(() => {
+                    const alertWebUrl =
+                      repository && project && alert.alertId
+                        ? azdoService?.buildAlertWebUrl(
+                            project.name,
+                            repository.id,
+                            alert.alertId
+                          )
+                        : alert.url;
+                    if (alertWebUrl) {
+                      return (
+                        <Box>
+                          <Box width={18}>
+                            <Text bold color="cyan">
+                              Alert URL:
+                            </Text>
+                          </Box>
+                          <Link url={alertWebUrl}>
+                            <Text color="blue" underline wrap="truncate">
+                              {alertWebUrl}
+                            </Text>
+                          </Link>
+                        </Box>
+                      );
+                    }
+                    return null;
+                  })()}
                   <Box>
                     <Box width={18}>
                       <Text bold color="cyan">
@@ -252,6 +288,79 @@ export const IssueModal = React.memo(
                       </Text>
                     </Box>
                   )}
+
+                  {/* Validation Fingerprint Information (for secret alerts) */}
+                  {(() => {
+                    const fingerprint = getMostRecentFingerprint(alert);
+                    if (!fingerprint) return null;
+
+                    const fingerprintData = parseFingerprintJson(fingerprint);
+
+                    return (
+                      <Box
+                        flexDirection="column"
+                        borderStyle="single"
+                        borderColor="magenta"
+                        paddingX={1}
+                        marginTop={1}
+                      >
+                        <Text color="magenta" bold>
+                          Validation Fingerprint
+                        </Text>
+                        <Box marginTop={1} flexDirection="column">
+                          {fingerprint.validityResult !== undefined && (
+                            <Box marginBottom={1}>
+                              <Box width={18}>
+                                <Text bold>Validity:</Text>
+                              </Box>
+                              <Text
+                                wrap="wrap"
+                                color={getValidityResultColor(
+                                  fingerprint.validityResult
+                                )}
+                                bold
+                              >
+                                {getValidityResultName(
+                                  fingerprint.validityResult
+                                )}
+                              </Text>
+                            </Box>
+                          )}
+                          {fingerprintData && (
+                            <Box flexDirection="column" marginTop={1}>
+                              <Text bold dimColor>
+                                Fingerprint Data:
+                              </Text>
+                              {Object.entries(fingerprintData).map(
+                                ([key, value]) => (
+                                  <Box key={key}>
+                                    <Box width={18}>
+                                      <Text dimColor>{key}:</Text>
+                                    </Box>
+                                    <Text wrap="truncate">{String(value)}</Text>
+                                  </Box>
+                                )
+                              )}
+                            </Box>
+                          )}
+                          {fingerprint.validityLastUpdatedDate && (
+                            <Box marginTop={1}>
+                              <Box width={18}>
+                                <Text bold dimColor>
+                                  Last Checked:
+                                </Text>
+                              </Box>
+                              <Text wrap="wrap" dimColor>
+                                {new Date(
+                                  fingerprint.validityLastUpdatedDate
+                                ).toLocaleString()}
+                              </Text>
+                            </Box>
+                          )}
+                        </Box>
+                      </Box>
+                    );
+                  })()}
 
                   {/* Git ref */}
                   {alert.gitRef && (
@@ -529,7 +638,7 @@ export const IssueModal = React.memo(
                       </Box>
                     )}
 
-                  {/* Locations Summary */}
+                  {/* Locations Summary - Distinct Files */}
                   {alert.physicalLocations &&
                     alert.physicalLocations.length > 0 && (
                       <Box
@@ -540,72 +649,51 @@ export const IssueModal = React.memo(
                         marginTop={1}
                       >
                         <Text color="cyan" bold>
-                          Locations Summary
+                          Files Summary
                         </Text>
-                        <Box marginTop={1}>
-                          <Box width={18}>
-                            <Text bold>Total Locations:</Text>
-                          </Box>
-                          <Text wrap="wrap" color="yellow" bold>
-                            {alert.physicalLocations.length}
-                          </Text>
-                        </Box>
-                        <Box>
-                          <Box width={18}>
-                            <Text bold>Distinct Files:</Text>
-                          </Box>
-                          <Text wrap="wrap" color="yellow" bold>
-                            {
-                              new Set(
-                                alert.physicalLocations.map(
-                                  (loc) => loc.filePath
-                                )
-                              ).size
-                            }
-                          </Text>
-                        </Box>
-                        {/* First 10 itemUrls */}
                         {(() => {
-                          const itemUrls = alert.physicalLocations
-                            .filter((loc) => loc.versionControl?.itemUrl)
-                            .map((loc) => loc.versionControl.itemUrl)
-                            .slice(0, 10);
-                          if (itemUrls.length > 0) {
-                            return (
+                          const distinctFiles = getDistinctFilePaths(alert);
+                          return (
+                            <>
+                              <Box marginTop={1}>
+                                <Box width={18}>
+                                  <Text bold>Distinct Files:</Text>
+                                </Box>
+                                <Text wrap="wrap" color="yellow" bold>
+                                  {distinctFiles.length}
+                                </Text>
+                              </Box>
+                              <Box>
+                                <Box width={18}>
+                                  <Text bold>Total Locations:</Text>
+                                </Box>
+                                <Text wrap="wrap" dimColor>
+                                  {alert.physicalLocations.length}
+                                </Text>
+                              </Box>
+                              {/* File list with first 10 */}
                               <Box flexDirection="column" marginTop={1}>
                                 <Text bold dimColor>
-                                  File Links:
+                                  Files:
                                 </Text>
-                                {itemUrls.map((url, idx) => (
-                                  <Box key={idx}>
-                                    <Link url={url}>
-                                      <Text
-                                        color="blue"
-                                        underline
-                                        wrap="truncate"
-                                      >
-                                        {url.length > 150
-                                          ? url.substring(0, 147) + '...'
-                                          : url}
+                                {distinctFiles
+                                  .slice(0, 10)
+                                  .map((filePath, idx) => (
+                                    <Box key={idx}>
+                                      <Text wrap="truncate" dimColor>
+                                        • {filePath}
                                       </Text>
-                                    </Link>
-                                  </Box>
-                                ))}
-                                {alert.physicalLocations.filter(
-                                  (loc) => loc.versionControl?.itemUrl
-                                ).length > 10 && (
+                                    </Box>
+                                  ))}
+                                {distinctFiles.length > 10 && (
                                   <Text dimColor>
-                                    ...and{' '}
-                                    {alert.physicalLocations.filter(
-                                      (loc) => loc.versionControl?.itemUrl
-                                    ).length - 10}{' '}
-                                    more
+                                    ...and {distinctFiles.length - 10} more
+                                    files
                                   </Text>
                                 )}
                               </Box>
-                            );
-                          }
-                          return null;
+                            </>
+                          );
                         })()}
                         <Box marginTop={1}>
                           <Text dimColor>

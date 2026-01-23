@@ -4,6 +4,7 @@
  */
 
 import * as azdev from 'azure-devops-node-api';
+import { ExpandOption } from 'azure-devops-node-api/interfaces/AlertInterfaces.js';
 import { getAzdoProxyOptions } from '../utils/proxy-config.js';
 
 /**
@@ -366,12 +367,24 @@ export class AzdoService {
    * @param {string} projectIdOrName - Project ID or name
    * @param {string} repositoryId - Repository ID
    * @param {number} alertId - Alert ID
+   * @param {Object} [options] - Optional parameters
+   * @param {boolean} [options.includeFingerprint=true] - Include validation fingerprint (for secret alerts)
    * @returns {Promise<Object>}
    */
-  async getAlert(projectIdOrName, repositoryId, alertId) {
+  async getAlert(projectIdOrName, repositoryId, alertId, options = {}) {
     await this.connect();
     const alertApi = await this.connection.getAlertApi();
-    return await alertApi.getAlert(projectIdOrName, alertId, repositoryId);
+    const { includeFingerprint = true } = options;
+    const expand = includeFingerprint
+      ? ExpandOption.ValidationFingerprint
+      : ExpandOption.None;
+    return await alertApi.getAlert(
+      projectIdOrName,
+      alertId,
+      repositoryId,
+      undefined, // ref
+      expand
+    );
   }
 
   /**

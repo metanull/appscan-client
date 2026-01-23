@@ -162,6 +162,111 @@ export function getDismissalTypeName(dismissalType) {
 }
 
 /**
+ * Validity result enum names for validation fingerprints
+ */
+export const VALIDITY_RESULT_NAMES = {
+  0: 'None',
+  1: 'Exploitable',
+  2: 'NotExploitable',
+  3: 'Inconclusive',
+  4: 'ValidationNotSupported',
+  5: 'TransientError',
+};
+
+/**
+ * Colors for validity result display
+ */
+export const VALIDITY_RESULT_COLORS = {
+  0: 'gray', // None
+  1: 'red', // Exploitable
+  2: 'green', // NotExploitable
+  3: 'yellow', // Inconclusive
+  4: 'gray', // ValidationNotSupported
+  5: 'yellow', // TransientError
+};
+
+/**
+ * Get human-readable validity result name
+ * @param {number} validityResult - Validity result enum value
+ * @returns {string} Validity result name
+ */
+export function getValidityResultName(validityResult) {
+  return VALIDITY_RESULT_NAMES[validityResult] || 'Unknown';
+}
+
+/**
+ * Get color for validity result display
+ * @param {number} validityResult - Validity result enum value
+ * @returns {string} Color name
+ */
+export function getValidityResultColor(validityResult) {
+  return VALIDITY_RESULT_COLORS[validityResult] || 'white';
+}
+
+/**
+ * Get distinct file paths from alert physical locations
+ * @param {Object} alert - Alert object
+ * @returns {string[]} Array of distinct file paths
+ */
+export function getDistinctFilePaths(alert) {
+  if (!alert?.physicalLocations || alert.physicalLocations.length === 0) {
+    return [];
+  }
+  const distinctFiles = new Set();
+  for (const loc of alert.physicalLocations) {
+    if (loc.filePath) {
+      distinctFiles.add(loc.filePath);
+    }
+  }
+  return Array.from(distinctFiles);
+}
+
+/**
+ * Get the most recent validation fingerprint from an alert
+ * Sorted by validityLastUpdatedDate descending
+ * @param {Object} alert - Alert object
+ * @returns {Object|null} Most recent fingerprint or null
+ */
+export function getMostRecentFingerprint(alert) {
+  if (
+    !alert?.validationFingerprints ||
+    alert.validationFingerprints.length === 0
+  ) {
+    return null;
+  }
+
+  // Sort by validityLastUpdatedDate descending and return the first one
+  const sorted = [...alert.validationFingerprints].sort((a, b) => {
+    const dateA = a.validityLastUpdatedDate
+      ? new Date(a.validityLastUpdatedDate).getTime()
+      : 0;
+    const dateB = b.validityLastUpdatedDate
+      ? new Date(b.validityLastUpdatedDate).getTime()
+      : 0;
+    return dateB - dateA;
+  });
+
+  return sorted[0];
+}
+
+/**
+ * Parse the validationFingerprintJson string into key-value pairs
+ * @param {Object} fingerprint - Fingerprint object
+ * @returns {Object|null} Parsed JSON object or null if invalid
+ */
+export function parseFingerprintJson(fingerprint) {
+  if (!fingerprint?.validationFingerprintJson) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(fingerprint.validationFingerprintJson);
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Group alerts by property and sort by severity
  * @param {Array} alerts - Alerts to group
  * @param {string} property - Property to group by (default: alertType)
