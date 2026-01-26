@@ -492,7 +492,12 @@ export class AzdoService {
    * @returns {Promise<Array>} Array of matches { project, pipeline, variableName, variableValue, isSecret, source }
    */
   async searchPipelineVariables(projectIdOrName, options = {}) {
-    const { searchValue, searchName, includeSecrets = true, useRegex = false } = options;
+    const {
+      searchValue,
+      searchName,
+      includeSecrets = true,
+      useRegex = false,
+    } = options;
     const results = [];
 
     // Compile regex patterns if useRegex is enabled
@@ -511,10 +516,7 @@ export class AzdoService {
       // Get full definition to access variables
       let definition;
       try {
-        definition = await this.getBuildDefinition(
-          projectIdOrName,
-          defRef.id
-        );
+        definition = await this.getBuildDefinition(projectIdOrName, defRef.id);
       } catch {
         continue;
       }
@@ -535,7 +537,9 @@ export class AzdoService {
           } else if (useRegex) {
             nameMatches = nameRegex.test(varName);
           } else {
-            nameMatches = varName.toLowerCase().includes(searchName.toLowerCase());
+            nameMatches = varName
+              .toLowerCase()
+              .includes(searchName.toLowerCase());
           }
 
           // Check value match (only for non-secrets)
@@ -547,7 +551,8 @@ export class AzdoService {
           } else if (useRegex) {
             valueMatches = value && valueRegex.test(value);
           } else {
-            valueMatches = value && value.toLowerCase().includes(searchValue.toLowerCase());
+            valueMatches =
+              value && value.toLowerCase().includes(searchValue.toLowerCase());
           }
 
           if (nameMatches && valueMatches) {
@@ -591,7 +596,9 @@ export class AzdoService {
             } else if (useRegex) {
               nameMatches = nameRegex.test(varName);
             } else {
-              nameMatches = varName.toLowerCase().includes(searchName.toLowerCase());
+              nameMatches = varName
+                .toLowerCase()
+                .includes(searchName.toLowerCase());
             }
 
             // Check value match (only for non-secrets)
@@ -603,7 +610,9 @@ export class AzdoService {
             } else if (useRegex) {
               valueMatches = value && valueRegex.test(value);
             } else {
-              valueMatches = value && value.toLowerCase().includes(searchValue.toLowerCase());
+              valueMatches =
+                value &&
+                value.toLowerCase().includes(searchValue.toLowerCase());
             }
 
             if (nameMatches && valueMatches) {
@@ -639,7 +648,12 @@ export class AzdoService {
    * @returns {Promise<Array>} Array of matches
    */
   async searchVariableGroups(projectIdOrName, options = {}) {
-    const { searchValue, searchName, includeSecrets = true, useRegex = false } = options;
+    const {
+      searchValue,
+      searchName,
+      includeSecrets = true,
+      useRegex = false,
+    } = options;
     const results = [];
 
     // Compile regex patterns if useRegex is enabled
@@ -676,7 +690,9 @@ export class AzdoService {
         } else if (useRegex) {
           nameMatches = nameRegex.test(varName);
         } else {
-          nameMatches = varName.toLowerCase().includes(searchName.toLowerCase());
+          nameMatches = varName
+            .toLowerCase()
+            .includes(searchName.toLowerCase());
         }
 
         // Check value match (only for non-secrets)
@@ -688,7 +704,8 @@ export class AzdoService {
         } else if (useRegex) {
           valueMatches = value && valueRegex.test(value);
         } else {
-          valueMatches = value && value.toLowerCase().includes(searchValue.toLowerCase());
+          valueMatches =
+            value && value.toLowerCase().includes(searchValue.toLowerCase());
         }
 
         if (nameMatches && valueMatches) {

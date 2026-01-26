@@ -155,7 +155,8 @@ function formatMatch(match) {
     lines.push(chalk.gray('  Value:          ') + chalk.red('[SECRET]'));
   } else {
     lines.push(
-      chalk.gray('  Value:          ') + chalk.green(match.variableValue || '(empty)')
+      chalk.gray('  Value:          ') +
+        chalk.green(match.variableValue || '(empty)')
     );
   }
 
@@ -169,7 +170,9 @@ async function main() {
 
   if (!args.searchName && !args.searchValue) {
     console.error(
-      chalk.red('Error: You must specify at least --name or --value to search for.')
+      chalk.red(
+        'Error: You must specify at least --name or --value to search for.'
+      )
     );
     console.log(chalk.gray('Use --help for usage information.'));
     process.exit(1);
@@ -223,7 +226,9 @@ async function main() {
       processedProjects++;
 
       if (!args.json) {
-        const percentage = Math.round((processedProjects / totalProjects) * 100);
+        const percentage = Math.round(
+          (processedProjects / totalProjects) * 100
+        );
         const barLength = 40;
         const filledLength = Math.round((percentage / 100) * barLength);
         const bar =
@@ -333,13 +338,15 @@ async function main() {
         // Summary
         console.log(chalk.bold('\nSummary:'));
         console.log(
-          chalk.gray('  Projects scanned:       ') + chalk.white(projects.length)
+          chalk.gray('  Projects scanned:       ') +
+            chalk.white(projects.length)
         );
         console.log(
           chalk.gray('  Pipelines scanned:      ') + chalk.white(totalPipelines)
         );
         console.log(
-          chalk.gray('  Variable groups scanned:') + chalk.white(totalVariableGroups)
+          chalk.gray('  Variable groups scanned:') +
+            chalk.white(totalVariableGroups)
         );
         console.log(
           chalk.gray('  Total matches:          ') +
