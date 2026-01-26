@@ -409,6 +409,304 @@ export class AzdoService {
       repositoryId
     );
   }
+
+  // ==========================================
+  // Pipeline Variables Methods
+  // ==========================================
+
+  /**
+   * List build definitions (pipelines) for a project
+   * @param {string} projectIdOrName - Project ID or name
+   * @param {Object} [options] - Optional parameters
+   * @param {boolean} [options.includeAllProperties=true] - Include full definition with variables
+   * @returns {Promise<Array>} Array of build definitions
+   */
+  async listBuildDefinitions(projectIdOrName, options = {}) {
+    await this.connect();
+    const buildApi = await this.connection.getBuildApi();
+    const { includeAllProperties = true } = options;
+
+    const definitions = await buildApi.getDefinitions(
+      projectIdOrName,
+      undefined, // name
+      undefined, // repositoryId
+      undefined, // repositoryType
+      undefined, // queryOrder
+      undefined, // top
+      undefined, // continuationToken
+      undefined, // minMetricsTime
+      undefined, // definitionIds
+      undefined, // path
+      undefined, // builtAfter
+      undefined, // notBuiltAfter
+      includeAllProperties
+    );
+
+    return definitions || [];
+  }
+
+  /**
+   * Get a specific build definition with full details (including variables)
+   * @param {string} projectIdOrName - Project ID or name
+   * @param {number} definitionId - Definition ID
+   * @returns {Promise<Object>} Build definition with variables
+   */
+  async getBuildDefinition(projectIdOrName, definitionId) {
+    await this.connect();
+    const buildApi = await this.connection.getBuildApi();
+    return await buildApi.getDefinition(projectIdOrName, definitionId);
+  }
+
+  /**
+   * List variable groups for a project
+   * @param {string} projectIdOrName - Project ID or name
+   * @returns {Promise<Array>} Array of variable groups
+   */
+  async listVariableGroups(projectIdOrName) {
+    await this.connect();
+    const taskAgentApi = await this.connection.getTaskAgentApi();
+    const groups = await taskAgentApi.getVariableGroups(projectIdOrName);
+    return groups || [];
+  }
+
+  /**
+   * Get a specific variable group
+   * @param {string} projectIdOrName - Project ID or name
+   * @param {number} groupId - Variable group ID
+   * @returns {Promise<Object>} Variable group
+   */
+  async getVariableGroup(projectIdOrName, groupId) {
+    await this.connect();
+    const taskAgentApi = await this.connection.getTaskAgentApi();
+    return await taskAgentApi.getVariableGroup(projectIdOrName, groupId);
+  }
+
+  /**
+   * Search for pipeline variables across all pipelines in a project
+   * @param {string} projectIdOrName - Project ID or name
+   * @param {Object} options - Search options
+   * @param {string} [options.searchValue] - Value to search for (only works for non-secret variables)
+   * @param {string} [options.searchName] - Variable name to search for (case-insensitive partial match, or regex if useRegex=true)
+   * @param {boolean} [options.includeSecrets=true] - Include secret variables in results (value will be null)
+   * @param {boolean} [options.useRegex=false] - Treat searchName and searchValue as regex patterns
+   * @returns {Promise<Array>} Array of matches { project, pipeline, variableName, variableValue, isSecret, source }
+   */
+  async searchPipelineVariables(projectIdOrName, options = {}) {
+    const { searchValue, searchName, includeSecrets = true, useRegex = false } = options;
+    const results = [];
+
+    // Compile regex patterns if useRegex is enabled
+    let nameRegex, valueRegex;
+    if (useRegex) {
+      if (searchName) nameRegex = new RegExp(searchName, 'i');
+      if (searchValue) valueRegex = new RegExp(searchValue, 'i');
+    }
+
+    // Get all build definitions
+    const definitions = await this.listBuildDefinitions(projectIdOrName, {
+      includeAllProperties: true,
+    });
+
+    for (const defRef of definitions) {
+      // Get full definition to access variables
+      let definition;
+      try {
+        definition = await this.getBuildDefinition(
+          projectIdOrName,
+          defRef.id
+        );
+      } catch {
+        continue;
+      }
+
+      // Search in pipeline variables
+      if (definition.variables) {
+        for (const [varName, varData] of Object.entries(definition.variables)) {
+          const isSecret = varData.isSecret === true;
+          const value = varData.value;
+
+          // Skip secrets if not included
+          if (isSecret && !includeSecrets) continue;
+
+          // Check name match
+          let nameMatches;
+          if (!searchName) {
+            nameMatches = true;
+          } else if (useRegex) {
+            nameMatches = nameRegex.test(varName);
+          } else {
+            nameMatches = varName.toLowerCase().includes(searchName.toLowerCase());
+          }
+
+          // Check value match (only for non-secrets)
+          let valueMatches;
+          if (!searchValue) {
+            valueMatches = true;
+          } else if (isSecret) {
+            valueMatches = false;
+          } else if (useRegex) {
+            valueMatches = value && valueRegex.test(value);
+          } else {
+            valueMatches = value && value.toLowerCase().includes(searchValue.toLowerCase());
+          }
+
+          if (nameMatches && valueMatches) {
+            results.push({
+              projectName: projectIdOrName,
+              pipelineId: definition.id,
+              pipelineName: definition.name,
+              pipelinePath: definition.path || '\\',
+              variableName: varName,
+              variableValue: isSecret ? null : value,
+              isSecret,
+              source: 'pipeline',
+            });
+          }
+        }
+      }
+
+      // Search in linked variable groups
+      if (definition.variableGroups) {
+        for (const groupRef of definition.variableGroups) {
+          // Fetch full group details to get variable values
+          let group;
+          try {
+            group = await this.getVariableGroup(projectIdOrName, groupRef.id);
+          } catch {
+            continue;
+          }
+
+          if (!group.variables) continue;
+
+          for (const [varName, varData] of Object.entries(group.variables)) {
+            const isSecret = varData.isSecret === true;
+            const value = varData.value;
+
+            if (isSecret && !includeSecrets) continue;
+
+            // Check name match
+            let nameMatches;
+            if (!searchName) {
+              nameMatches = true;
+            } else if (useRegex) {
+              nameMatches = nameRegex.test(varName);
+            } else {
+              nameMatches = varName.toLowerCase().includes(searchName.toLowerCase());
+            }
+
+            // Check value match (only for non-secrets)
+            let valueMatches;
+            if (!searchValue) {
+              valueMatches = true;
+            } else if (isSecret) {
+              valueMatches = false;
+            } else if (useRegex) {
+              valueMatches = value && valueRegex.test(value);
+            } else {
+              valueMatches = value && value.toLowerCase().includes(searchValue.toLowerCase());
+            }
+
+            if (nameMatches && valueMatches) {
+              results.push({
+                projectName: projectIdOrName,
+                pipelineId: definition.id,
+                pipelineName: definition.name,
+                pipelinePath: definition.path || '\\',
+                variableGroupId: group.id,
+                variableGroupName: group.name,
+                variableName: varName,
+                variableValue: isSecret ? null : value,
+                isSecret,
+                source: 'variableGroup',
+              });
+            }
+          }
+        }
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Search for variables in variable groups across a project
+   * @param {string} projectIdOrName - Project ID or name
+   * @param {Object} options - Search options
+   * @param {string} [options.searchValue] - Value to search for (only works for non-secret variables)
+   * @param {string} [options.searchName] - Variable name to search for (case-insensitive partial match, or regex if useRegex=true)
+   * @param {boolean} [options.includeSecrets=true] - Include secret variables in results
+   * @param {boolean} [options.useRegex=false] - Treat searchName and searchValue as regex patterns
+   * @returns {Promise<Array>} Array of matches
+   */
+  async searchVariableGroups(projectIdOrName, options = {}) {
+    const { searchValue, searchName, includeSecrets = true, useRegex = false } = options;
+    const results = [];
+
+    // Compile regex patterns if useRegex is enabled
+    let nameRegex, valueRegex;
+    if (useRegex) {
+      if (searchName) nameRegex = new RegExp(searchName, 'i');
+      if (searchValue) valueRegex = new RegExp(searchValue, 'i');
+    }
+
+    // Get list of variable groups (may not include full variable values)
+    const groupList = await this.listVariableGroups(projectIdOrName);
+
+    for (const groupRef of groupList) {
+      // Fetch full group details to get variable values
+      let group;
+      try {
+        group = await this.getVariableGroup(projectIdOrName, groupRef.id);
+      } catch {
+        continue;
+      }
+
+      if (!group.variables) continue;
+
+      for (const [varName, varData] of Object.entries(group.variables)) {
+        const isSecret = varData.isSecret === true;
+        const value = varData.value;
+
+        if (isSecret && !includeSecrets) continue;
+
+        // Check name match
+        let nameMatches;
+        if (!searchName) {
+          nameMatches = true;
+        } else if (useRegex) {
+          nameMatches = nameRegex.test(varName);
+        } else {
+          nameMatches = varName.toLowerCase().includes(searchName.toLowerCase());
+        }
+
+        // Check value match (only for non-secrets)
+        let valueMatches;
+        if (!searchValue) {
+          valueMatches = true;
+        } else if (isSecret) {
+          valueMatches = false;
+        } else if (useRegex) {
+          valueMatches = value && valueRegex.test(value);
+        } else {
+          valueMatches = value && value.toLowerCase().includes(searchValue.toLowerCase());
+        }
+
+        if (nameMatches && valueMatches) {
+          results.push({
+            projectName: projectIdOrName,
+            variableGroupId: group.id,
+            variableGroupName: group.name,
+            variableName: varName,
+            variableValue: isSecret ? null : value,
+            isSecret,
+            source: 'variableGroup',
+          });
+        }
+      }
+    }
+
+    return results;
+  }
 }
 
 export default AzdoService;

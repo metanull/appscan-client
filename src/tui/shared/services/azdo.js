@@ -117,6 +117,69 @@ export class AzdoService {
     );
   }
 
+  // ==========================================
+  // Pipeline Variables Methods (delegated)
+  // ==========================================
+
+  /**
+   * List build definitions (pipelines) for a project
+   * @param {string} projectIdOrName - Project ID or name
+   * @param {Object} [options] - Optional parameters
+   * @returns {Promise<Array>} Array of build definitions
+   */
+  async listBuildDefinitions(projectIdOrName, options = {}) {
+    return this.service.listBuildDefinitions(projectIdOrName, options);
+  }
+
+  /**
+   * Get a specific build definition with full details (including variables)
+   * @param {string} projectIdOrName - Project ID or name
+   * @param {number} definitionId - Definition ID
+   * @returns {Promise<Object>} Build definition with variables
+   */
+  async getBuildDefinition(projectIdOrName, definitionId) {
+    return this.service.getBuildDefinition(projectIdOrName, definitionId);
+  }
+
+  /**
+   * List variable groups for a project
+   * @param {string} projectIdOrName - Project ID or name
+   * @returns {Promise<Array>} Array of variable groups
+   */
+  async listVariableGroups(projectIdOrName) {
+    return this.service.listVariableGroups(projectIdOrName);
+  }
+
+  /**
+   * Get a specific variable group
+   * @param {string} projectIdOrName - Project ID or name
+   * @param {number} groupId - Variable group ID
+   * @returns {Promise<Object>} Variable group
+   */
+  async getVariableGroup(projectIdOrName, groupId) {
+    return this.service.getVariableGroup(projectIdOrName, groupId);
+  }
+
+  /**
+   * Search for pipeline variables across all pipelines in a project
+   * @param {string} projectIdOrName - Project ID or name
+   * @param {Object} options - Search options
+   * @returns {Promise<Array>} Array of matches
+   */
+  async searchPipelineVariables(projectIdOrName, options = {}) {
+    return this.service.searchPipelineVariables(projectIdOrName, options);
+  }
+
+  /**
+   * Search for variables in variable groups across a project
+   * @param {string} projectIdOrName - Project ID or name
+   * @param {Object} options - Search options
+   * @returns {Promise<Array>} Array of matches
+   */
+  async searchVariableGroups(projectIdOrName, options = {}) {
+    return this.service.searchVariableGroups(projectIdOrName, options);
+  }
+
   /**
    * Build the web URL to view an alert in Azure DevOps browser
    * @param {string} projectName - Project name
