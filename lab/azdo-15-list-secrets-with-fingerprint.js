@@ -34,6 +34,7 @@ import { AzdoService } from '../src/tui/shared/services/azdo.js';
 import {
   getMostRecentFingerprint,
   parseFingerprintJson,
+  parseAlertMetadata,
 } from '../src/tui/apps/azdo/utils/issue.js';
 
 /**
@@ -71,6 +72,44 @@ function extractFingerprintData(alert) {
     secret: fingerprintData.secret || 'N/A',
     id: fingerprintData.id || 'N/A',
   };
+}
+
+// State enum values
+const State = {
+  Unknown: 0,
+  Active: 1,
+  Dismissed: 2,
+  Fixed: 4,
+  AutoDismissed: 8,
+};
+
+// DismissalType enum values
+const DismissalType = {
+  Unknown: 0,
+};
+
+/**
+ * Check if alert should be included in the report
+ * Excludes: Fixed alerts, and Dismissed alerts with a known dismissal type
+ * @param {Object} alert - Alert object
+ * @returns {boolean}
+ */
+function shouldIncludeAlert(alert) {
+  // Exclude fixed alerts
+  if (alert.state === State.Fixed) {
+    return false;
+  }
+
+  // Exclude dismissed alerts with a known dismissal type (not Unknown)
+  if (
+    alert.state === State.Dismissed &&
+    alert.dismissal?.dismissalType !== undefined &&
+    alert.dismissal.dismissalType !== DismissalType.Unknown
+  ) {
+    return false;
+  }
+
+  return true;
 }
 
 async function main() {
@@ -147,18 +186,23 @@ async function main() {
                   { includeFingerprint: true }
                 );
 
-                allAlerts.push({
-                  project,
-                  repo,
-                  alert: alertDetails,
-                });
+                // Filter out fixed/properly dismissed alerts
+                if (shouldIncludeAlert(alertDetails)) {
+                  allAlerts.push({
+                    project,
+                    repo,
+                    alert: alertDetails,
+                  });
+                }
               } catch {
                 // Use basic alert if details fetch fails
-                allAlerts.push({
-                  project,
-                  repo,
-                  alert,
-                });
+                if (shouldIncludeAlert(alert)) {
+                  allAlerts.push({
+                    project,
+                    repo,
+                    alert,
+                  });
+                }
               }
             }
           }
@@ -185,6 +229,7 @@ async function main() {
     for (const { project, repo, alert } of allAlerts) {
       const fingerprintData = extractFingerprintData(alert);
       const filePaths = getFilePaths(alert);
+      const metadata = parseAlertMetadata(alert);
 
       console.log(chalk.bold.cyan(`Alert #${alert.alertId}`));
       console.log(
@@ -204,6 +249,11 @@ async function main() {
       console.log(
         chalk.gray('  Fingerprint ID:    ') + chalk.yellow(fingerprintData.id)
       );
+      if (metadata.jiraId) {
+        console.log(
+          chalk.gray('  Jira ID:           ') + chalk.green(metadata.jiraId)
+        );
+      }
       console.log(chalk.gray('  File(s):           ') + chalk.blue(filePaths));
       console.log(chalk.gray('─'.repeat(80)));
     }
