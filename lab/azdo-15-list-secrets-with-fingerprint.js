@@ -202,8 +202,7 @@ async function main() {
           chalk.yellow(` ${fingerprintData.secret}`)
       );
       console.log(
-        chalk.gray('  Fingerprint ID:    ') +
-          chalk.yellow(fingerprintData.id)
+        chalk.gray('  Fingerprint ID:    ') + chalk.yellow(fingerprintData.id)
       );
       console.log(chalk.gray('  File(s):           ') + chalk.blue(filePaths));
       console.log(chalk.gray('─'.repeat(80)));

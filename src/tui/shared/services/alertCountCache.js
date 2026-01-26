@@ -7,7 +7,10 @@
 import fs from 'fs';
 import { getAlertCountCachePath } from '../../../utils/config-paths.js';
 import logger from '../../../utils/logger.js';
-import { getComputedStatus, COMPUTED_STATUS } from '../../apps/azdo/utils/issue.js';
+import {
+  getComputedStatus,
+  COMPUTED_STATUS,
+} from '../../apps/azdo/utils/issue.js';
 
 const CACHE_FILE = getAlertCountCachePath();
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
