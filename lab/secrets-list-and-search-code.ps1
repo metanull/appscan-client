@@ -7,9 +7,9 @@ if(-not $secretList) {
 $secretList.validationFingerprints.validationFingerprintJson |
       ConvertFrom-Json |
       group-object secret |
-      Sort-Object count -Descending |
+      Sort-Object count -Descending |<#
       select -first 10 |
-      Select Count,Name |% {
+      #> Select Count,Name |% {
         $alertSecret = $_.Name
         $alertCount = $_.Count
         write-warning "($alertCount) $alertSecret"
@@ -37,4 +37,6 @@ $secretList.validationFingerprints.validationFingerprintJson |
                 Locations = $_.Group | Group-Object Project,Repository,Path | Select-Object -ExpandProperty Name
             }
           }
-      }
+      } |
+      Tee-Object -Variable CountedSecrets |
+      Sort-Object Found,Alerts -Descending
