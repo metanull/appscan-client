@@ -27,6 +27,9 @@ export class Config {
     this.azureDevOpsOrg = process.env.AZURE_DEVOPS_ORG || null;
     this.azureDevOpsBaseUrl =
       process.env.AZURE_DEVOPS_BASE_URL || 'https://dev.azure.com';
+    this.azureDevOpsSearchBaseUrl =
+      process.env.AZURE_DEVOPS_SEARCH_BASE_URL ||
+      'https://almsearch.dev.azure.com';
     this.confluenceHost = process.env.CONFLUENCE_HOST || null;
     this.bulkUpdateChunkSize = parseInt(
       process.env.BULK_UPDATE_CHUNK_SIZE || '10',
@@ -86,6 +89,10 @@ export class Config {
     return this.azureDevOpsBaseUrl;
   }
 
+  getAzureDevOpsSearchBaseUrl() {
+    return this.azureDevOpsSearchBaseUrl;
+  }
+
   getConfluenceHost() {
     return this.confluenceHost;
   }
@@ -111,6 +118,8 @@ export class Config {
           config.azureDevOpsOrg || instance.azureDevOpsOrg;
         instance.azureDevOpsBaseUrl =
           config.azureDevOpsBaseUrl || instance.azureDevOpsBaseUrl;
+        instance.azureDevOpsSearchBaseUrl =
+          config.azureDevOpsSearchBaseUrl || instance.azureDevOpsSearchBaseUrl;
         instance.confluenceHost =
           config.confluenceHost || instance.confluenceHost;
         instance.bulkUpdateChunkSize =

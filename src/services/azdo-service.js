@@ -4,8 +4,12 @@
  */
 
 import * as azdev from 'azure-devops-node-api';
+import axios from 'axios';
 import { ExpandOption } from 'azure-devops-node-api/interfaces/AlertInterfaces.js';
-import { getAzdoProxyOptions } from '../utils/proxy-config.js';
+import {
+  getAzdoProxyOptions,
+  getAxiosProxyConfig,
+} from '../utils/proxy-config.js';
 
 /**
  * Alert Type enum mapping
@@ -353,7 +357,11 @@ export class AzdoService {
         );
       } catch (error) {
         // Skip repositories without advanced security enabled
-        if (error.statusCode !== 404) {
+        const isAdvSecurityNotEnabled =
+          error.statusCode === 404 ||
+          error.message?.includes('Advanced Security is not enabled') ||
+          error.message?.includes('VS2150009');
+        if (!isAdvSecurityNotEnabled) {
           throw error;
         }
       }
@@ -408,6 +416,239 @@ export class AzdoService {
       alertId,
       repositoryId
     );
+  }
+
+  /**
+   * Get the base URL for Azure DevOps Search API
+   * @returns {string}
+   */
+  getSearchBaseUrl() {
+    const searchBaseUrl = this.config.getAzureDevOpsSearchBaseUrl();
+    const org = this.config.getAzureDevOpsOrg();
+
+    if (!org) {
+      throw new Error(
+        'Missing Azure DevOps organization. Set AZURE_DEVOPS_ORG environment variable.'
+      );
+    }
+
+    return `${searchBaseUrl.replace(/\/$/, '')}/${org}`;
+  }
+
+  /**
+   * Search code across Azure DevOps repositories
+   * Uses the Azure DevOps Search API (almsearch.dev.azure.com)
+   * @see https://learn.microsoft.com/en-us/rest/api/azure/devops/search/code-search-results/fetch-code-search-results
+   * @param {string} searchText - The search text
+   * @param {Object} [options] - Search options
+   * @param {string} [options.projectId] - Filter by project ID or name
+   * @param {string} [options.repositoryId] - Filter by repository ID or name
+   * @param {string} [options.path] - Filter by file path
+   * @param {string} [options.branch] - Filter by branch name
+   * @param {number} [options.top=50] - Number of results to return
+   * @param {number} [options.skip=0] - Number of results to skip
+   * @param {boolean} [options.includeSnippet=true] - Include matched code snippets
+   * @returns {Promise<Object>} Search response with count, results, and facets
+   */
+  async codeSearch(searchText, options = {}) {
+    await this.connect();
+
+    const pat =
+      process.env.AZDO_PAT ||
+      process.env.AZDO_PERSONAL_ACCESS_TOKEN ||
+      process.env.AZURE_DEVOPS_PAT;
+
+    if (!pat) {
+      throw new Error(
+        'Missing Azure DevOps PAT. Set AZDO_PAT or AZURE_DEVOPS_PAT environment variable.'
+      );
+    }
+
+    const {
+      projectId,
+      repositoryId,
+      path,
+      branch,
+      top = 50,
+      skip = 0,
+      includeSnippet = true,
+    } = options;
+
+    const filters = {};
+    if (projectId) {
+      filters.Project = [projectId];
+    }
+    if (repositoryId) {
+      filters.Repository = [repositoryId];
+    }
+    if (path) {
+      filters.Path = [path];
+    }
+    if (branch) {
+      filters.Branch = [branch];
+    }
+
+    const requestBody = {
+      searchText,
+      $skip: skip,
+      $top: top,
+      filters: Object.keys(filters).length > 0 ? filters : undefined,
+      includeSnippet,
+      includeFacets: true,
+    };
+
+    const searchUrl = projectId
+      ? `${this.getSearchBaseUrl()}/${projectId}/_apis/search/codesearchresults?api-version=7.2-preview.1`
+      : `${this.getSearchBaseUrl()}/_apis/search/codesearchresults?api-version=7.2-preview.1`;
+
+    const proxyConfig = await getAxiosProxyConfig();
+
+    const response = await axios.post(searchUrl, requestBody, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Basic ${Buffer.from(`:${pat}`).toString('base64')}`,
+      },
+      ...proxyConfig,
+    });
+
+    return response.data;
+  }
+
+  /**
+   * List all secret alerts across all projects and repositories
+   * @param {Object} [options] - Filter options
+   * @param {string} [options.projectId] - Filter by project ID or name
+   * @param {string} [options.repositoryId] - Filter by repository ID (requires projectId)
+   * @param {boolean} [options.includeFixed=false] - Include fixed alerts
+   * @param {boolean} [options.includeDismissed=false] - Include dismissed alerts
+   * @param {boolean} [options.includeFingerprint=true] - Include fingerprint data for each alert
+   * @param {Function} [options.onProgress] - Progress callback (processedRepos, totalRepos, alertsFound)
+   * @returns {Promise<Array>} Array of secret alerts with project/repo metadata
+   */
+  async listAllSecretAlerts(options = {}) {
+    await this.connect();
+
+    const {
+      projectId,
+      repositoryId,
+      includeFixed = false,
+      includeDismissed = false,
+      includeFingerprint = true,
+      onProgress,
+    } = options;
+
+    const allAlerts = [];
+
+    // Get projects to scan
+    let projects;
+    if (projectId) {
+      const project = await this.getProject(projectId);
+      projects = [project];
+    } else {
+      projects = await this.listProjects();
+    }
+
+    // Count total repositories for progress tracking
+    let totalRepos = 0;
+    const projectRepos = new Map();
+
+    for (const project of projects) {
+      try {
+        let repos;
+        if (repositoryId && projectId) {
+          const repo = await this.getRepository(project.id, repositoryId);
+          repos = repo ? [repo] : [];
+        } else {
+          repos = await this.listRepositories(project.id);
+        }
+        projectRepos.set(project.id, repos);
+        totalRepos += repos?.length || 0;
+      } catch {
+        projectRepos.set(project.id, []);
+      }
+    }
+
+    let processedRepos = 0;
+
+    for (const project of projects) {
+      const repos = projectRepos.get(project.id) || [];
+
+      for (const repo of repos) {
+        processedRepos++;
+
+        if (onProgress) {
+          onProgress(processedRepos, totalRepos, allAlerts.length);
+        }
+
+        try {
+          const alerts = await this.listAlerts(project.name, repo.id, {
+            type: 'secret',
+          });
+
+          if (alerts && alerts.length > 0) {
+            for (const alert of alerts) {
+              // Filter by state
+              if (!includeFixed && alert.state === State.Fixed) {
+                continue;
+              }
+              if (
+                !includeDismissed &&
+                (alert.state === State.Dismissed ||
+                  alert.state === State.AutoDismissed)
+              ) {
+                continue;
+              }
+
+              let alertData = alert;
+
+              if (includeFingerprint) {
+                try {
+                  alertData = await this.getAlert(
+                    project.name,
+                    repo.id,
+                    alert.alertId,
+                    { includeFingerprint: true }
+                  );
+
+                  // Re-check state after fetching full details
+                  if (!includeFixed && alertData.state === State.Fixed) {
+                    continue;
+                  }
+                  if (
+                    !includeDismissed &&
+                    (alertData.state === State.Dismissed ||
+                      alertData.state === State.AutoDismissed)
+                  ) {
+                    continue;
+                  }
+                } catch {
+                  // Use basic alert if details fetch fails
+                }
+              }
+
+              allAlerts.push({
+                ...alertData,
+                projectId: project.id,
+                projectName: project.name,
+                repositoryId: repo.id,
+                repositoryName: repo.name,
+              });
+            }
+          }
+        } catch (error) {
+          // Skip repositories without advanced security enabled
+          const isAdvSecurityNotEnabled =
+            error.statusCode === 404 ||
+            error.message?.includes('Advanced Security is not enabled') ||
+            error.message?.includes('VS2150009');
+          if (!isAdvSecurityNotEnabled) {
+            throw error;
+          }
+        }
+      }
+    }
+
+    return allAlerts;
   }
 }
 
