@@ -135,6 +135,13 @@ export async function listAzdoSecrets(options) {
           );
         };
 
+    // Streaming JSON callback - outputs NDJSON (one JSON per line) as alerts are found
+    const onAlert = options.json
+      ? (alert) => {
+          console.log(JSON.stringify(alert));
+        }
+      : undefined;
+
     const alerts = await service.listAllSecretAlerts({
       projectId: options.appId,
       repositoryId: options.repositoryId,
@@ -142,6 +149,7 @@ export async function listAzdoSecrets(options) {
       includeDismissed: options.includeDismissed || false,
       includeFingerprint: true,
       onProgress,
+      onAlert,
     });
 
     // Clear progress line
@@ -149,8 +157,9 @@ export async function listAzdoSecrets(options) {
       process.stdout.write('\r' + ' '.repeat(80) + '\r');
     }
 
+    // In JSON mode, alerts were already streamed as NDJSON, nothing more to output
     if (options.json) {
-      cliOutput.json(alerts || []);
+      return;
     } else {
       cliOutput.result(
         chalk.green(`\nFound ${alerts?.length || 0} secret alert(s):\n`)

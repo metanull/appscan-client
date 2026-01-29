@@ -535,6 +535,7 @@ export class AzdoService {
       includeDismissed = false,
       includeFingerprint = true,
       onProgress,
+      onAlert,
     } = options;
 
     const allAlerts = [];
@@ -626,13 +627,19 @@ export class AzdoService {
                 }
               }
 
-              allAlerts.push({
+              const enrichedAlert = {
                 ...alertData,
                 projectId: project.id,
                 projectName: project.name,
                 repositoryId: repo.id,
                 repositoryName: repo.name,
-              });
+              };
+
+              if (onAlert) {
+                onAlert(enrichedAlert);
+              }
+
+              allAlerts.push(enrichedAlert);
             }
           }
         } catch (error) {
