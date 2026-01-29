@@ -33,6 +33,8 @@ import { listAzdoIssues } from './commands/list-azdo-issues.js';
 import { listAzdoIssuesByApp } from './commands/list-azdo-issues-by-app.js';
 import { getAzdoIssueDetail } from './commands/get-azdo-issue-detail.js';
 import { updateAzdoIssue } from './commands/update-azdo-issue.js';
+import { searchAzdoCode } from './commands/search-azdo-code.js';
+import { listAzdoSecrets } from './commands/list-azdo-secrets.js';
 
 const packageJson = getPackageInfo();
 
@@ -141,11 +143,11 @@ Examples:
   # Update using JSON
   $ appscan set-application <app-id> '{"Name":"New Name","Description":"New desc"}'
   $ appscan set-application <app-id> '{"_customFields":{"JiraProject":"AGR"}}'
-  
+
   # Update using flags
   $ appscan set-application <app-id> --name "New Name" --description "New desc"
   $ appscan set-application <app-id> --jiraproject "AGR" --devopsproject "Agora"
-  
+
   # Mix standard and custom fields
   $ appscan set-application <app-id> --description "Updated" --jiraproject "SEC"`
   )
@@ -803,6 +805,56 @@ Examples:
   $ appscan azdo-update --appId "MyProject" --repositoryId "MyRepo" --issueId 123 --status Active --json`
   )
   .action(updateAzdoIssue);
+
+program
+  .command('search-azdo-code')
+  .alias('azdo-search')
+  .description('Search code across Azure DevOps repositories')
+  .argument('<searchText>', 'The text to search for')
+  .option('--appId <value>', 'Filter by project ID or name')
+  .option('--repositoryId <value>', 'Filter by repository ID or name')
+  .option('--path <value>', 'Filter by file path')
+  .option('--branch <value>', 'Filter by branch name')
+  .option('--top <value>', 'Number of results to return (default: 50)')
+  .option('--skip <value>', 'Number of results to skip (for pagination)')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan search-azdo-code "password"
+  $ appscan azdo-search "TODO:" --appId "MyProject"
+  $ appscan azdo-search "connectionString" --appId "MyProject" --repositoryId "MyRepo" --json
+  $ appscan azdo-search "api_key" --top 100 --skip 50`
+  )
+  .action(searchAzdoCode);
+
+program
+  .command('list-azdo-secrets')
+  .alias('azdo-secrets')
+  .description(
+    'List all secret alerts across Azure DevOps projects and repositories'
+  )
+  .option('--appId <value>', 'Filter by project ID or name')
+  .option(
+    '--repositoryId <value>',
+    'Filter by repository ID (requires --appId)'
+  )
+  .option('--include-fixed', 'Include fixed alerts')
+  .option('--include-dismissed', 'Include dismissed alerts')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan list-azdo-secrets
+  $ appscan azdo-secrets --appId "MyProject"
+  $ appscan azdo-secrets --appId "MyProject" --repositoryId "MyRepo"
+  $ appscan azdo-secrets --include-fixed --include-dismissed --json`
+  )
+  .action(listAzdoSecrets);
 
 // TUI Launchers
 program
