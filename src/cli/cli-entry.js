@@ -35,10 +35,125 @@ import { getAzdoIssueDetail } from './commands/get-azdo-issue-detail.js';
 import { updateAzdoIssue } from './commands/update-azdo-issue.js';
 import { searchAzdoCode } from './commands/search-azdo-code.js';
 import { listAzdoSecrets } from './commands/list-azdo-secrets.js';
+import { listDetectifyIssues } from './commands/list-detectify-issues.js';
+import { getDetectifyIssueDetail } from './commands/get-detectify-issue-detail.js';
+import { updateDetectifyIssue } from './commands/update-detectify-issue.js';
 
 const packageJson = getPackageInfo();
 
 const program = new Command();
+
+// Custom help formatting
+program.configureHelp({
+  sortSubcommands: true,
+  
+  formatHelp: (cmd, helper) => {
+    const termWidth = helper.padWidth(cmd, helper);
+    const itemIndentWidth = 2;
+    const itemSeparatorWidth = 2;
+
+    function formatItem(term, description) {
+      if (description) {
+        return `${term.padEnd(termWidth + itemSeparatorWidth)}${description}`;
+      }
+      return term;
+    }
+
+    function formatList(textArray) {
+      return textArray.join('\n').replace(/^/gm, ' '.repeat(itemIndentWidth));
+    }
+
+    let output = [];
+
+    // Package info header
+    output.push('');
+    output.push(`  ${packageJson.name} v${packageJson.version}`);
+    output.push(`  ${packageJson.description}`);
+    output.push(`  Author: ${packageJson.author}`);
+    output.push(`  License: ${packageJson.license}`);
+    if (packageJson.homepage) {
+      output.push(`  Homepage: ${packageJson.homepage}`);
+    }
+    output.push('');
+
+    // Usage
+    const usage = helper.commandUsage(cmd);
+    output.push(`Usage: ${usage}`);
+    output.push('');
+
+    // Options
+    const optionList = helper.visibleOptions(cmd).map((option) => {
+      return formatItem(helper.optionTerm(option), helper.optionDescription(option));
+    });
+    if (optionList.length > 0) {
+      output.push('Options:');
+      output.push(formatList(optionList));
+      output.push('');
+    }
+
+    // Commands - grouped by service
+    if (cmd.commands && cmd.commands.length > 0) {
+      const commands = helper.visibleCommands(cmd);
+      
+      // Define groups
+      const groups = {
+        'Interactive TUI': [],
+        'Setup & Connection': [],
+        'AppScan on Cloud (ASOC)': [],
+        'Azure DevOps (AZDO)': [],
+        'Detectify': [],
+        'Reporting': [],
+        'Other': [],
+      };
+      
+      // Categorize commands
+      for (const subCmd of commands) {
+        const name = subCmd.name();
+        
+        if (['asoc', 'azdo', 'detectify'].includes(name)) {
+          groups['Interactive TUI'].push(subCmd);
+        } else if (['setup', 'connection-check'].includes(name)) {
+          groups['Setup & Connection'].push(subCmd);
+        } else if (name.includes('azdo')) {
+          groups['Azure DevOps (AZDO)'].push(subCmd);
+        } else if (name.includes('detectify')) {
+          groups['Detectify'].push(subCmd);
+        } else if (name.includes('report') || name.includes('summary') || name.includes('article')) {
+          groups['Reporting'].push(subCmd);
+        } else if (name.includes('jira') || ['auth', 'help'].includes(name)) {
+          groups['Other'].push(subCmd);
+        } else {
+          groups['AppScan on Cloud (ASOC)'].push(subCmd);
+        }
+      }
+      
+      // Output grouped commands
+      output.push('Commands:');
+      output.push('');
+      
+      for (const [groupName, groupCommands] of Object.entries(groups)) {
+        if (groupCommands.length === 0) continue;
+        
+        output.push(`  ${groupName}:`);
+        
+        const commandList = groupCommands.map((subCmd) => {
+          const name = subCmd.name();
+          const alias = subCmd.alias() || '';
+          const args = subCmd._args.map(a => a.required ? `<${a.name()}>` : `[${a.name()}]`).join(' ');
+          const desc = subCmd.description();
+          
+          const term = alias ? `${name}|${alias}` : name;
+          const fullTerm = args ? `${term} ${args}` : term;
+          return formatItem(fullTerm, desc);
+        });
+        output.push(formatList(commandList));
+        output.push('');
+      }
+    }
+
+    return output.join('\n');
+  },
+});
 
 program
   .name('appscan')
@@ -856,6 +971,67 @@ Examples:
   )
   .action(listAzdoSecrets);
 
+// ========== Detectify Commands ==========
+
+program
+  .command('list-detectify-issues')
+  .alias('detectify-issues')
+  .description('List vulnerabilities from Detectify')
+  .option('--status <value>', 'Filter by status (comma-separated: active,new,patched,regression,accepted_risk,false_positive)')
+  .option('--severity <value>', 'Filter by severity (comma-separated: information,low,medium,high,critical)')
+  .option('--host <value>', 'Filter by host (comma-separated)')
+  .option('--assetToken <value>', 'Filter by asset token (comma-separated)')
+  .option('--limit <number>', 'Limit number of results (default: 100)', parseInt)
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan list-detectify-issues
+  $ appscan detectify-issues --status active,new
+  $ appscan detectify-issues --severity high,critical
+  $ appscan detectify-issues --host "example.com" --json
+  $ appscan detectify-issues --limit 50`
+  )
+  .action(listDetectifyIssues);
+
+program
+  .command('get-detectify-issue')
+  .alias('detectify-issue')
+  .description('Get detailed information about a Detectify vulnerability')
+  .option('--uuid <value>', 'Vulnerability UUID (required)')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan get-detectify-issue --uuid <vulnerability-uuid>
+  $ appscan detectify-issue --uuid <vulnerability-uuid> --json`
+  )
+  .action(getDetectifyIssueDetail);
+
+program
+  .command('update-detectify-issue')
+  .alias('detectify-update')
+  .description('Update a Detectify vulnerability status')
+  .option('--uuid <value>', 'Vulnerability UUID (required)')
+  .option('--status <value>', 'New status: accepted_risk, false_positive, patched/fixed, or active (to revert)')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-j, --json', 'Output as JSON')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan update-detectify-issue --uuid <uuid> --status accepted_risk
+  $ appscan detectify-update --uuid <uuid> --status false_positive
+  $ appscan detectify-update --uuid <uuid> --status patched
+  $ appscan detectify-update --uuid <uuid> --status active  # Reverts to active state
+  $ appscan detectify-update --uuid <uuid> --status accepted_risk --json`
+  )
+  .action(updateDetectifyIssue);
+
 // TUI Launchers
 program
   .command('asoc')
@@ -883,6 +1059,20 @@ Examples:
   .action(async () => {
     const { launchAzdoTUI } = await import('../tui/azdo-entry.js');
     await launchAzdoTUI({ config: null });
+  });
+
+program
+  .command('detectify')
+  .description('Launch interactive TUI for Detectify')
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ appscan detectify`
+  )
+  .action(async () => {
+    const { launchDetectifyTUI } = await import('../tui/detectify-entry.js');
+    await launchDetectifyTUI({ config: null });
   });
 
 export function runCLI(argv = process.argv) {

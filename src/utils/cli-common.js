@@ -7,6 +7,7 @@ import { Config } from './config.js';
 import { AppScanService } from '../services/appscan-service.js';
 import { JiraService } from '../services/jira-service.js';
 import { AzdoService } from '../services/azdo-service.js';
+import { DetectifyService } from '../services/detectify-service.js';
 import cliOutput from './cli-output.js';
 
 /**
@@ -46,6 +47,20 @@ export async function initializeServices(configPath) {
 export async function initializeAzdoService(configPath) {
   const config = configPath ? Config.loadFromFile(configPath) : new Config();
   const service = new AzdoService(config);
+  await service.connect();
+  return { config, service };
+}
+
+/**
+ * Initialize DetectifyService with config
+ * Standard pattern used by all Detectify CLI commands
+ *
+ * @param {string} configPath - Optional path to config file
+ * @returns {Promise<{config: Config, service: DetectifyService}>}
+ */
+export async function initializeDetectifyService(configPath) {
+  const config = configPath ? Config.loadFromFile(configPath) : new Config();
+  const service = new DetectifyService();
   await service.connect();
   return { config, service };
 }

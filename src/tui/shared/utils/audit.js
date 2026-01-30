@@ -154,6 +154,51 @@ class AuditService {
   }
 
   /**
+   * Log status change (generic for any vulnerability/issue)
+   * @param {Object} params - Status change parameters
+   * @param {string} params.source - Source system (detectify, asoc, azdo)
+   * @param {string} params.vulnerabilityId - Vulnerability/issue ID
+   * @param {string} params.oldStatus - Previous status
+   * @param {string} params.newStatus - New status
+   * @param {string} [params.title] - Vulnerability title
+   * @param {string} [params.host] - Host/application
+   * @returns {Object} Audit log entry
+   */
+  logStatusChange(params) {
+    return this.log(
+      `${params.source?.toUpperCase() || 'UNKNOWN'}_STATUS_CHANGE`,
+      {
+        vulnerabilityId: params.vulnerabilityId,
+        oldStatus: params.oldStatus,
+        newStatus: params.newStatus,
+        title: params.title,
+        host: params.host,
+      },
+      { success: true },
+      { source: params.source }
+    );
+  }
+
+  /**
+   * Log Detectify vulnerability update
+   * @param {string} uuid - Vulnerability UUID
+   * @param {Object} updateData - Update data
+   * @param {Object} result - Result of the update operation
+   * @returns {Object} Audit log entry
+   */
+  logDetectifyUpdate(uuid, updateData, result) {
+    return this.log(
+      'DETECTIFY_UPDATE',
+      {
+        uuid,
+        updateData,
+      },
+      result,
+      { source: 'detectify' }
+    );
+  }
+
+  /**
    * Log Azure DevOps alert update
    * @param {string} status - 'success' or 'failure'
    * @param {string} projectIdOrName - Project ID or name
