@@ -34,7 +34,9 @@ export async function launchDetectifyTUI(options = {}) {
       chalk.red('\n❌ Missing required environment variables!\n'),
       chalk.yellow('Required variables:'),
       chalk.white('  - DETECTIFY_API_KEY\n'),
-      chalk.cyan('Please set DETECTIFY_API_KEY in your .env file or environment:'),
+      chalk.cyan(
+        'Please set DETECTIFY_API_KEY in your .env file or environment:'
+      ),
       chalk.white('  ' + chalk.yellow('DETECTIFY_API_KEY=your-api-key') + '\n'),
     ].join('\n');
     logger.error(

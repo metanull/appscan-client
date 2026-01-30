@@ -1,9 +1,9 @@
 /**
  * Detectify Service
  * Handles interactions with Detectify APIs for vulnerability management
- * 
+ *
  * Detectify API Documentation: https://developer.detectify.com/v2
- * 
+ *
  * Key Concepts:
  * - Assets: Domains/IPs being monitored
  * - Vulnerabilities: Security findings detected across all assets
@@ -75,7 +75,10 @@ export class DetectifyService {
    */
   constructor(config = {}) {
     this.apiKey = config.apiKey || process.env.DETECTIFY_API_KEY;
-    this.baseUrl = config.baseUrl || process.env.DETECTIFY_BASE_URL || 'https://api.detectify.com';
+    this.baseUrl =
+      config.baseUrl ||
+      process.env.DETECTIFY_BASE_URL ||
+      'https://api.detectify.com';
     this.proxyConfig = undefined;
   }
 
@@ -89,7 +92,7 @@ export class DetectifyService {
         'Missing Detectify API key. Set DETECTIFY_API_KEY environment variable.'
       );
     }
-    
+
     // Pre-load proxy configuration
     if (!this.proxyConfig) {
       this.proxyConfig = await getAxiosProxyConfig();
@@ -105,9 +108,9 @@ export class DetectifyService {
    */
   async _request(endpoint, options = {}) {
     await this.connect();
-    
+
     const url = `${this.baseUrl}${endpoint}`;
-    
+
     const headers = {
       'X-Detectify-Key': this.apiKey,
       'Content-Type': 'application/json',
@@ -121,7 +124,7 @@ export class DetectifyService {
 
     // Apply proxy if configured (for Node.js fetch with agent)
     // Note: Native fetch doesn't support proxy directly; use undici or node-fetch for proxy support
-    
+
     const response = await fetch(url, fetchOptions);
 
     if (!response.ok) {
@@ -145,7 +148,7 @@ export class DetectifyService {
       const text = await response.text();
       return text ? JSON.parse(text) : null;
     }
-    
+
     return { success: true, status: response.status };
   }
 
@@ -157,10 +160,10 @@ export class DetectifyService {
    */
   _buildQueryString(params) {
     const searchParams = new URLSearchParams();
-    
+
     for (const [key, value] of Object.entries(params)) {
       if (value === undefined || value === null) continue;
-      
+
       if (Array.isArray(value)) {
         for (const item of value) {
           searchParams.append(key, item);
@@ -169,7 +172,7 @@ export class DetectifyService {
         searchParams.append(key, value);
       }
     }
-    
+
     return searchParams.toString();
   }
 
@@ -191,10 +194,10 @@ export class DetectifyService {
       from: options.from,
       include_subdomains: options.includeSubdomains,
     };
-    
+
     const queryString = this._buildQueryString(params);
     const endpoint = `/rest/v2/assets/${queryString ? '?' + queryString : ''}`;
-    
+
     return this._request(endpoint);
   }
 
@@ -207,21 +210,21 @@ export class DetectifyService {
   async getAllAssets(options = {}) {
     const allAssets = [];
     let marker;
-    
+
     do {
       const response = await this.listAssets({
         ...options,
         marker,
         pageSize: 100,
       });
-      
+
       if (response.assets) {
         allAssets.push(...response.assets);
       }
-      
+
       marker = response.has_more ? response.next_marker : undefined;
     } while (marker);
-    
+
     return allAssets;
   }
 
@@ -259,10 +262,10 @@ export class DetectifyService {
       updated_after: options.updatedAfter,
       updated_before: options.updatedBefore,
     };
-    
+
     const queryString = this._buildQueryString(params);
     const endpoint = `/rest/v2/vulnerabilities/${queryString ? '?' + queryString : ''}`;
-    
+
     return this._request(endpoint);
   }
 
@@ -278,34 +281,41 @@ export class DetectifyService {
     const allVulnerabilities = [];
     let marker;
     let totalCount;
-    
+
     do {
       const response = await this.listVulnerabilities({
         ...filterOptions,
         marker,
         pageSize: 100,
       });
-      
+
       if (response.vulnerabilities) {
         allVulnerabilities.push(...response.vulnerabilities);
-        
+
         // Call batch callback for progressive loading
         if (onBatch) {
-          onBatch(response.vulnerabilities, allVulnerabilities, response.total_vulnerabilities);
+          onBatch(
+            response.vulnerabilities,
+            allVulnerabilities,
+            response.total_vulnerabilities
+          );
         }
       }
-      
-      if (totalCount === undefined && response.total_vulnerabilities !== undefined) {
+
+      if (
+        totalCount === undefined &&
+        response.total_vulnerabilities !== undefined
+      ) {
         totalCount = response.total_vulnerabilities;
       }
-      
+
       if (onProgress) {
         onProgress(allVulnerabilities.length, totalCount);
       }
-      
+
       marker = response.has_more ? response.next_marker : undefined;
     } while (marker);
-    
+
     return allVulnerabilities;
   }
 
@@ -318,8 +328,10 @@ export class DetectifyService {
     if (!uuid) {
       throw new Error('Vulnerability UUID is required');
     }
-    
-    const response = await this._request(`/rest/v2/vulnerabilities/uuid/${uuid}/`);
+
+    const response = await this._request(
+      `/rest/v2/vulnerabilities/uuid/${uuid}/`
+    );
     return response.vulnerability;
   }
 
@@ -333,12 +345,14 @@ export class DetectifyService {
     if (!uuid) {
       throw new Error('Vulnerability UUID is required');
     }
-    
+
     const validActions = Object.values(StatusAction);
     if (!validActions.includes(action)) {
-      throw new Error(`Invalid action: ${action}. Valid actions: ${validActions.join(', ')}`);
+      throw new Error(
+        `Invalid action: ${action}. Valid actions: ${validActions.join(', ')}`
+      );
     }
-    
+
     return this._request(`/rest/v2/vulnerabilities/uuid/${uuid}/${action}/`, {
       method: 'POST',
     });
@@ -377,7 +391,10 @@ export class DetectifyService {
    * @returns {Promise<Object>} Response
    */
   async unsetFalsePositive(uuid) {
-    return this.updateVulnerabilityStatus(uuid, StatusAction.UnsetFalsePositive);
+    return this.updateVulnerabilityStatus(
+      uuid,
+      StatusAction.UnsetFalsePositive
+    );
   }
 
   /**
@@ -408,7 +425,7 @@ export class DetectifyService {
    */
   async setStatus(uuid, status) {
     const normalizedStatus = status.toLowerCase().replace(/[_-]/g, '');
-    
+
     switch (normalizedStatus) {
       case 'acceptedrisk':
         return this.setAcceptedRisk(uuid);
@@ -418,7 +435,9 @@ export class DetectifyService {
       case 'fixed':
         return this.setFixed(uuid);
       default:
-        throw new Error(`Cannot set status to "${status}". Use 'accepted_risk', 'false_positive', or 'patched'/'fixed'.`);
+        throw new Error(
+          `Cannot set status to "${status}". Use 'accepted_risk', 'false_positive', or 'patched'/'fixed'.`
+        );
     }
   }
 
@@ -431,7 +450,7 @@ export class DetectifyService {
    */
   async unsetStatus(uuid, status) {
     const normalizedStatus = status.toLowerCase().replace(/[_-]/g, '');
-    
+
     switch (normalizedStatus) {
       case 'acceptedrisk':
         return this.unsetAcceptedRisk(uuid);
@@ -441,7 +460,9 @@ export class DetectifyService {
       case 'fixed':
         return this.unsetFixed(uuid);
       default:
-        throw new Error(`Cannot unset status "${status}". Use 'accepted_risk', 'false_positive', or 'patched'/'fixed'.`);
+        throw new Error(
+          `Cannot unset status "${status}". Use 'accepted_risk', 'false_positive', or 'patched'/'fixed'.`
+        );
     }
   }
 
@@ -489,7 +510,7 @@ export class DetectifyService {
    */
   async getVulnerabilitySummary(options = {}) {
     const vulnerabilities = await this.getAllVulnerabilities(options);
-    
+
     const summary = {
       total: vulnerabilities.length,
       bySeverity: {},
@@ -497,19 +518,20 @@ export class DetectifyService {
       byScanSource: {},
       byHost: {},
     };
-    
+
     for (const vuln of vulnerabilities) {
       const severity = vuln.severity || 'unknown';
       const status = vuln.status || 'unknown';
       const scanSource = vuln.scan_source || 'unknown';
       const host = vuln.host || 'unknown';
-      
+
       summary.bySeverity[severity] = (summary.bySeverity[severity] || 0) + 1;
       summary.byStatus[status] = (summary.byStatus[status] || 0) + 1;
-      summary.byScanSource[scanSource] = (summary.byScanSource[scanSource] || 0) + 1;
+      summary.byScanSource[scanSource] =
+        (summary.byScanSource[scanSource] || 0) + 1;
       summary.byHost[host] = (summary.byHost[host] || 0) + 1;
     }
-    
+
     return summary;
   }
 }

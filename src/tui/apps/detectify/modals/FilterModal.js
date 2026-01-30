@@ -66,7 +66,12 @@ const SCAN_SOURCE_OPTIONS = [
  * @param {Function} props.onClose - Callback when modal is closed
  * @returns {JSX.Element}
  */
-export const FilterModal = ({ vulnerabilities = [], onSelect, onClear, onClose }) => {
+export const FilterModal = ({
+  vulnerabilities = [],
+  onSelect,
+  onClear,
+  onClose,
+}) => {
   const [step, setStep] = useState('type');
   const [filterType, setFilterType] = useState(null);
 

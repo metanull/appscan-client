@@ -29,19 +29,23 @@ export async function listDetectifyIssues(options) {
     };
 
     if (options.status) {
-      filterOptions.status = options.status.split(',').map(s => s.trim());
+      filterOptions.status = options.status.split(',').map((s) => s.trim());
     }
 
     if (options.severity) {
-      filterOptions.severityV3 = options.severity.split(',').map(s => s.trim());
+      filterOptions.severityV3 = options.severity
+        .split(',')
+        .map((s) => s.trim());
     }
 
     if (options.host) {
-      filterOptions.host = options.host.split(',').map(s => s.trim());
+      filterOptions.host = options.host.split(',').map((s) => s.trim());
     }
 
     if (options.assetToken) {
-      filterOptions.assetToken = options.assetToken.split(',').map(s => s.trim());
+      filterOptions.assetToken = options.assetToken
+        .split(',')
+        .map((s) => s.trim());
     }
 
     const response = await service.listVulnerabilities(filterOptions);
@@ -56,7 +60,9 @@ export async function listDetectifyIssues(options) {
       });
     } else {
       cliOutput.result(
-        chalk.green(`\nFound ${vulnerabilities.length} of ${response.total_vulnerabilities} total vulnerability(ies):\n`)
+        chalk.green(
+          `\nFound ${vulnerabilities.length} of ${response.total_vulnerabilities} total vulnerability(ies):\n`
+        )
       );
 
       if (vulnerabilities.length > 0) {
@@ -85,23 +91,25 @@ export async function listDetectifyIssues(options) {
         vulnerabilities.forEach((vuln, index) => {
           const severityColor = getSeverityColor(vuln.severity);
           const statusColor = getStatusColor(vuln.status);
-          
+
           cliOutput.result(
             `${index + 1}. ${chalk.bold(vuln.title || '(no title)')} ${chalk.gray(`[UUID: ${vuln.uuid}]`)}`
           );
           cliOutput.result(
             `   Host: ${chalk.cyan(vuln.host || 'N/A')} | ` +
-            `Severity: ${chalk[severityColor](vuln.severity || 'N/A')} | ` +
-            `Status: ${chalk[statusColor](vuln.status || 'N/A')}`
+              `Severity: ${chalk[severityColor](vuln.severity || 'N/A')} | ` +
+              `Status: ${chalk[statusColor](vuln.status || 'N/A')}`
           );
-          cliOutput.result(
-            `   Location: ${vuln.location || 'N/A'}`
-          );
+          cliOutput.result(`   Location: ${vuln.location || 'N/A'}`);
           cliOutput.result('');
         });
 
         if (response.has_more) {
-          cliOutput.result(chalk.yellow(`\nNote: More results available. Use --limit to fetch more.`));
+          cliOutput.result(
+            chalk.yellow(
+              `\nNote: More results available. Use --limit to fetch more.`
+            )
+          );
         }
       }
     }

@@ -9,15 +9,15 @@ import cliOutput from '../../utils/cli-output.js';
  * Valid status actions for Detectify vulnerabilities
  */
 const VALID_ACTIONS = {
-  'accepted_risk': 'setAcceptedRisk',
+  accepted_risk: 'setAcceptedRisk',
   'accepted-risk': 'setAcceptedRisk',
-  'acceptedrisk': 'setAcceptedRisk',
-  'false_positive': 'setFalsePositive',
+  acceptedrisk: 'setAcceptedRisk',
+  false_positive: 'setFalsePositive',
   'false-positive': 'setFalsePositive',
-  'falsepositive': 'setFalsePositive',
-  'patched': 'setFixed',
-  'fixed': 'setFixed',
-  'active': 'unset', // Special case: need to determine current status to unset
+  falsepositive: 'setFalsePositive',
+  patched: 'setFixed',
+  fixed: 'setFixed',
+  active: 'unset', // Special case: need to determine current status to unset
 };
 
 /**
@@ -39,7 +39,7 @@ export async function updateDetectifyIssue(options) {
 
     const normalizedStatus = options.status.toLowerCase().replace(/[_-]/g, '');
     const actionKey = Object.keys(VALID_ACTIONS).find(
-      k => k.replace(/[_-]/g, '') === normalizedStatus
+      (k) => k.replace(/[_-]/g, '') === normalizedStatus
     );
 
     if (!actionKey) {
@@ -52,7 +52,9 @@ export async function updateDetectifyIssue(options) {
     const { service } = await initializeDetectifyService(options.config);
 
     // Get current vulnerability to show before/after
-    cliOutput.status(`Fetching current status for vulnerability: ${options.uuid}`);
+    cliOutput.status(
+      `Fetching current status for vulnerability: ${options.uuid}`
+    );
     const beforeVuln = await service.getVulnerability(options.uuid);
     const beforeStatus = beforeVuln.status;
 
@@ -68,18 +70,26 @@ export async function updateDetectifyIssue(options) {
       } else if (beforeStatus === 'patched') {
         await service.unsetFixed(options.uuid);
       } else {
-        cliOutput.result(chalk.yellow(`Vulnerability is already in '${beforeStatus}' state.`));
+        cliOutput.result(
+          chalk.yellow(`Vulnerability is already in '${beforeStatus}' state.`)
+        );
         if (options.json) {
-          cliOutput.json({ uuid: options.uuid, status: beforeStatus, changed: false });
+          cliOutput.json({
+            uuid: options.uuid,
+            status: beforeStatus,
+            changed: false,
+          });
         }
         return;
       }
     } else {
       // Setting a specific status
       const methodName = VALID_ACTIONS[actionKey];
-      
+
       // If already in a resolved state, need to unset first
-      if (['accepted_risk', 'false_positive', 'patched'].includes(beforeStatus)) {
+      if (
+        ['accepted_risk', 'false_positive', 'patched'].includes(beforeStatus)
+      ) {
         cliOutput.status(`Unsetting current status '${beforeStatus}' first...`);
         if (beforeStatus === 'accepted_risk') {
           await service.unsetAcceptedRisk(options.uuid);
@@ -89,7 +99,7 @@ export async function updateDetectifyIssue(options) {
           await service.unsetFixed(options.uuid);
         }
       }
-      
+
       // Now set the new status
       await service[methodName](options.uuid);
     }
@@ -106,11 +116,19 @@ export async function updateDetectifyIssue(options) {
         changed: beforeStatus !== afterVuln.status,
       });
     } else {
-      cliOutput.result(chalk.green('\n✓ Vulnerability status updated successfully\n'));
+      cliOutput.result(
+        chalk.green('\n✓ Vulnerability status updated successfully\n')
+      );
       cliOutput.result(`${chalk.bold('UUID:')} ${afterVuln.uuid}`);
-      cliOutput.result(`${chalk.bold('Title:')} ${afterVuln.title || '(no title)'}`);
-      cliOutput.result(`${chalk.bold('Before Status:')} ${getStatusDisplay(beforeStatus)}`);
-      cliOutput.result(`${chalk.bold('After Status:')} ${getStatusDisplay(afterVuln.status)}`);
+      cliOutput.result(
+        `${chalk.bold('Title:')} ${afterVuln.title || '(no title)'}`
+      );
+      cliOutput.result(
+        `${chalk.bold('Before Status:')} ${getStatusDisplay(beforeStatus)}`
+      );
+      cliOutput.result(
+        `${chalk.bold('After Status:')} ${getStatusDisplay(afterVuln.status)}`
+      );
       cliOutput.result('');
     }
   } catch (error) {

@@ -2,7 +2,7 @@
  * CreateJiraModal for Detectify Vulnerabilities
  * Modal for creating Jira issues from selected vulnerabilities
  * Following the same pattern as AZDO CreateJiraModal
- * 
+ *
  * Note: Detectify doesn't have built-in Jira linking (unlike AZDO comments),
  * so we can only create Jira issues but cannot store the link back in Detectify.
  */
@@ -18,7 +18,7 @@ import {
   saveParentEpic,
   getLastUsedEpic,
 } from '../../../shared/services/parentEpicCache.js';
-import { getSeverityName, getStatusName, truncate } from '../utils/vulnerability.js';
+import { getSeverityName } from '../utils/vulnerability.js';
 
 const GROUP_OPTIONS = [
   { label: 'Severity (recommended)', value: 'severity' },
@@ -161,7 +161,7 @@ export const CreateJiraModal = React.memo(
         <Panel title="🎫 Create Jira Issue(s)" borderColor="green">
           <Box flexDirection="column" marginTop={1}>
             <Text>Selected Vulnerabilities: {vulnerabilities.length}</Text>
-            
+
             {/* Summary */}
             <Box marginTop={1} flexDirection="row">
               <Box marginRight={3}>
@@ -242,7 +242,8 @@ export const CreateJiraModal = React.memo(
             <Box marginTop={2}>
               <Text color="green">✅ Jira issues created successfully!</Text>
               <Text dimColor marginTop={1}>
-                Note: Detectify doesn't support storing Jira links in vulnerabilities.
+                Note: Detectify doesn't support storing Jira links in
+                vulnerabilities.
               </Text>
             </Box>
           )}

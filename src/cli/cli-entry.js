@@ -46,7 +46,7 @@ const program = new Command();
 // Custom help formatting
 program.configureHelp({
   sortSubcommands: true,
-  
+
   formatHelp: (cmd, helper) => {
     const termWidth = helper.padWidth(cmd, helper);
     const itemIndentWidth = 2;
@@ -63,7 +63,7 @@ program.configureHelp({
       return textArray.join('\n').replace(/^/gm, ' '.repeat(itemIndentWidth));
     }
 
-    let output = [];
+    const output = [];
 
     // Package info header
     output.push('');
@@ -83,7 +83,10 @@ program.configureHelp({
 
     // Options
     const optionList = helper.visibleOptions(cmd).map((option) => {
-      return formatItem(helper.optionTerm(option), helper.optionDescription(option));
+      return formatItem(
+        helper.optionTerm(option),
+        helper.optionDescription(option)
+      );
     });
     if (optionList.length > 0) {
       output.push('Options:');
@@ -94,22 +97,22 @@ program.configureHelp({
     // Commands - grouped by service
     if (cmd.commands && cmd.commands.length > 0) {
       const commands = helper.visibleCommands(cmd);
-      
+
       // Define groups
       const groups = {
         'Interactive TUI': [],
         'Setup & Connection': [],
         'AppScan on Cloud (ASOC)': [],
         'Azure DevOps (AZDO)': [],
-        'Detectify': [],
-        'Reporting': [],
-        'Other': [],
+        Detectify: [],
+        Reporting: [],
+        Other: [],
       };
-      
+
       // Categorize commands
       for (const subCmd of commands) {
         const name = subCmd.name();
-        
+
         if (['asoc', 'azdo', 'detectify'].includes(name)) {
           groups['Interactive TUI'].push(subCmd);
         } else if (['setup', 'connection-check'].includes(name)) {
@@ -118,7 +121,11 @@ program.configureHelp({
           groups['Azure DevOps (AZDO)'].push(subCmd);
         } else if (name.includes('detectify')) {
           groups['Detectify'].push(subCmd);
-        } else if (name.includes('report') || name.includes('summary') || name.includes('article')) {
+        } else if (
+          name.includes('report') ||
+          name.includes('summary') ||
+          name.includes('article')
+        ) {
           groups['Reporting'].push(subCmd);
         } else if (name.includes('jira') || ['auth', 'help'].includes(name)) {
           groups['Other'].push(subCmd);
@@ -126,22 +133,24 @@ program.configureHelp({
           groups['AppScan on Cloud (ASOC)'].push(subCmd);
         }
       }
-      
+
       // Output grouped commands
       output.push('Commands:');
       output.push('');
-      
+
       for (const [groupName, groupCommands] of Object.entries(groups)) {
         if (groupCommands.length === 0) continue;
-        
+
         output.push(`  ${groupName}:`);
-        
+
         const commandList = groupCommands.map((subCmd) => {
           const name = subCmd.name();
           const alias = subCmd.alias() || '';
-          const args = subCmd._args.map(a => a.required ? `<${a.name()}>` : `[${a.name()}]`).join(' ');
+          const args = subCmd._args
+            .map((a) => (a.required ? `<${a.name()}>` : `[${a.name()}]`))
+            .join(' ');
           const desc = subCmd.description();
-          
+
           const term = alias ? `${name}|${alias}` : name;
           const fullTerm = args ? `${term} ${args}` : term;
           return formatItem(fullTerm, desc);
@@ -977,11 +986,21 @@ program
   .command('list-detectify-issues')
   .alias('detectify-issues')
   .description('List vulnerabilities from Detectify')
-  .option('--status <value>', 'Filter by status (comma-separated: active,new,patched,regression,accepted_risk,false_positive)')
-  .option('--severity <value>', 'Filter by severity (comma-separated: information,low,medium,high,critical)')
+  .option(
+    '--status <value>',
+    'Filter by status (comma-separated: active,new,patched,regression,accepted_risk,false_positive)'
+  )
+  .option(
+    '--severity <value>',
+    'Filter by severity (comma-separated: information,low,medium,high,critical)'
+  )
   .option('--host <value>', 'Filter by host (comma-separated)')
   .option('--assetToken <value>', 'Filter by asset token (comma-separated)')
-  .option('--limit <number>', 'Limit number of results (default: 100)', parseInt)
+  .option(
+    '--limit <number>',
+    'Limit number of results (default: 100)',
+    parseInt
+  )
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
   .addHelpText(
@@ -1017,7 +1036,10 @@ program
   .alias('detectify-update')
   .description('Update a Detectify vulnerability status')
   .option('--uuid <value>', 'Vulnerability UUID (required)')
-  .option('--status <value>', 'New status: accepted_risk, false_positive, patched/fixed, or active (to revert)')
+  .option(
+    '--status <value>',
+    'New status: accepted_risk, false_positive, patched/fixed, or active (to revert)'
+  )
   .option('-c, --config <path>', 'Path to configuration file')
   .option('-j, --json', 'Output as JSON')
   .addHelpText(

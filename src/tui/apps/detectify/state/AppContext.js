@@ -62,7 +62,11 @@ export const useStore = create((set, get) => ({
   // Actions - Data
   setAssets: (assets) => set({ assets }),
   setVulnerabilities: (vulnerabilities, total) =>
-    set({ vulnerabilities, totalVulnerabilities: total || vulnerabilities.length, listCursor: 0 }),
+    set({
+      vulnerabilities,
+      totalVulnerabilities: total || vulnerabilities.length,
+      listCursor: 0,
+    }),
   setVulnerabilityDetails: (details) => set({ vulnerabilityDetails: details }),
 
   /**
@@ -74,11 +78,11 @@ export const useStore = create((set, get) => ({
     set((state) => {
       // Create a new array copy to ensure Zustand/React detects the change
       const vulnerabilitiesCopy = [...newVulnerabilities];
-      
+
       // Keep cursor at same position unless it's beyond the new list length
       const maxCursor = Math.max(0, vulnerabilitiesCopy.length - 1);
       const newCursor = Math.min(state.listCursor, maxCursor);
-      
+
       return {
         vulnerabilities: vulnerabilitiesCopy,
         totalVulnerabilities: total || vulnerabilitiesCopy.length,
@@ -100,10 +104,16 @@ export const useStore = create((set, get) => ({
         sortBy: state.sortBy,
       };
 
-      const filteredVulns = filterVulnerabilities(state.vulnerabilities, filterOptions);
+      const filteredVulns = filterVulnerabilities(
+        state.vulnerabilities,
+        filterOptions
+      );
       const currentUuid = filteredVulns[state.listCursor]?.uuid;
 
-      const newFilteredVulns = filterVulnerabilities(newVulnerabilities, filterOptions);
+      const newFilteredVulns = filterVulnerabilities(
+        newVulnerabilities,
+        filterOptions
+      );
 
       let newCursor = 0;
       if (currentUuid) {
@@ -111,7 +121,10 @@ export const useStore = create((set, get) => ({
         if (idx !== -1) {
           newCursor = idx;
         } else {
-          newCursor = Math.min(state.listCursor, Math.max(0, newFilteredVulns.length - 1));
+          newCursor = Math.min(
+            state.listCursor,
+            Math.max(0, newFilteredVulns.length - 1)
+          );
         }
       }
 
@@ -186,7 +199,10 @@ export const useStore = create((set, get) => ({
         searchText: state.searchText,
         sortBy: state.sortBy,
       };
-      const filtered = filterVulnerabilities(state.vulnerabilities, filterOptions);
+      const filtered = filterVulnerabilities(
+        state.vulnerabilities,
+        filterOptions
+      );
       return { selectedVulnerabilityIds: filtered.map((v) => v.uuid) };
     }),
 
@@ -197,7 +213,8 @@ export const useStore = create((set, get) => ({
   setError: (error) => set({ error }),
   toggleHelp: () => set((state) => ({ showHelp: !state.showHelp })),
   setShowHelp: (show) => set({ showHelp: show }),
-  toggleJiraPanel: () => set((state) => ({ showJiraPanel: !state.showJiraPanel })),
+  toggleJiraPanel: () =>
+    set((state) => ({ showJiraPanel: !state.showJiraPanel })),
   setShowJiraPanel: (show) => set({ showJiraPanel: show }),
 
   // Actions - List navigation
@@ -212,9 +229,15 @@ export const useStore = create((set, get) => ({
         searchText: state.searchText,
         sortBy: state.sortBy,
       };
-      const filtered = filterVulnerabilities(state.vulnerabilities, filterOptions);
+      const filtered = filterVulnerabilities(
+        state.vulnerabilities,
+        filterOptions
+      );
       const maxIndex = Math.max(0, filtered.length - 1);
-      const newCursor = Math.max(0, Math.min(maxIndex, state.listCursor + delta));
+      const newCursor = Math.max(
+        0,
+        Math.min(maxIndex, state.listCursor + delta)
+      );
       return { listCursor: newCursor };
     }),
 

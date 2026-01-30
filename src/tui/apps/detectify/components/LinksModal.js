@@ -22,7 +22,7 @@ import { truncate } from '../utils/vulnerability.js';
  * @param {Function} props.onClose - Callback when modal is closed
  * @returns {JSX.Element}
  */
-export const LinksModal = React.memo(({ vulnerability, config, onClose }) => {
+export const LinksModal = React.memo(({ vulnerability, _config, onClose }) => {
   const [cursor, setCursor] = useState(0);
 
   if (!vulnerability) {
@@ -120,9 +120,7 @@ export const LinksModal = React.memo(({ vulnerability, config, onClose }) => {
             </Text>
           </Box>
           <Box marginBottom={1}>
-            <Text dimColor>
-              Host: {vulnerability.host || 'N/A'}
-            </Text>
+            <Text dimColor>Host: {vulnerability.host || 'N/A'}</Text>
           </Box>
 
           {links.length === 0 ? (
@@ -160,9 +158,15 @@ export const LinksModal = React.memo(({ vulnerability, config, onClose }) => {
             </Box>
           )}
 
-          <Box marginTop={2} borderStyle="single" borderColor="gray" paddingX={1}>
+          <Box
+            marginTop={2}
+            borderStyle="single"
+            borderColor="gray"
+            paddingX={1}
+          >
             <Text dimColor>
-              ↑↓: Navigate | Enter/o: Open in browser | 1-9: Quick open | Esc: Close
+              ↑↓: Navigate | Enter/o: Open in browser | 1-9: Quick open | Esc:
+              Close
             </Text>
           </Box>
         </Box>

@@ -4,7 +4,7 @@
  * Following the same pattern as AZDO UpdateStatusModal
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
 import Spinner from 'ink-spinner';
@@ -16,16 +16,19 @@ import { getStatusName, STATUS_COLORS } from '../utils/vulnerability.js';
 const STATUS_OPTIONS = [
   { label: '✅ Set as Patched (Fixed)', value: VulnerabilityStatus.Patched },
   { label: '🛡️ Set as Accepted Risk', value: VulnerabilityStatus.AcceptedRisk },
-  { label: '❌ Set as False Positive', value: VulnerabilityStatus.FalsePositive },
+  {
+    label: '❌ Set as False Positive',
+    value: VulnerabilityStatus.FalsePositive,
+  },
   { label: '🔄 Revert to Active', value: 'active' },
 ];
 
 /**
  * Modal for updating Detectify vulnerability status
  * Supports single and bulk updates
- * 
+ *
  * Note: Detectify doesn't support comments on status changes
- * 
+ *
  * @param {Object} props - Component props
  * @param {number} props.vulnerabilityCount - Number of vulnerabilities to update
  * @param {Array} props.vulnerabilities - Array of vulnerabilities with their current status
@@ -35,7 +38,7 @@ const STATUS_OPTIONS = [
  */
 export const UpdateStatusModal = React.memo(
   ({ vulnerabilityCount, vulnerabilities = [], onUpdate, onClose }) => {
-    const isInitialized = useRef(false);
+    const _isInitialized = useRef(false);
     const [step, setStep] = useState('status'); // 'status' | 'confirm' | 'progress' | 'success' | 'error'
     const [selectedStatus, setSelectedStatus] = useState(null);
     const [progress, setProgress] = useState({ current: 0, total: 0 });
@@ -54,12 +57,16 @@ export const UpdateStatusModal = React.memo(
 
       // If all vulnerabilities have the same status, show appropriate options
       const uniqueStatuses = Object.keys(currentStatuses);
-      
+
       return STATUS_OPTIONS.filter((opt) => {
         // Always show "Revert to Active" if any vulnerability is in a resolved state
         if (opt.value === 'active') {
           return uniqueStatuses.some((s) =>
-            [VulnerabilityStatus.Patched, VulnerabilityStatus.AcceptedRisk, VulnerabilityStatus.FalsePositive].includes(s)
+            [
+              VulnerabilityStatus.Patched,
+              VulnerabilityStatus.AcceptedRisk,
+              VulnerabilityStatus.FalsePositive,
+            ].includes(s)
           );
         }
         // Don't show an option if all vulnerabilities already have that status
@@ -111,7 +118,7 @@ export const UpdateStatusModal = React.memo(
         <Panel title="🔄 Update Status" borderColor="green">
           <Box flexDirection="column" marginTop={1}>
             <Text>Vulnerabilities selected: {vulnerabilityCount}</Text>
-            
+
             {/* Current status summary */}
             <Box marginTop={1} flexDirection="column">
               <Text dimColor>Current status:</Text>
@@ -133,7 +140,10 @@ export const UpdateStatusModal = React.memo(
                 Note: Detectify doesn't support comments on status changes
               </Text>
               {availableOptions.length > 0 ? (
-                <SelectInput items={availableOptions} onSelect={handleStatusSelect} />
+                <SelectInput
+                  items={availableOptions}
+                  onSelect={handleStatusSelect}
+                />
               ) : (
                 <Text color="yellow">No status changes available</Text>
               )}

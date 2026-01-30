@@ -4,7 +4,7 @@
  *
  * Purpose: Test the DetectifyService class
  * Self-contained: Yes
- * 
+ *
  * Tests all major service methods:
  * - testConnection
  * - listAssets
@@ -17,12 +17,17 @@
  */
 
 import dotenv from 'dotenv';
-import { DetectifyService, VulnerabilityStatus, Severity, StatusAction } from '../src/services/detectify-service.js';
+import {
+  DetectifyService,
+  VulnerabilityStatus,
+  Severity,
+  StatusAction,
+} from '../src/services/detectify-service.js';
 
 dotenv.config();
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function main() {
@@ -60,12 +65,19 @@ async function main() {
       pageSize: 5,
       status: [VulnerabilityStatus.Active],
     });
-    console.log(`✅ Listed ${vulnsResponse.vulnerabilities?.length || 0} vulnerabilities`);
+    console.log(
+      `✅ Listed ${vulnsResponse.vulnerabilities?.length || 0} vulnerabilities`
+    );
     console.log(`   Total available: ${vulnsResponse.total_vulnerabilities}`);
-    
-    if (vulnsResponse.vulnerabilities && vulnsResponse.vulnerabilities.length > 0) {
+
+    if (
+      vulnsResponse.vulnerabilities &&
+      vulnsResponse.vulnerabilities.length > 0
+    ) {
       testVulnUuid = vulnsResponse.vulnerabilities[0].uuid;
-      console.log(`   First vulnerability: ${vulnsResponse.vulnerabilities[0].title}`);
+      console.log(
+        `   First vulnerability: ${vulnsResponse.vulnerabilities[0].title}`
+      );
       console.log(`   UUID: ${testVulnUuid}`);
     }
   } catch (err) {
@@ -144,7 +156,9 @@ async function main() {
     try {
       await service.setFixed(testVulnUuid);
       const vuln = await service.getVulnerability(testVulnUuid);
-      console.log(`   ✅ setFixed: status = ${vuln.status} (note: results in "patched")`);
+      console.log(
+        `   ✅ setFixed: status = ${vuln.status} (note: results in "patched")`
+      );
     } catch (err) {
       console.log(`   ❌ setFixed failed: ${err.message}`);
     }
@@ -163,7 +177,7 @@ async function main() {
 
     // Test convenience methods
     console.log('\n   Testing convenience methods...');
-    
+
     // setStatus('accepted_risk')
     try {
       await service.setStatus(testVulnUuid, 'accepted_risk');
@@ -178,7 +192,9 @@ async function main() {
     try {
       await service.unsetStatus(testVulnUuid, 'accepted_risk');
       const vuln = await service.getVulnerability(testVulnUuid);
-      console.log(`   ✅ unsetStatus('accepted_risk'): status = ${vuln.status}`);
+      console.log(
+        `   ✅ unsetStatus('accepted_risk'): status = ${vuln.status}`
+      );
     } catch (err) {
       console.log(`   ❌ unsetStatus('accepted_risk') failed: ${err.message}`);
     }
@@ -196,22 +212,24 @@ async function main() {
     // Just get first page to avoid long wait
     const vulnsResponse = await service.listVulnerabilities({ pageSize: 100 });
     const vulnerabilities = vulnsResponse.vulnerabilities || [];
-    
+
     const summary = {
       total: vulnerabilities.length,
       totalAvailable: vulnsResponse.total_vulnerabilities,
       bySeverity: {},
       byStatus: {},
     };
-    
+
     for (const vuln of vulnerabilities) {
       const severity = vuln.severity || 'unknown';
       const status = vuln.status || 'unknown';
       summary.bySeverity[severity] = (summary.bySeverity[severity] || 0) + 1;
       summary.byStatus[status] = (summary.byStatus[status] || 0) + 1;
     }
-    
-    console.log(`✅ Summary (${summary.total} of ${summary.totalAvailable} total):`);
+
+    console.log(
+      `✅ Summary (${summary.total} of ${summary.totalAvailable} total):`
+    );
     console.log(`   By Severity: ${JSON.stringify(summary.bySeverity)}`);
     console.log(`   By Status: ${JSON.stringify(summary.byStatus)}`);
   } catch (err) {
@@ -220,7 +238,9 @@ async function main() {
 
   // Test 7: Enum exports
   console.log('\n--- Test 7: Enum Exports ---');
-  console.log(`   VulnerabilityStatus: ${Object.keys(VulnerabilityStatus).join(', ')}`);
+  console.log(
+    `   VulnerabilityStatus: ${Object.keys(VulnerabilityStatus).join(', ')}`
+  );
   console.log(`   Severity: ${Object.keys(Severity).join(', ')}`);
   console.log(`   StatusAction: ${Object.keys(StatusAction).join(', ')}`);
 
@@ -228,7 +248,7 @@ async function main() {
   process.exit(0);
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error('Fatal error:', err);
   process.exit(1);
 });

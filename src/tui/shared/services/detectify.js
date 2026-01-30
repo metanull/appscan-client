@@ -3,7 +3,11 @@
  * Provides UI-specific helpers and audit logging for write operations
  */
 
-import { DetectifyService as ParentDetectifyService, VulnerabilityStatus, StatusAction } from '../../../services/detectify-service.js';
+import {
+  DetectifyService as ParentDetectifyService,
+  VulnerabilityStatus,
+  StatusAction,
+} from '../../../services/detectify-service.js';
 import { auditService } from '../../shared/utils/audit.js';
 import logger from '../../../utils/logger.js';
 import { Config } from '../../../utils/config.js';
@@ -102,9 +106,9 @@ export class DetectifyService {
    */
   async setAcceptedRisk(uuid, context = {}) {
     logger.info('Setting vulnerability to accepted_risk', { uuid, ...context });
-    
+
     const result = await this.service.setAcceptedRisk(uuid);
-    
+
     auditService.logStatusChange({
       source: 'detectify',
       vulnerabilityId: uuid,
@@ -113,7 +117,7 @@ export class DetectifyService {
       title: context.title,
       host: context.host,
     });
-    
+
     return result;
   }
 
@@ -125,9 +129,9 @@ export class DetectifyService {
    */
   async unsetAcceptedRisk(uuid, context = {}) {
     logger.info('Unsetting accepted_risk status', { uuid, ...context });
-    
+
     const result = await this.service.unsetAcceptedRisk(uuid);
-    
+
     auditService.logStatusChange({
       source: 'detectify',
       vulnerabilityId: uuid,
@@ -136,7 +140,7 @@ export class DetectifyService {
       title: context.title,
       host: context.host,
     });
-    
+
     return result;
   }
 
@@ -147,10 +151,13 @@ export class DetectifyService {
    * @returns {Promise<Object>} Response
    */
   async setFalsePositive(uuid, context = {}) {
-    logger.info('Setting vulnerability to false_positive', { uuid, ...context });
-    
+    logger.info('Setting vulnerability to false_positive', {
+      uuid,
+      ...context,
+    });
+
     const result = await this.service.setFalsePositive(uuid);
-    
+
     auditService.logStatusChange({
       source: 'detectify',
       vulnerabilityId: uuid,
@@ -159,7 +166,7 @@ export class DetectifyService {
       title: context.title,
       host: context.host,
     });
-    
+
     return result;
   }
 
@@ -171,9 +178,9 @@ export class DetectifyService {
    */
   async unsetFalsePositive(uuid, context = {}) {
     logger.info('Unsetting false_positive status', { uuid, ...context });
-    
+
     const result = await this.service.unsetFalsePositive(uuid);
-    
+
     auditService.logStatusChange({
       source: 'detectify',
       vulnerabilityId: uuid,
@@ -182,7 +189,7 @@ export class DetectifyService {
       title: context.title,
       host: context.host,
     });
-    
+
     return result;
   }
 
@@ -194,9 +201,9 @@ export class DetectifyService {
    */
   async setFixed(uuid, context = {}) {
     logger.info('Setting vulnerability to patched', { uuid, ...context });
-    
+
     const result = await this.service.setFixed(uuid);
-    
+
     auditService.logStatusChange({
       source: 'detectify',
       vulnerabilityId: uuid,
@@ -205,7 +212,7 @@ export class DetectifyService {
       title: context.title,
       host: context.host,
     });
-    
+
     return result;
   }
 
@@ -217,9 +224,9 @@ export class DetectifyService {
    */
   async unsetFixed(uuid, context = {}) {
     logger.info('Unsetting patched status', { uuid, ...context });
-    
+
     const result = await this.service.unsetFixed(uuid);
-    
+
     auditService.logStatusChange({
       source: 'detectify',
       vulnerabilityId: uuid,
@@ -228,7 +235,7 @@ export class DetectifyService {
       title: context.title,
       host: context.host,
     });
-    
+
     return result;
   }
 
@@ -242,7 +249,7 @@ export class DetectifyService {
   async updateStatus(uuid, targetStatus, context = {}) {
     const currentStatus = context.currentStatus || context.oldStatus;
     const normalizedTarget = targetStatus.toLowerCase().replace(/[_-]/g, '');
-    
+
     // If reverting to active, need to unset current status
     if (normalizedTarget === 'active') {
       if (currentStatus === 'accepted_risk') {
@@ -257,7 +264,9 @@ export class DetectifyService {
     }
 
     // If already in a resolved state, unset first
-    if (['accepted_risk', 'false_positive', 'patched'].includes(currentStatus)) {
+    if (
+      ['accepted_risk', 'false_positive', 'patched'].includes(currentStatus)
+    ) {
       if (currentStatus === 'accepted_risk') {
         await this.service.unsetAcceptedRisk(uuid);
       } else if (currentStatus === 'false_positive') {

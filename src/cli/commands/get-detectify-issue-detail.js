@@ -28,26 +28,40 @@ export async function getDetectifyIssueDetail(options) {
     if (options.json) {
       cliOutput.json(vuln);
     } else {
-      cliOutput.result(chalk.green('\n=== Detectify Vulnerability Details ===\n'));
-      
+      cliOutput.result(
+        chalk.green('\n=== Detectify Vulnerability Details ===\n')
+      );
+
       // Basic information
       cliOutput.result(`${chalk.bold('UUID:')} ${vuln.uuid || 'N/A'}`);
       cliOutput.result(`${chalk.bold('Title:')} ${vuln.title || '(no title)'}`);
       cliOutput.result(`${chalk.bold('Host:')} ${vuln.host || 'N/A'}`);
       cliOutput.result(`${chalk.bold('Location:')} ${vuln.location || 'N/A'}`);
-      
+
       const severityColor = getSeverityColor(vuln.severity);
       const statusColor = getStatusColor(vuln.status);
-      cliOutput.result(`${chalk.bold('Severity:')} ${chalk[severityColor](vuln.severity || 'N/A')}`);
-      cliOutput.result(`${chalk.bold('Status:')} ${chalk[statusColor](vuln.status || 'N/A')}`);
-      cliOutput.result(`${chalk.bold('Scan Source:')} ${vuln.scan_source || 'N/A'}`);
+      cliOutput.result(
+        `${chalk.bold('Severity:')} ${chalk[severityColor](vuln.severity || 'N/A')}`
+      );
+      cliOutput.result(
+        `${chalk.bold('Status:')} ${chalk[statusColor](vuln.status || 'N/A')}`
+      );
+      cliOutput.result(
+        `${chalk.bold('Scan Source:')} ${vuln.scan_source || 'N/A'}`
+      );
 
       // Timestamps
       cliOutput.result('');
       cliOutput.result(chalk.bold('--- Timestamps ---'));
-      cliOutput.result(`${chalk.bold('Created At:')} ${vuln.created_at || 'N/A'}`);
-      cliOutput.result(`${chalk.bold('Updated At:')} ${vuln.updated_at || 'N/A'}`);
-      cliOutput.result(`${chalk.bold('Modified At:')} ${vuln.modified_at || 'N/A'}`);
+      cliOutput.result(
+        `${chalk.bold('Created At:')} ${vuln.created_at || 'N/A'}`
+      );
+      cliOutput.result(
+        `${chalk.bold('Updated At:')} ${vuln.updated_at || 'N/A'}`
+      );
+      cliOutput.result(
+        `${chalk.bold('Modified At:')} ${vuln.modified_at || 'N/A'}`
+      );
 
       // Asset info
       if (vuln.asset_token) {
@@ -61,13 +75,19 @@ export async function getDetectifyIssueDetail(options) {
         cliOutput.result('');
         cliOutput.result(chalk.bold('--- CVSS Scores ---'));
         if (vuln.cvss_scores.cvss_2_0) {
-          cliOutput.result(`${chalk.bold('CVSS v2.0:')} ${vuln.cvss_scores.cvss_2_0.score} (${vuln.cvss_scores.cvss_2_0.severity})`);
+          cliOutput.result(
+            `${chalk.bold('CVSS v2.0:')} ${vuln.cvss_scores.cvss_2_0.score} (${vuln.cvss_scores.cvss_2_0.severity})`
+          );
         }
         if (vuln.cvss_scores.cvss_3_0) {
-          cliOutput.result(`${chalk.bold('CVSS v3.0:')} ${vuln.cvss_scores.cvss_3_0.score} (${vuln.cvss_scores.cvss_3_0.severity})`);
+          cliOutput.result(
+            `${chalk.bold('CVSS v3.0:')} ${vuln.cvss_scores.cvss_3_0.score} (${vuln.cvss_scores.cvss_3_0.severity})`
+          );
         }
         if (vuln.cvss_scores.cvss_3_1) {
-          cliOutput.result(`${chalk.bold('CVSS v3.1:')} ${vuln.cvss_scores.cvss_3_1.score} (${vuln.cvss_scores.cvss_3_1.severity})`);
+          cliOutput.result(
+            `${chalk.bold('CVSS v3.1:')} ${vuln.cvss_scores.cvss_3_1.score} (${vuln.cvss_scores.cvss_3_1.severity})`
+          );
         }
       }
 
@@ -85,10 +105,14 @@ export async function getDetectifyIssueDetail(options) {
           cliOutput.result(`${chalk.bold('Title:')} ${vuln.definition.title}`);
         }
         if (vuln.definition.description) {
-          cliOutput.result(`${chalk.bold('Description:')} ${truncate(vuln.definition.description, 500)}`);
+          cliOutput.result(
+            `${chalk.bold('Description:')} ${truncate(vuln.definition.description, 500)}`
+          );
         }
         if (vuln.definition.risk) {
-          cliOutput.result(`${chalk.bold('Risk:')} ${truncate(vuln.definition.risk, 300)}`);
+          cliOutput.result(
+            `${chalk.bold('Risk:')} ${truncate(vuln.definition.risk, 300)}`
+          );
         }
       }
 
@@ -96,9 +120,11 @@ export async function getDetectifyIssueDetail(options) {
       if (vuln.details && vuln.details.text) {
         cliOutput.result('');
         cliOutput.result(chalk.bold('--- Details ---'));
-        const textDetails = Array.isArray(vuln.details.text) 
-          ? vuln.details.text.map(t => t.value || t).join('\n')
-          : (typeof vuln.details.text === 'string' ? vuln.details.text : JSON.stringify(vuln.details.text));
+        const textDetails = Array.isArray(vuln.details.text)
+          ? vuln.details.text.map((t) => t.value || t).join('\n')
+          : typeof vuln.details.text === 'string'
+            ? vuln.details.text
+            : JSON.stringify(vuln.details.text);
         cliOutput.result(truncate(textDetails, 1000));
       }
 
@@ -123,7 +149,9 @@ export async function getDetectifyIssueDetail(options) {
         cliOutput.result('');
         cliOutput.result(chalk.bold('--- Links ---'));
         if (vuln.links.details_page) {
-          cliOutput.result(`${chalk.bold('Details Page:')} ${vuln.links.details_page}`);
+          cliOutput.result(
+            `${chalk.bold('Details Page:')} ${vuln.links.details_page}`
+          );
         }
       }
 

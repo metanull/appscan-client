@@ -5,7 +5,7 @@
  * Purpose: List vulnerabilities from Detectify API with filtering
  * API Endpoints: GET /rest/v2/vulnerabilities/
  * Self-contained: Yes
- * 
+ *
  * Vulnerability Statuses:
  * - active: Currently active vulnerability
  * - new: Newly detected vulnerability
@@ -13,10 +13,10 @@
  * - regression: Vulnerability reappeared
  * - accepted_risk: Manually marked as accepted risk
  * - false_positive: Manually marked as false positive
- * 
+ *
  * Severities (CVSS v2): information, low, medium, high
  * Severities (CVSS v3.1): information, low, medium, high, critical
- * 
+ *
  * Scan Sources: application-scanning, surface-monitoring, api-scanning
  */
 
@@ -32,7 +32,7 @@ const API_KEY = process.env.DETECTIFY_API_KEY;
  */
 async function detectifyRequest(endpoint, options = {}) {
   const url = `${BASE_URL}${endpoint}`;
-  
+
   const headers = {
     'X-Detectify-Key': API_KEY,
     'Content-Type': 'application/json',
@@ -46,7 +46,9 @@ async function detectifyRequest(endpoint, options = {}) {
 
   if (!response.ok) {
     const errorBody = await response.text();
-    throw new Error(`API request failed: ${response.status} ${response.statusText} - ${errorBody}`);
+    throw new Error(
+      `API request failed: ${response.status} ${response.statusText} - ${errorBody}`
+    );
   }
 
   const contentType = response.headers.get('content-type');
@@ -61,10 +63,10 @@ async function detectifyRequest(endpoint, options = {}) {
  */
 function buildQueryString(params) {
   const searchParams = new URLSearchParams();
-  
+
   for (const [key, value] of Object.entries(params)) {
     if (value === undefined || value === null) continue;
-    
+
     if (Array.isArray(value)) {
       // Handle array parameters like severity[], status[]
       for (const item of value) {
@@ -74,14 +76,16 @@ function buildQueryString(params) {
       searchParams.append(key, value);
     }
   }
-  
+
   return searchParams.toString();
 }
 
 async function main() {
   try {
     if (!API_KEY) {
-      throw new Error('Missing required environment variable: DETECTIFY_API_KEY');
+      throw new Error(
+        'Missing required environment variable: DETECTIFY_API_KEY'
+      );
     }
 
     console.log('=== Detectify Vulnerability List ===\n');
@@ -99,24 +103,28 @@ async function main() {
 
     const queryString = buildQueryString(queryParams);
     const endpoint = `/rest/v2/vulnerabilities/${queryString ? '?' + queryString : ''}`;
-    
+
     console.log(`Fetching vulnerabilities...`);
     console.log(`Endpoint: ${endpoint}\n`);
 
     const response = await detectifyRequest(endpoint);
 
     console.log('Response Summary:');
-    console.log(`  Total Vulnerabilities: ${response.total_vulnerabilities || 'N/A'}`);
+    console.log(
+      `  Total Vulnerabilities: ${response.total_vulnerabilities || 'N/A'}`
+    );
     console.log(`  Has More: ${response.has_more}`);
     console.log(`  Current Marker: ${response.current_marker || 'N/A'}`);
     console.log(`  Next Marker: ${response.next_marker || 'N/A'}`);
-    
+
     if (!response.vulnerabilities || response.vulnerabilities.length === 0) {
       console.log('\n  No vulnerabilities found with current filters.');
       process.exit(0);
     }
 
-    console.log(`\n  Fetched ${response.vulnerabilities.length} vulnerability(ies):\n`);
+    console.log(
+      `\n  Fetched ${response.vulnerabilities.length} vulnerability(ies):\n`
+    );
 
     // Group by severity and status for summary
     const bySeverity = {};
@@ -157,7 +165,9 @@ async function main() {
       console.log(`  Created At: ${vuln.created_at || 'N/A'}`);
       console.log(`  Updated At: ${vuln.updated_at || 'N/A'}`);
       if (vuln.cvss_scores) {
-        console.log(`  CVSS Scores: v2=${vuln.cvss_scores.cvss_v2 || 'N/A'}, v3=${vuln.cvss_scores.cvss_v3 || 'N/A'}`);
+        console.log(
+          `  CVSS Scores: v2=${vuln.cvss_scores.cvss_v2 || 'N/A'}, v3=${vuln.cvss_scores.cvss_v3 || 'N/A'}`
+        );
       }
       if (vuln.cwe) {
         console.log(`  CWE: ${vuln.cwe}`);
@@ -168,8 +178,12 @@ async function main() {
     // Store first vulnerability UUID for other scripts
     if (response.vulnerabilities.length > 0) {
       console.log('=== For Testing ===');
-      console.log(`First vulnerability UUID: ${response.vulnerabilities[0].uuid}`);
-      console.log('Use this UUID in detectify-02-get-vulnerability.js and detectify-03-update-status.js');
+      console.log(
+        `First vulnerability UUID: ${response.vulnerabilities[0].uuid}`
+      );
+      console.log(
+        'Use this UUID in detectify-02-get-vulnerability.js and detectify-03-update-status.js'
+      );
     }
 
     process.exit(0);

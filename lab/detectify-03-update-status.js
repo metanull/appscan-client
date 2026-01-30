@@ -11,7 +11,7 @@
  *   - POST /rest/v2/vulnerabilities/uuid/{uuid}/unsetfalsepositivestatus/
  *   - POST /rest/v2/vulnerabilities/uuid/{uuid}/unsetfixedstatus/
  * Self-contained: Yes
- * 
+ *
  * Detectify Vulnerability Statuses:
  *   - active: Currently active vulnerability (scanner detected it)
  *   - new: Newly detected vulnerability
@@ -19,22 +19,22 @@
  *   - regression: Vulnerability reappeared after being patched
  *   - accepted_risk: Manually marked as accepted risk
  *   - false_positive: Manually marked as false positive
- * 
+ *
  * Status Transitions (SET operations):
  *   - From any status -> accepted_risk (via setacceptedriskstatus)
  *   - From any status -> false_positive (via setfalsepositivestatus)
  *   - From any status -> patched (via setfixedstatus - note: results in "patched" status, not "fixed")
- * 
+ *
  * Status Transitions (UNSET operations - revert to previous/active state):
  *   - accepted_risk -> active (via unsetacceptedriskstatus)
  *   - false_positive -> active (via unsetfalsepositivestatus)
  *   - patched (manual) -> active (via unsetfixedstatus)
- * 
+ *
  * Important Notes:
  *   - setfixedstatus results in "patched" status (not "fixed")
  *   - Cannot directly transition between accepted_risk/false_positive/patched - must unset first
  *   - API may have rate limiting; add delays between rapid successive calls
- * 
+ *
  * Usage: node detectify-03-update-status.js [uuid] [action]
  *   action: set-accepted | unset-accepted | set-fp | unset-fp | set-fixed | unset-fixed | demo
  *   If no UUID is provided, fetches first "active" vulnerability for testing
@@ -52,7 +52,7 @@ const API_KEY = process.env.DETECTIFY_API_KEY;
  */
 async function detectifyRequest(endpoint, options = {}) {
   const url = `${BASE_URL}${endpoint}`;
-  
+
   const headers = {
     'X-Detectify-Key': API_KEY,
     'Content-Type': 'application/json',
@@ -67,7 +67,9 @@ async function detectifyRequest(endpoint, options = {}) {
   // Note: Status update endpoints return 200 with no content on success
   if (!response.ok) {
     const errorBody = await response.text();
-    throw new Error(`API request failed: ${response.status} ${response.statusText} - ${errorBody}`);
+    throw new Error(
+      `API request failed: ${response.status} ${response.statusText} - ${errorBody}`
+    );
   }
 
   const contentType = response.headers.get('content-type');
@@ -75,7 +77,7 @@ async function detectifyRequest(endpoint, options = {}) {
     const text = await response.text();
     return text ? JSON.parse(text) : null;
   }
-  
+
   return { success: true, status: response.status };
 }
 
@@ -83,7 +85,9 @@ async function detectifyRequest(endpoint, options = {}) {
  * Get vulnerability details
  */
 async function getVulnerability(uuid) {
-  const response = await detectifyRequest(`/rest/v2/vulnerabilities/uuid/${uuid}/`);
+  const response = await detectifyRequest(
+    `/rest/v2/vulnerabilities/uuid/${uuid}/`
+  );
   return response.vulnerability;
 }
 
@@ -91,54 +95,72 @@ async function getVulnerability(uuid) {
  * Set vulnerability status to "accepted_risk"
  */
 async function setAcceptedRisk(uuid) {
-  return detectifyRequest(`/rest/v2/vulnerabilities/uuid/${uuid}/setacceptedriskstatus/`, {
-    method: 'POST',
-  });
+  return detectifyRequest(
+    `/rest/v2/vulnerabilities/uuid/${uuid}/setacceptedriskstatus/`,
+    {
+      method: 'POST',
+    }
+  );
 }
 
 /**
  * Unset "accepted_risk" status (revert to previous state)
  */
 async function unsetAcceptedRisk(uuid) {
-  return detectifyRequest(`/rest/v2/vulnerabilities/uuid/${uuid}/unsetacceptedriskstatus/`, {
-    method: 'POST',
-  });
+  return detectifyRequest(
+    `/rest/v2/vulnerabilities/uuid/${uuid}/unsetacceptedriskstatus/`,
+    {
+      method: 'POST',
+    }
+  );
 }
 
 /**
  * Set vulnerability status to "false_positive"
  */
 async function setFalsePositive(uuid) {
-  return detectifyRequest(`/rest/v2/vulnerabilities/uuid/${uuid}/setfalsepositivestatus/`, {
-    method: 'POST',
-  });
+  return detectifyRequest(
+    `/rest/v2/vulnerabilities/uuid/${uuid}/setfalsepositivestatus/`,
+    {
+      method: 'POST',
+    }
+  );
 }
 
 /**
  * Unset "false_positive" status (revert to previous state)
  */
 async function unsetFalsePositive(uuid) {
-  return detectifyRequest(`/rest/v2/vulnerabilities/uuid/${uuid}/unsetfalsepositivestatus/`, {
-    method: 'POST',
-  });
+  return detectifyRequest(
+    `/rest/v2/vulnerabilities/uuid/${uuid}/unsetfalsepositivestatus/`,
+    {
+      method: 'POST',
+    }
+  );
 }
 
 /**
  * Set vulnerability status to "fixed" (manual)
  */
 async function setFixed(uuid) {
-  return detectifyRequest(`/rest/v2/vulnerabilities/uuid/${uuid}/setfixedstatus/`, {
-    method: 'POST',
-  });
+  return detectifyRequest(
+    `/rest/v2/vulnerabilities/uuid/${uuid}/setfixedstatus/`,
+    {
+      method: 'POST',
+    }
+  );
 }
 
 /**
  * Unset "fixed" status (revert to previous state)
  */
 async function unsetFixed(uuid) {
-  return detectifyRequest(`/rest/v2/vulnerabilities/uuid/${uuid}/unsetfixedstatus/`, {
-    method: 'POST',
-  });
+  return detectifyRequest(
+    `/rest/v2/vulnerabilities/uuid/${uuid}/unsetfixedstatus/`,
+    {
+      method: 'POST',
+    }
+  );
 }
 
 /**
@@ -158,13 +180,15 @@ async function displayStatus(uuid, label = 'Current') {
  * Sleep for specified milliseconds
  */
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function main() {
   try {
     if (!API_KEY) {
-      throw new Error('Missing required environment variable: DETECTIFY_API_KEY');
+      throw new Error(
+        'Missing required environment variable: DETECTIFY_API_KEY'
+      );
     }
 
     let vulnerabilityUUID = process.argv[2];
@@ -174,14 +198,28 @@ async function main() {
 
     // Find a suitable test vulnerability if none provided
     if (!vulnerabilityUUID) {
-      console.log('No UUID provided, searching for an "active" vulnerability...\n');
-      const listResponse = await detectifyRequest('/rest/v2/vulnerabilities/?status[]=active&pageSize=5');
-      
-      if (!listResponse.vulnerabilities || listResponse.vulnerabilities.length === 0) {
+      console.log(
+        'No UUID provided, searching for an "active" vulnerability...\n'
+      );
+      const listResponse = await detectifyRequest(
+        '/rest/v2/vulnerabilities/?status[]=active&pageSize=5'
+      );
+
+      if (
+        !listResponse.vulnerabilities ||
+        listResponse.vulnerabilities.length === 0
+      ) {
         // Try finding any vulnerability
-        console.log('No active vulnerabilities found, trying any vulnerability...');
-        const anyResponse = await detectifyRequest('/rest/v2/vulnerabilities/?pageSize=5');
-        if (!anyResponse.vulnerabilities || anyResponse.vulnerabilities.length === 0) {
+        console.log(
+          'No active vulnerabilities found, trying any vulnerability...'
+        );
+        const anyResponse = await detectifyRequest(
+          '/rest/v2/vulnerabilities/?pageSize=5'
+        );
+        if (
+          !anyResponse.vulnerabilities ||
+          anyResponse.vulnerabilities.length === 0
+        ) {
           throw new Error('No vulnerabilities found to test with');
         }
         vulnerabilityUUID = anyResponse.vulnerabilities[0].uuid;
@@ -246,8 +284,10 @@ async function main() {
       case 'demo':
       default:
         console.log('\n=== Demo: Testing All Status Transitions ===');
-        console.log('(Adding small delays between API calls to avoid rate limiting)\n');
-        
+        console.log(
+          '(Adding small delays between API calls to avoid rate limiting)\n'
+        );
+
         // 1. Set to Accepted Risk
         console.log('--- Step 1: Set to Accepted Risk ---');
         try {
@@ -293,7 +333,9 @@ async function main() {
         await sleep(500);
 
         // 5. Set to Fixed/Patched (manual)
-        console.log('\n--- Step 5: Set to Fixed (results in "patched" status) ---');
+        console.log(
+          '\n--- Step 5: Set to Fixed (results in "patched" status) ---'
+        );
         try {
           await setFixed(vulnerabilityUUID);
           console.log('✅ setFixed succeeded');
@@ -315,7 +357,7 @@ async function main() {
 
         // Final status
         const finalVuln = await displayStatus(vulnerabilityUUID, 'Final');
-        
+
         console.log('\n=== Demo Summary ===');
         console.log(`Initial status: ${initialStatus}`);
         console.log(`Final status: ${finalVuln.status}`);
