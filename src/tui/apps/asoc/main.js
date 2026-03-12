@@ -658,7 +658,20 @@ export const App = ({ configPath }) => {
   const selectedIssueIds = useStore((state) => state.selectedIssueIds);
   const excludePassedNoise = useStore((state) => state.excludePassedNoise);
   const filterDateRange = useStore((state) => state.filterDateRange);
-  const lastSyncDate = useStore((state) => state.lastSyncDate);
+  const lastSyncDates = useStore((state) => state.lastSyncDates);
+
+  // Compute the source key and last sync date for the current selection
+  const isCurrentViewAll =
+    selectedScan?._isViewAll || selectedScan?.Id === '__VIEW_ALL__';
+  const currentSourceKey =
+    isCurrentViewAll && selectedApp?.Id
+      ? `app:${selectedApp.Id}`
+      : selectedScan?.Id
+        ? `scan:${selectedScan.Id}`
+        : null;
+  const lastSyncDate = currentSourceKey
+    ? lastSyncDates[currentSourceKey]
+    : undefined;
 
   // Log file path (stable reference – derived from logger)
   const logFilePath = useRef(logger.getLogFilePath()).current;
@@ -786,8 +799,12 @@ export const App = ({ configPath }) => {
 
         if (cancelled) return;
         useStore.getState().setIssues(issueList || []);
-        // Record successful sync timestamp (only on success – preserves last good date on failure)
-        useStore.getState().setLastSyncDate(new Date().toISOString());
+        // Record successful sync timestamp per source (only on success – preserves last good date on failure)
+        const sourceKey =
+          isViewAll && selectedApp?.Id
+            ? `app:${selectedApp.Id}`
+            : `scan:${selectedScan.Id}`;
+        useStore.getState().setLastSyncDate(sourceKey, new Date().toISOString());
 
         if (selectedApp?.Id) {
           try {
@@ -1004,8 +1021,12 @@ export const App = ({ configPath }) => {
       }
 
       store.setIssues(issueList || []);
-      // Update last sync date only on success
-      store.setLastSyncDate(new Date().toISOString());
+      // Update last sync date per source only on success
+      const sourceKey =
+        isViewAll && selectedApp?.Id
+          ? `app:${selectedApp.Id}`
+          : `scan:${selectedScan.Id}`;
+      store.setLastSyncDate(sourceKey, new Date().toISOString());
 
       // Load FixGroups for the application
       if (selectedApp?.Id) {

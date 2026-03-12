@@ -17,7 +17,7 @@ beforeEach(() => {
     searchText: null,
     sortBy: 'severity',
     filterDateRange: null,
-    lastSyncDate: null,
+    lastSyncDates: {},
   });
 });
 
@@ -139,10 +139,20 @@ describe('AppContext store - cache and filtering helpers', () => {
     expect(useStore.getState().filterDateRange).toBeNull();
   });
 
-  it('setLastSyncDate persists the timestamp', () => {
+  it('setLastSyncDate persists the timestamp per source', () => {
     const ts = new Date().toISOString();
-    useStore.getState().setLastSyncDate(ts);
-    expect(useStore.getState().lastSyncDate).toBe(ts);
+    useStore.getState().setLastSyncDate('scan:test-scan', ts);
+    expect(useStore.getState().lastSyncDates['scan:test-scan']).toBe(ts);
+  });
+
+  it('setLastSyncDate tracks multiple sources independently', () => {
+    const ts1 = '2024-01-01T00:00:00.000Z';
+    const ts2 = '2024-06-01T00:00:00.000Z';
+    useStore.getState().setLastSyncDate('scan:scan-a', ts1);
+    useStore.getState().setLastSyncDate('app:app-b', ts2);
+    const { lastSyncDates } = useStore.getState();
+    expect(lastSyncDates['scan:scan-a']).toBe(ts1);
+    expect(lastSyncDates['app:app-b']).toBe(ts2);
   });
 
   it('hasActiveFilters returns true when filterDateRange is set', () => {

@@ -28,7 +28,7 @@ import { getIssueComputedDate, getDateRangeCutoff } from '../utils/issue.js';
  * @property {string|null} searchText - Search text for filtering issues
  * @property {string} sortBy - Sort field: 'severity' | 'name' | 'status'
  * @property {string|null} filterDateRange - Date range filter: 'last-sync'|'24h'|'1w'|'1m'|'3m'|'6m'|null
- * @property {string|null} lastSyncDate - ISO timestamp of the last successful issue sync
+ * @property {Object} lastSyncDates - ISO timestamps of the last successful issue sync, keyed by sourceKey ('app:{id}' or 'scan:{id}')
  * @property {string|null} scanSearchText - Search text for filtering scans
  * @property {string|null} scanFilterType - Filter scans by type (SAST, DAST, etc.)
  * @property {boolean} hideEmptyScans - Whether to hide scans with no issues
@@ -73,7 +73,7 @@ export const useStore = create((set, get) => ({
   searchText: null,
   sortBy: 'severity', // 'severity' | 'name' | 'status'
   filterDateRange: null, // 'last-sync' | '24h' | '1w' | '1m' | '3m' | '6m' | null
-  lastSyncDate: null, // ISO string – timestamp of last successful issue load
+  lastSyncDates: {}, // { [sourceKey]: ISO string } – keyed by 'app:{id}' or 'scan:{id}'
   scanSearchText: null,
   scanFilterType: null, // 'SAST' | 'DAST' | etc.
   hideEmptyScans: true,
@@ -349,10 +349,14 @@ export const useStore = create((set, get) => ({
     set({ filterDateRange: range, selectedIssueIds: [] }),
 
   /**
-   * Record the timestamp of the last successful issue sync
+   * Record the timestamp of the last successful issue sync for a specific source
+   * @param {string} sourceKey - Source key: 'app:{id}' for view-all or 'scan:{id}' for a specific scan
    * @param {string} date - ISO timestamp string
    */
-  setLastSyncDate: (date) => set({ lastSyncDate: date }),
+  setLastSyncDate: (sourceKey, date) =>
+    set((state) => ({
+      lastSyncDates: { ...state.lastSyncDates, [sourceKey]: date },
+    })),
 
   /**
    * Set scan search text
@@ -561,8 +565,20 @@ export const useStore = create((set, get) => ({
       searchText,
       sortBy,
       filterDateRange,
-      lastSyncDate,
+      lastSyncDates,
+      selectedApp,
+      selectedScan,
     } = get();
+
+    const isViewAll =
+      selectedScan?._isViewAll || selectedScan?.Id === '__VIEW_ALL__';
+    const sourceKey =
+      isViewAll && selectedApp?.Id
+        ? `app:${selectedApp.Id}`
+        : selectedScan?.Id
+          ? `scan:${selectedScan.Id}`
+          : null;
+    const lastSyncDate = sourceKey ? lastSyncDates[sourceKey] : undefined;
 
     let filtered = [...issues];
 
