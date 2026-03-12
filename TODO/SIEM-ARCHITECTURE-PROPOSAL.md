@@ -1091,7 +1091,6 @@ describe('AzdoProvider', () => {
 - **Web UI:** Could add later using same presenters
 - **API Server:** Could expose Core as REST/GraphQL if needed
 - **Multi-tenancy:** Not in scope; single-user local app
-- **Plugins:** Provider registry could load external modules later
 
 ### 14.3 Risks
 
