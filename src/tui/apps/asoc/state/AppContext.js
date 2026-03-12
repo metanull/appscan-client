@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { getIssueComputedDate, getDateRangeCutoff } from '../utils/issue.js';
 
 /**
  * Global application state store using Zustand
@@ -26,6 +27,8 @@ import { create } from 'zustand';
  * @property {string|null} filterFixGroup - Filter by FixGroup ID
  * @property {string|null} searchText - Search text for filtering issues
  * @property {string} sortBy - Sort field: 'severity' | 'name' | 'status'
+ * @property {string|null} filterDateRange - Date range filter: 'last-sync'|'24h'|'1w'|'1m'|'3m'|'6m'|null
+ * @property {string|null} lastSyncDate - ISO timestamp of the last successful issue sync
  * @property {string|null} scanSearchText - Search text for filtering scans
  * @property {string|null} scanFilterType - Filter scans by type (SAST, DAST, etc.)
  * @property {boolean} hideEmptyScans - Whether to hide scans with no issues
@@ -69,6 +72,8 @@ export const useStore = create((set, get) => ({
   filterFixGroup: null,
   searchText: null,
   sortBy: 'severity', // 'severity' | 'name' | 'status'
+  filterDateRange: null, // 'last-sync' | '24h' | '1w' | '1m' | '3m' | '6m' | null
+  lastSyncDate: null, // ISO string – timestamp of last successful issue load
   scanSearchText: null,
   scanFilterType: null, // 'SAST' | 'DAST' | etc.
   hideEmptyScans: true,
@@ -337,6 +342,19 @@ export const useStore = create((set, get) => ({
   setSortBy: (sortBy) => set({ sortBy }),
 
   /**
+   * Set date range filter
+   * @param {string|null} range - Date range: 'last-sync'|'24h'|'1w'|'1m'|'3m'|'6m'|null
+   */
+  setFilterDateRange: (range) =>
+    set({ filterDateRange: range, selectedIssueIds: [] }),
+
+  /**
+   * Record the timestamp of the last successful issue sync
+   * @param {string} date - ISO timestamp string
+   */
+  setLastSyncDate: (date) => set({ lastSyncDate: date }),
+
+  /**
    * Set scan search text
    * @param {string|null} text - Search text for scans
    */
@@ -366,6 +384,7 @@ export const useStore = create((set, get) => ({
       filterFixGroup: null,
       searchText: null,
       filterPreset: null,
+      filterDateRange: null,
       selectedIssueIds: [],
     }),
 
@@ -541,6 +560,8 @@ export const useStore = create((set, get) => ({
       filterFixGroup,
       searchText,
       sortBy,
+      filterDateRange,
+      lastSyncDate,
     } = get();
 
     let filtered = [...issues];
@@ -582,6 +603,16 @@ export const useStore = create((set, get) => ({
           (i.Location && i.Location.toLowerCase().includes(searchLower)) ||
           (i.Api && i.Api.toLowerCase().includes(searchLower))
       );
+    }
+
+    if (filterDateRange) {
+      const cutoff = getDateRangeCutoff(filterDateRange, lastSyncDate);
+      if (cutoff !== undefined) {
+        filtered = filtered.filter((i) => {
+          const d = getIssueComputedDate(i);
+          return d !== null && d.getTime() >= cutoff;
+        });
+      }
     }
 
     const severityOrder = {
@@ -627,6 +658,7 @@ export const useStore = create((set, get) => ({
       filterJira,
       filterFixGroup,
       searchText,
+      filterDateRange,
     } = get();
     return !!(
       filterStatus ||
@@ -634,7 +666,8 @@ export const useStore = create((set, get) => ({
       filterIssueType ||
       filterJira ||
       filterFixGroup ||
-      searchText
+      searchText ||
+      filterDateRange
     );
   },
 

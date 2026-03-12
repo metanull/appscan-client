@@ -16,6 +16,8 @@ beforeEach(() => {
     filterFixGroup: null,
     searchText: null,
     sortBy: 'severity',
+    filterDateRange: null,
+    lastSyncDate: null,
   });
 });
 
@@ -127,5 +129,41 @@ describe('AppContext store - cache and filtering helpers', () => {
     // toggle adds back
     useStore.getState().toggleIssueSelection('1');
     expect(useStore.getState().selectedIssueIds.sort()).toEqual(['1', '2']);
+  });
+
+  it('setFilterDateRange stores the value and clearFilters resets it', () => {
+    useStore.getState().setFilterDateRange('24h');
+    expect(useStore.getState().filterDateRange).toBe('24h');
+
+    useStore.getState().clearFilters();
+    expect(useStore.getState().filterDateRange).toBeNull();
+  });
+
+  it('setLastSyncDate persists the timestamp', () => {
+    const ts = new Date().toISOString();
+    useStore.getState().setLastSyncDate(ts);
+    expect(useStore.getState().lastSyncDate).toBe(ts);
+  });
+
+  it('hasActiveFilters returns true when filterDateRange is set', () => {
+    expect(useStore.getState().hasActiveFilters()).toBe(false);
+    useStore.getState().setFilterDateRange('1w');
+    expect(useStore.getState().hasActiveFilters()).toBe(true);
+    useStore.getState().clearFilters();
+    expect(useStore.getState().hasActiveFilters()).toBe(false);
+  });
+
+  it('getFilteredIssues applies dateRange filter', () => {
+    const now = new Date();
+    const hoursAgo = (h) =>
+      new Date(now.getTime() - h * 60 * 60 * 1000).toISOString();
+    const issues = [
+      { Id: '1', Severity: 'High', LastUpdated: hoursAgo(1) },
+      { Id: '2', Severity: 'Low', LastUpdated: hoursAgo(48) },
+    ];
+    useStore.getState().setIssues(issues);
+    useStore.getState().setFilterDateRange('24h');
+    const filtered = useStore.getState().getFilteredIssues();
+    expect(filtered.map((i) => i.Id)).toEqual(['1']);
   });
 });

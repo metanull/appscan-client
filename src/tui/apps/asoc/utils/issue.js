@@ -105,6 +105,45 @@ export function getSeverityBadge(severity) {
 }
 
 /**
+ * Compute the most recent relevant date for an issue.
+ * Returns the latest of DateCreated, LastUpdated, and LastFound (excluding nulls).
+ * @param {Object} issue - Issue object with date fields
+ * @returns {Date|null} Most recent date, or null if no dates are available
+ */
+export function getIssueComputedDate(issue) {
+  const candidates = [issue.DateCreated, issue.LastUpdated, issue.LastFound]
+    .filter(Boolean)
+    .map((d) => new Date(d))
+    .filter((d) => !isNaN(d.getTime()));
+  if (candidates.length === 0) return null;
+  return new Date(Math.max(...candidates.map((d) => d.getTime())));
+}
+
+/**
+ * Compute the cutoff timestamp for a date range filter option.
+ * Month-based ranges use fixed-day approximations (30/90/180 days).
+ * @param {string|null} dateRange - One of '24h' | '1w' | '1m' | '3m' | '6m' | 'last-sync' | null
+ * @param {string|null} lastSyncDate - ISO timestamp used when dateRange is 'last-sync'
+ * @returns {number|undefined} Millisecond epoch cutoff, or undefined when no filter applies
+ */
+export function getDateRangeCutoff(dateRange, lastSyncDate) {
+  if (!dateRange) return undefined;
+  const now = Date.now();
+  if (dateRange === 'last-sync' && lastSyncDate) {
+    return new Date(lastSyncDate).getTime();
+  }
+  const durations = {
+    '24h': 24 * 60 * 60 * 1000,
+    '1w': 7 * 24 * 60 * 60 * 1000,
+    '1m': 30 * 24 * 60 * 60 * 1000,
+    '3m': 90 * 24 * 60 * 60 * 1000,
+    '6m': 180 * 24 * 60 * 60 * 1000,
+  };
+  const ms = durations[dateRange];
+  return ms !== undefined ? now - ms : undefined;
+}
+
+/**
  * Filter and sort issues based on criteria
  * @param {Array} issues - List of issues
  * @param {Object} filters - Filter criteria
@@ -119,6 +158,8 @@ export function filterIssues(issues, filters = {}) {
     fixgroup,
     searchText,
     sortBy = 'severity',
+    dateRange,
+    lastSyncDate,
   } = filters;
 
   let filtered = [...issues];
@@ -160,6 +201,16 @@ export function filterIssues(issues, filters = {}) {
         (i.Location && i.Location.toLowerCase().includes(searchLower)) ||
         (i.Api && i.Api.toLowerCase().includes(searchLower))
     );
+  }
+
+  if (dateRange) {
+    const cutoff = getDateRangeCutoff(dateRange, lastSyncDate);
+    if (cutoff !== undefined) {
+      filtered = filtered.filter((i) => {
+        const d = getIssueComputedDate(i);
+        return d !== null && d.getTime() >= cutoff;
+      });
+    }
   }
 
   const severityOrder = {
@@ -231,6 +282,8 @@ export default {
   getSeverityBadge,
   getStatusBadge,
   formatIssueForDisplay,
+  getIssueComputedDate,
+  getDateRangeCutoff,
   SEVERITY_ORDER,
   SEVERITY_COLORS,
 };

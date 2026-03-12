@@ -151,9 +151,9 @@ const ContextPane = React.memo(
 ContextPane.displayName = 'ContextPane';
 
 /**
- * Individual vulnerability row displaying severity, status, Jira link, and type
+ * Individual vulnerability row displaying severity, status, work items, comments, and type
  * @param {Object} props - Component props
- * @param {Object} props.issue - Vulnerability issue object with severity, status, type, and ExternalId
+ * @param {Object} props.issue - Vulnerability issue object with severity, status, type, ExternalId, and LastComment
  * @param {boolean} props.isSelected - Whether this row is the currently selected item
  * @param {boolean} props.isMultiSelected - Whether this row is included in multi-selection
  * @returns {JSX.Element}
@@ -162,7 +162,8 @@ const VulnRow = React.memo(({ issue, isSelected, isMultiSelected }) => {
   const severity = issue.Severity || 'Unknown';
   const status = issue.Status || 'Unknown';
   const type = issue.IssueType || 'Unknown';
-  const jiraRef = issue.ExternalId || '';
+  const workItemRef = issue.ExternalId || '';
+  const hasComments = !!issue.LastComment;
 
   const severityColor =
     {
@@ -194,7 +195,14 @@ const VulnRow = React.memo(({ issue, isSelected, isMultiSelected }) => {
         <Text color={isSelected ? 'cyan' : undefined}>{status}</Text>
       </Box>
       <Box width={14} justifyContent="flex-start" marginRight={1}>
-        <Text color={jiraRef ? 'green' : 'dimColor'}>{jiraRef || '-'}</Text>
+        <Text color={workItemRef ? 'green' : 'dimColor'}>
+          {workItemRef || '-'}
+        </Text>
+      </Box>
+      <Box width={6} justifyContent="flex-start" marginRight={1}>
+        <Text color={hasComments ? 'yellow' : 'dimColor'}>
+          {hasComments ? '💬' : '-'}
+        </Text>
       </Box>
       <Box flexGrow={1} minWidth={0} justifyContent="flex-start">
         <Text color={isSelected ? 'cyan' : undefined} wrap="truncate">
@@ -219,6 +227,7 @@ VulnRow.displayName = 'VulnRow';
  * @param {string} props.filterJira - Active Jira filter (with/without)
  * @param {string} props.searchText - Active search text
  * @param {string} props.filterPreset - Active filter preset name
+ * @param {string} props.filterDateRange - Active date range filter
  * @param {Function} props.onCursorChange - Cursor change handler (unused)
  * @param {number} props.height - Available height for panel
  * @returns {JSX.Element}
@@ -234,6 +243,7 @@ const VulnListPanel = React.memo(
     filterJira,
     searchText,
     filterPreset,
+    filterDateRange,
     onCursorChange: _onCursorChange,
     height,
   }) => {
@@ -274,6 +284,19 @@ const VulnListPanel = React.memo(
     if (filterIssueType) activeFilters.push(`Type:${filterIssueType}`);
     if (filterJira) activeFilters.push(`Jira:${filterJira}`);
     if (searchText) activeFilters.push(`Search:"${searchText}"`);
+    if (filterDateRange) {
+      const dateRangeLabels = {
+        'last-sync': 'Since last sync',
+        '24h': 'Last 24h',
+        '1w': 'Last 1 week',
+        '1m': 'Last 1 month',
+        '3m': 'Last 3 months',
+        '6m': 'Last 6 months',
+      };
+      activeFilters.push(
+        `Date:${dateRangeLabels[filterDateRange] || filterDateRange}`
+      );
+    }
     const hasFilters = activeFilters.length > 0;
 
     // Calculate available rows for the list
@@ -339,7 +362,12 @@ const VulnListPanel = React.memo(
           </Box>
           <Box width={14} justifyContent="flex-start" marginRight={1}>
             <Text bold dimColor>
-              Jira
+              Work Items
+            </Text>
+          </Box>
+          <Box width={6} justifyContent="flex-start" marginRight={1}>
+            <Text bold dimColor>
+              Cmts
             </Text>
           </Box>
           <Box flexGrow={1} minWidth={0} justifyContent="flex-start">
@@ -517,11 +545,12 @@ DetailsPreviewPanel.displayName = 'DetailsPreviewPanel';
  * @param {boolean} props.loading - Whether application is in loading state
  * @param {string} props.message - Custom loading message
  * @param {boolean} props.excludePassedNoise - Whether Passed/Noise issues are excluded
+ * @param {string} props.logFilePath - Path to the application log file
  * @returns {JSX.Element}
  */
 const pkg = getPackageInfo();
 const StatusBar = React.memo(
-  ({ error, loading, message, excludePassedNoise }) => {
+  ({ error, loading, message, excludePassedNoise, logFilePath }) => {
     const rightText = `${pkg.name || 'appscan-client'} ${pkg.version || 'v0.0.0'} • License ${pkg.license || 'MIT'} • ${pkg.author || 'Pascal (MetaNull) Havelange'}`;
     return (
       <Box
@@ -550,6 +579,13 @@ const StatusBar = React.memo(
                 <Text color="yellow" dimColor>
                   {' '}
                   | [Passed/Noise Excluded]
+                </Text>
+              )}
+              {logFilePath && (
+                <Text dimColor>
+                  {' '}
+                  | Log: <Text color="blue">{logFilePath}</Text>
+                  <Text dimColor> (ALT+L)</Text>
                 </Text>
               )}
             </Box>
@@ -621,6 +657,11 @@ export const App = ({ configPath }) => {
   const sortBy = useStore((state) => state.sortBy);
   const selectedIssueIds = useStore((state) => state.selectedIssueIds);
   const excludePassedNoise = useStore((state) => state.excludePassedNoise);
+  const filterDateRange = useStore((state) => state.filterDateRange);
+  const lastSyncDate = useStore((state) => state.lastSyncDate);
+
+  // Log file path (stable reference – derived from logger)
+  const logFilePath = useRef(logger.getLogFilePath()).current;
 
   // Setup logger debug callback on mount
   React.useEffect(() => {
@@ -745,6 +786,8 @@ export const App = ({ configPath }) => {
 
         if (cancelled) return;
         useStore.getState().setIssues(issueList || []);
+        // Record successful sync timestamp (only on success – preserves last good date on failure)
+        useStore.getState().setLastSyncDate(new Date().toISOString());
 
         if (selectedApp?.Id) {
           try {
@@ -795,6 +838,8 @@ export const App = ({ configPath }) => {
       fixgroup: filterFixGroup,
       searchText: searchText,
       sortBy: sortBy,
+      dateRange: filterDateRange,
+      lastSyncDate: lastSyncDate,
     });
   }, [
     issues,
@@ -805,6 +850,8 @@ export const App = ({ configPath }) => {
     filterFixGroup,
     searchText,
     sortBy,
+    filterDateRange,
+    lastSyncDate,
   ]);
 
   // Get actual selected issues from IDs (use full issues list, not filtered)
@@ -957,6 +1004,8 @@ export const App = ({ configPath }) => {
       }
 
       store.setIssues(issueList || []);
+      // Update last sync date only on success
+      store.setLastSyncDate(new Date().toISOString());
 
       // Load FixGroups for the application
       if (selectedApp?.Id) {
@@ -1408,6 +1457,16 @@ export const App = ({ configPath }) => {
         description: 'Disable Debug',
         group: 'Debug',
       },
+      {
+        key: 'alt+l',
+        action: () => {
+          open(logFilePath).catch((err) => {
+            logger.error('Failed to open log file', err);
+          });
+        },
+        description: 'Open Log File',
+        group: 'General',
+      },
     ],
     [
       currentIssue,
@@ -1422,6 +1481,7 @@ export const App = ({ configPath }) => {
       applyFilterPreset,
       reloadIssues,
       excludePassedNoise,
+      logFilePath,
     ]
   );
 
@@ -1736,6 +1796,7 @@ export const App = ({ configPath }) => {
           loading={loading}
           message={loading ? loadingMessage : 'Ready'}
           excludePassedNoise={excludePassedNoise}
+          logFilePath={logFilePath}
         />
       }
       debugBar={<DebugBar message={debugMessage} visible={debugMode} />}
@@ -1762,6 +1823,7 @@ export const App = ({ configPath }) => {
           filterJira={filterJira}
           searchText={searchText}
           filterPreset={filterPreset}
+          filterDateRange={filterDateRange}
           height={contentHeight}
         />
 
@@ -1798,6 +1860,8 @@ export const App = ({ configPath }) => {
               useStore.getState().setFilterFixGroup(value);
             else if (filterType === 'jira')
               useStore.getState().setFilterJira(value);
+            else if (filterType === 'dateRange')
+              useStore.getState().setFilterDateRange(value);
           }}
           onClose={() => setActiveModal(null)}
         />

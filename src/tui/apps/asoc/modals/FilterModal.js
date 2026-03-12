@@ -10,6 +10,7 @@ const FILTER_TYPES = [
   { label: 'Type Filter', value: 'type' },
   { label: 'FixGroup Filter', value: 'fixgroup' },
   { label: 'Jira Filter', value: 'jira' },
+  { label: 'Date Range Filter', value: 'dateRange' },
   { label: 'Cancel', value: 'cancel' },
 ];
 
@@ -38,6 +39,16 @@ const JIRA_OPTIONS = [
   { label: 'Only issues WITHOUT Jira link', value: 'without' },
 ];
 
+const DATE_RANGE_OPTIONS = [
+  { label: 'All Dates', value: null },
+  { label: 'Since last sync', value: 'last-sync' },
+  { label: 'Last 24 hours', value: '24h' },
+  { label: 'Last 1 week', value: '1w' },
+  { label: 'Last 1 month', value: '1m' },
+  { label: 'Last 3 months', value: '3m' },
+  { label: 'Last 6 months', value: '6m' },
+];
+
 /**
  * Modal for filtering vulnerability list by status, severity, type, FixGroup, and Jira linkage
  * Provides multi-step interface for selecting filter type and specific values
@@ -49,7 +60,7 @@ const JIRA_OPTIONS = [
  * @returns {JSX.Element}
  */
 export const FilterModal = ({ issues, fixGroups, onSelect, onClose }) => {
-  const [step, setStep] = useState('type'); // 'type' | 'status' | 'severity' | 'jira' | 'issueType' | 'fixgroup'
+  const [step, setStep] = useState('type'); // 'type' | 'status' | 'severity' | 'jira' | 'issueType' | 'fixgroup' | 'dateRange'
   const [filterType, setFilterType] = useState(null);
 
   useInput((input, key) => {
@@ -70,6 +81,9 @@ export const FilterModal = ({ issues, fixGroups, onSelect, onClose }) => {
     } else if (item.value === 'fixgroup') {
       setFilterType('fixgroup');
       setStep('fixgroup');
+    } else if (item.value === 'dateRange') {
+      setFilterType('dateRange');
+      setStep('dateRange');
     } else {
       setFilterType(item.value);
       setStep(item.value);
@@ -209,6 +223,16 @@ export const FilterModal = ({ issues, fixGroups, onSelect, onClose }) => {
             <Text>Select vulnerability type:</Text>
             <SelectInput
               items={getIssueTypeOptions()}
+              onSelect={handleFilterSelect}
+            />
+          </Box>
+        )}
+
+        {step === 'dateRange' && (
+          <Box flexDirection="column" marginTop={1}>
+            <Text>Select date range:</Text>
+            <SelectInput
+              items={DATE_RANGE_OPTIONS}
               onSelect={handleFilterSelect}
             />
           </Box>
